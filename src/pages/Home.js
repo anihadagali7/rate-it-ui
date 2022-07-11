@@ -5,7 +5,6 @@ import { theme } from "../Theme/Theme";
 import Header from "../components/header/Header";
 
 const Home = () => {
-  console.log("inside home");
   return (
     <Provider>
       <StyledEngineProvider injectFirst>

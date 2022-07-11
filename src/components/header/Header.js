@@ -1,107 +1,91 @@
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { atom, useAtom } from "jotai";
+import { currentlyLoggedIn } from "../../state/user";
+import { Link } from "react-router-dom";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Profile", "Wishlist", "Playlist"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const useStyles = makeStyles({});
 
 const Header = ({}) => {
-  const [navigation, setNavigation] = useState(null);
-    const [userMenu, setUserMenu] = useState(null);
-    
-    const [state, setState] = React.useState({
-      left: false,
-    });
+  const [userMenu, setUserMenu] = useState(null);
 
-    const toggleDrawer = (anchor, open) => (event) => {
-      if (
-        event.type === "keydown" &&
-        (event.key === "Tab" || event.key === "Shift")
-      ) {
-        return;
-      }
+  const [drawer, setDrawer] = useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
-      setState({ ...state, [anchor]: open });
-    };
+  useEffect(() => {}, []);
 
-  const handleOpenNavMenu = (event) => {
-    setNavigation(event.currentTarget);
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setDrawer(open);
   };
+
   const handleOpenUserMenu = (event) => {
     setUserMenu(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setNavigation(null);
+  const handleCloseUserMenu = () => {
+    setUserMenu(false);
   };
 
-  const handleCloseUserMenu = () => {
-    setUserMenu(null);
-  };
-    
-    const list = (anchor) => (
-      <Box
-        sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
-        role="presentation"
-        onClick={toggleDrawer(anchor, false)}
-        onKeyDown={toggleDrawer(anchor, false)}
-      >
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    );
-    
+  const menuDrawer = () => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        {pages.map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {text === "Profile" && <AccountCircleIcon />}
+                {text === "Playlist" && <PlaylistAddIcon />}
+                {text === "Wishlist" && <AddTaskIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* BIG SCREEN */}
+          {/* START BIG SCREEN */}
           <Typography
             variant="h6"
             noWrap
@@ -119,6 +103,19 @@ const Header = ({}) => {
           >
             RATE IT
           </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+          {/* END BIG SCREEN */}
+
+          {/* START SMALL SCREEN */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             {/* icon */}
             <IconButton
@@ -126,21 +123,15 @@ const Header = ({}) => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={toggleDrawer("left", true)}
+              onClick={toggleDrawer(true)}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
           </Box>
-          <Drawer
-            anchor={"left"}
-            open={state["left"]}
-            onClose={toggleDrawer("left", false)}
-          >
-            {list("left")}
+          <Drawer anchor={"left"} open={drawer} onClose={toggleDrawer(false)}>
+            {menuDrawer()}
           </Drawer>
-
-          {/* big SCREEN */}
           <Typography
             variant="h5"
             noWrap
@@ -159,25 +150,50 @@ const Header = ({}) => {
           >
             RATE IT
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
+          {/* END SMALL SCREEN */}
 
           {/* ACCOUNT ICON */}
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
+            {userLoggedIn ? (
+              <>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={userMenu}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={userMenu}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outlined"
+                  component={Link}
+                  to="/login"
+                  startIcon={<AccountCircleIcon style={{ color: "white" }} />}
+                >
+                  <Typography variant="button">Sign In</Typography>
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Container>

@@ -12,6 +12,9 @@ export default class App extends Component {
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
             <Route exact path="/login" element={<Login />}></Route>
+            <Route exact path="/profile" element={<Login />}></Route>
+            <Route exact path="/playlist" element={<Login />}></Route>
+            <Route exact path="/wishlist" element={<Login />}></Route>
           </Routes>
         </BrowserRouter>
       </div>
