@@ -1,4 +1,5 @@
 import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -24,6 +25,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { atom, useAtom } from "jotai";
 import { currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import PhoneIcon from "@mui/icons-material/Phone";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonPinIcon from "@mui/icons-material/PersonPin";
 
 const pages = ["Profile", "Wishlist", "Playlist"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -37,6 +43,52 @@ const useStyles = makeStyles({
   },
 });
 
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: "#f195ac",
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+    },
+    fontWeight: theme.typography.fontWeightRegular,
+    marginRight: theme.spacing(1),
+    color: "#40a9ff",
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+    "& .root": {
+      borderBottom: "none",
+    },
+    "&:hover": {
+      color: "#40a9ff",
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: "#f195ac",
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#f195ac",
+    },
+  })
+);
+
 const Header = ({ displayMenu }) => {
   const classes = useStyles();
   const [userMenu, setUserMenu] = useState(null);
@@ -44,7 +96,29 @@ const Header = ({ displayMenu }) => {
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
-  useEffect(() => {}, []);
+  const [tabValue, setTabValue] = React.useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  useEffect(() => {
+    checkPathnameValue();
+  }, []);
+
+  const checkPathnameValue = () => {
+    const { pathname } = window.location;
+    console.log("current path ", pathname);
+    if (pathname === "/profile") {
+      setTabValue(0);
+    } else if (pathname === "/playlist") {
+      setTabValue(1);
+    } else if (pathname === "/wishlist") {
+      setTabValue(2);
+    } else {
+      setTabValue(false);
+    }
+  };
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -114,48 +188,39 @@ const Header = ({ displayMenu }) => {
           {displayMenu && (
             <>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {pages.map((page) => (
-                  <Button
-                    key={page}
-                    sx={{ my: 2, color: "white", display: "block" }}
-                  >
-                    <Typography variant="normalText" sx={{ color: "	#f195ac" }}>
-                      {page === "Profile" && (
-                        <>
-                          <Typography
-                            variant="normalText"
-                            sx={{ color: "	#f195ac" }}
-                          >
-                            <AccountCircleIcon />
-                            Profile
-                          </Typography>
-                        </>
-                      )}
-                      {page === "Playlist" && (
-                        <>
-                          <Typography
-                            variant="normalText"
-                            sx={{ color: "	#f195ac" }}
-                          >
-                            <PlaylistAddIcon />
-                            Playlist
-                          </Typography>
-                        </>
-                      )}
-                      {page === "Wishlist" && (
-                        <>
-                          <Typography
-                            variant="normalText"
-                            sx={{ color: "	#f195ac" }}
-                          >
-                            <AddTaskIcon />
-                            Wishlist
-                          </Typography>
-                        </>
-                      )}
-                    </Typography>
-                  </Button>
-                ))}
+                <AntTabs
+                  sx={{
+                    marginLeft: "32%",
+                    color: "#f195ac",
+                    borderBottom: "none",
+                  }}
+                  value={tabValue}
+                  onChange={handleTabChange}
+                  aria-label="icon label tabs example"
+                  TabIndicatorProps={{ style: { background: "#f195ac" } }}
+                >
+                  <AntTab
+                    icon={<AccountCircleIcon />}
+                    label="Profile"
+                    iconPosition="start"
+                    component={Link}
+                    to="/profile"
+                  />
+                  <AntTab
+                    icon={<PlaylistAddIcon />}
+                    label="Playlist"
+                    iconPosition="start"
+                    component={Link}
+                    to="/"
+                  />
+                  <AntTab
+                    icon={<AddTaskIcon />}
+                    iconPosition="start"
+                    component={Link}
+                    label="Wishlist"
+                    to="/"
+                  />
+                </AntTabs>
               </Box>
             </>
           )}
