@@ -28,9 +28,17 @@ import { Link } from "react-router-dom";
 const pages = ["Profile", "Wishlist", "Playlist"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-const useStyles = makeStyles({});
+const useStyles = makeStyles({
+  title: {
+    fontFamily: "Black Signature",
+  },
+  appBar: {
+    backgroundColor: "#FFFFFF",
+  },
+});
 
 const Header = ({ displayMenu }) => {
+  const classes = useStyles();
   const [userMenu, setUserMenu] = useState(null);
 
   const [drawer, setDrawer] = useState(false);
@@ -82,7 +90,7 @@ const Header = ({ displayMenu }) => {
   );
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={classes.appBar}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* START BIG SCREEN */}
@@ -94,10 +102,10 @@ const Header = ({ displayMenu }) => {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
+              fontFamily: "Black Signature",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#00a8ff",
               textDecoration: "none",
             }}
           >
@@ -111,7 +119,41 @@ const Header = ({ displayMenu }) => {
                     key={page}
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
-                    {page}
+                    <Typography variant="normalText" sx={{ color: "	#f195ac" }}>
+                      {page === "Profile" && (
+                        <>
+                          <Typography
+                            variant="normalText"
+                            sx={{ color: "	#f195ac" }}
+                          >
+                            <AccountCircleIcon />
+                            Profile
+                          </Typography>
+                        </>
+                      )}
+                      {page === "Playlist" && (
+                        <>
+                          <Typography
+                            variant="normalText"
+                            sx={{ color: "	#f195ac" }}
+                          >
+                            <PlaylistAddIcon />
+                            Playlist
+                          </Typography>
+                        </>
+                      )}
+                      {page === "Wishlist" && (
+                        <>
+                          <Typography
+                            variant="normalText"
+                            sx={{ color: "	#f195ac" }}
+                          >
+                            <AddTaskIcon />
+                            Wishlist
+                          </Typography>
+                        </>
+                      )}
+                    </Typography>
                   </Button>
                 ))}
               </Box>
@@ -154,10 +196,10 @@ const Header = ({ displayMenu }) => {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
+              fontFamily: "Black Signature",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#00a8ff",
               textDecoration: "none",
             }}
           >
@@ -200,20 +242,25 @@ const Header = ({ displayMenu }) => {
                       ))}
                     </Menu>
                   </>
-                ) : 
+                ) : (
                   <>
                     <Button
                       variant="outlined"
                       component={Link}
                       to="/login"
                       startIcon={
-                        <AccountCircleIcon style={{ color: "white" }} />
+                        <AccountCircleIcon style={{ color: "#f195ac" }} />
                       }
                     >
-                      <Typography variant="button">Sign In</Typography>
+                      <Typography
+                        variant="normalText"
+                        sx={{ color: "#f195ac" }}
+                      >
+                        Sign In
+                      </Typography>
                     </Button>
                   </>
-                }
+                )}
               </Box>
             </>
           )}
