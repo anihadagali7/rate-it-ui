@@ -9,7 +9,7 @@ const Home = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Header />
+          <Header displayMenu={true}/>
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

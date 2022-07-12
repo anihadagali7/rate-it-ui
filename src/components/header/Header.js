@@ -30,7 +30,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const useStyles = makeStyles({});
 
-const Header = ({}) => {
+const Header = ({ displayMenu }) => {
   const [userMenu, setUserMenu] = useState(null);
 
   const [drawer, setDrawer] = useState(false);
@@ -103,35 +103,48 @@ const Header = ({}) => {
           >
             RATE IT
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
+          {displayMenu && (
+            <>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                {pages.map((page) => (
+                  <Button
+                    key={page}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </Box>
+            </>
+          )}
           {/* END BIG SCREEN */}
 
           {/* START SMALL SCREEN */}
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            {/* icon */}
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={toggleDrawer(true)}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-          <Drawer anchor={"left"} open={drawer} onClose={toggleDrawer(false)}>
-            {menuDrawer()}
-          </Drawer>
+          {displayMenu && (
+            <>
+              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                {/* icon */}
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={toggleDrawer(true)}
+                  color="inherit"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+              <Drawer
+                anchor={"left"}
+                open={drawer}
+                onClose={toggleDrawer(false)}
+              >
+                {menuDrawer()}
+              </Drawer>
+            </>
+          )}
+
           <Typography
             variant="h5"
             noWrap
@@ -153,48 +166,57 @@ const Header = ({}) => {
           {/* END SMALL SCREEN */}
 
           {/* ACCOUNT ICON */}
-          <Box sx={{ flexGrow: 0 }}>
-            {userLoggedIn ? (
-              <>
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={userMenu}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={userMenu}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  component={Link}
-                  to="/login"
-                  startIcon={<AccountCircleIcon style={{ color: "white" }} />}
-                >
-                  <Typography variant="button">Sign In</Typography>
-                </Button>
-              </>
-            )}
-          </Box>
+          {displayMenu && (
+            <>
+              <Box sx={{ flexGrow: 0 }}>
+                {userLoggedIn ? (
+                  <>
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="/static/images/avatar/2.jpg"
+                      />
+                    </IconButton>
+                    <Menu
+                      sx={{ mt: "45px" }}
+                      id="menu-appbar"
+                      anchorEl={userMenu}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      open={userMenu}
+                      onClose={handleCloseUserMenu}
+                    >
+                      {settings.map((setting) => (
+                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                          <Typography textAlign="center">{setting}</Typography>
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </>
+                ) : 
+                  <>
+                    <Button
+                      variant="outlined"
+                      component={Link}
+                      to="/login"
+                      startIcon={
+                        <AccountCircleIcon style={{ color: "white" }} />
+                      }
+                    >
+                      <Typography variant="button">Sign In</Typography>
+                    </Button>
+                  </>
+                }
+              </Box>
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
