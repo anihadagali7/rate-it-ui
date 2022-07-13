@@ -27,9 +27,7 @@ import { currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import PhoneIcon from "@mui/icons-material/Phone";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import PersonPinIcon from "@mui/icons-material/PersonPin";
+import HomeIcon from "@mui/icons-material/Home";
 
 const pages = ["Profile", "Wishlist", "Playlist"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -147,18 +145,34 @@ const Header = ({ displayMenu }) => {
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {pages.map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {text === "Profile" && <AccountCircleIcon />}
-                {text === "Playlist" && <PlaylistAddIcon />}
-                {text === "Wishlist" && <AddTaskIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem key={"home"} component={Link} to={"/"}>
+          <ListItemIcon>
+            <HomeIcon sx={{ color: "#f195ac" }} />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography sx={{ color: "#f195ac" }}>Home</Typography>
+          </ListItemText>
+        </ListItem>
+        <ListItem key={"profile"} component={Link} to={"/profile"}>
+          <ListItemIcon>
+            <AccountCircleIcon sx={{ color: "#f195ac" }} />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography sx={{ color: "#f195ac" }}>Profile</Typography>
+          </ListItemText>
+        </ListItem>
+        <ListItem key={"playlist"} component={Link} to={"/playlist"}>
+          <ListItemIcon>
+            <PlaylistAddIcon sx={{ color: "#f195ac" }} />
+          </ListItemIcon>
+          <Typography sx={{ color: "#f195ac" }}>Playlist</Typography>
+        </ListItem>
+        <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
+          <ListItemIcon>
+            <AddTaskIcon sx={{ color: "#f195ac" }} />
+          </ListItemIcon>
+          <Typography sx={{ color: "#f195ac" }}>Wishlist</Typography>
+        </ListItem>
       </List>
     </Box>
   );
@@ -238,6 +252,7 @@ const Header = ({ displayMenu }) => {
                   aria-haspopup="true"
                   onClick={toggleDrawer(true)}
                   color="inherit"
+                  sx={{ color: "#00a8ff" }}
                 >
                   <MenuIcon />
                 </IconButton>
