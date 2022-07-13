@@ -12,25 +12,22 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import HomeIcon from "@mui/icons-material/Home";
 
-const pages = ["Profile", "Wishlist", "Playlist"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Profile", "Account", "Logout"];
 
 const useStyles = makeStyles({
   title: {
@@ -94,7 +91,7 @@ const Header = ({ displayMenu }) => {
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
-  const [tabValue, setTabValue] = React.useState(0);
+  const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -271,7 +268,7 @@ const Header = ({ displayMenu }) => {
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -294,10 +291,7 @@ const Header = ({ displayMenu }) => {
                 {userLoggedIn ? (
                   <>
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="/static/images/avatar/2.jpg"
-                      />
+                      <AccountCircleIcon />
                     </IconButton>
                     <Menu
                       sx={{ mt: "45px" }}
