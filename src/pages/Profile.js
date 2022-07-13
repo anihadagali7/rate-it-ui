@@ -4,16 +4,16 @@ import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import Header from "../components/header/Header";
 
-const Home = () => {
+const Profile = () => {
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Header displayMenu={true}/>
+          <Header displayMenu={true} />
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
   );
 };
 
-export default Home;
+export default Profile;
