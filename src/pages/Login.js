@@ -16,6 +16,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
+import AuthClient from "../client/AuthClient";
 
 const useStyles = makeStyles({
   container: {
@@ -42,6 +43,11 @@ const Login = () => {
 
   const onChangePassword = (event) => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
+  };
+
+  const handleLogin = async () => {
+    const result = await AuthClient.login(login.email, login.password);
+    console.log("result ", result);
   };
 
   return (
@@ -87,7 +93,11 @@ const Login = () => {
                   <div>Forgot your password?</div>
                 </Grid>
                 <Grid item xs={4}>
-                  <Button variant="outlined" className={classes.loginBtn}>
+                  <Button
+                    variant="outlined"
+                    className={classes.loginBtn}
+                    onClick={handleLogin}
+                  >
                     <Typography variant="normalText" className={classes.login}>
                       Sign In
                     </Typography>
