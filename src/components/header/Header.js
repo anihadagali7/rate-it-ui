@@ -55,7 +55,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     fontWeight: "bold",
     fontSize: "16px",
     marginRight: theme.spacing(1),
-    color: "#40a9ff",
+    color: "#232b2b",
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -72,16 +72,16 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
       borderBottom: "none",
     },
     "&:hover": {
-      color: "#40a9ff",
+      color: "#232b2b",
       opacity: 1,
     },
     "&.Mui-selected": {
-      color: "#f195ac",
+      color: "#40a9ff",
       fontWeight: "bold",
       fontSize: "18px",
     },
     "&.Mui-focusVisible": {
-      backgroundColor: "#f195ac",
+      backgroundColor: "#40a9ff",
     },
   })
 );
