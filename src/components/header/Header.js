@@ -52,9 +52,10 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     [theme.breakpoints.up("sm")]: {
       minWidth: 0,
     },
-    fontWeight: theme.typography.fontWeightRegular,
+    fontWeight: "bold",
+    fontSize: "16px",
     marginRight: theme.spacing(1),
-    color: "#40a9ff",
+    color: "#232b2b",
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -71,15 +72,16 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
       borderBottom: "none",
     },
     "&:hover": {
-      color: "#40a9ff",
+      color: "#232b2b",
       opacity: 1,
     },
     "&.Mui-selected": {
-      color: "#f195ac",
-      fontWeight: theme.typography.fontWeightMedium,
+      color: "#40a9ff",
+      fontWeight: "bold",
+      fontSize: "18px",
     },
     "&.Mui-focusVisible": {
-      backgroundColor: "#f195ac",
+      backgroundColor: "#40a9ff",
     },
   })
 );
@@ -99,7 +101,8 @@ const Header = ({ displayMenu }) => {
 
   useEffect(() => {
     checkPathnameValue();
-  }, []);
+    console.log("user logged in ", userLoggedIn);
+  }, [userLoggedIn]);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
@@ -198,18 +201,31 @@ const Header = ({ displayMenu }) => {
           </Typography>
           {displayMenu && (
             <>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: { xs: "none", md: "flex" },
+                }}
+              >
                 <AntTabs
                   sx={{
                     marginLeft: "32%",
                     color: "#f195ac",
                     borderBottom: "none",
+                    margin: "auto",
                   }}
                   value={tabValue}
                   onChange={handleTabChange}
                   aria-label="icon label tabs example"
                   TabIndicatorProps={{ style: { background: "#f195ac" } }}
                 >
+                  <AntTab
+                    icon={<HomeIcon />}
+                    label="Home"
+                    iconPosition="start"
+                    component={Link}
+                    to="/"
+                  />
                   <AntTab
                     icon={<AccountCircleIcon />}
                     label="Profile"

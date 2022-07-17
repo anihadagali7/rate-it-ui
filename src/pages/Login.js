@@ -9,13 +9,15 @@ import {
   Typography,
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
-import Header from "../components/header/Header";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
+import AuthClient from "../client/AuthClient";
+import { currentUser, currentlyLoggedIn } from "../state/user";
+import { useAtom } from "jotai";
+import Divider from "@mui/material/Divider";
 
 const useStyles = makeStyles({
   container: {
@@ -23,9 +25,13 @@ const useStyles = makeStyles({
   },
   loginBtn: {
     backgroundColor: "#f4afc2",
+    "&:hover": {
+      backgroundColor: "#f4afc2",
+    },
   },
   login: {
     fontWeight: "900",
+    marginLeft: "5px",
   },
 });
 
@@ -35,6 +41,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [user, setUser] = useAtom(currentUser);
+  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -44,56 +52,146 @@ const Login = () => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
   };
 
+  const handleLogin = async () => {
+    const result = await AuthClient.login(login.email, login.password);
+    if (result.status === "success") {
+      console.log("result success ");
+      setUserLoggedIn(true);
+      setUser(result.data.user);
+    }
+  };
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Header displayMenu={false} />
-          <Container fixed maxWidth={"md"}>
-            <Box className={classes.container}>
-              <Grid
-                container
-                spacing={{ xs: 2, md: 2, xl: 5 }}
-                columns={{ md: 12 }}
+          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+            <Box
+              sx={{
+                width: "100%",
+                height: 500,
+                margin: "auto",
+              }}
+            >
+              <Paper
+                elevation={6}
+                sx={{
+                  width: "100%",
+                  maxHeight: "480px",
+                  backgroundColor: "#FFFFFF",
+                  margin: "auto",
+                }}
               >
-                <Grid item xs={8}>
-                  Sign In
-                </Grid>
-                <Grid item xs={4}>
-                  or create an account
-                </Grid>
-                <Grid item xs={4}>
-                  <InputLabel>
-                    <Typography>Email</Typography>
-                    <TextField
-                      sx={{ width: "100%" }}
-                      size="small"
-                      value={login.email}
-                      onChange={onChangeEmail}
-                    />
-                  </InputLabel>
-                  <InputLabel>
-                    <Typography>Password</Typography>
-                    <TextField
-                      sx={{ width: "100%" }}
-                      size="small"
-                      type={"password"}
-                      value={login.password}
-                      onChange={onChangePassword}
-                    />
-                  </InputLabel>
-                </Grid>
-                <Grid item xs={8}>
-                  <div>Forgot your password?</div>
-                </Grid>
-                <Grid item xs={4}>
-                  <Button variant="outlined" className={classes.loginBtn}>
-                    <Typography variant="normalText" className={classes.login}>
-                      Sign In
-                    </Typography>
-                  </Button>
-                </Grid>
-              </Grid>
+                <div style={{ padding: "0 35px" }}>
+                  <Box>
+                    <Grid
+                      container
+                      spacing={{ xs: 2, md: 2, xl: 5 }}
+                      columns={{ md: 12 }}
+                    >
+                      <Grid item xs={8}>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            fontSize: "22px",
+                          }}
+                        >
+                          Sign In
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "14px",
+                            marginTop: "7px",
+                          }}
+                        >
+                          Stay updated on your media
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} sx={{ width: "100%" }}>
+                        <InputLabel>
+                          <Typography>Email</Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            value={login.email}
+                            onChange={onChangeEmail}
+                          />
+                        </InputLabel>
+                        <InputLabel>
+                          <Typography sx={{ marginTop: "10px" }}>
+                            Password
+                          </Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            type={"password"}
+                            value={login.password}
+                            onChange={onChangePassword}
+                          />
+                        </InputLabel>
+                      </Grid>
+                      <Grid item xs={8} sx={{ marginTop: "8px" }}>
+                        <Typography
+                          sx={{
+                            marginTop: "10px",
+                            fontWeight: "bold",
+                          }}
+                          variant="blueText"
+                        >
+                          Forgot your password?
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Button
+                          variant="outlined"
+                          className={classes.loginBtn}
+                          onClick={handleLogin}
+                          sx={{ float: "right" }}
+                        >
+                          <Typography
+                            variant="normalText"
+                            className={classes.login}
+                          >
+                            Sign In
+                          </Typography>
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                  <Divider
+                    variant="middle"
+                    sx={{
+                      marginTop: "25px",
+                      marginLeft: "0",
+                      marginRight: "0",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      margin: "auto",
+                      marginTop: "20px",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography sx={{ fontWeight: 550 }}>
+                        New to Rate It?
+                      </Typography>
+                      <Button>
+                        <Typography variant="blueText" sx={{ fontWeight: 600 }}>
+                          Join Now
+                        </Typography>
+                      </Button>
+                    </div>
+                  </Box>
+                </div>
+              </Paper>
             </Box>
           </Container>
         </ThemeProvider>
