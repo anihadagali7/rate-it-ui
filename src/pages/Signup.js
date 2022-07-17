@@ -36,30 +36,68 @@ const useStyles = makeStyles({
   },
 });
 
-const Login = () => {
+const Signup = () => {
   const classes = useStyles();
-  const [login, setLogin] = useState({
+  const [newAccount, setNewAccount] = useState({
+    firstName: "",
+    lastName: "",
+    userName: "",
     email: "",
     password: "",
+    phoneNumber: "",
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
+  const onChangeFirstName = (event) => {
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      firstName: event.target.value,
+    }));
+  };
+
+  const onChangeLastName = (event) => {
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      lastName: event.target.value,
+    }));
+  };
+
+  const onChangeUserName = (event) => {
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      userName: event.target.value,
+    }));
+  };
+
   const onChangeEmail = (event) => {
-    setLogin((credentials) => ({ ...login, email: event.target.value }));
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      email: event.target.value,
+    }));
   };
 
   const onChangePassword = (event) => {
-    setLogin((credentials) => ({ ...login, password: event.target.value }));
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      password: event.target.value,
+    }));
   };
 
-  const handleLogin = async () => {
-    const result = await AuthClient.login(login.email, login.password);
-    if (result.status === "success") {
-      console.log("result success ");
-      setUserLoggedIn(true);
-      setUser(result.data.user);
-    }
+  const onChangePhoneNumber = (event) => {
+    setNewAccount((credentials) => ({
+      ...newAccount,
+      phoneNumber: event.target.value,
+    }));
+  };
+
+  const handleSignup = async () => {
+    // const result = await AuthClient.login(login.email, login.password);
+    // if (result.status === "success") {
+    //   console.log("result success ");
+    //   setUserLoggedIn(true);
+    //   setUser(result.data.user);
+    // }
   };
 
   return (
@@ -70,7 +108,7 @@ const Login = () => {
             <Box
               sx={{
                 width: "100%",
-                height: 500,
+                height: "100%",
                 margin: "auto",
               }}
             >
@@ -78,7 +116,6 @@ const Login = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  maxHeight: "480px",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                 }}
@@ -97,24 +134,53 @@ const Login = () => {
                             fontSize: "22px",
                           }}
                         >
-                          Sign In
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            marginTop: "7px",
-                          }}
-                        >
-                          Stay updated on your media
+                          Create an Account
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sx={{ width: "100%" }}>
+                        <InputLabel>
+                          <Typography>First Name</Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            value={newAccount.firstName}
+                            onChange={onChangeFirstName}
+                          />
+                        </InputLabel>
+                        <InputLabel>
+                          <Typography>Last Name</Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            value={newAccount.lastName}
+                            onChange={onChangeLastName}
+                          />
+                        </InputLabel>
+                        <InputLabel>
+                          <Typography>Username</Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            value={newAccount.userName}
+                            onChange={onChangeUserName}
+                          />
+                        </InputLabel>
+                        <InputLabel>
+                          <Typography>Phone Number</Typography>
+                          <TextField
+                            sx={{ width: "100%" }}
+                            size="small"
+                            value={newAccount.phoneNumber}
+                            onChange={onChangePhoneNumber}
+                          />
+                        </InputLabel>
                         <InputLabel>
                           <Typography>Email</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
-                            value={login.email}
+                            type={"email"}
+                            value={newAccount.email}
                             onChange={onChangeEmail}
                           />
                         </InputLabel>
@@ -126,7 +192,7 @@ const Login = () => {
                             sx={{ width: "100%" }}
                             size="small"
                             type={"password"}
-                            value={login.password}
+                            value={newAccount.password}
                             onChange={onChangePassword}
                           />
                         </InputLabel>
@@ -146,50 +212,18 @@ const Login = () => {
                         <Button
                           variant="outlined"
                           className={classes.loginBtn}
-                          onClick={handleLogin}
+                          onClick={handleSignup}
                           sx={{ float: "right" }}
                         >
                           <Typography
                             variant="normalText"
                             className={classes.login}
                           >
-                            Sign In
+                            Sign Up
                           </Typography>
                         </Button>
                       </Grid>
                     </Grid>
-                  </Box>
-                  <Divider
-                    variant="middle"
-                    sx={{
-                      marginTop: "25px",
-                      marginLeft: "0",
-                      marginRight: "0",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      margin: "auto",
-                      marginTop: "20px",
-                      marginBottom: "30px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography sx={{ fontWeight: 550 }}>
-                        New to Rate It?
-                      </Typography>
-                      <Button component={Link} to="/signup">
-                        <Typography variant="blueText" sx={{ fontWeight: 600 }}>
-                          Join Now
-                        </Typography>
-                      </Button>
-                    </div>
                   </Box>
                 </div>
               </Paper>
@@ -201,4 +235,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

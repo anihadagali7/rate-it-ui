@@ -22,4 +22,21 @@ const login = (email, password) => {
     });
 };
 
-export default { login };
+const signup = (newAccount) => {
+  return axios
+    .post(API_URL + "/api/create-user", newAccount)
+    .then((response) => {
+      console.log("response ", response);
+      if (response.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
+        localStorage.setItem(
+          "accessToken",
+          JSON.stringify(response.data.accessToken)
+        );
+      }
+
+      return response.data;
+    });
+};
+
+export default { login, signup };
