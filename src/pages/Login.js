@@ -62,56 +62,99 @@ const Login = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Header displayMenu={false} />
-          <Container fixed maxWidth={"md"}>
-            <Box className={classes.container}>
-              <Grid
-                container
-                spacing={{ xs: 2, md: 2, xl: 5 }}
-                columns={{ md: 12 }}
+          <Container maxWidth={"xl"} sx={{ marginTop: "50px" }}>
+            <Box
+              sx={{
+                width: 800,
+                height: 300,
+                margin: "auto",
+              }}
+            >
+              <Paper
+                elevation={6}
+                sx={{
+                  width: 400,
+                  height: 550,
+                  backgroundColor: "#FFFFFF",
+                  margin: "auto",
+                }}
               >
-                <Grid item xs={8}>
-                  Sign In
-                </Grid>
-                <Grid item xs={4}>
-                  or create an account
-                </Grid>
-                <Grid item xs={4}>
-                  <InputLabel>
-                    <Typography>Email</Typography>
-                    <TextField
-                      sx={{ width: "100%" }}
-                      size="small"
-                      value={login.email}
-                      onChange={onChangeEmail}
-                    />
-                  </InputLabel>
-                  <InputLabel>
-                    <Typography>Password</Typography>
-                    <TextField
-                      sx={{ width: "100%" }}
-                      size="small"
-                      type={"password"}
-                      value={login.password}
-                      onChange={onChangePassword}
-                    />
-                  </InputLabel>
-                </Grid>
-                <Grid item xs={8}>
-                  <div>Forgot your password?</div>
-                </Grid>
-                <Grid item xs={4}>
-                  <Button
-                    variant="outlined"
-                    className={classes.loginBtn}
-                    onClick={handleLogin}
-                  >
-                    <Typography variant="normalText" className={classes.login}>
+                <Grid
+                  container
+                  spacing={{ xs: 2, md: 2, xl: 5 }}
+                  columns={{ md: 12 }}
+                >
+                  <Grid item xs={10}>
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        fontSize: "22px",
+                        marginLeft: "36px",
+                      }}
+                    >
                       Sign In
                     </Typography>
-                  </Button>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        marginLeft: "36px",
+                        marginTop: "7px",
+                      }}
+                    >
+                      Stay updated on your media
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={10} sx={{ margin: "auto" }}>
+                    <InputLabel>
+                      <Typography>Email</Typography>
+                      <TextField
+                        sx={{ width: "100%" }}
+                        size="small"
+                        value={login.email}
+                        onChange={onChangeEmail}
+                      />
+                    </InputLabel>
+                    <InputLabel>
+                      <Typography sx={{ marginTop: "10px" }}>
+                        Password
+                      </Typography>
+                      <TextField
+                        sx={{ width: "100%" }}
+                        size="small"
+                        type={"password"}
+                        value={login.password}
+                        onChange={onChangePassword}
+                      />
+                    </InputLabel>
+                  </Grid>
+                  <Grid item xs={10}>
+                    <Typography
+                      sx={{
+                        marginTop: "10px",
+                        fontWeight: "bold",
+                        marginLeft: "37px",
+                      }}
+                      variant="blueText"
+                    >
+                      Forgot password?
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button
+                      variant="outlined"
+                      className={classes.loginBtn}
+                      onClick={handleLogin}
+                    >
+                      <Typography
+                        variant="normalText"
+                        className={classes.login}
+                      >
+                        Sign In
+                      </Typography>
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Paper>
             </Box>
           </Container>
         </ThemeProvider>

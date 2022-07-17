@@ -11,5 +11,8 @@ export const theme = createTheme({
       color: "#FFFFFF",
       fontWeight: "600",
     },
+    blueText: {
+      color: "#00a8ff",
+    },
   },
 });

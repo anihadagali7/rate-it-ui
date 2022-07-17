@@ -9,7 +9,8 @@ const Profile = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Header displayMenu={true} />
+          {/* <Header displayMenu={true} /> */}
+          <div>profile</div>
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
