@@ -99,7 +99,8 @@ const Header = ({ displayMenu }) => {
 
   useEffect(() => {
     checkPathnameValue();
-  }, []);
+    console.log("user logged in ", userLoggedIn);
+  }, [userLoggedIn]);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;

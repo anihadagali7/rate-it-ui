@@ -17,6 +17,8 @@ import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
 import AuthClient from "../client/AuthClient";
+import { currentUser, currentlyLoggedIn } from "../state/user";
+import { useAtom } from "jotai";
 
 const useStyles = makeStyles({
   container: {
@@ -36,6 +38,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [user, setUser] = useAtom(currentUser);
+  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -47,7 +51,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     const result = await AuthClient.login(login.email, login.password);
-    console.log("result ", result);
+    if (result.status === "success") {
+      console.log("result success ");
+      setUserLoggedIn(true);
+      setUser(result.data.user);
+    }
   };
 
   return (
