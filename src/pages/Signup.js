@@ -17,7 +17,6 @@ import Button from "@mui/material/Button";
 import AuthClient from "../client/AuthClient";
 import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
-import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -98,7 +97,7 @@ const Signup = () => {
   const validateInput = () => {
     const emailValidity = isValidEmail(newAccount.email);
     const passwordValidity = newAccount.password.length > 4;
-    const phoneNumberValidity = newAccount.phoneNumber.length > 10;
+    const phoneNumberValidity = newAccount.phoneNumber.length == 10;
     const firstNameValidity = newAccount.firstName.length > 1;
     const lastNameValidity = newAccount.lastName.length > 1;
     const userNameValidity = newAccount.userName.length > 1;
@@ -125,15 +124,11 @@ const Signup = () => {
 
     if (validateInput()) {
       const result = await AuthClient.signup(newUser);
-      console.log("result of api  ", result);
+      if (result.status === "success") {
+        setUserLoggedIn(true);
+        setUser(result.data.user);
+      }
     }
-
-    // const result = await AuthClient.login(login.email, login.password);
-    // if (result.status === "success") {
-    //   console.log("result success ");
-    //   setUserLoggedIn(true);
-    //   setUser(result.data.user);
-    // }
   };
 
   return (
