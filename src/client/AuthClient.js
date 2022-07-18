@@ -11,10 +11,7 @@ const login = (email, password) => {
     .then((response) => {
       if (response.data.accessToken) {
         localStorage.setItem("user", JSON.stringify(response.data.data.user));
-        localStorage.setItem(
-          "accessToken",
-          JSON.stringify(response.data.accessToken)
-        );
+        localStorage.setItem("accessToken", response.data.accessToken);
       }
 
       return response.data;
@@ -27,10 +24,7 @@ const signup = (newAccount) => {
     .then((response) => {
       if (response.data.accessToken) {
         localStorage.setItem("user", JSON.stringify(response.data.data.user));
-        localStorage.setItem(
-          "accessToken",
-          JSON.stringify(response.data.accessToken)
-        );
+        localStorage.setItem("accessToken", response.data.accessToken);
       }
 
       return response.data;

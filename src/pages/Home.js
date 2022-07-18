@@ -2,7 +2,7 @@ import React from "react";
 import { Provider } from "jotai";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "../Theme/Theme";
-import Search from "../components/Search";
+import Search from "../components/Search/Search";
 
 const Home = () => {
   return (

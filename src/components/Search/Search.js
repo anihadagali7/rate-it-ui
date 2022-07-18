@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
 import { Provider } from "jotai";
-import { theme } from "../Theme/Theme";
+import { theme } from "../../Theme/Theme";
 import {
   Container,
   InputLabel,
@@ -24,18 +24,20 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import MicIcon from "@mui/icons-material/Mic";
 import Tooltip from "@mui/material/Tooltip";
+import SearchClient from "../../client/SearchClient";
+import SearchResults from "./SearchResults";
 
 const useStyles = makeStyles({
   container: {
     margin: "20px 35px",
   },
-  loginBtn: {
+  searchBtn: {
     backgroundColor: "#f4afc2",
     "&:hover": {
       backgroundColor: "#f4afc2",
     },
   },
-  login: {
+  search: {
     fontWeight: "900",
     fontSize: "15px",
   },
@@ -44,7 +46,7 @@ const useStyles = makeStyles({
 const Search = () => {
   const classes = useStyles();
   const [searchKeyword, setSearchKeyword] = useState("");
-
+  const [searchResults, setSearchResults] = useState([]);
   const [mediaType, setMediaType] = useState("movie");
 
   const handleMediaType = (event, media) => {
@@ -94,6 +96,16 @@ const Search = () => {
     </Stack>
   );
 
+  const handleSearch = async () => {
+    if (searchKeyword.length > 0) {
+      console.log("media type ", mediaType, searchKeyword);
+      const result = await SearchClient.searchMedia(mediaType, searchKeyword);
+      console.log("result of api ", result);
+      const finalList = result.data.results;
+      setSearchResults(finalList);
+    }
+  };
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
@@ -110,7 +122,7 @@ const Search = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  maxHeight: 250,
+                  // maxHeight: 250,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                 }}
@@ -140,7 +152,8 @@ const Search = () => {
                       <Grid item xs={3}>
                         <Button
                           variant="outlined"
-                          className={classes.loginBtn}
+                          className={classes.searchBtn}
+                          onClick={handleSearch}
                           sx={{
                             float: "right",
                             border: "transparent",
@@ -151,7 +164,7 @@ const Search = () => {
                         >
                           <Typography
                             variant="normalText"
-                            className={classes.login}
+                            className={classes.search}
                           >
                             Search
                           </Typography>
@@ -159,6 +172,7 @@ const Search = () => {
                       </Grid>
                     </Grid>
                   </Box>
+                  <SearchResults results={searchResults} />
                 </div>
               </Paper>
             </Box>
