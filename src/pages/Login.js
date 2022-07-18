@@ -19,6 +19,7 @@ import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
 import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles({
 });
 
 const Login = () => {
+  let navigate = useNavigate();
   const classes = useStyles();
   const [login, setLogin] = useState({
     email: "",
@@ -72,6 +74,7 @@ const Login = () => {
         console.log("result success ");
         setUserLoggedIn(true);
         setUser(result.data.user);
+        navigate("/");
       }
     } else {
       console.log("not valid");

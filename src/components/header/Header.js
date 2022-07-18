@@ -21,7 +21,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAtom } from "jotai";
-import { currentlyLoggedIn } from "../../state/user";
+import { currentUser, currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -92,6 +92,7 @@ const Header = ({ displayMenu }) => {
 
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const [user, setUser] = useAtom(currentUser);
 
   const [tabValue, setTabValue] = useState(0);
 
@@ -101,8 +102,17 @@ const Header = ({ displayMenu }) => {
 
   useEffect(() => {
     checkPathnameValue();
-    console.log("user logged in ", userLoggedIn);
-  }, [userLoggedIn]);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      const localStorageUser = JSON.parse(localStorage.getItem("user"));
+      setUser(localStorageUser);
+      setUserLoggedIn(true);
+    } else {
+      setUserLoggedIn(false);
+    }
+  }, []);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
@@ -309,6 +319,7 @@ const Header = ({ displayMenu }) => {
                   <>
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                       <AccountCircleIcon />
+                      <Typography>{user.userName}</Typography>
                     </IconButton>
                     <Menu
                       sx={{ mt: "45px" }}

@@ -18,6 +18,7 @@ import AuthClient from "../client/AuthClient";
 import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles({
 });
 
 const Signup = () => {
+  let navigate = useNavigate();
   const classes = useStyles();
   const [newAccount, setNewAccount] = useState({
     firstName: "",
@@ -127,6 +129,7 @@ const Signup = () => {
       if (result.status === "success") {
         setUserLoggedIn(true);
         setUser(result.data.user);
+        navigate("/");
       }
     }
   };
