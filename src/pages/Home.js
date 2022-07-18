@@ -2,14 +2,14 @@ import React from "react";
 import { Provider } from "jotai";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "../Theme/Theme";
-import Header from "../components/header/Header";
+import Search from "../components/Search";
 
 const Home = () => {
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          {/* <Header displayMenu={true}/> */}
+          <Search />
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
