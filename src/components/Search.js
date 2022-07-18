@@ -22,7 +22,7 @@ import LiveTvIcon from "@mui/icons-material/LiveTv";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
-import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
+import MicIcon from "@mui/icons-material/Mic";
 import Tooltip from "@mui/material/Tooltip";
 
 const useStyles = makeStyles({
@@ -87,7 +87,7 @@ const Search = () => {
         </ToggleButton>
         <ToggleButton value="podcast">
           <Tooltip title="Podcast">
-            <HeadsetMicIcon />
+            <MicIcon />
           </Tooltip>
         </ToggleButton>
       </ToggleButtonGroup>
@@ -102,7 +102,7 @@ const Search = () => {
             <Box
               sx={{
                 width: "100%",
-                height: 250,
+                height: 225,
                 margin: "auto",
               }}
             >
@@ -110,7 +110,7 @@ const Search = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  maxHeight: 275,
+                  maxHeight: 250,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                 }}
@@ -122,16 +122,6 @@ const Search = () => {
                       spacing={{ xs: 2, md: 2, xl: 5 }}
                       columns={{ md: 12 }}
                     >
-                      <Grid item xs={8}>
-                        <Typography
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "16px",
-                          }}
-                        >
-                          Search for your favorite media
-                        </Typography>
-                      </Grid>
                       <Grid item xs={12}>
                         {mediaTypeToggle()}
                       </Grid>
@@ -151,7 +141,13 @@ const Search = () => {
                         <Button
                           variant="outlined"
                           className={classes.loginBtn}
-                          sx={{ float: "right" }}
+                          sx={{
+                            float: "right",
+                            border: "transparent",
+                            "&.MuiButtonBase-root:hover": {
+                              border: "transparent",
+                            },
+                          }}
                         >
                           <Typography
                             variant="normalText"

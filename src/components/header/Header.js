@@ -351,17 +351,20 @@ const Header = ({ displayMenu }) => {
                     <Button
                       variant="outlined"
                       component={Link}
+                      sx={{
+                        border: "transparent",
+                        backgroundColor: "#00a8ff",
+                        "&.MuiButtonBase-root:hover": {
+                          border: "transparent",
+                          backgroundColor: "#00a8ff",
+                        },
+                      }}
                       to="/login"
                       startIcon={
-                        <AccountCircleIcon style={{ color: "#f195ac" }} />
+                        <AccountCircleIcon style={{ color: "#FFFFFF" }} />
                       }
                     >
-                      <Typography
-                        variant="normalText"
-                        sx={{ color: "#f195ac" }}
-                      >
-                        Sign In
-                      </Typography>
+                      <Typography variant="normalText">Sign In</Typography>
                     </Button>
                   </>
                 )}
