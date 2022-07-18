@@ -91,7 +91,43 @@ const Signup = () => {
     }));
   };
 
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const validateInput = () => {
+    const emailValidity = isValidEmail(newAccount.email);
+    const passwordValidity = newAccount.password.length > 4;
+    const phoneNumberValidity = newAccount.phoneNumber.length > 10;
+    const firstNameValidity = newAccount.firstName.length > 1;
+    const lastNameValidity = newAccount.lastName.length > 1;
+    const userNameValidity = newAccount.userName.length > 1;
+
+    return (
+      emailValidity &&
+      passwordValidity &&
+      phoneNumberValidity &&
+      firstNameValidity &&
+      lastNameValidity &&
+      userNameValidity
+    );
+  };
+
   const handleSignup = async () => {
+    const newUser = {
+      firstName: newAccount.firstName,
+      lastName: newAccount.lastName,
+      email: newAccount.email,
+      userName: newAccount.userName,
+      password: newAccount.password,
+      phoneNumber: newAccount.phoneNumber,
+    };
+
+    if (validateInput()) {
+      const result = await AuthClient.signup(newUser);
+      console.log("result of api  ", result);
+    }
+
     // const result = await AuthClient.login(login.email, login.password);
     // if (result.status === "success") {
     //   console.log("result success ");
@@ -118,13 +154,14 @@ const Signup = () => {
                   width: "100%",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
+                  height: "667px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
                   <Box>
                     <Grid
                       container
-                      spacing={{ xs: 2, md: 2, xl: 5 }}
+                      spacing={{ xs: 2, md: 2, xl: 2 }}
                       columns={{ md: 12 }}
                     >
                       <Grid item xs={8}>
@@ -137,89 +174,120 @@ const Signup = () => {
                           Create an Account
                         </Typography>
                       </Grid>
-                      <Grid item xs={12} sx={{ width: "100%" }}>
+                      <Grid item xs={6} sx={{ width: "100%" }}>
                         <InputLabel>
                           <Typography>First Name</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
+                            required
                             value={newAccount.firstName}
                             onChange={onChangeFirstName}
                           />
                         </InputLabel>
+                      </Grid>
+                      <Grid item xs={6} sx={{ width: "100%" }}>
                         <InputLabel>
                           <Typography>Last Name</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
+                            required
                             value={newAccount.lastName}
                             onChange={onChangeLastName}
                           />
                         </InputLabel>
+                      </Grid>
+                      <Grid item xs={12} sx={{ width: "100%" }}>
                         <InputLabel>
                           <Typography>Username</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
+                            required
                             value={newAccount.userName}
                             onChange={onChangeUserName}
                           />
                         </InputLabel>
-                        <InputLabel>
+                        <InputLabel sx={{ marginTop: "15px" }}>
                           <Typography>Phone Number</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
+                            required
                             value={newAccount.phoneNumber}
                             onChange={onChangePhoneNumber}
                           />
                         </InputLabel>
-                        <InputLabel>
+                        <InputLabel sx={{ marginTop: "15px" }}>
                           <Typography>Email</Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
+                            required
                             type={"email"}
                             value={newAccount.email}
                             onChange={onChangeEmail}
                           />
                         </InputLabel>
                         <InputLabel>
-                          <Typography sx={{ marginTop: "10px" }}>
+                          <Typography sx={{ marginTop: "15px" }}>
                             Password
                           </Typography>
                           <TextField
                             sx={{ width: "100%" }}
                             size="small"
                             type={"password"}
+                            required
                             value={newAccount.password}
                             onChange={onChangePassword}
                           />
                         </InputLabel>
                       </Grid>
-                      <Grid item xs={8} sx={{ marginTop: "8px" }}>
-                        <Typography
-                          sx={{
-                            marginTop: "10px",
-                            fontWeight: "bold",
-                          }}
-                          variant="blueText"
-                        >
-                          Forgot your password?
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4}>
+                      <Grid item md={12} sx={{ width: "100%" }}>
                         <Button
                           variant="outlined"
                           className={classes.loginBtn}
                           onClick={handleSignup}
-                          sx={{ float: "right" }}
+                          sx={{
+                            float: "right",
+                            marginLeft: "43px",
+                            marginTop: "10px",
+                            width: "100%",
+                          }}
                         >
                           <Typography
                             variant="normalText"
                             className={classes.login}
                           >
                             Sign Up
+                          </Typography>
+                        </Button>
+                      </Grid>
+                      <Grid
+                        item
+                        md={12}
+                        sx={{
+                          marginTop: "0px",
+                          display: "flex",
+                          justifyContent: "center",
+                          width: "100%",
+                        }}
+                      >
+                        <Button
+                          component={Link}
+                          to="/login"
+                          sx={{ marginTop: "10px" }}
+                        >
+                          <Typography
+                            variant="blueText"
+                            sx={{
+                              fontWeight: 600,
+                              marginLeft: "-8px",
+                              fontSize: "15px",
+                            }}
+                          >
+                            Sign in instead
                           </Typography>
                         </Button>
                       </Grid>

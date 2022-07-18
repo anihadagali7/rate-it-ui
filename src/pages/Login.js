@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
   login: {
     fontWeight: "900",
-    marginLeft: "5px",
+    fontSize: "15px",
   },
 });
 
@@ -53,12 +53,28 @@ const Login = () => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
   };
 
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const validateInput = () => {
+    const emailValidity = isValidEmail(login.email);
+    const passwordValidity = login.password.length > 4;
+
+    return emailValidity && passwordValidity;
+  };
+
   const handleLogin = async () => {
-    const result = await AuthClient.login(login.email, login.password);
-    if (result.status === "success") {
-      console.log("result success ");
-      setUserLoggedIn(true);
-      setUser(result.data.user);
+    if (validateInput()) {
+      console.log("valid");
+      const result = await AuthClient.login(login.email, login.password);
+      if (result.status === "success") {
+        console.log("result success ");
+        setUserLoggedIn(true);
+        setUser(result.data.user);
+      }
+    } else {
+      console.log("not valid");
     }
   };
 
@@ -116,6 +132,7 @@ const Login = () => {
                             size="small"
                             value={login.email}
                             onChange={onChangeEmail}
+                            required
                           />
                         </InputLabel>
                         <InputLabel>
@@ -128,6 +145,7 @@ const Login = () => {
                             type={"password"}
                             value={login.password}
                             onChange={onChangePassword}
+                            required
                           />
                         </InputLabel>
                       </Grid>

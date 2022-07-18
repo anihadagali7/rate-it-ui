@@ -106,7 +106,7 @@ const Header = ({ displayMenu }) => {
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
-    console.log("current path ", pathname);
+
     if (pathname === "/profile") {
       setTabValue(0);
     } else if (pathname === "/playlist") {
@@ -114,6 +114,7 @@ const Header = ({ displayMenu }) => {
     } else if (pathname === "/wishlist") {
       setTabValue(2);
     } else {
+      console.log("current path ", pathname);
       setTabValue(false);
     }
   };
@@ -147,31 +148,31 @@ const Header = ({ displayMenu }) => {
       <List>
         <ListItem key={"home"} component={Link} to={"/"}>
           <ListItemIcon>
-            <HomeIcon sx={{ color: "#f195ac" }} />
+            <HomeIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={{ color: "#f195ac" }}>Home</Typography>
+            <Typography sx={{ color: "#232b2b" }}>Home</Typography>
           </ListItemText>
         </ListItem>
         <ListItem key={"profile"} component={Link} to={"/profile"}>
           <ListItemIcon>
-            <AccountCircleIcon sx={{ color: "#f195ac" }} />
+            <AccountCircleIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={{ color: "#f195ac" }}>Profile</Typography>
+            <Typography sx={{ color: "#232b2b" }}>Profile</Typography>
           </ListItemText>
         </ListItem>
         <ListItem key={"playlist"} component={Link} to={"/playlist"}>
           <ListItemIcon>
-            <PlaylistAddIcon sx={{ color: "#f195ac" }} />
+            <PlaylistAddIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
-          <Typography sx={{ color: "#f195ac" }}>Playlist</Typography>
+          <Typography sx={{ color: "#232b2b" }}>Playlist</Typography>
         </ListItem>
         <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
           <ListItemIcon>
-            <AddTaskIcon sx={{ color: "#f195ac" }} />
+            <AddTaskIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
-          <Typography sx={{ color: "#f195ac" }}>Wishlist</Typography>
+          <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
         </ListItem>
       </List>
     </Box>
