@@ -21,7 +21,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAtom } from "jotai";
-import { currentlyLoggedIn } from "../../state/user";
+import { currentUser, currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -92,6 +92,7 @@ const Header = ({ displayMenu }) => {
 
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const [user, setUser] = useAtom(currentUser);
 
   const [tabValue, setTabValue] = useState(0);
 
@@ -101,12 +102,21 @@ const Header = ({ displayMenu }) => {
 
   useEffect(() => {
     checkPathnameValue();
-    console.log("user logged in ", userLoggedIn);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      const localStorageUser = JSON.parse(localStorage.getItem("user"));
+      setUser(localStorageUser);
+      setUserLoggedIn(true);
+    } else {
+      setUserLoggedIn(false);
+    }
   }, [userLoggedIn]);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
-    console.log("current path ", pathname);
+
     if (pathname === "/profile") {
       setTabValue(0);
     } else if (pathname === "/playlist") {
@@ -114,6 +124,7 @@ const Header = ({ displayMenu }) => {
     } else if (pathname === "/wishlist") {
       setTabValue(2);
     } else {
+      console.log("current path ", pathname);
       setTabValue(false);
     }
   };
@@ -137,6 +148,11 @@ const Header = ({ displayMenu }) => {
     setUserMenu(false);
   };
 
+  const logoutUser = () => {
+    localStorage.clear();
+    setUserLoggedIn(false);
+  };
+
   const menuDrawer = () => (
     <Box
       sx={{ width: 250 }}
@@ -147,31 +163,31 @@ const Header = ({ displayMenu }) => {
       <List>
         <ListItem key={"home"} component={Link} to={"/"}>
           <ListItemIcon>
-            <HomeIcon sx={{ color: "#f195ac" }} />
+            <HomeIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={{ color: "#f195ac" }}>Home</Typography>
+            <Typography sx={{ color: "#232b2b" }}>Home</Typography>
           </ListItemText>
         </ListItem>
         <ListItem key={"profile"} component={Link} to={"/profile"}>
           <ListItemIcon>
-            <AccountCircleIcon sx={{ color: "#f195ac" }} />
+            <AccountCircleIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
           <ListItemText>
-            <Typography sx={{ color: "#f195ac" }}>Profile</Typography>
+            <Typography sx={{ color: "#232b2b" }}>Profile</Typography>
           </ListItemText>
         </ListItem>
         <ListItem key={"playlist"} component={Link} to={"/playlist"}>
           <ListItemIcon>
-            <PlaylistAddIcon sx={{ color: "#f195ac" }} />
+            <PlaylistAddIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
-          <Typography sx={{ color: "#f195ac" }}>Playlist</Typography>
+          <Typography sx={{ color: "#232b2b" }}>Playlist</Typography>
         </ListItem>
         <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
           <ListItemIcon>
-            <AddTaskIcon sx={{ color: "#f195ac" }} />
+            <AddTaskIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
-          <Typography sx={{ color: "#f195ac" }}>Wishlist</Typography>
+          <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
         </ListItem>
       </List>
     </Box>
@@ -308,6 +324,7 @@ const Header = ({ displayMenu }) => {
                   <>
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                       <AccountCircleIcon />
+                      <Typography>{user.userName}</Typography>
                     </IconButton>
                     <Menu
                       sx={{ mt: "45px" }}
@@ -325,11 +342,11 @@ const Header = ({ displayMenu }) => {
                       open={userMenu}
                       onClose={handleCloseUserMenu}
                     >
-                      {settings.map((setting) => (
-                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                          <Typography textAlign="center">{setting}</Typography>
-                        </MenuItem>
-                      ))}
+                      <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center" onClick={logoutUser}>
+                          Logout
+                        </Typography>
+                      </MenuItem>
                     </Menu>
                   </>
                 ) : (

@@ -8,6 +8,7 @@ import { Provider } from "jotai";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "./Theme/Theme";
 import Header from "./components/header/Header";
+import Signup from "./pages/Signup";
 
 export default class App extends Component {
   render() {
@@ -20,6 +21,7 @@ export default class App extends Component {
               <Routes>
                 <Route exact path="/" element={<Home />}></Route>
                 <Route exact path="/login" element={<Login />}></Route>
+                <Route exact path="/signup" element={<Signup />}></Route>
                 <Route exact path="/profile" element={<Profile />}></Route>
                 <Route exact path="/playlist" element={<Login />}></Route>
                 <Route exact path="/wishlist" element={<Login />}></Route>

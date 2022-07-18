@@ -18,6 +18,8 @@ import AuthClient from "../client/AuthClient";
 import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
 import Divider from "@mui/material/Divider";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
@@ -31,11 +33,12 @@ const useStyles = makeStyles({
   },
   login: {
     fontWeight: "900",
-    marginLeft: "5px",
+    fontSize: "15px",
   },
 });
 
 const Login = () => {
+  let navigate = useNavigate();
   const classes = useStyles();
   const [login, setLogin] = useState({
     email: "",
@@ -52,12 +55,29 @@ const Login = () => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
   };
 
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const validateInput = () => {
+    const emailValidity = isValidEmail(login.email);
+    const passwordValidity = login.password.length > 4;
+
+    return emailValidity && passwordValidity;
+  };
+
   const handleLogin = async () => {
-    const result = await AuthClient.login(login.email, login.password);
-    if (result.status === "success") {
-      console.log("result success ");
-      setUserLoggedIn(true);
-      setUser(result.data.user);
+    if (validateInput()) {
+      console.log("valid");
+      const result = await AuthClient.login(login.email, login.password);
+      if (result.status === "success") {
+        console.log("result success ");
+        setUserLoggedIn(true);
+        setUser(result.data.user);
+        navigate("/");
+      }
+    } else {
+      console.log("not valid");
     }
   };
 
@@ -82,7 +102,7 @@ const Login = () => {
                   margin: "auto",
                 }}
               >
-                <div style={{ padding: "0 35px" }}>
+                <div style={{ padding: "0 35px", minHeight: "385px" }}>
                   <Box>
                     <Grid
                       container
@@ -115,6 +135,7 @@ const Login = () => {
                             size="small"
                             value={login.email}
                             onChange={onChangeEmail}
+                            required
                           />
                         </InputLabel>
                         <InputLabel>
@@ -127,6 +148,7 @@ const Login = () => {
                             type={"password"}
                             value={login.password}
                             onChange={onChangePassword}
+                            required
                           />
                         </InputLabel>
                       </Grid>
@@ -183,7 +205,7 @@ const Login = () => {
                       <Typography sx={{ fontWeight: 550 }}>
                         New to Rate It?
                       </Typography>
-                      <Button>
+                      <Button component={Link} to="/signup">
                         <Typography variant="blueText" sx={{ fontWeight: 600 }}>
                           Join Now
                         </Typography>
