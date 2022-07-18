@@ -112,7 +112,7 @@ const Header = ({ displayMenu }) => {
     } else {
       setUserLoggedIn(false);
     }
-  }, []);
+  }, [userLoggedIn]);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
@@ -146,6 +146,11 @@ const Header = ({ displayMenu }) => {
 
   const handleCloseUserMenu = () => {
     setUserMenu(false);
+  };
+
+  const logoutUser = () => {
+    localStorage.clear();
+    setUserLoggedIn(false);
   };
 
   const menuDrawer = () => (
@@ -337,11 +342,11 @@ const Header = ({ displayMenu }) => {
                       open={userMenu}
                       onClose={handleCloseUserMenu}
                     >
-                      {settings.map((setting) => (
-                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                          <Typography textAlign="center">{setting}</Typography>
-                        </MenuItem>
-                      ))}
+                      <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center" onClick={logoutUser}>
+                          Logout
+                        </Typography>
+                      </MenuItem>
                     </Menu>
                   </>
                 ) : (
