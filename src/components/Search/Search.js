@@ -72,22 +72,22 @@ const Search = () => {
             <LiveTvIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="book">
+        <ToggleButton value="book" disabled>
           <Tooltip title="Book">
             <MenuBookIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="song">
+        <ToggleButton value="song" disabled>
           <Tooltip title="Song">
             <MusicNoteIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="theatre">
+        <ToggleButton value="theatre" disabled>
           <Tooltip title="Theatre Play">
             <TheaterComedyIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="podcast">
+        <ToggleButton value="podcast" disabled>
           <Tooltip title="Podcast">
             <MicIcon />
           </Tooltip>
