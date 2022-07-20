@@ -168,7 +168,13 @@ const Login = () => {
                           variant="outlined"
                           className={classes.loginBtn}
                           onClick={handleLogin}
-                          sx={{ float: "right" }}
+                          sx={{
+                            float: "right",
+                            border: "transparent",
+                            "&.MuiButtonBase-root:hover": {
+                              border: "transparent",
+                            },
+                          }}
                         >
                           <Typography
                             variant="normalText"

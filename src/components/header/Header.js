@@ -10,7 +10,6 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -18,7 +17,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import AddTaskIcon from "@mui/icons-material/AddTask";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAtom } from "jotai";
 import { currentUser, currentlyLoggedIn } from "../../state/user";
@@ -26,8 +25,6 @@ import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import HomeIcon from "@mui/icons-material/Home";
-
-const settings = ["Profile", "Account", "Logout"];
 
 const useStyles = makeStyles({
   title: {
@@ -185,7 +182,7 @@ const Header = ({ displayMenu }) => {
         </ListItem>
         <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
           <ListItemIcon>
-            <AddTaskIcon sx={{ color: "#232b2b" }} />
+            <BookmarkIcon sx={{ color: "#232b2b" }} />
           </ListItemIcon>
           <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
         </ListItem>
@@ -257,7 +254,7 @@ const Header = ({ displayMenu }) => {
                     to="/"
                   />
                   <AntTab
-                    icon={<AddTaskIcon />}
+                    icon={<BookmarkIcon />}
                     iconPosition="start"
                     component={Link}
                     label="Wishlist"
@@ -354,17 +351,20 @@ const Header = ({ displayMenu }) => {
                     <Button
                       variant="outlined"
                       component={Link}
+                      sx={{
+                        border: "transparent",
+                        backgroundColor: "#00a8ff",
+                        "&.MuiButtonBase-root:hover": {
+                          border: "transparent",
+                          backgroundColor: "#00a8ff",
+                        },
+                      }}
                       to="/login"
                       startIcon={
-                        <AccountCircleIcon style={{ color: "#f195ac" }} />
+                        <AccountCircleIcon style={{ color: "#FFFFFF" }} />
                       }
                     >
-                      <Typography
-                        variant="normalText"
-                        sx={{ color: "#f195ac" }}
-                      >
-                        Sign In
-                      </Typography>
+                      <Typography variant="normalText">Sign In</Typography>
                     </Button>
                   </>
                 )}

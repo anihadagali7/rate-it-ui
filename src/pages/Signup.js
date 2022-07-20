@@ -252,6 +252,10 @@ const Signup = () => {
                             marginLeft: "43px",
                             marginTop: "10px",
                             width: "100%",
+                            border: "transparent",
+                            "&.MuiButtonBase-root:hover": {
+                              border: "transparent",
+                            },
                           }}
                         >
                           <Typography
