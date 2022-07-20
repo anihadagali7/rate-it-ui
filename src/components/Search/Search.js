@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -98,10 +98,8 @@ const Search = () => {
 
   const handleSearch = async () => {
     if (searchKeyword.length > 0) {
-      console.log("media type ", mediaType, searchKeyword);
       const result = await SearchClient.searchMedia(mediaType, searchKeyword);
-      console.log("result of api ", result);
-      const finalList = result.data.results;
+      const finalList = result.data.movieList;
       setSearchResults(finalList);
     }
   };
@@ -114,7 +112,7 @@ const Search = () => {
             <Box
               sx={{
                 width: "100%",
-                height: 225,
+                height: searchResults.length > 0 ? "100%" : 200,
                 margin: "auto",
               }}
             >
@@ -122,7 +120,7 @@ const Search = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  // maxHeight: 250,
+                  height: searchResults.length > 0 ? "100%" : 200,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                 }}
@@ -172,7 +170,9 @@ const Search = () => {
                       </Grid>
                     </Grid>
                   </Box>
-                  <SearchResults results={searchResults} />
+                  {searchResults.length > 0 && (
+                    <SearchResults results={searchResults} />
+                  )}
                 </div>
               </Paper>
             </Box>
