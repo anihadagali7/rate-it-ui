@@ -18,31 +18,75 @@ import CardContent from "@mui/material/CardContent";
 
 const SearchResults = ({ results }) => {
   const listItem = (row) => (
-    <ListItem sx={{ width: 700 }}>
-      <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-        <Grid container spacing={{ xs: 2, md: 2, xl: 2 }} columns={{ md: 12 }}>
-          <Grid item xs={3}>
-            <div>
-              <ListItemAvatar>
-                <img width={100} height={150} alt="poster" src={row.poster} />
-              </ListItemAvatar>
-            </div>
+    <ListItem
+      sx={{
+        width: 700,
+        "&.MuiListItem-root": { marginLeft: "-12px" },
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+        }}
+      >
+        <Paper elevation={8} sx={{ width: 500 }}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 2, xl: 2 }}
+            columns={{ md: 12 }}
+            sx={{ "&.MuiGrid-root": { marginLeft: "16px" } }}
+          >
+            <Grid
+              item
+              xs={2}
+              sx={{
+                "&.MuiGrid-root": { marginLeft: "-16px !important" },
+              }}
+            >
+              <div>
+                <ListItemAvatar sx={{ marginTop: "15px" }}>
+                  <img
+                    width={100}
+                    height={150}
+                    alt="Remy Sharp"
+                    src={row.poster}
+                  />
+                </ListItemAvatar>
+              </div>
+            </Grid>
+            <Grid
+              item
+              xs={7}
+              sx={{
+                marginTop: "0px",
+                marginRight: "50px",
+              }}
+            >
+              <div style={{ marginLeft: "40px", width: "100%" }}>
+                <Typography
+                  component="div"
+                  variant="h5"
+                  sx={{ marginTop: "10px" }}
+                >
+                  {row.name.length > 25
+                    ? `${row.name.substring(0, 25)}...`
+                    : row.name}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  component="div"
+                >
+                  {row.description.length > 100
+                    ? `${row.description.substring(0, 100)}...`
+                    : row.description}
+                </Typography>
+              </div>
+            </Grid>
           </Grid>
-          <Grid item xs={7}>
-            <CardContent sx={{ flex: "1 0 auto" }}>
-              <Typography component="div" variant="h5">
-                {row.name}
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                color="text.secondary"
-                component="div"
-              >
-                {row.description}
-              </Typography>
-            </CardContent>
-          </Grid>
-        </Grid>
+        </Paper>
       </Box>
     </ListItem>
   );
@@ -56,80 +100,8 @@ const SearchResults = ({ results }) => {
           maxWidth={"sm"}
           sx={{ "&.MuiContainer-root": { marginLeft: "-37px !important" } }}
         >
-          <List
-            sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-          >
-            {results.map((row, index) => (
-              <ListItem
-                sx={{
-                  width: 700,
-                  "&.MuiListItem-root": { marginLeft: "-12px" },
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <Paper elevation={8} sx={{ width: 500 }}>
-                    <Grid
-                      container
-                      spacing={{ xs: 2, md: 2, xl: 2 }}
-                      columns={{ md: 12 }}
-                      sx={{ "&.MuiGrid-root": { marginLeft: "16px" } }}
-                    >
-                      <Grid
-                        item
-                        xs={2}
-                        sx={{
-                          "&.MuiGrid-root": { marginLeft: "-16px !important" },
-                        }}
-                      >
-                        <div>
-                          <ListItemAvatar sx={{ marginTop: "15px" }}>
-                            <img
-                              width={100}
-                              height={150}
-                              alt="Remy Sharp"
-                              src={row.poster}
-                            />
-                          </ListItemAvatar>
-                        </div>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={7}
-                        sx={{
-                          marginTop: "0px",
-                          marginRight: "50px",
-                        }}
-                      >
-                        <div style={{ marginLeft: "40px", width: "100%" }}>
-                          <Typography
-                            component="div"
-                            variant="h5"
-                            sx={{ marginTop: "10px" }}
-                          >
-                            {row.name}
-                          </Typography>
-                          <Typography
-                            variant="subtitle1"
-                            color="text.secondary"
-                            component="div"
-                          >
-                            {row.description.length > 100
-                              ? `${row.description.substring(0, 100)}...`
-                              : row.description}
-                          </Typography>
-                        </div>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                </Box>
-              </ListItem>
-            ))}
+          <List sx={{ width: "100%", maxWidth: 360 }}>
+            {results.map((row, index) => listItem(row))}
           </List>
         </Container>
       </StyledEngineProvider>
