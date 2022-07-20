@@ -99,7 +99,7 @@ const Search = () => {
   const handleSearch = async () => {
     if (searchKeyword.length > 0) {
       const result = await SearchClient.searchMedia(mediaType, searchKeyword);
-      const finalList = result.data.movieList;
+      const finalList = result.data.mediaList;
       setSearchResults(finalList);
     }
   };

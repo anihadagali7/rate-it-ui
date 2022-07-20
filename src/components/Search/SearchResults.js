@@ -50,6 +50,7 @@ const SearchResults = ({ results }) => {
                   <img
                     width={100}
                     height={150}
+                    style={{ marginBottom: "10px" }}
                     alt="poster"
                     src={row.poster ? row.poster : NotFoundImage}
                   />
