@@ -6,7 +6,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { Provider } from "jotai";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { theme } from "../../Theme/Theme";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -14,7 +14,7 @@ import Divider from "@mui/material/Divider";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import CardContent from "@mui/material/CardContent";
+import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 
 const SearchResults = ({ results }) => {
   const listItem = (row) => (
@@ -50,8 +50,8 @@ const SearchResults = ({ results }) => {
                   <img
                     width={100}
                     height={150}
-                    alt="Remy Sharp"
-                    src={row.poster}
+                    alt="poster"
+                    src={row.poster ? row.poster : NotFoundImage}
                   />
                 </ListItemAvatar>
               </div>
@@ -67,18 +67,17 @@ const SearchResults = ({ results }) => {
               <div style={{ marginLeft: "40px", width: "100%" }}>
                 <Typography
                   component="div"
-                  variant="h5"
-                  sx={{ marginTop: "10px" }}
+                  sx={{
+                    marginTop: "10px",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                  }}
                 >
                   {row.name.length > 25
                     ? `${row.name.substring(0, 25)}...`
                     : row.name}
                 </Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="text.secondary"
-                  component="div"
-                >
+                <Typography component="div">
                   {row.description.length > 100
                     ? `${row.description.substring(0, 100)}...`
                     : row.description}
