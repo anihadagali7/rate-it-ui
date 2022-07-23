@@ -50,6 +50,7 @@ const Search = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [mediaType, setMediaType] = useState("movie");
+  const [resultType, setResultType] = useState("");
 
   const handleMediaType = (event, media) => {
     if (media !== null) {
@@ -79,8 +80,8 @@ const Search = () => {
             <MenuBookIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="song" disabled>
-          <Tooltip title="Song">
+        <ToggleButton value="music">
+          <Tooltip title="Music">
             <MusicNoteIcon />
           </Tooltip>
         </ToggleButton>
@@ -102,6 +103,7 @@ const Search = () => {
     if (searchKeyword.length > 0) {
       const result = await SearchClient.searchMedia(mediaType, searchKeyword);
       const finalList = result.data.mediaList;
+      setResultType(result.mediaType);
       setSearchResults(finalList);
     }
   };
@@ -175,10 +177,16 @@ const Search = () => {
                   {searchResults.length > 0 && (
                     <>
                       <BrowserView>
-                        <SearchResults results={searchResults} />
+                        <SearchResults
+                          results={searchResults}
+                          resultType={resultType}
+                        />
                       </BrowserView>
                       <MobileView>
-                        <SearchResultsMobile results={searchResults} />
+                        <SearchResultsMobile
+                          results={searchResults}
+                          resultType={resultType}
+                        />
                       </MobileView>
                     </>
                   )}
