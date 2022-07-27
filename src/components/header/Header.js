@@ -89,6 +89,7 @@ const Header = ({ displayMenu }) => {
 
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const [localUserLoggedIn, setLocalUserLoggedIn] = useState(false);
   const [user, setUser] = useAtom(currentUser);
 
   const [tabValue, setTabValue] = useState(0);
@@ -99,29 +100,30 @@ const Header = ({ displayMenu }) => {
 
   useEffect(() => {
     checkPathnameValue();
-  }, []);
+  }, [window.location.pathname]);
 
   useEffect(() => {
     if (localStorage.getItem("user")) {
       const localStorageUser = JSON.parse(localStorage.getItem("user"));
       setUser(localStorageUser);
-      setUserLoggedIn(true);
+      setLocalUserLoggedIn(true);
     } else {
-      setUserLoggedIn(false);
+      setLocalUserLoggedIn(false);
     }
   }, [userLoggedIn]);
 
   const checkPathnameValue = () => {
     const { pathname } = window.location;
 
-    if (pathname === "/profile") {
+    if (pathname === "/") {
       setTabValue(0);
-    } else if (pathname === "/playlist") {
+    } else if (pathname === "/profile") {
       setTabValue(1);
-    } else if (pathname === "/wishlist") {
+    } else if (pathname === "/playlist") {
       setTabValue(2);
+    } else if (pathname === "/wishlist") {
+      setTabValue(3);
     } else {
-      console.log("current path ", pathname);
       setTabValue(false);
     }
   };
@@ -317,7 +319,7 @@ const Header = ({ displayMenu }) => {
           {displayMenu && (
             <>
               <Box sx={{ flexGrow: 0 }}>
-                {userLoggedIn ? (
+                {localUserLoggedIn ? (
                   <>
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                       <AccountCircleIcon />
