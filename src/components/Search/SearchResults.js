@@ -15,10 +15,13 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
+import { Link } from "react-router-dom";
 
 const SearchResults = ({ results, resultType }) => {
   const listItem = (row) => (
     <ListItem
+      component={Link}
+      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
       sx={{
         width: 700,
         "&.MuiListItem-root": { marginLeft: "-12px" },
@@ -149,7 +152,8 @@ const SearchResults = ({ results, resultType }) => {
                       fontWeight: "bold",
                     }}
                   >
-                    {row.name} {row.albumType === "album" && ", " + row.albumName}
+                    {row.name}{" "}
+                    {row.albumType === "album" && ", " + row.albumName}
                   </Typography>
                   <Typography component="div">
                     {row.artists.length > 100
