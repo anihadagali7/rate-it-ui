@@ -59,19 +59,40 @@ const MediaInfo = () => {
                     spacing={{ xs: 2, md: 2, xl: 5 }}
                     columns={{ md: 12 }}
                   >
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                       <Typography>
                         <img
-                          width={100}
-                          height={150}
+                          width={200}
+                          height={250}
                           style={{ marginBottom: "10px" }}
                           alt="poster"
                           src={media.picture ? media.picture : NotFoundImage}
                         />
                       </Typography>
                     </Grid>
-                    <Grid item xs={9} sx={{ width: "100%" }}>
-                      {media.name}
+                    <Grid item xs={6} sx={{ width: "100%" }}>
+                      <Typography
+                        component="div"
+                        sx={{
+                          marginTop: "10px",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {media.name}
+                      </Typography>
+                      <div>
+                        <Typography component="div">
+                          {media.description}
+                        </Typography>
+                      </div>
+                      <div>
+                        {media.director && media.director.length > 0 && (
+                          <Typography component="div">
+                            Directors: {media.director}
+                          </Typography>
+                        )}
+                      </div>
                     </Grid>
                     <Grid item xs={3}></Grid>
                   </Grid>
