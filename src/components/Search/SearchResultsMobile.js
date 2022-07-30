@@ -12,10 +12,17 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
+import { Link } from "react-router-dom";
 
 const SearchResultsMobile = ({ results, resultType }) => {
   const listItem = (row, index) => (
-    <Grid item xs={6} sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}>
+    <Grid
+      item
+      xs={6}
+      sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}
+      component={Link}
+      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
+    >
       <Box
         sx={{
           display: "flex",
@@ -39,7 +46,13 @@ const SearchResultsMobile = ({ results, resultType }) => {
   );
 
   const listItemMusic = (row, index) => (
-    <Grid item xs={6} sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}>
+    <Grid
+      item
+      xs={6}
+      sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}
+      component={Link}
+      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
+    >
       <Box
         sx={{
           display: "flex",

@@ -19,6 +19,7 @@ import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles({
   container: {
@@ -152,7 +153,9 @@ const Signup = () => {
                   width: "100%",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  height: "667px",
+                  height: isMobile ? "685px" : "100%",
+                  borderRadius: "17px",
+                  marginBottom: "20px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -176,7 +179,12 @@ const Signup = () => {
                         <InputLabel>
                           <Typography>First Name</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             required
                             value={newAccount.firstName}
@@ -188,7 +196,12 @@ const Signup = () => {
                         <InputLabel>
                           <Typography>Last Name</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             required
                             value={newAccount.lastName}
@@ -200,7 +213,12 @@ const Signup = () => {
                         <InputLabel>
                           <Typography>Username</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             required
                             value={newAccount.userName}
@@ -210,7 +228,12 @@ const Signup = () => {
                         <InputLabel sx={{ marginTop: "15px" }}>
                           <Typography>Phone Number</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             required
                             value={newAccount.phoneNumber}
@@ -220,7 +243,12 @@ const Signup = () => {
                         <InputLabel sx={{ marginTop: "15px" }}>
                           <Typography>Email</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             required
                             type={"email"}
@@ -233,7 +261,12 @@ const Signup = () => {
                             Password
                           </Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             type={"password"}
                             required
@@ -256,6 +289,7 @@ const Signup = () => {
                             "&.MuiButtonBase-root:hover": {
                               border: "transparent",
                             },
+                            borderRadius: "17px",
                           }}
                         >
                           <Typography
