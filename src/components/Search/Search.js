@@ -28,6 +28,8 @@ import SearchClient from "../../client/SearchClient";
 import SearchResults from "./SearchResults";
 import { BrowserView, MobileView } from "react-device-detect";
 import SearchResultsMobile from "./SearchResultsMobile";
+import StickyBox from "react-sticky-box";
+import Sidebar from "../Sidebar";
 
 const useStyles = makeStyles({
   container: {
@@ -112,88 +114,101 @@ const Search = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-            <Box
-              sx={{
-                width: "100%",
-                height: searchResults.length > 0 ? "100%" : 200,
-                margin: "auto",
-              }}
-            >
-              <Paper
-                elevation={6}
-                sx={{
-                  width: "100%",
-                  height: searchResults.length > 0 ? "100%" : 200,
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                }}
-              >
-                <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box>
-                    <Grid
-                      container
-                      spacing={{ xs: 2, md: 2, xl: 5 }}
-                      columns={{ md: 12 }}
-                    >
-                      <Grid item xs={12}>
-                        {mediaTypeToggle()}
-                      </Grid>
-                      <Grid item xs={9} sx={{ width: "100%" }}>
-                        <InputLabel>
-                          <TextField
-                            sx={{ width: "100%" }}
-                            size="small"
-                            placeholder="Search for your favorite media"
-                            value={searchKeyword}
-                            onChange={onChangeSearch}
-                            required
-                          />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Button
-                          variant="outlined"
-                          className={classes.searchBtn}
-                          onClick={handleSearch}
-                          sx={{
-                            float: "right",
-                            border: "transparent",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
-                            },
-                          }}
+          <Grid container>
+            <Grid item xs={3}>
+              <Container maxWidth={"sm"} sx={{}}>
+                <StickyBox offsetTop={20} offsetBottom={20}>
+                  <Sidebar />
+                </StickyBox>
+              </Container>
+            </Grid>
+            <Grid item xs={6}>
+              <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: searchResults.length > 0 ? "100%" : 200,
+                    margin: "auto",
+                  }}
+                >
+                  <Paper
+                    elevation={6}
+                    sx={{
+                      width: "100%",
+                      height: searchResults.length > 0 ? "100%" : 200,
+                      backgroundColor: "#FFFFFF",
+                      margin: "auto",
+                      borderRadius: "20px",
+                    }}
+                  >
+                    <div style={{ padding: "0 35px", minHeight: "385px" }}>
+                      <Box>
+                        <Grid
+                          container
+                          spacing={{ xs: 2, md: 2, xl: 5 }}
+                          columns={{ md: 12 }}
                         >
-                          <Typography
-                            variant="normalText"
-                            className={classes.search}
-                          >
-                            Search
-                          </Typography>
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  {searchResults.length > 0 && (
-                    <>
-                      <BrowserView>
-                        <SearchResults
-                          results={searchResults}
-                          resultType={resultType}
-                        />
-                      </BrowserView>
-                      <MobileView>
-                        <SearchResultsMobile
-                          results={searchResults}
-                          resultType={resultType}
-                        />
-                      </MobileView>
-                    </>
-                  )}
-                </div>
-              </Paper>
-            </Box>
-          </Container>
+                          <Grid item xs={12}>
+                            {mediaTypeToggle()}
+                          </Grid>
+                          <Grid item xs={9} sx={{ width: "100%" }}>
+                            <InputLabel>
+                              <TextField
+                                sx={{ width: "100%" }}
+                                size="small"
+                                placeholder="Search for your favorite media"
+                                value={searchKeyword}
+                                onChange={onChangeSearch}
+                                required
+                              />
+                            </InputLabel>
+                          </Grid>
+                          <Grid item xs={3}>
+                            <Button
+                              variant="outlined"
+                              className={classes.searchBtn}
+                              onClick={handleSearch}
+                              sx={{
+                                float: "right",
+                                border: "transparent",
+                                "&.MuiButtonBase-root:hover": {
+                                  border: "transparent",
+                                },
+                              }}
+                            >
+                              <Typography
+                                variant="normalText"
+                                className={classes.search}
+                              >
+                                Search
+                              </Typography>
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                      {searchResults.length > 0 && (
+                        <>
+                          <BrowserView>
+                            <SearchResults
+                              results={searchResults}
+                              resultType={resultType}
+                            />
+                          </BrowserView>
+                          <MobileView>
+                            <SearchResultsMobile
+                              results={searchResults}
+                              resultType={resultType}
+                            />
+                          </MobileView>
+                        </>
+                      )}
+                    </div>
+                  </Paper>
+                </Box>
+              </Container>
+            </Grid>
+            <Grid item xs={2}></Grid>
+          </Grid>
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
