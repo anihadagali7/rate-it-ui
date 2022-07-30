@@ -356,12 +356,14 @@ const Header = ({ displayMenu }) => {
                       sx={{
                         border: "transparent",
                         backgroundColor: "#00a8ff",
+                        borderRadius: "17px",
                         "&.MuiButtonBase-root:hover": {
                           border: "transparent",
                           backgroundColor: "#00a8ff",
                         },
                       }}
                       to="/login"
+                      onClick={() => setTabValue(false)}
                       startIcon={
                         <AccountCircleIcon style={{ color: "#FFFFFF" }} />
                       }

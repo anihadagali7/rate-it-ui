@@ -20,7 +20,7 @@ const SearchResults = ({ results, resultType }) => {
   const listItem = (row) => (
     <ListItem
       sx={{
-        width: 700,
+        width: 525,
         "&.MuiListItem-root": { marginLeft: "-12px" },
       }}
     >
@@ -28,10 +28,15 @@ const SearchResults = ({ results, resultType }) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "100%",
         }}
       >
-        <Paper elevation={8} sx={{ width: 500 }}>
+        <Paper
+          elevation={2}
+          sx={{
+            width: 500,
+            borderRadius: "17px",
+          }}
+        >
           <Grid
             container
             spacing={{ xs: 2, md: 2, xl: 2 }}
@@ -104,6 +109,7 @@ const SearchResults = ({ results, resultType }) => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
+            borderRadius: "17px",
           }}
         >
           <Paper elevation={8} sx={{ width: 500 }}>
