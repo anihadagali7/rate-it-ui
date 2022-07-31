@@ -100,6 +100,7 @@ const Login = () => {
                   maxHeight: "480px",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
+                  borderRadius: "17px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -131,7 +132,12 @@ const Login = () => {
                         <InputLabel>
                           <Typography>Email</Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             value={login.email}
                             onChange={onChangeEmail}
@@ -143,7 +149,12 @@ const Login = () => {
                             Password
                           </Typography>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             type={"password"}
                             value={login.password}
@@ -174,6 +185,7 @@ const Login = () => {
                             "&.MuiButtonBase-root:hover": {
                               border: "transparent",
                             },
+                            borderRadius: "17px",
                           }}
                         >
                           <Typography

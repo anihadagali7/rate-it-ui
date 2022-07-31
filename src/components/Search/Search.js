@@ -127,6 +127,7 @@ const Search = () => {
                   height: searchResults.length > 0 ? "100%" : 200,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
+                  borderRadius: "17px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -142,7 +143,12 @@ const Search = () => {
                       <Grid item xs={9} sx={{ width: "100%" }}>
                         <InputLabel>
                           <TextField
-                            sx={{ width: "100%" }}
+                            sx={{
+                              width: "100%",
+                              "& fieldset": {
+                                borderRadius: "17px",
+                              },
+                            }}
                             size="small"
                             placeholder="Search for your favorite media"
                             value={searchKeyword}
@@ -162,6 +168,7 @@ const Search = () => {
                             "&.MuiButtonBase-root:hover": {
                               border: "transparent",
                             },
+                            borderRadius: "17px",
                           }}
                         >
                           <Typography
