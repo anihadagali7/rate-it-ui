@@ -21,7 +21,7 @@ const SearchResults = ({ results, resultType }) => {
   const listItem = (row) => (
     <ListItem
       component={Link}
-      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
+      to={`/${resultType}/${row.mediaId}`}
       sx={{
         width: 525,
         "&.MuiListItem-root": { marginLeft: "-12px" },

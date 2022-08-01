@@ -21,7 +21,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
       xs={6}
       sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}
       component={Link}
-      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
+      to={`/${resultType}/${row.mediaId}`}
     >
       <Box
         sx={{
@@ -51,7 +51,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
       xs={6}
       sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}
       component={Link}
-      to={`/${resultType}/${row.tmdbId ? row.tmdbId : row.id}`}
+      to={`/${resultType}/${row.mediaId}`}
     >
       <Box
         sx={{
