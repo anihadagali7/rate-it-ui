@@ -102,6 +102,8 @@ const SearchResults = ({ results, resultType }) => {
   const listItemMusic = (row) => {
     return (
       <ListItem
+        component={Link}
+        to={`/${resultType}/${row.mediaId}`}
         sx={{
           width: 700,
           "&.MuiListItem-root": { marginLeft: "-12px" },

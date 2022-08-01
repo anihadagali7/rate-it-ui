@@ -50,6 +50,7 @@ const MediaInfo = () => {
                 height: "100%",
                 backgroundColor: "#FFFFFF",
                 margin: "auto",
+                borderRadius: "17px",
               }}
             >
               <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -64,7 +65,7 @@ const MediaInfo = () => {
                         <img
                           width={200}
                           height={250}
-                          style={{ marginBottom: "10px" }}
+                          style={{ margin: "10px 0" }}
                           alt="poster"
                           src={media.picture ? media.picture : NotFoundImage}
                         />
