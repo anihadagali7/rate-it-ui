@@ -126,7 +126,7 @@ const SearchResults = ({ results, resultType }) => {
             >
               <Grid
                 item
-                xs={2}
+                xs={3}
                 sx={{
                   "&.MuiGrid-root": { marginLeft: "-16px !important" },
                 }}
@@ -134,7 +134,7 @@ const SearchResults = ({ results, resultType }) => {
                 <div>
                   <ListItemAvatar sx={{ marginTop: "15px" }}>
                     <img
-                      width={100}
+                      width={150}
                       height={150}
                       style={{ marginBottom: "10px" }}
                       alt="poster"

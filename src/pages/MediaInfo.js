@@ -15,6 +15,10 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import NotFoundImage from "../imgs/Image-Not-Available.jpeg";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
 
 const MediaInfo = () => {
   const [mediaTypeParams, setMediaTypeParams] = useState("");
@@ -30,6 +34,74 @@ const MediaInfo = () => {
     console.log("result of media client ", result);
     setMedia(result.data.media);
   }, []);
+
+  const listToString = (list) => {
+    let newString = "";
+
+    list.forEach((name) => {
+      newString += name + ", ";
+    });
+
+    return newString.substring(0, newString.length - 2);
+  };
+
+  const displayMovieTvShow = (media) => (
+    <>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <Typography
+          component="div"
+          sx={{
+            marginTop: "10px",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          {media.name}
+        </Typography>
+        <div>
+          <Typography component="div">{media.description}</Typography>
+        </div>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <List component="nav" aria-label="mailbox folders">
+          <Divider />
+          {media.director && media.director.length > 0 && (
+            <ListItem>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Directors:{" "}
+                </span>
+                {listToString(media.director)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+          {media.producer && media.producer.length > 0 && (
+            <ListItem>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Producers:
+                </span>
+                {listToString(media.producer)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+          {media.cast && media.cast.length > 0 && (
+            <ListItem>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Cast:
+                </span>
+                {listToString(media.cast)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+        </List>
+      </Grid>
+    </>
+  );
 
   return (
     <Provider>
@@ -71,31 +143,7 @@ const MediaInfo = () => {
                         />
                       </Typography>
                     </Grid>
-                    <Grid item xs={6} sx={{ width: "100%" }}>
-                      <Typography
-                        component="div"
-                        sx={{
-                          marginTop: "10px",
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {media.name}
-                      </Typography>
-                      <div>
-                        <Typography component="div">
-                          {media.description}
-                        </Typography>
-                      </div>
-                      <div>
-                        {media.director && media.director.length > 0 && (
-                          <Typography component="div">
-                            Directors: {media.director}
-                          </Typography>
-                        )}
-                      </div>
-                    </Grid>
-                    <Grid item xs={3}></Grid>
+                    {displayMovieTvShow(media)}
                   </Grid>
                 </Box>
               </div>
