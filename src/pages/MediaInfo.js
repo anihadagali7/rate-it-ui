@@ -5,9 +5,7 @@ import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
 import {
   Container,
-  InputLabel,
   StyledEngineProvider,
-  TextField,
   ThemeProvider,
   Typography,
 } from "@mui/material";
@@ -17,8 +15,11 @@ import Grid from "@mui/material/Grid";
 import NotFoundImage from "../imgs/Image-Not-Available.jpeg";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import StarIcon from "@mui/icons-material/Star";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
 const MediaInfo = () => {
   const [mediaTypeParams, setMediaTypeParams] = useState("");
@@ -66,7 +67,7 @@ const MediaInfo = () => {
         <List component="nav" aria-label="mailbox folders">
           <Divider />
           {media.director && media.director.length > 0 && (
-            <ListItem>
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Directors:{" "}
@@ -77,10 +78,10 @@ const MediaInfo = () => {
           )}
           <Divider />
           {media.producer && media.producer.length > 0 && (
-            <ListItem>
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Producers:
+                  Producers:{" "}
                 </span>
                 {listToString(media.producer)}
               </Typography>
@@ -88,10 +89,10 @@ const MediaInfo = () => {
           )}
           <Divider />
           {media.cast && media.cast.length > 0 && (
-            <ListItem>
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Cast:
+                  Cast:{" "}
                 </span>
                 {listToString(media.cast)}
               </Typography>
@@ -142,6 +143,52 @@ const MediaInfo = () => {
                           src={media.picture ? media.picture : NotFoundImage}
                         />
                       </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={6}
+                      align="center"
+                      justify="center"
+                      direction="column"
+                    >
+                      <Stack spacing={4} sx={{ marginTop: "80px" }}>
+                        <Button
+                          variant="outlined"
+                          startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+                          sx={{
+                            border: "transparent",
+                            backgroundColor: "#00a8ff",
+                            borderRadius: "17px",
+                            "&.MuiButtonBase-root:hover": {
+                              border: "transparent",
+                              backgroundColor: "#00a8ff",
+                            },
+                          }}
+                        >
+                          <Typography variant="normalText">
+                            Add Rating
+                          </Typography>
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={
+                            <PlaylistAddIcon style={{ color: "#FFFFFF" }} />
+                          }
+                          sx={{
+                            border: "transparent",
+                            backgroundColor: "#00a8ff",
+                            borderRadius: "17px",
+                            "&.MuiButtonBase-root:hover": {
+                              border: "transparent",
+                              backgroundColor: "#00a8ff",
+                            },
+                          }}
+                        >
+                          <Typography variant="normalText">
+                            Add to Playlist
+                          </Typography>
+                        </Button>
+                      </Stack>
                     </Grid>
                     {displayMovieTvShow(media)}
                   </Grid>
