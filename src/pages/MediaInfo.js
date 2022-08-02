@@ -63,7 +63,7 @@ const MediaInfo = () => {
         </div>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav" aria-label="mailbox folders">
+        <List component="nav">
           <Divider />
           {media.director && media.director.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
@@ -94,6 +94,50 @@ const MediaInfo = () => {
                   Cast:{" "}
                 </span>
                 {listToString(media.cast)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+        </List>
+      </Grid>
+    </>
+  );
+
+  const displayMusic = (media) => (
+    <>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <Typography
+          component="div"
+          sx={{
+            marginTop: "10px",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          {media.name}
+        </Typography>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <List component="nav">
+          <Divider />
+          {media.album && (
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Album:{" "}
+                </span>
+                {media.album}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+          {media.artist && media.artist.length > 0 && (
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Artists:{" "}
+                </span>
+                {listToString(media.artist)}
               </Typography>
             </ListItem>
           )}
@@ -150,7 +194,9 @@ const MediaInfo = () => {
           </Button>
         </Stack>
       </Grid>
-      {displayMovieTvShow(media)}
+      {(media.mediaType === "MOVIE" || media.mediaType === "TV SHOW") &&
+        displayMovieTvShow(media)}
+      {media.mediaType === "MUSIC" && displayMusic(media)}
     </Grid>
   );
 
@@ -207,6 +253,7 @@ const MediaInfo = () => {
       </Grid>
       {(media.mediaType === "MOVIE" || media.mediaType === "TV SHOW") &&
         displayMovieTvShow(media)}
+      {media.mediaType === "MUSIC" && displayMusic(media)}
     </Grid>
   );
 
