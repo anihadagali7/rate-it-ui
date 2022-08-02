@@ -49,7 +49,10 @@ const SearchResultsMobile = ({ results, resultType }) => {
     <Grid
       item
       xs={6}
-      sx={{ paddingLeft: index % 2 == 0 ? "0px" : "20px" }}
+      sx={{
+        paddingLeft: index % 2 == 0 ? "0px" : "20px",
+        textDecoration: "none",
+      }}
       component={Link}
       to={`/${resultType}/${row.mediaId}`}
     >
@@ -70,14 +73,15 @@ const SearchResultsMobile = ({ results, resultType }) => {
               paddingLeft: index % 2 == 0 ? "5px" : "10px",
               paddingBottom: "5px",
               maxHeight: "20px",
+              color: "#000000",
             }}
           >
-            {row.name} {row.albumType === "album" && ", " + row.albumName}
+            {row.name}
           </Typography>
           <ListItemAvatar sx={{ marginTop: "15px" }}>
             <img
-              width={125}
-              height={175}
+              width={150}
+              height={150}
               style={{ marginBottom: "10px" }}
               alt="poster"
               src={row.poster ? row.poster : NotFoundImage}
