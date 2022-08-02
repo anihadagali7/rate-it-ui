@@ -20,6 +20,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import { BrowserView, MobileView } from "react-device-detect";
 
 const MediaInfo = () => {
   const [mediaTypeParams, setMediaTypeParams] = useState("");
@@ -28,11 +29,9 @@ const MediaInfo = () => {
   const [media, setMedia] = useState({});
 
   useEffect(async () => {
-    console.log("i fire once");
     setMediaTypeParams(mediaType);
     setMediaIdParams(id);
     const result = await MediaClient.getMediaInfoDetails(mediaType, id);
-    console.log("result of media client ", result);
     setMedia(result.data.media);
   }, []);
 
@@ -104,11 +103,121 @@ const MediaInfo = () => {
     </>
   );
 
+  const desktopView = (media) => (
+    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
+      <Grid item xs={6}>
+        <Typography>
+          <img
+            width={200}
+            height={250}
+            style={{ margin: "10px 0" }}
+            alt="poster"
+            src={media.picture ? media.picture : NotFoundImage}
+          />
+        </Typography>
+      </Grid>
+      <Grid item xs={6} align="center" justify="center" direction="column">
+        <Stack spacing={4} sx={{ marginTop: "80px" }}>
+          <Button
+            variant="outlined"
+            startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+            sx={{
+              border: "transparent",
+              backgroundColor: "#00a8ff",
+              borderRadius: "17px",
+              "&.MuiButtonBase-root:hover": {
+                border: "transparent",
+                backgroundColor: "#00a8ff",
+              },
+            }}
+          >
+            <Typography variant="normalText">Add Rating</Typography>
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<PlaylistAddIcon style={{ color: "#FFFFFF" }} />}
+            sx={{
+              border: "transparent",
+              backgroundColor: "#00a8ff",
+              borderRadius: "17px",
+              "&.MuiButtonBase-root:hover": {
+                border: "transparent",
+                backgroundColor: "#00a8ff",
+              },
+            }}
+          >
+            <Typography variant="normalText">Add to Playlist</Typography>
+          </Button>
+        </Stack>
+      </Grid>
+      {displayMovieTvShow(media)}
+    </Grid>
+  );
+
+  const mobileView = (media) => (
+    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
+      <Grid item xs={12} sx={{ margin: "auto" }}>
+        <Typography>
+          <img
+            width={200}
+            height={250}
+            style={{ margin: "10px 0" }}
+            alt="poster"
+            src={media.picture ? media.picture : NotFoundImage}
+          />
+        </Typography>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <Button
+          variant="outlined"
+          startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+          sx={{
+            border: "transparent",
+            backgroundColor: "#00a8ff",
+            width: "100%",
+            borderRadius: "17px",
+            "&.MuiButtonBase-root:hover": {
+              border: "transparent",
+              backgroundColor: "#00a8ff",
+            },
+          }}
+        >
+          <Typography variant="normalText">Add Rating</Typography>
+        </Button>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <Button
+          variant="outlined"
+          startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+          sx={{
+            border: "transparent",
+            backgroundColor: "#ffffff",
+            borderRadius: "17px",
+            width: "100%",
+            "&.MuiButtonBase-root:hover": {
+              border: "transparent",
+              backgroundColor: "#ffffff",
+            },
+          }}
+        >
+          <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+            Add to Playlist
+          </Typography>
+        </Button>
+      </Grid>
+      {(media.mediaType === "MOVIE" || media.mediaType === "TV SHOW") &&
+        displayMovieTvShow(media)}
+    </Grid>
+  );
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}></ThemeProvider>
-        <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+        <Container
+          maxWidth={"sm"}
+          sx={{ marginTop: "50px", marginBottom: "25px" }}
+        >
           <Box
             sx={{
               width: "100%",
@@ -128,70 +237,8 @@ const MediaInfo = () => {
             >
               <div style={{ padding: "0 35px", minHeight: "385px" }}>
                 <Box>
-                  <Grid
-                    container
-                    spacing={{ xs: 2, md: 2, xl: 5 }}
-                    columns={{ md: 12 }}
-                  >
-                    <Grid item xs={6}>
-                      <Typography>
-                        <img
-                          width={200}
-                          height={250}
-                          style={{ margin: "10px 0" }}
-                          alt="poster"
-                          src={media.picture ? media.picture : NotFoundImage}
-                        />
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      align="center"
-                      justify="center"
-                      direction="column"
-                    >
-                      <Stack spacing={4} sx={{ marginTop: "80px" }}>
-                        <Button
-                          variant="outlined"
-                          startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-                          sx={{
-                            border: "transparent",
-                            backgroundColor: "#00a8ff",
-                            borderRadius: "17px",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
-                              backgroundColor: "#00a8ff",
-                            },
-                          }}
-                        >
-                          <Typography variant="normalText">
-                            Add Rating
-                          </Typography>
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={
-                            <PlaylistAddIcon style={{ color: "#FFFFFF" }} />
-                          }
-                          sx={{
-                            border: "transparent",
-                            backgroundColor: "#00a8ff",
-                            borderRadius: "17px",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
-                              backgroundColor: "#00a8ff",
-                            },
-                          }}
-                        >
-                          <Typography variant="normalText">
-                            Add to Playlist
-                          </Typography>
-                        </Button>
-                      </Stack>
-                    </Grid>
-                    {displayMovieTvShow(media)}
-                  </Grid>
+                  <BrowserView>{desktopView(media)}</BrowserView>
+                  <MobileView>{mobileView(media)}</MobileView>
                 </Box>
               </div>
             </Paper>

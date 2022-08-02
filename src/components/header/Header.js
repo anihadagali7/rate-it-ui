@@ -150,6 +150,7 @@ const Header = ({ displayMenu }) => {
   const logoutUser = () => {
     localStorage.clear();
     setUserLoggedIn(false);
+    setLocalUserLoggedIn(false);
   };
 
   const menuDrawer = () => (
