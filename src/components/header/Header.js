@@ -1,5 +1,5 @@
 import { makeStyles } from "@mui/styles";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -25,6 +25,13 @@ import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import HomeIcon from "@mui/icons-material/Home";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Divider from "@mui/material/Divider";
+import ListItemButton from "@mui/material/ListItemButton";
+
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 
 const useStyles = makeStyles({
   title: {
@@ -34,6 +41,15 @@ const useStyles = makeStyles({
     backgroundColor: "#FFFFFF",
   },
 });
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: "flex-end",
+}));
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -83,8 +99,11 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   })
 );
 
+const drawerWidth = 240;
+
 const Header = ({ displayMenu }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [userMenu, setUserMenu] = useState(null);
 
   const [drawer, setDrawer] = useState(false);
@@ -288,10 +307,55 @@ const Header = ({ displayMenu }) => {
               </Box>
               <Drawer
                 anchor={"left"}
+                sx={{
+                  width: drawerWidth,
+                  flexShrink: 0,
+                  "& .MuiDrawer-paper": {
+                    width: drawerWidth,
+                    boxSizing: "border-box",
+                  },
+                }}
                 open={drawer}
                 onClose={toggleDrawer(false)}
               >
-                {menuDrawer()}
+                {/* {menuDrawer()} */}
+                <DrawerHeader>
+                  <IconButton onClick={toggleDrawer(false)}>
+                    {theme.direction === "ltr" ? (
+                      <ChevronLeftIcon />
+                    ) : (
+                      <ChevronRightIcon />
+                    )}
+                  </IconButton>
+                </DrawerHeader>
+                <Divider />
+                <List>
+                  {["Inbox", "Starred", "Send email", "Drafts"].map(
+                    (text, index) => (
+                      <ListItem key={text} disablePadding>
+                        <ListItemButton>
+                          <ListItemIcon>
+                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                          </ListItemIcon>
+                          <ListItemText primary={text} />
+                        </ListItemButton>
+                      </ListItem>
+                    )
+                  )}
+                </List>
+                <Divider />
+                <List>
+                  {["All mail", "Trash", "Spam"].map((text, index) => (
+                    <ListItem key={text} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary={text} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
               </Drawer>
             </>
           )}
