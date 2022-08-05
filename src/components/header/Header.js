@@ -406,7 +406,13 @@ const Header = ({ displayMenu }) => {
           <Divider />
           <List>
             {localUserLoggedIn ? (
-              <ListItem key={"logout"}>
+              <ListItem
+                key={"logout"}
+                onClick={() => {
+                  logoutUser();
+                  setDrawer(false);
+                }}
+              >
                 <ListItemIcon>
                   <LogoutIcon sx={{ color: "#232b2b" }} />
                 </ListItemIcon>
