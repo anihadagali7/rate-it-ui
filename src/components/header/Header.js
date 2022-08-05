@@ -1,5 +1,5 @@
 import { makeStyles } from "@mui/styles";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -25,6 +25,13 @@ import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import HomeIcon from "@mui/icons-material/Home";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Divider from "@mui/material/Divider";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LoginIcon from "@mui/icons-material/Login";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 
 const useStyles = makeStyles({
   title: {
@@ -34,6 +41,15 @@ const useStyles = makeStyles({
     backgroundColor: "#FFFFFF",
   },
 });
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: "flex-end",
+}));
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -83,8 +99,11 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   })
 );
 
+const drawerWidth = 240;
+
 const Header = ({ displayMenu }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [userMenu, setUserMenu] = useState(null);
 
   const [drawer, setDrawer] = useState(false);
@@ -153,229 +172,293 @@ const Header = ({ displayMenu }) => {
     setLocalUserLoggedIn(false);
   };
 
-  const menuDrawer = () => (
-    <Box
-      sx={{ width: 250 }}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <List>
-        <ListItem key={"home"} component={Link} to={"/"}>
-          <ListItemIcon>
-            <HomeIcon sx={{ color: "#232b2b" }} />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography sx={{ color: "#232b2b" }}>Home</Typography>
-          </ListItemText>
-        </ListItem>
-        <ListItem key={"profile"} component={Link} to={"/profile"}>
-          <ListItemIcon>
-            <AccountCircleIcon sx={{ color: "#232b2b" }} />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography sx={{ color: "#232b2b" }}>Profile</Typography>
-          </ListItemText>
-        </ListItem>
-        <ListItem key={"playlist"} component={Link} to={"/playlist"}>
-          <ListItemIcon>
-            <PlaylistAddIcon sx={{ color: "#232b2b" }} />
-          </ListItemIcon>
-          <Typography sx={{ color: "#232b2b" }}>Playlist</Typography>
-        </ListItem>
-        <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
-          <ListItemIcon>
-            <BookmarkIcon sx={{ color: "#232b2b" }} />
-          </ListItemIcon>
-          <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
-        </ListItem>
-      </List>
-    </Box>
+  const displayBigScreenHeader = () => (
+    <>
+      <Typography
+        variant="h6"
+        noWrap
+        component="a"
+        href="/"
+        sx={{
+          mr: 2,
+          display: { xs: "none", md: "flex" },
+          fontFamily: "Black Signature",
+          fontWeight: 700,
+          letterSpacing: ".3rem",
+          color: "#00a8ff",
+          textDecoration: "none",
+        }}
+      >
+        RATE IT
+      </Typography>
+      <>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <AntTabs
+            sx={{
+              marginLeft: "32%",
+              color: "#f195ac",
+              borderBottom: "none",
+              margin: "auto",
+            }}
+            value={tabValue}
+            onChange={handleTabChange}
+            TabIndicatorProps={{ style: { background: "#f195ac" } }}
+          >
+            <AntTab
+              icon={<HomeIcon />}
+              label="Home"
+              iconPosition="start"
+              component={Link}
+              to="/"
+            />
+            <AntTab
+              icon={<AccountCircleIcon />}
+              label="Profile"
+              iconPosition="start"
+              component={Link}
+              to="/profile"
+            />
+            <AntTab
+              icon={<PlaylistAddIcon />}
+              label="Playlist"
+              iconPosition="start"
+              component={Link}
+              to="/"
+            />
+            <AntTab
+              icon={<BookmarkIcon />}
+              iconPosition="start"
+              component={Link}
+              label="Wishlist"
+              to="/"
+            />
+          </AntTabs>
+          {localUserLoggedIn ? (
+            <>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <AccountCircleIcon />
+                <Typography>{user.userName}</Typography>
+              </IconButton>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={userMenu}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={userMenu}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={logoutUser}>
+                    Logout
+                  </Typography>
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outlined"
+                component={Link}
+                sx={{
+                  border: "transparent",
+                  backgroundColor: "#00a8ff",
+                  borderRadius: "17px",
+                  "&.MuiButtonBase-root:hover": {
+                    border: "transparent",
+                    backgroundColor: "#00a8ff",
+                  },
+                }}
+                to="/login"
+                onClick={() => setTabValue(false)}
+                startIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
+              >
+                <Typography variant="normalText">Sign In</Typography>
+              </Button>
+            </>
+          )}
+        </Box>
+      </>
+    </>
+  );
+
+  const displaySmallScreenHeader = () => (
+    <>
+      <>
+        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <IconButton
+            size="large"
+            onClick={toggleDrawer(true)}
+            color="inherit"
+            sx={{ color: "#00a8ff" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+        <Drawer
+          anchor={"left"}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+          open={drawer}
+          onClose={toggleDrawer(false)}
+        >
+          <DrawerHeader sx={{ width: "100%" }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ marginRight: "15px", marginTop: "10px" }}
+            >
+              {localUserLoggedIn && user && (
+                <>
+                  <Avatar
+                    sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                    component={Link}
+                    to={"/profile"}
+                    onClick={toggleDrawer(false)}
+                  >
+                    {user.firstName[0]}
+                    {user.lastName[0]}
+                  </Avatar>
+                  <div>
+                    <Stack direction="column">
+                      <Typography>
+                        {user.firstName} {user.lastName}
+                      </Typography>
+                      <Typography>@{user.userName}</Typography>
+                    </Stack>
+                  </div>
+                </>
+              )}
+              <IconButton onClick={toggleDrawer(false)}>
+                {theme.direction === "ltr" ? (
+                  <ChevronLeftIcon />
+                ) : (
+                  <ChevronRightIcon />
+                )}
+              </IconButton>
+            </Stack>
+          </DrawerHeader>
+          <Divider />
+          <List onClick={() => setDrawer(false)}>
+            <ListItem key={"home"} component={Link} to={"/"}>
+              <ListItemIcon>
+                <HomeIcon sx={{ color: "#232b2b" }} />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography
+                  sx={{ color: "#232b2b", fontWeight: tabValue == 0 && "bold" }}
+                >
+                  Home
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem key={"profile"} component={Link} to={"/profile"}>
+              <ListItemIcon>
+                <AccountCircleIcon sx={{ color: "#232b2b" }} />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography
+                  sx={{ color: "#232b2b", fontWeight: tabValue == 1 && "bold" }}
+                >
+                  Profile
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem key={"playlist"} component={Link} to={"/playlist"}>
+              <ListItemIcon>
+                <PlaylistAddIcon sx={{ color: "#232b2b" }} />
+              </ListItemIcon>
+              <Typography
+                sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}
+              >
+                Playlist
+              </Typography>
+            </ListItem>
+            <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
+              <ListItemIcon>
+                <BookmarkIcon sx={{ color: "#232b2b" }} />
+              </ListItemIcon>
+              <Typography
+                sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}
+              >
+                Wishlist
+              </Typography>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            {localUserLoggedIn ? (
+              <ListItem key={"logout"}>
+                <ListItemIcon>
+                  <LogoutIcon sx={{ color: "#232b2b" }} />
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography sx={{ color: "#232b2b" }}>Logout</Typography>
+                </ListItemText>
+              </ListItem>
+            ) : (
+              <ListItem
+                key={"login"}
+                component={Link}
+                to={"/login"}
+                onClick={() => setDrawer(false)}
+              >
+                <ListItemIcon>
+                  <LoginIcon sx={{ color: "#232b2b" }} />
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography sx={{ color: "#232b2b" }}>Login</Typography>
+                </ListItemText>
+              </ListItem>
+            )}
+          </List>
+        </Drawer>
+      </>
+      <Typography
+        variant="h5"
+        noWrap
+        component="a"
+        href="/"
+        sx={{
+          mr: 2,
+          display: { xs: "flex", md: "none" },
+          flexGrow: 1,
+          fontFamily: "Black Signature",
+          fontWeight: 700,
+          letterSpacing: ".3rem",
+          color: "#00a8ff",
+          textDecoration: "none",
+        }}
+      >
+        RATE IT
+      </Typography>
+    </>
   );
 
   return (
     <AppBar position="static" className={classes.appBar}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* START BIG SCREEN */}
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "Black Signature",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "#00a8ff",
-              textDecoration: "none",
-            }}
-          >
-            RATE IT
-          </Typography>
-          {displayMenu && (
-            <>
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  display: { xs: "none", md: "flex" },
-                }}
-              >
-                <AntTabs
-                  sx={{
-                    marginLeft: "32%",
-                    color: "#f195ac",
-                    borderBottom: "none",
-                    margin: "auto",
-                  }}
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  aria-label="icon label tabs example"
-                  TabIndicatorProps={{ style: { background: "#f195ac" } }}
-                >
-                  <AntTab
-                    icon={<HomeIcon />}
-                    label="Home"
-                    iconPosition="start"
-                    component={Link}
-                    to="/"
-                  />
-                  <AntTab
-                    icon={<AccountCircleIcon />}
-                    label="Profile"
-                    iconPosition="start"
-                    component={Link}
-                    to="/profile"
-                  />
-                  <AntTab
-                    icon={<PlaylistAddIcon />}
-                    label="Playlist"
-                    iconPosition="start"
-                    component={Link}
-                    to="/"
-                  />
-                  <AntTab
-                    icon={<BookmarkIcon />}
-                    iconPosition="start"
-                    component={Link}
-                    label="Wishlist"
-                    to="/"
-                  />
-                </AntTabs>
-              </Box>
-            </>
-          )}
-          {/* END BIG SCREEN */}
-
-          {/* START SMALL SCREEN */}
-          {displayMenu && (
-            <>
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                {/* icon */}
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={toggleDrawer(true)}
-                  color="inherit"
-                  sx={{ color: "#00a8ff" }}
-                >
-                  <MenuIcon />
-                </IconButton>
-              </Box>
-              <Drawer
-                anchor={"left"}
-                open={drawer}
-                onClose={toggleDrawer(false)}
-              >
-                {menuDrawer()}
-              </Drawer>
-            </>
-          )}
-
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "Black Signature",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "#00a8ff",
-              textDecoration: "none",
-            }}
-          >
-            RATE IT
-          </Typography>
-          {/* END SMALL SCREEN */}
-
-          {/* ACCOUNT ICON */}
-          {displayMenu && (
-            <>
-              <Box sx={{ flexGrow: 0 }}>
-                {localUserLoggedIn ? (
-                  <>
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <AccountCircleIcon />
-                      <Typography>{user.userName}</Typography>
-                    </IconButton>
-                    <Menu
-                      sx={{ mt: "45px" }}
-                      id="menu-appbar"
-                      anchorEl={userMenu}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      keepMounted
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      open={userMenu}
-                      onClose={handleCloseUserMenu}
-                    >
-                      <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
-                        <Typography textAlign="center" onClick={logoutUser}>
-                          Logout
-                        </Typography>
-                      </MenuItem>
-                    </Menu>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="outlined"
-                      component={Link}
-                      sx={{
-                        border: "transparent",
-                        backgroundColor: "#00a8ff",
-                        borderRadius: "17px",
-                        "&.MuiButtonBase-root:hover": {
-                          border: "transparent",
-                          backgroundColor: "#00a8ff",
-                        },
-                      }}
-                      to="/login"
-                      onClick={() => setTabValue(false)}
-                      startIcon={
-                        <AccountCircleIcon style={{ color: "#FFFFFF" }} />
-                      }
-                    >
-                      <Typography variant="normalText">Sign In</Typography>
-                    </Button>
-                  </>
-                )}
-              </Box>
-            </>
-          )}
+          {displayBigScreenHeader()}
+          {displaySmallScreenHeader()}
         </Toolbar>
       </Container>
     </AppBar>
