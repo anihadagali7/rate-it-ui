@@ -29,9 +29,14 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Divider from "@mui/material/Divider";
 import ListItemButton from "@mui/material/ListItemButton";
-
+import LogoutIcon from "@mui/icons-material/Logout";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import LoginIcon from "@mui/icons-material/Login";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
+import { deepOrange, deepPurple } from "@mui/material/colors";
+import Paper from "@mui/material/Paper";
 
 const useStyles = makeStyles({
   title: {
@@ -251,7 +256,6 @@ const Header = ({ displayMenu }) => {
                   }}
                   value={tabValue}
                   onChange={handleTabChange}
-                  aria-label="icon label tabs example"
                   TabIndicatorProps={{ style: { background: "#f195ac" } }}
                 >
                   <AntTab
@@ -283,6 +287,59 @@ const Header = ({ displayMenu }) => {
                     to="/"
                   />
                 </AntTabs>
+                {localUserLoggedIn ? (
+                  <>
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <AccountCircleIcon />
+                      <Typography>{user.userName}</Typography>
+                    </IconButton>
+                    <Menu
+                      sx={{ mt: "45px" }}
+                      id="menu-appbar"
+                      anchorEl={userMenu}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      open={userMenu}
+                      onClose={handleCloseUserMenu}
+                    >
+                      <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center" onClick={logoutUser}>
+                          Logout
+                        </Typography>
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      component={Link}
+                      sx={{
+                        border: "transparent",
+                        backgroundColor: "#00a8ff",
+                        borderRadius: "17px",
+                        "&.MuiButtonBase-root:hover": {
+                          border: "transparent",
+                          backgroundColor: "#00a8ff",
+                        },
+                      }}
+                      to="/login"
+                      onClick={() => setTabValue(false)}
+                      startIcon={
+                        <AccountCircleIcon style={{ color: "#FFFFFF" }} />
+                      }
+                    >
+                      <Typography variant="normalText">Sign In</Typography>
+                    </Button>
+                  </>
+                )}
               </Box>
             </>
           )}
@@ -319,42 +376,101 @@ const Header = ({ displayMenu }) => {
                 onClose={toggleDrawer(false)}
               >
                 {/* {menuDrawer()} */}
-                <DrawerHeader>
-                  <IconButton onClick={toggleDrawer(false)}>
-                    {theme.direction === "ltr" ? (
-                      <ChevronLeftIcon />
-                    ) : (
-                      <ChevronRightIcon />
+                <DrawerHeader sx={{ width: "100%" }}>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ marginRight: "15px", marginTop: "10px" }}
+                  >
+                    {localUserLoggedIn && user && (
+                      <>
+                        <Avatar
+                          sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                          component={Link}
+                          to={"/profile"}
+                          onClick={toggleDrawer(false)}
+                        >
+                          {user.firstName[0]}
+                          {user.lastName[0]}
+                        </Avatar>
+                        <div>
+                          <Stack direction="column">
+                            <Typography>
+                              {user.firstName} {user.lastName}
+                            </Typography>
+                            <Typography>@{user.userName}</Typography>
+                          </Stack>
+                        </div>
+                      </>
                     )}
-                  </IconButton>
+                    <IconButton onClick={toggleDrawer(false)}>
+                      {theme.direction === "ltr" ? (
+                        <ChevronLeftIcon />
+                      ) : (
+                        <ChevronRightIcon />
+                      )}
+                    </IconButton>
+                  </Stack>
                 </DrawerHeader>
                 <Divider />
-                <List>
-                  {["Inbox", "Starred", "Send email", "Drafts"].map(
-                    (text, index) => (
-                      <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                          <ListItemIcon>
-                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                          </ListItemIcon>
-                          <ListItemText primary={text} />
-                        </ListItemButton>
-                      </ListItem>
-                    )
-                  )}
+                <List onClick={() => setDrawer(false)}>
+                  <ListItem key={"home"} component={Link} to={"/"}>
+                    <ListItemIcon>
+                      <HomeIcon sx={{ color: "#232b2b" }} />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography sx={{ color: "#232b2b" }}>Home</Typography>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem key={"profile"} component={Link} to={"/profile"}>
+                    <ListItemIcon>
+                      <AccountCircleIcon sx={{ color: "#232b2b" }} />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography sx={{ color: "#232b2b" }}>Profile</Typography>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem key={"playlist"} component={Link} to={"/playlist"}>
+                    <ListItemIcon>
+                      <PlaylistAddIcon sx={{ color: "#232b2b" }} />
+                    </ListItemIcon>
+                    <Typography sx={{ color: "#232b2b" }}>Playlist</Typography>
+                  </ListItem>
+                  <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
+                    <ListItemIcon>
+                      <BookmarkIcon sx={{ color: "#232b2b" }} />
+                    </ListItemIcon>
+                    <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
+                  </ListItem>
                 </List>
                 <Divider />
                 <List>
-                  {["All mail", "Trash", "Spam"].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
+                  {localUserLoggedIn ? (
+                    <ListItem key={"logout"}>
+                      <ListItemIcon>
+                        <LogoutIcon sx={{ color: "#232b2b" }} />
+                      </ListItemIcon>
+                      <ListItemText>
+                        <Typography sx={{ color: "#232b2b" }}>
+                          Logout
+                        </Typography>
+                      </ListItemText>
                     </ListItem>
-                  ))}
+                  ) : (
+                    <ListItem
+                      key={"login"}
+                      component={Link}
+                      to={"/login"}
+                      onClick={() => setDrawer(false)}
+                    >
+                      <ListItemIcon>
+                        <LoginIcon sx={{ color: "#232b2b" }} />
+                      </ListItemIcon>
+                      <ListItemText>
+                        <Typography sx={{ color: "#232b2b" }}>Login</Typography>
+                      </ListItemText>
+                    </ListItem>
+                  )}
                 </List>
               </Drawer>
             </>
@@ -381,7 +497,7 @@ const Header = ({ displayMenu }) => {
           {/* END SMALL SCREEN */}
 
           {/* ACCOUNT ICON */}
-          {displayMenu && (
+          {/* {displayMenu && (
             <>
               <Box sx={{ flexGrow: 0 }}>
                 {localUserLoggedIn ? (
@@ -439,7 +555,7 @@ const Header = ({ displayMenu }) => {
                 )}
               </Box>
             </>
-          )}
+          )} */}
         </Toolbar>
       </Container>
     </AppBar>
