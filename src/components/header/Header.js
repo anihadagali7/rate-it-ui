@@ -300,9 +300,6 @@ const Header = ({ displayMenu }) => {
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <IconButton
             size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
             onClick={toggleDrawer(true)}
             color="inherit"
             sx={{ color: "#00a8ff" }}
@@ -366,7 +363,11 @@ const Header = ({ displayMenu }) => {
                 <HomeIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
               <ListItemText>
-                <Typography sx={{ color: "#232b2b" }}>Home</Typography>
+                <Typography
+                  sx={{ color: "#232b2b", fontWeight: tabValue == 0 && "bold" }}
+                >
+                  Home
+                </Typography>
               </ListItemText>
             </ListItem>
             <ListItem key={"profile"} component={Link} to={"/profile"}>
@@ -374,20 +375,32 @@ const Header = ({ displayMenu }) => {
                 <AccountCircleIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
               <ListItemText>
-                <Typography sx={{ color: "#232b2b" }}>Profile</Typography>
+                <Typography
+                  sx={{ color: "#232b2b", fontWeight: tabValue == 1 && "bold" }}
+                >
+                  Profile
+                </Typography>
               </ListItemText>
             </ListItem>
             <ListItem key={"playlist"} component={Link} to={"/playlist"}>
               <ListItemIcon>
                 <PlaylistAddIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
-              <Typography sx={{ color: "#232b2b" }}>Playlist</Typography>
+              <Typography
+                sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}
+              >
+                Playlist
+              </Typography>
             </ListItem>
             <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
               <ListItemIcon>
                 <BookmarkIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
-              <Typography sx={{ color: "#232b2b" }}>Wishlist</Typography>
+              <Typography
+                sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}
+              >
+                Wishlist
+              </Typography>
             </ListItem>
           </List>
           <Divider />
