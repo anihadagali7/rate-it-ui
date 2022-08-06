@@ -276,6 +276,8 @@ const Header = ({ displayMenu }) => {
                   border: "transparent",
                   backgroundColor: "#00a8ff",
                   borderRadius: "17px",
+                  height: '35px',
+                  marginTop: '17px',
                   "&.MuiButtonBase-root:hover": {
                     border: "transparent",
                     backgroundColor: "#00a8ff",
