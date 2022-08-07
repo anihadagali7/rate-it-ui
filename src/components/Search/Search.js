@@ -8,11 +8,11 @@ import { Provider } from "jotai";
 import { theme } from "../../Theme/Theme";
 import {
   Container,
-  InputLabel,
+  InputLabel, ListItem,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -27,21 +27,23 @@ import Tooltip from "@mui/material/Tooltip";
 import SearchClient from "../../client/SearchClient";
 import SearchResults from "./SearchResults";
 import SearchResultsMobile from "./SearchResultsMobile";
+import SearchResultsDesktopLoading from "../../shared/loading/SearchResultsDesktopLoading";
+import SearchResultsMobileLoading from "../../shared/loading/SearchResultsMobileLoading";
 
 const useStyles = makeStyles({
   container: {
-    margin: "20px 35px",
+    margin: "20px 35px"
   },
   searchBtn: {
     backgroundColor: "#f4afc2",
     "&:hover": {
-      backgroundColor: "#f4afc2",
-    },
+      backgroundColor: "#f4afc2"
+    }
   },
   search: {
     fontWeight: "900",
-    fontSize: "15px",
-  },
+    fontSize: "15px"
+  }
 });
 
 const Search = () => {
@@ -50,6 +52,7 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [mediaType, setMediaType] = useState("movie");
   const [resultType, setResultType] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleMediaType = (event, media) => {
     if (media !== null) {
@@ -99,12 +102,14 @@ const Search = () => {
   );
 
   const handleSearch = async () => {
+    setLoading(true);
     if (searchKeyword.length > 0) {
       const result = await SearchClient.searchMedia(mediaType, searchKeyword);
       const finalList = result.data.mediaList;
       setResultType(result.mediaType);
       setSearchResults(finalList);
     }
+    setLoading(false);
   };
 
   return (
@@ -115,18 +120,18 @@ const Search = () => {
             <Box
               sx={{
                 width: "100%",
-                height: searchResults.length > 0 ? "100%" : 200,
-                margin: "auto",
+                height: (searchResults.length > 0) || loading ? "100%" : 200,
+                margin: "auto"
               }}
             >
               <Paper
                 elevation={6}
                 sx={{
                   width: "100%",
-                  height: searchResults.length > 0 ? "100%" : 200,
+                  height: (searchResults.length > 0) || loading ? "100%" : 200,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px",
+                  borderRadius: "17px"
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -145,8 +150,8 @@ const Search = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             placeholder="Search for your favorite media"
@@ -165,9 +170,9 @@ const Search = () => {
                             float: "right",
                             border: "transparent",
                             "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
+                              border: "transparent"
                             },
-                            borderRadius: "17px",
+                            borderRadius: "17px"
                           }}
                         >
                           <Typography
@@ -180,22 +185,28 @@ const Search = () => {
                       </Grid>
                     </Grid>
                   </Box>
-                  {searchResults.length > 0 && (
-                    <>
-                      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                  <>
+                    <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                      {loading ? (
+                        <SearchResultsMobileLoading />
+                      ) : searchResults.length > 0 && (
                         <SearchResultsMobile
                           results={searchResults}
                           resultType={resultType}
                         />
-                      </Box>
-                      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }}}>
+                      )}
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                      {loading ? (
+                        <SearchResultsDesktopLoading />
+                      ) : searchResults.length > 0 && (
                         <SearchResults
                           results={searchResults}
                           resultType={resultType}
                         />
-                      </Box>
-                    </>
-                  )}
+                      )}
+                    </Box>
+                  </>
                 </div>
               </Paper>
             </Box>

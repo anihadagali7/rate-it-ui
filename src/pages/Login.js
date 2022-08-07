@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Provider } from "jotai";
 import {
+  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
@@ -46,6 +47,7 @@ const Login = () => {
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const [loading, setLoading] = useState(false);
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -67,6 +69,7 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     if (validateInput()) {
       console.log("valid");
       const result = await AuthClient.login(login.email, login.password);
@@ -168,6 +171,7 @@ const Login = () => {
                           sx={{
                             marginTop: "10px",
                             fontWeight: "bold",
+                            fontSize: '14px'
                           }}
                           variant="blueText"
                         >
@@ -186,8 +190,20 @@ const Login = () => {
                               border: "transparent",
                             },
                             borderRadius: "17px",
+                            maxHeight: '35px',
+                            "&.Mui-disabled": {
+                              color: "#fff",
+                              background: "#9E9E9E",
+                            }
                           }}
+                          disabled={loading}
                         >
+                          {loading && (
+                            <div style={{color: '#ffffff'}}>
+                              <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
+                            </div>
+                          )}
+
                           <Typography
                             variant="normalText"
                             className={classes.login}
