@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Provider } from "jotai";
 import {
+  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
@@ -50,6 +51,7 @@ const Signup = () => {
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const [loading, setLoading] = useState(false);
 
   const onChangeFirstName = (event) => {
     setNewAccount((credentials) => ({
@@ -116,6 +118,7 @@ const Signup = () => {
   };
 
   const handleSignup = async () => {
+    setLoading(true);
     const newUser = {
       firstName: newAccount.firstName,
       lastName: newAccount.lastName,
@@ -290,8 +293,19 @@ const Signup = () => {
                               border: "transparent",
                             },
                             borderRadius: "17px",
+                            maxHeight: '35px',
+                            "&.Mui-disabled": {
+                              color: "#fff",
+                              background: "#9E9E9E",
+                            }
                           }}
+                          disabled={loading}
                         >
+                          {loading && (
+                            <div style={{color: '#ffffff'}}>
+                              <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
+                            </div>
+                          )}
                           <Typography
                             variant="normalText"
                             className={classes.login}
