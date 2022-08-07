@@ -183,18 +183,18 @@ const Search = () => {
                   </Box>
                   {searchResults.length > 0 && (
                     <>
-                      <BrowserView>
-                        <SearchResults
-                          results={searchResults}
-                          resultType={resultType}
-                        />
-                      </BrowserView>
-                      <MobileView>
+                      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                         <SearchResultsMobile
                           results={searchResults}
                           resultType={resultType}
                         />
-                      </MobileView>
+                      </Box>
+                      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }}}>
+                        <SearchResults
+                          results={searchResults}
+                          resultType={resultType}
+                        />
+                      </Box>
                     </>
                   )}
                 </div>
