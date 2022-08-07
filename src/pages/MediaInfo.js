@@ -20,7 +20,6 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import { BrowserView, MobileView } from "react-device-detect";
 
 const MediaInfo = () => {
   const [mediaTypeParams, setMediaTypeParams] = useState("");
@@ -283,9 +282,11 @@ const MediaInfo = () => {
               }}
             >
               <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                <Box>
-                  <BrowserView>{desktopView(media)}</BrowserView>
-                  <MobileView>{mobileView(media)}</MobileView>
+                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                  {mobileView(media)}
+                </Box>
+                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }}}>
+                  {desktopView(media)}
                 </Box>
               </div>
             </Paper>

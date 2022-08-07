@@ -26,7 +26,6 @@ import MicIcon from "@mui/icons-material/Mic";
 import Tooltip from "@mui/material/Tooltip";
 import SearchClient from "../../client/SearchClient";
 import SearchResults from "./SearchResults";
-import { BrowserView, MobileView } from "react-device-detect";
 import SearchResultsMobile from "./SearchResultsMobile";
 
 const useStyles = makeStyles({
