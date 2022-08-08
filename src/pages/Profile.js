@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,12 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
-import { Provider, useAtom } from "jotai";
+import { Provider } from "jotai";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { currentUser } from "../state/user";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { useParams } from "react-router-dom";
+import UserClient from "../client/UserClient";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -24,12 +25,26 @@ const TabPanel = (props) => {
 };
 
 const Profile = () => {
-  const [user, setUser] = useAtom(currentUser);
+  const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
+  const [currentProfile, setCurrentProfile] = useState({});
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const getProfileDetails = async () => {
+    const result = await UserClient.getUserInfo(userName);
+    setCurrentProfile(result.data.user)
+  };
+
+  const getLength = (list) => {
+    return list.length;
+  }
+
+  useEffect(async () => {
+    getProfileDetails();
+  }, [userName])
 
   return (
     <Provider>
@@ -94,7 +109,7 @@ const Profile = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {user.firstName}
+                      {currentProfile.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -105,8 +120,32 @@ const Profile = () => {
                         fontSize: "13px",
                       }}
                     >
-                      @{user.userName}
+                      @{currentProfile.userName}
                     </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <span
+                      style={{
+                        marginLeft: "22px",
+                        marginTop: "0px",
+                        fontSize: "13px",
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {currentProfile && currentProfile.following && currentProfile.following.length}
+                      <span style={{fontWeight: 'normal'}}> following</span>
+                    </span>
+                    <span
+                      style={{
+                        marginLeft: "22px",
+                        marginTop: "0px",
+                        fontSize: "13px",
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {currentProfile && currentProfile.followers && currentProfile.followers.length}
+                      <span style={{fontWeight: 'normal'}}> followers</span>
+                    </span>
                   </Grid>
                 </Grid>
                 <Box sx={{ width: "100%" }}>

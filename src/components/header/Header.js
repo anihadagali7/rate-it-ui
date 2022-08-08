@@ -136,7 +136,7 @@ const Header = ({ displayMenu }) => {
 
     if (pathname === "/") {
       setTabValue(0);
-    } else if (pathname === "/profile") {
+    } else if (pathname.includes("/profile/")) {
       setTabValue(1);
     } else if (pathname === "/playlist") {
       setTabValue(2);
@@ -333,7 +333,7 @@ const Header = ({ displayMenu }) => {
                   <Avatar
                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                     component={Link}
-                    to={"/profile"}
+                    to={`/profile/${user.userName}`}
                     onClick={toggleDrawer(false)}
                   >
                     {user.firstName[0]}
@@ -372,7 +372,7 @@ const Header = ({ displayMenu }) => {
                 </Typography>
               </ListItemText>
             </ListItem>
-            <ListItem key={"profile"} component={Link} to={"/profile"}>
+            <ListItem key={"profile"} component={Link} to={`/profile/${user.userName}`}>
               <ListItemIcon>
                 <AccountCircleIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
