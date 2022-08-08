@@ -30,6 +30,7 @@ const Profile = () => {
   const [tabValue, setTabValue] = useState(0);
   const [currentProfile, setCurrentProfile] = useState({});
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
+  const [friendsTab, setFriendsTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -48,7 +49,8 @@ const Profile = () => {
     setOpenFriendsModal(false);
   };
 
-  const handleFriendsModalOpen = () => {
+  const handleFriendsModalOpen = (initialTab) => {
+    setFriendsTab(initialTab);
     setOpenFriendsModal(true);
   };
 
@@ -96,7 +98,7 @@ const Profile = () => {
                         width: "100%",
                       }}
                     >
-                      <Typography
+                      <Typography component="div"
                         sx={{
                           fontSize: "12px",
                           color: "#00a8ff",
@@ -129,7 +131,7 @@ const Profile = () => {
                       @{currentProfile.userName}
                     </Typography>
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid item xs={12}>
                     <span
                       style={{
                         marginLeft: "22px",
@@ -138,7 +140,7 @@ const Profile = () => {
                         fontWeight: 'bold',
                         cursor: 'pointer'
                       }}
-                      onClick={handleFriendsModalOpen}
+                      onClick={() => handleFriendsModalOpen(0)}
                     >
                       {currentProfile && currentProfile.following && currentProfile.following.length}
                       <span style={{fontWeight: 'normal'}}> following</span>
@@ -151,7 +153,7 @@ const Profile = () => {
                         fontWeight: 'bold',
                         cursor: 'pointer'
                       }}
-                      onClick={handleFriendsModalOpen}
+                      onClick={() => handleFriendsModalOpen(1)}
                     >
                       {currentProfile && currentProfile.followers && currentProfile.followers.length}
                       <span style={{fontWeight: 'normal'}}> followers</span>
@@ -221,7 +223,8 @@ const Profile = () => {
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} name={currentProfile.firstName} />
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
+            openingTab={friendsTab} followingList={currentProfile.following} followersList={currentProfile.followers}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>

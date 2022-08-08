@@ -18,4 +18,37 @@ const getUserInfo = (userName) => {
     });
 };
 
-export default {getUserInfo}
+const getFollowing = (userName) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(
+      API_URL + `/api/${userName}/following`,
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+
+
+const getFollowers = (userName) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(
+      API_URL + `/api/${userName}/followers`,
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export default {getUserInfo, getFollowing, getFollowers}
