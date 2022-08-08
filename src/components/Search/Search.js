@@ -29,6 +29,10 @@ import SearchResults from "./SearchResults";
 import SearchResultsMobile from "./SearchResultsMobile";
 import SearchResultsDesktopLoading from "../../shared/loading/SearchResultsDesktopLoading";
 import SearchResultsMobileLoading from "../../shared/loading/SearchResultsMobileLoading";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const useStyles = makeStyles({
   container: {
@@ -62,6 +66,10 @@ const Search = () => {
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
+  };
+
+  const resetSearch = () => {
+    setSearchKeyword("");
   };
 
   const mediaTypeToggle = () => (
@@ -144,13 +152,16 @@ const Search = () => {
                       <Grid item xs={12}>
                         {mediaTypeToggle()}
                       </Grid>
-                      <Grid item xs={9} sx={{ width: "100%" }}>
-                        <InputLabel>
+                      <Grid item xs={12} sx={{ width: "100%" }}>
+                        <Paper elevation={4}
+                          component="form"
+                          sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 'auto', borderRadius: "17px" }}
+                        >
                           <TextField
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px"
+                                border: "none"
                               }
                             }}
                             size="small"
@@ -159,29 +170,16 @@ const Search = () => {
                             onChange={onChangeSearch}
                             required
                           />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Button
-                          variant="outlined"
-                          className={classes.searchBtn}
-                          onClick={handleSearch}
-                          sx={{
-                            float: "right",
-                            border: "transparent",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent"
-                            },
-                            borderRadius: "17px"
-                          }}
-                        >
-                          <Typography
-                            variant="normalText"
-                            className={classes.search}
-                          >
-                            Search
-                          </Typography>
-                        </Button>
+                          {searchKeyword.length > 0 && (
+                            <IconButton sx={{ p: "10px" }} onClick={resetSearch}>
+                              <ClearIcon />
+                            </IconButton>
+                          )}
+                          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                          <IconButton  sx={{ p: "10px" }} onClick={handleSearch}>
+                            <SearchIcon />
+                          </IconButton>
+                        </Paper>
                       </Grid>
                     </Grid>
                   </Box>
