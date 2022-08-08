@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, Dialog, DialogTitle, StyledEngineProvider,
+  Box, Button, Dialog, DialogTitle, StyledEngineProvider,
   ThemeProvider, Typography
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
@@ -11,11 +11,14 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import UserClient from "../client/UserClient";
+import Avatar from "@mui/material/Avatar";
+import { Link } from "react-router-dom";
+import Stack from "@mui/material/Stack";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
-  return <div {...other}>{value === index && <Box p={3}>{children}</Box>}</div>;
+  return <div {...other}>{value === index && <Box >{children}</Box>}</div>;
 };
 
 const FriendsModal = ({ open, onClose, userName, openingTab }) => {
@@ -91,31 +94,110 @@ const FriendsModal = ({ open, onClose, userName, openingTab }) => {
                 <TabPanel value={tabValue} index={0}>
                   <List component="nav">
                     {followingList && followingList.length > 0 ? followingList.map((profile) => (
-                      <>
-                        <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-                          <Typography component="div">
-                            {profile.firstName}
-                          </Typography>
-
-                        </ListItem>
-                        <Divider />
-                      </>
-                    )) :
+                        <>
+                          <ListItem >
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                            >
+                              <>
+                                <Avatar
+                                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                                  component={Link}
+                                  to={`/profile/${profile.userName}`}
+                                >
+                                  {profile.firstName[0]}
+                                  {profile.lastName[0]}
+                                </Avatar>
+                                <div>
+                                  <Stack direction="column">
+                                    <Typography>
+                                      {profile.firstName} {profile.lastName}
+                                    </Typography>
+                                    <Typography>@{profile.userName}</Typography>
+                                  </Stack>
+                                </div>
+                                <Button
+                                  variant="outlined"
+                                  sx={{
+                                    borderRadius: "17px",
+                                    width: "100%",
+                                    height: '30px',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                >
+                                  <Typography component="div"
+                                              sx={{
+                                                fontSize: "12px",
+                                                color: "#00a8ff",
+                                                fontWeight: "bold",
+                                              }}
+                                  >
+                                    Following
+                                  </Typography>
+                                </Button>
+                              </>
+                            </Stack>
+                          </ListItem>
+                          <Divider />
+                        </>
+                      )) :
                       <div>No following</div>}
                   </List>
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
                   <List component="nav">
                     {followersList && followersList.length > 0 ? followersList.map((profile) => (
-                      <>
-                        <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-                          <Typography component="div">
-                            {profile.firstName}
-                          </Typography>
-                        </ListItem>
-                        <Divider />
-                      </>
-                    )) : 
+                        <>
+                          <ListItem >
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                            >
+                              <>
+                                <Avatar
+                                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                                  component={Link}
+                                  to={`/profile/${profile.userName}`}
+                                >
+                                  {profile.firstName[0]}
+                                  {profile.lastName[0]}
+                                </Avatar>
+                                <div>
+                                  <Stack direction="column">
+                                    <Typography>
+                                      {profile.firstName} {profile.lastName}
+                                    </Typography>
+                                    <Typography>@{profile.userName}</Typography>
+                                  </Stack>
+                                </div>
+                                <Button
+                                  variant="outlined"
+                                  sx={{
+                                    borderRadius: "17px",
+                                    width: "100%",
+                                    height: '30px',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                >
+                                  <Typography component="div"
+                                              sx={{
+                                                fontSize: "12px",
+                                                color: "#00a8ff",
+                                                fontWeight: "bold",
+                                              }}
+                                  >
+                                    Following
+                                  </Typography>
+                                </Button>
+                              </>
+                            </Stack>
+                          </ListItem>
+                          <Divider />
+                        </>
+                      )) :
                       <div>No followers</div>}
                   </List>
                 </TabPanel>
