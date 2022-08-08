@@ -17,6 +17,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
+import FriendsModal from "../components/FriendsModal";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -28,6 +29,7 @@ const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const [currentProfile, setCurrentProfile] = useState({});
+  const [openFriendsModal, setOpenFriendsModal] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -38,13 +40,17 @@ const Profile = () => {
     setCurrentProfile(result.data.user)
   };
 
-  const getLength = (list) => {
-    return list.length;
-  }
-
   useEffect(async () => {
     getProfileDetails();
   }, [userName])
+
+  const handleFriendsModalClose = () => {
+    setOpenFriendsModal(false);
+  };
+
+  const handleFriendsModalOpen = () => {
+    setOpenFriendsModal(true);
+  };
 
   return (
     <Provider>
@@ -123,14 +129,16 @@ const Profile = () => {
                       @{currentProfile.userName}
                     </Typography>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={5}>
                     <span
                       style={{
                         marginLeft: "22px",
                         marginTop: "0px",
                         fontSize: "13px",
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
                       }}
+                      onClick={handleFriendsModalOpen}
                     >
                       {currentProfile && currentProfile.following && currentProfile.following.length}
                       <span style={{fontWeight: 'normal'}}> following</span>
@@ -140,8 +148,10 @@ const Profile = () => {
                         marginLeft: "22px",
                         marginTop: "0px",
                         fontSize: "13px",
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
                       }}
+                      onClick={handleFriendsModalOpen}
                     >
                       {currentProfile && currentProfile.followers && currentProfile.followers.length}
                       <span style={{fontWeight: 'normal'}}> followers</span>
@@ -210,6 +220,9 @@ const Profile = () => {
               </Paper>
             </Box>
           </Container>
+          {openFriendsModal && (
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} name={currentProfile.firstName} />
+          )}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

@@ -221,7 +221,7 @@ const Header = ({ displayMenu }) => {
               label="Profile"
               iconPosition="start"
               component={Link}
-              to="/profile"
+              to={`/profile/${user.userName}`}
             />
             <AntTab
               icon={<PlaylistAddIcon />}
