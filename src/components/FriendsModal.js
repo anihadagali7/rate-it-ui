@@ -21,10 +21,11 @@ const TabPanel = (props) => {
   return <div {...other}>{value === index && <Box >{children}</Box>}</div>;
 };
 
-const FriendsModal = ({ open, onClose, userName, openingTab }) => {
+const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
   const [tabValue, setTabValue] = useState(openingTab);
   const [followingList, setFollowingList] = useState({});
   const [followersList, setFollowersList] = useState({});
+  const [updateList, setUpdateList] = useState(false);
 
   const getFollowers = async () => {
     const result = await UserClient.getFollowers(userName);
@@ -39,11 +40,59 @@ const FriendsModal = ({ open, onClose, userName, openingTab }) => {
   useEffect(() => {
     getFollowers();
     getFollowing();
-  }, [userName]);
+  }, [userName, updateList]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const displayFollowingButton = (profile) => {
+    // check if current user follows this profile
+    // if yes, show "following" text
+    // if not, show "follow" text
+
+    // console.log("-> currentUser.following", currentUser.following);
+    // console.log("-> profile", profile);
+    let currentlyFollows = currentUser.following.includes(profile);
+    let text = currentlyFollows ? "Following" : "Follow";
+    let buttonType = currentlyFollows ? "outlined" : "contained"
+    return (
+      <Button
+        variant={buttonType}
+        sx={{
+          borderRadius: "17px",
+          width: "100%",
+          height: '30px',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
+        onClick={() => {
+          currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)
+        }}
+      >
+        <Typography component="div"
+                    sx={{
+                      fontSize: "12px",
+                      color: "#00a8ff",
+                      fontWeight: "bold",
+                    }}
+        >
+          {text}
+        </Typography>
+      </Button>
+    )
+  }
+
+  const unFollowUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  }
+
+  const followUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.followUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  }
 
   return (
     <>
@@ -117,26 +166,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab }) => {
                                     <Typography>@{profile.userName}</Typography>
                                   </Stack>
                                 </div>
-                                <Button
-                                  variant="outlined"
-                                  sx={{
-                                    borderRadius: "17px",
-                                    width: "100%",
-                                    height: '30px',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                  }}
-                                >
-                                  <Typography component="div"
-                                              sx={{
-                                                fontSize: "12px",
-                                                color: "#00a8ff",
-                                                fontWeight: "bold",
-                                              }}
-                                  >
-                                    Following
-                                  </Typography>
-                                </Button>
+                                {displayFollowingButton(profile.userName)}
                               </>
                             </Stack>
                           </ListItem>

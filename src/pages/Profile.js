@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
-import { Provider } from "jotai";
+import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Tabs from "@mui/material/Tabs";
@@ -18,6 +18,7 @@ import Tab from "@mui/material/Tab";
 import { useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/FriendsModal";
+import { currentUser } from "../state/user";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -31,6 +32,7 @@ const Profile = () => {
   const [currentProfile, setCurrentProfile] = useState({});
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [friendsTab, setFriendsTab] = useState(0);
+  const [user, setUser] = useAtom(currentUser);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -46,6 +48,7 @@ const Profile = () => {
   }, [userName])
 
   const handleFriendsModalClose = () => {
+    getProfileDetails();
     setOpenFriendsModal(false);
   };
 
@@ -223,8 +226,8 @@ const Profile = () => {
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
-            openingTab={friendsTab} followingList={currentProfile.following} followersList={currentProfile.followers}/>
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} currentUser={user}
+            openingTab={friendsTab}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { currentUser } from "../state/user";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
@@ -51,4 +52,42 @@ const getFollowers = (userName) => {
     });
 };
 
-export default {getUserInfo, getFollowing, getFollowers}
+const unFollowUser = (currentUser, userToUnfollow) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .post(
+      API_URL + `/api/friends/unfollow`,
+      {
+        currentUser, userToUnfollow
+      },
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.status;
+    });
+}
+
+const followUser = (currentUser, userToFollow) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .post(
+      API_URL + `/api/friends/follow`,
+      {
+        currentUser, userToFollow
+      },
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.status;
+    });
+}
+
+export default {getUserInfo, getFollowing, getFollowers, unFollowUser, followUser}
