@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, Button, Dialog, DialogTitle, StyledEngineProvider,
+  Box, Button, Dialog, DialogTitle, Popover, StyledEngineProvider,
   ThemeProvider, Typography
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
@@ -14,18 +14,22 @@ import UserClient from "../client/UserClient";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
-  return <div {...other}>{value === index && <Box >{children}</Box>}</div>;
+  return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
 };
 
 const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
   const [tabValue, setTabValue] = useState(openingTab);
   const [followingList, setFollowingList] = useState({});
   const [followersList, setFollowersList] = useState({});
-  const [updateList, setUpdateList] = useState(false);
+  const [updateList, setUpdateList] = useState(null);
+
+  const [unfollowPopover, setUnfollowPopover] = useState(false);
+  const openPopover = Boolean(unfollowPopover);
 
   const getFollowers = async () => {
     const result = await UserClient.getFollowers(userName);
@@ -46,63 +50,85 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
     setTabValue(newValue);
   };
 
-  const displayFollowingButton = (profile) => {
-    // check if current user follows this profile
-    // if yes, show "following" text
-    // if not, show "follow" text
+  const handleUnFollowPopoverClose = () => {
+    setUnfollowPopover(null);
+  };
 
+  const handleUnFollowPopoverOpen = (event) => {
+    setUnfollowPopover((event.currentTarget));
+  };
+
+  const displayFollowingButton = (profile) => {
     // console.log("-> currentUser.following", currentUser.following);
     // console.log("-> profile", profile);
     let currentlyFollows = currentUser.following.includes(profile);
     let text = currentlyFollows ? "Following" : "Follow";
-    let buttonType = currentlyFollows ? "outlined" : "contained"
+    let buttonType = currentlyFollows ? "outlined" : "contained";
     return (
-      <Button
-        variant={buttonType}
-        sx={{
-          borderRadius: "17px",
-          width: "100%",
-          height: '30px',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
-        onClick={() => {
-          currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)
-        }}
-      >
-        <Typography component="div"
-                    sx={{
-                      fontSize: "12px",
-                      color: "#00a8ff",
-                      fontWeight: "bold",
-                    }}
+      <>
+        <Button
+          variant={buttonType}
+          sx={{
+            borderRadius: "17px",
+            width: "100%",
+            height: "30px",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: currentlyFollows ? '#ffffff' : "#00a8ff"
+          }}
+          // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
+          onClick={handleUnFollowPopoverOpen}
         >
-          {text}
-        </Typography>
-      </Button>
-    )
-  }
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: currentlyFollows ? '#00a8ff' : "#ffffff" ,
+                        fontWeight: "bold"
+                      }}
+          >
+            {text}
+          </Typography>
+        </Button>
+        <Popover
+          open={openPopover}
+          anchorEl={unfollowPopover}
+          onClose={handleUnFollowPopoverClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <Button variant="outlined" endIcon={<PersonRemoveIcon />}>
+            Unfollow @{profile}
+          </Button>
+        </Popover>
+      </>
+    );
+  };
 
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
     result == 200 && setUpdateList(!updateList);
-  }
+  };
 
   const followUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.followUser(currentUser, userToUnfollow);
     result == 200 && setUpdateList(!updateList);
-  }
+  };
 
   return (
     <>
       <Provider>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>
-            <Dialog open={open} onClose={onClose} maxWidth="xs"
-                    sx={{ "&.MuiPaper-root": { width: "100%", height: 400, maxWidth: 300, overflowY: "hidden" } }}>
+            <Dialog open={open} onClose={onClose}
+                    sx={{ "& .MuiDialog-paper": { width: '100%', height: 300, maxWidth: 500, overflowY: "hidden" } }}>
               <DialogTitle
-                sx={{ fontSize: "13px", fontWeight: "bold", margin: "auto", height: "0px" }}>{userName}</DialogTitle>
+                sx={{ fontSize: "13px", fontWeight: "bold", height: "0px", textAlign: 'center' }}>{userName}</DialogTitle>
               <Box sx={{ width: "100%" }}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <Tabs
@@ -144,7 +170,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                   <List component="nav">
                     {followingList && followingList.length > 0 ? followingList.map((profile) => (
                         <>
-                          <ListItem >
+                          <ListItem>
                             <Stack
                               direction="row"
                               spacing={2}
@@ -166,7 +192,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                     <Typography>@{profile.userName}</Typography>
                                   </Stack>
                                 </div>
-                                {displayFollowingButton(profile.userName)}
+                                {/*{displayFollowingButton(profile.userName)}*/}
                               </>
                             </Stack>
                           </ListItem>
@@ -180,7 +206,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                   <List component="nav">
                     {followersList && followersList.length > 0 ? followersList.map((profile) => (
                         <>
-                          <ListItem >
+                          <ListItem>
                             <Stack
                               direction="row"
                               spacing={2}
@@ -202,26 +228,26 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                     <Typography>@{profile.userName}</Typography>
                                   </Stack>
                                 </div>
-                                <Button
-                                  variant="outlined"
-                                  sx={{
-                                    borderRadius: "17px",
-                                    width: "100%",
-                                    height: '30px',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                  }}
-                                >
-                                  <Typography component="div"
-                                              sx={{
-                                                fontSize: "12px",
-                                                color: "#00a8ff",
-                                                fontWeight: "bold",
-                                              }}
-                                  >
-                                    Following
-                                  </Typography>
-                                </Button>
+                                {/*<Button*/}
+                                {/*  variant="outlined"*/}
+                                {/*  sx={{*/}
+                                {/*    borderRadius: "17px",*/}
+                                {/*    width: "100%",*/}
+                                {/*    height: "30px",*/}
+                                {/*    alignItems: "center",*/}
+                                {/*    justifyContent: "center"*/}
+                                {/*  }}*/}
+                                {/*>*/}
+                                {/*  <Typography component="div"*/}
+                                {/*              sx={{*/}
+                                {/*                fontSize: "12px",*/}
+                                {/*                color: "#00a8ff",*/}
+                                {/*                fontWeight: "bold"*/}
+                                {/*              }}*/}
+                                {/*  >*/}
+                                {/*    Follow*/}
+                                {/*  </Typography>*/}
+                                {/*</Button>*/}
                               </>
                             </Stack>
                           </ListItem>
