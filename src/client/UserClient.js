@@ -19,6 +19,22 @@ const getUserInfo = (userName) => {
     });
 };
 
+const getAllUsers = () => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(
+      API_URL + `/api/allUsers`,
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+
 const getFollowing = (userName) => {
   const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
@@ -90,4 +106,4 @@ const followUser = (currentUser, userToFollow) => {
     });
 }
 
-export default {getUserInfo, getFollowing, getFollowers, unFollowUser, followUser}
+export default {getUserInfo, getFollowing, getFollowers, unFollowUser, followUser, getAllUsers}

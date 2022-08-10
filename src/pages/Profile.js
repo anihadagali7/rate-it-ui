@@ -19,6 +19,9 @@ import { useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/FriendsModal";
 import { currentUser } from "../state/user";
+import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import AddFriendsModal from "../components/AddFriendsModal";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -31,6 +34,7 @@ const Profile = () => {
   const [tabValue, setTabValue] = useState(0);
   const [currentProfile, setCurrentProfile] = useState({});
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
+  const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
 
@@ -55,6 +59,14 @@ const Profile = () => {
   const handleFriendsModalOpen = (initialTab) => {
     setFriendsTab(initialTab);
     setOpenFriendsModal(true);
+  };
+
+  const handleAddFriendsModalClose = () => {
+    setOpenAddFriendsModal(false);
+  };
+
+  const handleAddFriendsModalOpen = () => {
+    setOpenAddFriendsModal(true);
   };
 
   return (
@@ -162,6 +174,13 @@ const Profile = () => {
                       <span style={{fontWeight: 'normal'}}> followers</span>
                     </span>
                   </Grid>
+                  <Grid item xs={12}>
+                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />} sx={{color: "#00a8ff", marginLeft: '15px'}}
+                    onClick={handleAddFriendsModalOpen}>
+                      Add friends
+                    </Button>
+
+                  </Grid>
                 </Grid>
                 <Box sx={{ width: "100%" }}>
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -228,6 +247,9 @@ const Profile = () => {
           {openFriendsModal && (
             <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} currentUser={user}
             openingTab={friendsTab}/>
+          )}
+          {openAddFriendsModal && (
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>
