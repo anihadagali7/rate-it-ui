@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,9 +13,15 @@ import { theme } from "../Theme/Theme";
 import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { currentUser } from "../state/user";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { useParams } from "react-router-dom";
+import UserClient from "../client/UserClient";
+import FriendsModal from "../components/FriendsModal";
+import { currentUser } from "../state/user";
+import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import AddFriendsModal from "../components/AddFriendsModal";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -24,11 +30,43 @@ const TabPanel = (props) => {
 };
 
 const Profile = () => {
-  const [user, setUser] = useAtom(currentUser);
+  const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
+  const [currentProfile, setCurrentProfile] = useState({});
+  const [openFriendsModal, setOpenFriendsModal] = useState(false);
+  const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
+  const [friendsTab, setFriendsTab] = useState(0);
+  const [user, setUser] = useAtom(currentUser);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+
+  const getProfileDetails = async () => {
+    const result = await UserClient.getUserInfo(userName);
+    setCurrentProfile(result.data.user)
+  };
+
+  useEffect(async () => {
+    getProfileDetails();
+  }, [userName])
+
+  const handleFriendsModalClose = () => {
+    getProfileDetails();
+    setOpenFriendsModal(false);
+  };
+
+  const handleFriendsModalOpen = (initialTab) => {
+    setFriendsTab(initialTab);
+    setOpenFriendsModal(true);
+  };
+
+  const handleAddFriendsModalClose = () => {
+    setOpenAddFriendsModal(false);
+  };
+
+  const handleAddFriendsModalOpen = () => {
+    setOpenAddFriendsModal(true);
   };
 
   return (
@@ -75,7 +113,7 @@ const Profile = () => {
                         width: "100%",
                       }}
                     >
-                      <Typography
+                      <Typography component="div"
                         sx={{
                           fontSize: "12px",
                           color: "#00a8ff",
@@ -94,7 +132,7 @@ const Profile = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {user.firstName}
+                      {currentProfile.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -105,8 +143,43 @@ const Profile = () => {
                         fontSize: "13px",
                       }}
                     >
-                      @{user.userName}
+                      @{currentProfile.userName}
                     </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <span
+                      style={{
+                        marginLeft: "22px",
+                        marginTop: "0px",
+                        fontSize: "13px",
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleFriendsModalOpen(0)}
+                    >
+                      {currentProfile && currentProfile.following && currentProfile.following.length}
+                      <span style={{fontWeight: 'normal'}}> following</span>
+                    </span>
+                    <span
+                      style={{
+                        marginLeft: "22px",
+                        marginTop: "0px",
+                        fontSize: "13px",
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => handleFriendsModalOpen(1)}
+                    >
+                      {currentProfile && currentProfile.followers && currentProfile.followers.length}
+                      <span style={{fontWeight: 'normal'}}> followers</span>
+                    </span>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />} sx={{color: "#00a8ff", marginLeft: '15px'}}
+                    onClick={handleAddFriendsModalOpen}>
+                      Add friends
+                    </Button>
+
                   </Grid>
                 </Grid>
                 <Box sx={{ width: "100%" }}>
@@ -171,6 +244,13 @@ const Profile = () => {
               </Paper>
             </Box>
           </Container>
+          {openFriendsModal && (
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} currentUser={user}
+            openingTab={friendsTab}/>
+          )}
+          {openAddFriendsModal && (
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose}/>
+          )}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

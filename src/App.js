@@ -24,7 +24,7 @@ export default class App extends Component {
                 <Route exact path="/login" element={<Login />}></Route>
                 <Route exact path="/signup" element={<Signup />}></Route>
                 <Route exact path="/:mediaType/:id" element={<MediaInfo />}></Route>
-                <Route exact path="/profile" element={<Profile />}></Route>
+                <Route exact path="/profile/:userName" element={<Profile />}></Route>
                 <Route exact path="/playlist" element={<Login />}></Route>
                 <Route exact path="/wishlist" element={<Login />}></Route>
               </Routes>
