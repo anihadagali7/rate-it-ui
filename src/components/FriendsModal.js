@@ -186,7 +186,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                 </Avatar>
                                 <div>
                                   <Stack direction="column">
-                                    <Typography>
+                                    <Typography sx={{fontWeight: 'bold'}}>
                                       {profile.firstName} {profile.lastName}
                                     </Typography>
                                     <Typography>@{profile.userName}</Typography>
