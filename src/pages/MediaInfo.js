@@ -27,12 +27,16 @@ const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [media, setMedia] = useState({});
 
-  useEffect(async () => {
+  useEffect(() => {
     setMediaTypeParams(mediaType);
     setMediaIdParams(id);
+    getMediaInfoDetails(mediaType, id);
+  }, [id, mediaType]);
+
+  const getMediaInfoDetails = async (mediaType, id) => {
     const result = await MediaClient.getMediaInfoDetails(mediaType, id);
     setMedia(result.data.media);
-  }, []);
+  };
 
   const listToString = (list) => {
     let newString = "";

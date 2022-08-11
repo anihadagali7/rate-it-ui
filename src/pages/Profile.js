@@ -47,7 +47,7 @@ const Profile = () => {
     setCurrentProfile(result.data.user)
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     getProfileDetails();
   }, [userName])
 
