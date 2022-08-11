@@ -19,10 +19,10 @@ import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
-import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 
-const AddFriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
+const AddFriendsModal = ({ open, onClose, currentUser }) => {
+
   const [usersList, setUsers] = useState([]);
   const [filteredUsersList, setFilteredUsersList] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -33,6 +33,8 @@ const AddFriendsModal = ({ open, onClose, userName, openingTab, currentUser }) =
 
   const getAllUsers = async () => {
     const result = await UserClient.getAllUsers();
+    const index = result.data.findIndex(item => item.userName === currentUser.userName)
+    result.data.splice(index, 1);
     setUsers(result.data);
   };
 
@@ -54,10 +56,6 @@ const AddFriendsModal = ({ open, onClose, userName, openingTab, currentUser }) =
   useEffect(() => {
     getAllUsers();
   }, []);
-
-  const selectBox = filteredUsersList.map(user => (
-    <li key={user.userName}>{user.userName}</li>
-  ));
 
   return (
     <>
@@ -118,6 +116,7 @@ const AddFriendsModal = ({ open, onClose, userName, openingTab, currentUser }) =
                                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                     component={Link}
                                     to={`/profile/${profile.userName}`}
+                                    onClick={onClose}
                                   >
                                     {profile.firstName[0]}
                                     {profile.lastName[0]}

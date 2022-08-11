@@ -249,7 +249,7 @@ const Profile = () => {
             openingTab={friendsTab}/>
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose}/>
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>
