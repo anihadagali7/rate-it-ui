@@ -17,11 +17,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
-import FriendsModal from "../components/FriendsModal";
+import FriendsModal from "../components/modals/FriendsModal";
 import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import AddFriendsModal from "../components/AddFriendsModal";
+import AddFriendsModal from "../components/modals/AddFriendsModal";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;

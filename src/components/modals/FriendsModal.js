@@ -5,12 +5,12 @@ import {
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { theme } from "../Theme/Theme";
+import { theme } from "../../Theme/Theme";
 import { Provider } from "jotai";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import UserClient from "../client/UserClient";
+import UserClient from "../../client/UserClient";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
