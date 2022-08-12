@@ -7,7 +7,7 @@ import {
   Container,
   StyledEngineProvider,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -20,16 +20,14 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import AddRatingModal from "../components/modals/AddRatingModal";
 
 const MediaInfo = () => {
-  const [mediaTypeParams, setMediaTypeParams] = useState("");
-  const [mediaIdParams, setMediaIdParams] = useState("");
   const { id, mediaType } = useParams();
   const [media, setMedia] = useState({});
+  const [openRatingModal, setOpenRatingModal] = useState(false);
 
   useEffect(() => {
-    setMediaTypeParams(mediaType);
-    setMediaIdParams(id);
     getMediaInfoDetails(mediaType, id);
   }, [id, mediaType]);
 
@@ -48,6 +46,14 @@ const MediaInfo = () => {
     return newString.substring(0, newString.length - 2);
   };
 
+  const handleAddRatingModalOpen = () => {
+    setOpenRatingModal(true);
+  };
+
+  const handleAddRatingModalClose = () => {
+    setOpenRatingModal(false);
+  };
+
   const displayMovieTvShow = (media) => (
     <>
       <Grid item xs={12} sx={{ width: "100%" }}>
@@ -56,7 +62,7 @@ const MediaInfo = () => {
           sx={{
             marginTop: "10px",
             fontSize: "18px",
-            fontWeight: "bold",
+            fontWeight: "bold"
           }}
         >
           {media.name}
@@ -114,7 +120,7 @@ const MediaInfo = () => {
           sx={{
             marginTop: "10px",
             fontSize: "18px",
-            fontWeight: "bold",
+            fontWeight: "bold"
           }}
         >
           {media.name}
@@ -174,9 +180,10 @@ const MediaInfo = () => {
               borderRadius: "17px",
               "&.MuiButtonBase-root:hover": {
                 border: "transparent",
-                backgroundColor: "#00a8ff",
-              },
+                backgroundColor: "#00a8ff"
+              }
             }}
+            onClick={handleAddRatingModalOpen}
           >
             <Typography variant="normalText">Add Rating</Typography>
           </Button>
@@ -189,8 +196,8 @@ const MediaInfo = () => {
               borderRadius: "17px",
               "&.MuiButtonBase-root:hover": {
                 border: "transparent",
-                backgroundColor: "#00a8ff",
-              },
+                backgroundColor: "#00a8ff"
+              }
             }}
           >
             <Typography variant="normalText">Add to Playlist</Typography>
@@ -227,9 +234,10 @@ const MediaInfo = () => {
             borderRadius: "17px",
             "&.MuiButtonBase-root:hover": {
               border: "transparent",
-              backgroundColor: "#00a8ff",
-            },
+              backgroundColor: "#00a8ff"
+            }
           }}
+          onClick={handleAddRatingModalOpen}
         >
           <Typography variant="normalText">Add Rating</Typography>
         </Button>
@@ -245,8 +253,8 @@ const MediaInfo = () => {
             width: "100%",
             "&.MuiButtonBase-root:hover": {
               border: "transparent",
-              backgroundColor: "#ffffff",
-            },
+              backgroundColor: "#ffffff"
+            }
           }}
         >
           <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
@@ -263,39 +271,44 @@ const MediaInfo = () => {
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}></ThemeProvider>
-        <Container
-          maxWidth={"sm"}
-          sx={{ marginTop: "50px", marginBottom: "25px" }}
-        >
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              margin: "auto",
-            }}
+        <ThemeProvider theme={theme}>
+          <Container
+            maxWidth={"sm"}
+            sx={{ marginTop: "50px", marginBottom: "25px" }}
           >
-            <Paper
-              elevation={6}
+            <Box
               sx={{
                 width: "100%",
                 height: "100%",
-                backgroundColor: "#FFFFFF",
-                margin: "auto",
-                borderRadius: "17px",
+                margin: "auto"
               }}
             >
-              <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                  {mobileView(media)}
-                </Box>
-                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }}}>
-                  {desktopView(media)}
-                </Box>
-              </div>
-            </Paper>
-          </Box>
-        </Container>
+              <Paper
+                elevation={6}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#FFFFFF",
+                  margin: "auto",
+                  borderRadius: "17px"
+                }}
+              >
+                <div style={{ padding: "0 35px", minHeight: "385px" }}>
+                  <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                    {mobileView(media)}
+                  </Box>
+                  <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                    {desktopView(media)}
+                  </Box>
+                </div>
+              </Paper>
+            </Box>
+          </Container>
+          {openRatingModal && (
+            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaType={mediaType}
+                            mediaId={id} mediaDetails={media} />
+          )}
+        </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
   );

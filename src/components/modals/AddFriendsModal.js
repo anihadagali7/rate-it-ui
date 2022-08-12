@@ -9,9 +9,9 @@ import {
   ThemeProvider,
   Typography
 } from "@mui/material";
-import { theme } from "../Theme/Theme";
+import { theme } from "../../Theme/Theme";
 import { Provider } from "jotai";
-import UserClient from "../client/UserClient";
+import UserClient from "../../client/UserClient";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import Paper from "@mui/material/Paper";
