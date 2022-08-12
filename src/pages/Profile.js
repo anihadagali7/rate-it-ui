@@ -7,7 +7,7 @@ import {
   Paper,
   StyledEngineProvider,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import { Provider, useAtom } from "jotai";
@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/FriendsModal";
 import { currentUser } from "../state/user";
-import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
+import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AddFriendsModal from "../components/AddFriendsModal";
 
@@ -33,6 +33,8 @@ const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const [currentProfile, setCurrentProfile] = useState({});
+  const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
+  const [currentlyFollowsProfile, setCurrentlyFollowsProfile] = useState(false);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsTab, setFriendsTab] = useState(0);
@@ -44,12 +46,27 @@ const Profile = () => {
 
   const getProfileDetails = async () => {
     const result = await UserClient.getUserInfo(userName);
-    setCurrentProfile(result.data.user)
+    console.log(user.userName, userName);
+    if (user.userName === userName) {
+      setIsCurrentUserProfile(true);
+    }
+    setCurrentProfile(result.data.user);
+    if (result.data.user.followers.includes(user.userName)) {
+      setCurrentlyFollowsProfile(true);
+    }
+  };
+
+  const followProfile = async () => {
+    await UserClient.followUser(user.userName, currentProfile.userName);
+  };
+
+  const unFollowProfile = async () => {
+    await UserClient.unFollowUser(user.userName, currentProfile.userName);
   };
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName])
+  }, [userName]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -69,6 +86,79 @@ const Profile = () => {
     setOpenAddFriendsModal(true);
   };
 
+  const determineActionButton = () => {
+    if (isCurrentUserProfile) {
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%"
+          }}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#00a8ff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Edit profile
+          </Typography>
+        </Button>
+      );
+    } else if (currentlyFollowsProfile) {
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%"
+          }}
+          onClick={unFollowProfile}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#00a8ff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Following
+          </Typography>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="contained"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%",
+            backgroundColor: "#00a8ff"
+          }}
+          onClick={followProfile}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#ffffff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Follow
+          </Typography>
+        </Button>
+      );
+    }
+  };
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
@@ -78,7 +168,7 @@ const Profile = () => {
               sx={{
                 width: "100%",
                 height: "100%",
-                margin: "auto",
+                margin: "auto"
               }}
             >
               <Paper
@@ -88,7 +178,7 @@ const Profile = () => {
                   height: "300px",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px",
+                  borderRadius: "17px"
                 }}
               >
                 <Grid container>
@@ -99,37 +189,19 @@ const Profile = () => {
                         width: 56,
                         height: 56,
                         marginLeft: "13px",
-                        marginTop: "10px",
+                        marginTop: "10px"
                       }}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        borderRadius: "17px",
-                        marginTop: "20px",
-                        marginRight: "3px",
-                        width: "100%",
-                      }}
-                    >
-                      <Typography component="div"
-                        sx={{
-                          fontSize: "12px",
-                          color: "#00a8ff",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Edit profile
-                      </Typography>
-                    </Button>
+                    {determineActionButton()}
                   </Grid>
                   <Grid item xs={12}>
                     <Typography
                       sx={{
                         marginLeft: "22px",
                         marginTop: "10px",
-                        fontWeight: "bold",
+                        fontWeight: "bold"
                       }}
                     >
                       {currentProfile.firstName}
@@ -140,7 +212,7 @@ const Profile = () => {
                       sx={{
                         marginLeft: "22px",
                         marginTop: "0px",
-                        fontSize: "13px",
+                        fontSize: "13px"
                       }}
                     >
                       @{currentProfile.userName}
@@ -152,31 +224,32 @@ const Profile = () => {
                         marginLeft: "22px",
                         marginTop: "0px",
                         fontSize: "13px",
-                        fontWeight: 'bold',
-                        cursor: 'pointer'
+                        fontWeight: "bold",
+                        cursor: "pointer"
                       }}
                       onClick={() => handleFriendsModalOpen(0)}
                     >
                       {currentProfile && currentProfile.following && currentProfile.following.length}
-                      <span style={{fontWeight: 'normal'}}> following</span>
+                      <span style={{ fontWeight: "normal" }}> following</span>
                     </span>
                     <span
                       style={{
                         marginLeft: "22px",
                         marginTop: "0px",
                         fontSize: "13px",
-                        fontWeight: 'bold',
-                        cursor: 'pointer'
+                        fontWeight: "bold",
+                        cursor: "pointer"
                       }}
                       onClick={() => handleFriendsModalOpen(1)}
                     >
                       {currentProfile && currentProfile.followers && currentProfile.followers.length}
-                      <span style={{fontWeight: 'normal'}}> followers</span>
+                      <span style={{ fontWeight: "normal" }}> followers</span>
                     </span>
                   </Grid>
                   <Grid item xs={12}>
-                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />} sx={{color: "#00a8ff", marginLeft: '15px'}}
-                    onClick={handleAddFriendsModalOpen}>
+                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />}
+                            sx={{ color: "#00a8ff", marginLeft: "15px" }}
+                            onClick={handleAddFriendsModalOpen}>
                       Add friends
                     </Button>
 
@@ -195,11 +268,11 @@ const Profile = () => {
                           fontSize: "13px",
                           "&.Mui-selected": {
                             color: "#40a9ff",
-                            fontSize: "13px",
+                            fontSize: "13px"
                           },
                           "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
+                            backgroundColor: "#40a9ff"
+                          }
                         }}
                         label="Ratings"
                       />
@@ -208,11 +281,11 @@ const Profile = () => {
                           fontSize: "13px",
                           "&.Mui-selected": {
                             color: "#40a9ff",
-                            fontSize: "13px",
+                            fontSize: "13px"
                           },
                           "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
+                            backgroundColor: "#40a9ff"
+                          }
                         }}
                         label="Likes"
                       />
@@ -221,11 +294,11 @@ const Profile = () => {
                           fontSize: "13px",
                           "&.Mui-selected": {
                             color: "#40a9ff",
-                            fontSize: "13px",
+                            fontSize: "13px"
                           },
                           "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
+                            backgroundColor: "#40a9ff"
+                          }
                         }}
                         label="Comments"
                       />
@@ -245,11 +318,12 @@ const Profile = () => {
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} currentUser={user}
-            openingTab={friendsTab}/>
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
+                          currentUser={user}
+                          openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose}/>
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

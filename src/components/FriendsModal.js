@@ -14,7 +14,7 @@ import UserClient from "../client/UserClient";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -74,7 +74,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
             height: "30px",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: currentlyFollows ? '#ffffff' : "#00a8ff"
+            backgroundColor: currentlyFollows ? "#ffffff" : "#00a8ff"
           }}
           // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
           onClick={handleUnFollowPopoverOpen}
@@ -82,7 +82,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
           <Typography component="div"
                       sx={{
                         fontSize: "12px",
-                        color: currentlyFollows ? '#00a8ff' : "#ffffff" ,
+                        color: currentlyFollows ? "#00a8ff" : "#ffffff",
                         fontWeight: "bold"
                       }}
           >
@@ -94,12 +94,12 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
           anchorEl={unfollowPopover}
           onClose={handleUnFollowPopoverClose}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
+            vertical: "bottom",
+            horizontal: "right"
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
+            vertical: "top",
+            horizontal: "right"
           }}
         >
           <Button variant="outlined" endIcon={<PersonRemoveIcon />}>
@@ -126,9 +126,14 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>
             <Dialog open={open} onClose={onClose}
-                    sx={{ "& .MuiDialog-paper": { width: '100%', height: 300, maxWidth: 500, overflowY: "hidden" } }}>
+                    sx={{ "& .MuiDialog-paper": { width: "100%", height: 300, maxWidth: 500, overflowY: "hidden" } }}>
               <DialogTitle
-                sx={{ fontSize: "13px", fontWeight: "bold", height: "0px", textAlign: 'center' }}>{userName}</DialogTitle>
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  height: "0px",
+                  textAlign: "center"
+                }}>{userName}</DialogTitle>
               <Box sx={{ width: "100%" }}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <Tabs
@@ -187,7 +192,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                 </Avatar>
                                 <div>
                                   <Stack direction="column">
-                                    <Typography sx={{fontWeight: 'bold'}}>
+                                    <Typography sx={{ fontWeight: "bold" }}>
                                       {profile.firstName} {profile.lastName}
                                     </Typography>
                                     <Typography>@{profile.userName}</Typography>
@@ -224,7 +229,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                 </Avatar>
                                 <div>
                                   <Stack direction="column">
-                                    <Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>
                                       {profile.firstName} {profile.lastName}
                                     </Typography>
                                     <Typography>@{profile.userName}</Typography>
