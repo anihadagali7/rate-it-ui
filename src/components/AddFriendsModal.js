@@ -33,7 +33,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
 
   const getAllUsers = async () => {
     const result = await UserClient.getAllUsers();
-    const index = result.data.findIndex(item => item.userName === currentUser.userName)
+    const index = result.data.findIndex(item => item.userName === currentUser.userName);
     result.data.splice(index, 1);
     setUsers(result.data);
   };
@@ -103,7 +103,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                     )}
                   </Paper>
                   {searchKeyword.length > 0 && (
-                    <List component="nav" sx={{margin: '0 10px'}}>
+                    <List component="nav" sx={{ margin: "0 10px" }}>
                       {filteredUsersList && filteredUsersList.length > 0 ? filteredUsersList.map((profile) => (
                           <>
                             <ListItem>
@@ -123,7 +123,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                   </Avatar>
                                   <div>
                                     <Stack direction="column">
-                                      <Typography sx={{fontWeight: 'bold'}}>
+                                      <Typography sx={{ fontWeight: "bold" }}>
                                         {profile.firstName} {profile.lastName}
                                       </Typography>
                                       <Typography>@{profile.userName}</Typography>
