@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Provider } from "jotai";
+import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
 import {
@@ -21,11 +21,13 @@ import Button from "@mui/material/Button";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddRatingModal from "../components/modals/AddRatingModal";
+import { currentUser } from "../state/user";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [media, setMedia] = useState({});
   const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [user, setUser] = useAtom(currentUser);
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
@@ -305,8 +307,7 @@ const MediaInfo = () => {
             </Box>
           </Container>
           {openRatingModal && (
-            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaType={mediaType}
-                            mediaId={id} mediaDetails={media} />
+            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media} user={user} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>
