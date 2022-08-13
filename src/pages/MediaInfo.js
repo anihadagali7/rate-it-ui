@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
@@ -22,16 +22,26 @@ import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddRatingModal from "../components/modals/AddRatingModal";
 import { currentUser } from "../state/user";
+import RatingClient from "../client/RatingClient";
+import Avatar from "@mui/material/Avatar";
+import moment from "moment/moment";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [media, setMedia] = useState({});
+  const [ratingsList, setRatingsList] = useState([]);
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [user, setUser] = useAtom(currentUser);
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
+    getRatingsForMedia(id);
   }, [id, mediaType]);
+
+  const getRatingsForMedia = async (id) => {
+    const result = await RatingClient.getAllRatingsForMedia(id);
+    setRatingsList(result.data.ratingsList);
+  };
 
   const getMediaInfoDetails = async (mediaType, id) => {
     const result = await MediaClient.getMediaInfoDetails(mediaType, id);
@@ -270,6 +280,12 @@ const MediaInfo = () => {
     </Grid>
   );
 
+  const getTimeAgo = (date) => {
+    const timeAgo = moment(date).fromNow(true);
+    const units = timeAgo.split(" ")[1];
+    return "" + timeAgo.split(" ")[0] + units[0];
+  };
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
@@ -305,9 +321,86 @@ const MediaInfo = () => {
                 </div>
               </Paper>
             </Box>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                margin: "auto",
+                marginTop: "15px"
+              }}
+            >
+              <Paper
+                elevation={6}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#FFFFFF",
+                  margin: "auto",
+                  borderRadius: "17px"
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "22px",
+                    paddingTop: "15px",
+                    paddingLeft: "25px"
+                  }}
+                >
+                  User reviews
+                </Typography>
+                <List component="nav" sx={{marginLeft: '15px', marginRight: '15px'}}>
+                  {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
+                    <>
+                      <ListItem>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                        >
+                          <>
+                            <Avatar
+                              sx={{
+                                bgcolor: "#00a8ff",
+                                textDecoration: "none",
+                                marginTop: "auto",
+                                marginBottom: "auto"
+                              }}
+                              component={Link}
+                              to={`/profile/${rating.ratedBy.userName}`}
+                            >
+                              {rating.ratedBy.firstName[0]}
+                              {rating.ratedBy.lastName[0]}
+                            </Avatar>
+                            <div>
+                              <Stack direction="column">
+                                <span style={{ fontWeight: "bold" }}>
+                                  {rating.ratedBy.firstName} {rating.ratedBy.lastName}
+                                  <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
+                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
+                                </span>
+                                <span>
+                                  <Typography component={Link} sx={{ textDecoration: "none" }}
+                                              to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
+                                   -{rating.media.name}
+                                </Typography>
+                              </span>
+                                <Typography>Rating: {rating.rating}</Typography>
+                                <Typography>Comments: {rating.comments}</Typography>
+                              </Stack>
+                            </div>
+                          </>
+                        </Stack>
+                      </ListItem>
+                      <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
+                    </>
+                  ))}
+                </List>
+              </Paper>
+            </Box>
           </Container>
           {openRatingModal && (
-            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media} user={user} />
+            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media}
+                            user={user} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>
