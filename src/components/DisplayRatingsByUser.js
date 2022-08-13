@@ -14,6 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
+import moment from "moment";
 
 const DisplayRatingsByUser = ({ user }) => {
   const [ratingsList, setRatingsList] = useState([]);
@@ -27,11 +28,16 @@ const DisplayRatingsByUser = ({ user }) => {
     setRatingsList(result.data.ratingsList);
   };
 
+  const getTimeAgo = (date) => {
+    const timeAgo = moment(date).fromNow(true);
+    const units = timeAgo.split(" ")[1];
+    return "" + timeAgo.split(" ")[0] + units[0]
+  }
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          {/*<Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>*/}
           <Box
             sx={{
               width: "100%",
@@ -61,6 +67,7 @@ const DisplayRatingsByUser = ({ user }) => {
                                 <span style={{ fontWeight: "bold" }}>
                                   {rating.ratedBy.firstName} {rating.ratedBy.lastName}
                                   <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
+                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
                                 </span>
                               <span>
                                   <Typography component={Link} sx={{textDecoration: "none"}}
@@ -81,7 +88,6 @@ const DisplayRatingsByUser = ({ user }) => {
                 <div>No following</div>}
             </List>
           </Box>
-          {/*</Container>*/}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
