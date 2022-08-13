@@ -3,11 +3,10 @@ import RatingClient from "../client/RatingClient";
 import { theme } from "../Theme/Theme";
 import {
   Box,
-  Container,
   StyledEngineProvider,
   ThemeProvider, Typography
 } from "@mui/material";
-import { Provider, useAtom } from "jotai";
+import { Provider } from "jotai";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
@@ -42,11 +41,10 @@ const DisplayRatingsByUser = ({ user }) => {
             sx={{
               width: "100%",
               height: "100%"
-
             }}
           >
             <List component="nav">
-              {ratingsList && ratingsList.length > 0 ? ratingsList.map((rating) => (
+              {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
                   <>
                     <ListItem>
                       <Stack
@@ -84,8 +82,7 @@ const DisplayRatingsByUser = ({ user }) => {
                     </ListItem>
                     <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
                   </>
-                )) :
-                <div>No following</div>}
+                ))}
             </List>
           </Box>
         </ThemeProvider>
