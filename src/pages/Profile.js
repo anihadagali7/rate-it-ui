@@ -22,11 +22,12 @@ import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
+import DisplayRatingsByUser from "../components/DisplayRatingsByUser";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
-  return <div {...other}>{value === index && <Box p={3}>{children}</Box>}</div>;
+  return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
 };
 
 const Profile = () => {
@@ -175,7 +176,8 @@ const Profile = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  height: "300px",
+                  minHeight: "300px",
+                  height: '100%',
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                   borderRadius: "17px"
@@ -305,7 +307,7 @@ const Profile = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
-                    Ratings
+                    <DisplayRatingsByUser user={user} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
                     Likes
