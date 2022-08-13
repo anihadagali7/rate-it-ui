@@ -15,4 +15,30 @@ const submitRating = (rating) => {
     });
 };
 
-export default { submitRating };
+const getAllRatingsForUser = (userName) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + `/api/ratings/user/${userName}`, {
+      headers: {
+        Authorization: ACCESS_TOKEN,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const getAllRatingsForMedia = (mediaId) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + `/api/ratings/media/${mediaId}`, {
+      headers: {
+        Authorization: ACCESS_TOKEN,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export default { submitRating, getAllRatingsForUser, getAllRatingsForMedia };
