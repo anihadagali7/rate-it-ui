@@ -43,7 +43,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails, user }) => {
   const handleSubmitRating = async () => {
     let requestBody = {};
     requestBody.mediaId = mediaDetails.mediaId;
-    requestBody.userId = user._id;
+    requestBody.userName = user.userName;
     requestBody.comments = comments;
     requestBody.rating = rating;
     await RatingClient.submitRating(requestBody);
