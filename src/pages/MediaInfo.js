@@ -216,7 +216,7 @@ const MediaInfo = () => {
           </Button>
         </Stack>
       </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV SHOW") &&
+      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
         displayMovieTvShow(media)}
       {media.mediaType === "MUSIC" && displayMusic(media)}
     </Grid>
@@ -274,7 +274,7 @@ const MediaInfo = () => {
           </Typography>
         </Button>
       </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV SHOW") &&
+      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
         displayMovieTvShow(media)}
       {media.mediaType === "MUSIC" && displayMusic(media)}
     </Grid>
