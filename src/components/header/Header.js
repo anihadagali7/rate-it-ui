@@ -240,23 +240,15 @@ const Header = ({ displayMenu }) => {
           </AntTabs>
           {localUserLoggedIn ? (
             <>
-              {/*<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>*/}
-              {/*  <AccountCircleIcon />*/}
-              {/*  <Typography>{user.userName}</Typography>*/}
-              {/*</IconButton>*/}
               <Button
                 variant="text"
                 component={Link}
                 sx={{
                   border: "transparent",
-                  // backgroundColor: "#00a8ff",
-                  // borderRadius: "17px",
-                  // color: 'gray',
                   height: "35px",
                   marginTop: "17px",
                   "&.MuiButtonBase-root:hover": {
                     border: "transparent"
-                    // backgroundColor: "#00a8ff",
                   }
                 }}
                 startIcon={<AccountCircleIcon
@@ -266,7 +258,6 @@ const Header = ({ displayMenu }) => {
                 onClick={handleOpenUserMenu}
               >
                 <Typography sx={{
-                  // fontFamily: "Arial",
                   fontSize: "14px",
                   color: "#000000",
                   fontWeight: "500"
