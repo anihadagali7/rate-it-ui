@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
 code {
@@ -44,4 +45,16 @@ code {
   src: local("Nostalgia"),
     url(./fonts/nostalgia/Nostalgia.ttf)
       format("truetype");
+}
+
+@font-face {
+  font-family: "OpenSans";
+  src: local("OpenSans"),
+  url("./fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "NunitoSans";
+  src: local("NunitoSans"),
+  url("./fonts/Nunito_Sans/NunitoSans-SemiBold.ttf") format("truetype");
 }

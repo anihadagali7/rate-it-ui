@@ -205,7 +205,7 @@ const Login = () => {
                           )}
 
                           <Typography
-                            variant="normalText"
+                            variant="normalTextWhite"
                             className={classes.login}
                           >
                             Sign In

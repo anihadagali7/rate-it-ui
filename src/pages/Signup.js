@@ -307,7 +307,7 @@ const Signup = () => {
                             </div>
                           )}
                           <Typography
-                            variant="normalText"
+                            variant="normalTextWhite"
                             className={classes.login}
                           >
                             Sign Up

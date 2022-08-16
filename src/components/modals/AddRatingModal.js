@@ -127,7 +127,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails, user }) => {
                     }}
                     onClick={handleSubmitRating}
                   >
-                    <Typography variant="normalText">Submit</Typography>
+                    <Typography variant="normalTextWhite">Submit</Typography>
                   </Button>
                 </Container>
               </Box>

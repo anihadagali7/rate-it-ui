@@ -71,16 +71,15 @@ const MediaInfo = () => {
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Typography
           component="div"
+          variant="header"
           sx={{
             marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold"
           }}
         >
           {media.name}
         </Typography>
         <div>
-          <Typography component="div">{media.description}</Typography>
+          <Typography component="div" variant="normalText" >{media.description}</Typography>
         </div>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
@@ -89,7 +88,7 @@ const MediaInfo = () => {
           {media.director && media.director.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                <span style={{ fontWeight: "550", fontSize: "17px", fontFamily: "" }}>
                   Directors:{" "}
                 </span>
                 {listToString(media.director)}
@@ -197,7 +196,7 @@ const MediaInfo = () => {
             }}
             onClick={handleAddRatingModalOpen}
           >
-            <Typography variant="normalText">Add Rating</Typography>
+            <Typography variant="normalTextWhite">Add Rating</Typography>
           </Button>
           <Button
             variant="outlined"
@@ -212,7 +211,7 @@ const MediaInfo = () => {
               }
             }}
           >
-            <Typography variant="normalText">Add to Playlist</Typography>
+            <Typography variant="normalTextWhite">Add to Playlist</Typography>
           </Button>
         </Stack>
       </Grid>
@@ -251,7 +250,7 @@ const MediaInfo = () => {
           }}
           onClick={handleAddRatingModalOpen}
         >
-          <Typography variant="normalText">Add Rating</Typography>
+          <Typography variant="normalTextWhite">Add Rating</Typography>
         </Button>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
@@ -269,7 +268,7 @@ const MediaInfo = () => {
             }
           }}
         >
-          <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+          <Typography variant="normalTextWhite" sx={{ color: "#00a8ff" }}>
             Add to Playlist
           </Typography>
         </Button>

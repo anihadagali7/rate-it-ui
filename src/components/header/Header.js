@@ -101,7 +101,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 
 const drawerWidth = 240;
 
-const Header = ({ displayMenu }) => {
+const Header = () => {
   const classes = useStyles();
   const theme = useTheme();
   const [userMenu, setUserMenu] = useState(null);
@@ -240,37 +240,27 @@ const Header = ({ displayMenu }) => {
           </AntTabs>
           {localUserLoggedIn ? (
             <>
-              {/*<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>*/}
-              {/*  <AccountCircleIcon />*/}
-              {/*  <Typography>{user.userName}</Typography>*/}
-              {/*</IconButton>*/}
               <Button
                 variant="text"
-                component={Link}
                 sx={{
                   border: "transparent",
-                  // backgroundColor: "#00a8ff",
-                  // borderRadius: "17px",
-                  // color: 'gray',
                   height: "35px",
                   marginTop: "17px",
                   "&.MuiButtonBase-root:hover": {
                     border: "transparent"
-                    // backgroundColor: "#00a8ff",
                   }
                 }}
                 startIcon={<AccountCircleIcon
                   style={{ color: "#000000" }}
                 />}
-                to="/login"
                 onClick={handleOpenUserMenu}
               >
                 <Typography sx={{
-                  // fontFamily: "Arial",
+                  fontFamily: "OpenSans",
                   fontSize: "14px",
                   color: "#000000",
                   fontWeight: "500"
-                }}>Logout</Typography>
+                }}>{user.userName}</Typography>
               </Button>
               <Menu
                 sx={{ mt: "45px" }}
@@ -289,7 +279,7 @@ const Header = ({ displayMenu }) => {
                 onClose={handleCloseUserMenu}
               >
                 <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={logoutUser}>
+                  <Typography textAlign="center" onClick={logoutUser} sx={{fontFamily: 'OpenSans'}}>
                     Logout
                   </Typography>
                 </MenuItem>
@@ -315,7 +305,7 @@ const Header = ({ displayMenu }) => {
                 onClick={() => setTabValue(false)}
                 startIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
               >
-                <Typography variant="normalText">Sign In</Typography>
+                <Typography variant="normalTextWhite">Sign In</Typography>
               </Button>
             </>
           )}
