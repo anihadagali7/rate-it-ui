@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -68,10 +68,14 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearchTabType = (event, search) => {
+  const changeSearchTabType = (event, search) => {
     setSearchTabType(search);
     // setSearchResults([])
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTabType])
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
@@ -91,7 +95,7 @@ const Search = () => {
 
   const mediaTypeToggle = () => (
     <Stack direction="row" spacing={4}>
-      <ToggleButtonGroup value={searchTabType} exclusive onChange={handleSearchTabType}>
+      <ToggleButtonGroup value={searchTabType} exclusive onChange={changeSearchTabType}>
         <ToggleButton value="movie">
           <Tooltip title="Movie">
             <MovieIcon />
@@ -127,10 +131,20 @@ const Search = () => {
   );
 
   const handleSearch = async () => {
-    setLoading(true);
-    setHasSearched(false);
     if (searchKeyword.length > 0) {
-      const result = await SearchClient.searchMedia(searchTabType, searchKeyword);
+      setLoading(true);
+      setHasSearched(true);
+    }
+    if (searchKeyword.length > 0) {
+      const searchMapping = {
+        0: "movie",
+        1: "tv",
+        2: "music",
+        // 3: "",
+      };
+      let searchType = searchMapping[searchTabType];
+      console.log("-> searchType", searchType);
+      const result = await SearchClient.searchMedia(searchType, searchKeyword);
       const finalList = result.data.mediaList;
       setResultType(result.searchTabType);
       setSearchResults(finalList);
@@ -212,7 +226,7 @@ const Search = () => {
                       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                         <Tabs
                           value={searchTabType}
-                          onChange={handleSearchTabType}
+                          onChange={changeSearchTabType}
                           variant="scrollable"
                           // scrollButtons
                           allowScrollButtonsMobile
