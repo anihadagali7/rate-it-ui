@@ -125,7 +125,7 @@ const Search = () => {
             <Box
               sx={{
                 width: "100%",
-                height: (searchResults.length > 0) || loading ? "100%" : 85,
+                height: hasSearched || loading ? "100%" : 85,
                 margin: "auto"
               }}
             >
@@ -133,7 +133,7 @@ const Search = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  height: (searchResults.length > 0) || loading ? "100%" : 85,
+                  height: hasSearched || loading ? "100%" : 85,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                   borderRadius: "17px"
@@ -147,7 +147,7 @@ const Search = () => {
                       columns={{ md: 12 }}
                     >
                       <Grid item xs={12} sx={{ width: "100%" }}>
-                        <Paper elevation={4}
+                        <Paper elevation={2}
                                component="form"
                                sx={{
                                  p: "2px 4px",
