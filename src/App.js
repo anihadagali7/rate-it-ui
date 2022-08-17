@@ -10,6 +10,7 @@ import { theme } from "./Theme/Theme";
 import Header from "./components/header/Header";
 import Signup from "./pages/Signup";
 import MediaInfo from "./pages/MediaInfo";
+import Search from "./components/Search/Search";
 
 export default class App extends Component {
   render() {
@@ -21,6 +22,7 @@ export default class App extends Component {
               <Header displayMenu={true} />
               <Routes>
                 <Route exact path="/" element={<Home />}></Route>
+                <Route exact path="/search" element={<Search />}></Route>
                 <Route exact path="/login" element={<Login />}></Route>
                 <Route exact path="/signup" element={<Signup />}></Route>
                 <Route exact path="/:mediaType/:id" element={<MediaInfo />}></Route>
