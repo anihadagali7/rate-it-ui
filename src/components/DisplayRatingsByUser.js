@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import moment from "moment";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const DisplayRatingsByUser = ({ user }) => {
   const [ratingsList, setRatingsList] = useState([]);
@@ -55,11 +56,9 @@ const DisplayRatingsByUser = ({ user }) => {
                           <Avatar
                             sx={{ bgcolor: "#00a8ff", textDecoration: "none", marginTop: "auto", marginBottom: "auto" }}
                             component={Link}
+                            src={AccountCircleIcon}
                             to={`/profile/${rating.ratedBy.userName}`}
-                          >
-                            {rating.ratedBy.firstName[0]}
-                            {rating.ratedBy.lastName[0]}
-                          </Avatar>
+                          />
                           <div>
                             <Stack direction="column">
                                 <span style={{ fontWeight: "bold" }}>

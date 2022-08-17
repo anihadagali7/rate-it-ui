@@ -80,8 +80,8 @@ const Search = () => {
       const searchMapping = {
         0: "movie",
         1: "tv",
-        2: "music"
-        // 3: "",
+        2: "music",
+        3: "user",
       };
       let searchType = searchMapping[searchTabType];
       const result = await SearchClient.searchMedia(searchType, searchKeyword);
@@ -258,7 +258,7 @@ const Search = () => {
                         {displayMediaSearchResults()}
                       </TabPanel>
                       <TabPanel value={searchTabType} index={3}>
-                        Users
+                        {displayMediaSearchResults()}
                       </TabPanel>
                     </Box>
                   )}

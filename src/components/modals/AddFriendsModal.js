@@ -20,6 +20,7 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const AddFriendsModal = ({ open, onClose, currentUser }) => {
 
@@ -115,12 +116,10 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                   <Avatar
                                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                     component={Link}
+                                    src={AccountCircleIcon}
                                     to={`/profile/${profile.userName}`}
                                     onClick={onClose}
-                                  >
-                                    {profile.firstName[0]}
-                                    {profile.lastName[0]}
-                                  </Avatar>
+                                  />
                                   <div>
                                     <Stack direction="column">
                                       <Typography sx={{ fontWeight: "bold" }}>
