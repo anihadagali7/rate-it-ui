@@ -32,6 +32,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import SearchIcon from '@mui/icons-material/Search';
 
 const useStyles = makeStyles({
   title: {
@@ -136,12 +137,14 @@ const Header = ({ displayMenu }) => {
 
     if (pathname === "/") {
       setTabValue(0);
-    } else if (pathname.includes("/profile/")) {
+    } else if (pathname.includes("/search")) {
       setTabValue(1);
-    } else if (pathname === "/playlist") {
+    } else if (pathname.includes("/profile/")) {
       setTabValue(2);
-    } else if (pathname === "/wishlist") {
+    } else if (pathname === "/playlist") {
       setTabValue(3);
+    } else if (pathname === "/wishlist") {
+      setTabValue(4);
     } else {
       setTabValue(false);
     }
@@ -215,6 +218,13 @@ const Header = ({ displayMenu }) => {
               iconPosition="start"
               component={Link}
               to="/"
+            />
+            <AntTab
+              icon={<SearchIcon />}
+              label="Search"
+              iconPosition="start"
+              component={Link}
+              to="/search"
             />
             <AntTab
               icon={<AccountCircleIcon />}

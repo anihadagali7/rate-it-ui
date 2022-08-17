@@ -3,7 +3,7 @@ import {
   Grid,
   Paper,
   StyledEngineProvider,
-  ThemeProvider,
+  ThemeProvider
 } from "@mui/material";
 import { Provider } from "jotai";
 import React from "react";
@@ -16,6 +16,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import { Link } from "react-router-dom";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const SearchResults = ({ results, resultType }) => {
   const listItem = (row) => (
@@ -24,20 +27,20 @@ const SearchResults = ({ results, resultType }) => {
       to={`/${resultType}/${row.mediaId}`}
       sx={{
         width: 525,
-        "&.MuiListItem-root": { marginLeft: "-12px" },
+        "&.MuiListItem-root": { marginLeft: "-12px" }
       }}
     >
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "column"
         }}
       >
         <Paper
           elevation={2}
           sx={{
             width: 500,
-            borderRadius: "17px",
+            borderRadius: "17px"
           }}
         >
           <Grid
@@ -50,7 +53,7 @@ const SearchResults = ({ results, resultType }) => {
               item
               xs={2}
               sx={{
-                "&.MuiGrid-root": { marginLeft: "-16px !important" },
+                "&.MuiGrid-root": { marginLeft: "-16px !important" }
               }}
             >
               <div>
@@ -70,7 +73,7 @@ const SearchResults = ({ results, resultType }) => {
               xs={7}
               sx={{
                 marginTop: "0px",
-                marginRight: "50px",
+                marginRight: "50px"
               }}
             >
               <div style={{ marginLeft: "40px", width: "100%" }}>
@@ -79,7 +82,7 @@ const SearchResults = ({ results, resultType }) => {
                   sx={{
                     marginTop: "10px",
                     fontSize: "18px",
-                    fontWeight: "bold",
+                    fontWeight: "bold"
                   }}
                 >
                   {row.name.length > 25
@@ -106,7 +109,7 @@ const SearchResults = ({ results, resultType }) => {
         to={`/${resultType}/${row.mediaId}`}
         sx={{
           width: 700,
-          "&.MuiListItem-root": { marginLeft: "-12px" },
+          "&.MuiListItem-root": { marginLeft: "-12px" }
         }}
       >
         <Box
@@ -114,10 +117,10 @@ const SearchResults = ({ results, resultType }) => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            borderRadius: "17px",
+            borderRadius: "17px"
           }}
         >
-          <Paper elevation={8} sx={{ width: 500 }}>
+          <Paper elevation={8} sx={{ width: 500, borderRadius: "17px" }}>
             <Grid
               container
               spacing={{ xs: 2, md: 2, xl: 2 }}
@@ -128,7 +131,7 @@ const SearchResults = ({ results, resultType }) => {
                 item
                 xs={3}
                 sx={{
-                  "&.MuiGrid-root": { marginLeft: "-16px !important" },
+                  "&.MuiGrid-root": { marginLeft: "-16px !important" }
                 }}
               >
                 <div>
@@ -148,7 +151,7 @@ const SearchResults = ({ results, resultType }) => {
                 xs={7}
                 sx={{
                   marginTop: "0px",
-                  marginRight: "50px",
+                  marginRight: "50px"
                 }}
               >
                 <div style={{ marginLeft: "40px", width: "100%" }}>
@@ -157,7 +160,7 @@ const SearchResults = ({ results, resultType }) => {
                     sx={{
                       marginTop: "10px",
                       fontSize: "18px",
-                      fontWeight: "bold",
+                      fontWeight: "bold"
                     }}
                   >
                     {row.name}{" "}
@@ -171,6 +174,51 @@ const SearchResults = ({ results, resultType }) => {
                 </div>
               </Grid>
             </Grid>
+          </Paper>
+        </Box>
+      </ListItem>
+    );
+  };
+
+  const listItemUser = (row) => {
+    return (
+      <ListItem
+        component={Link}
+        to={`/profile/${row.userName}`}
+        sx={{
+          width: 700,
+          "&.MuiListItem-root": { marginLeft: "-12px" }
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            borderRadius: "17px"
+          }}
+        >
+          <Paper elevation={8} sx={{ width: 500, borderRadius: "17px", }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ margin: '15px 0 15px 15px'}}
+            >
+              <>
+                <Avatar
+                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                  src={AccountCircleIcon}
+                />
+                <div>
+                  <Stack direction="column">
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      {row.firstName} {row.lastName}
+                    </Typography>
+                    <Typography>@{row.userName}</Typography>
+                  </Stack>
+                </div>
+              </>
+            </Stack>
           </Paper>
         </Box>
       </ListItem>
@@ -191,6 +239,8 @@ const SearchResults = ({ results, resultType }) => {
               results.map((row, index) => listItemMusic(row))}
             {(resultType === "movie" || resultType === "tv") &&
               results.map((row, index) => listItem(row))}
+            {(resultType === "user") &&
+              results.map((row, index) => listItemUser(row))}
           </List>
         </Container>
       </StyledEngineProvider>

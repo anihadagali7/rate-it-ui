@@ -1,29 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import { Provider } from "jotai";
 import { theme } from "../../Theme/Theme";
-import {
-  Container,
-  InputLabel, ListItem,
-  StyledEngineProvider,
-  TextField,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
-import Stack from "@mui/material/Stack";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import MovieIcon from "@mui/icons-material/Movie";
-import LiveTvIcon from "@mui/icons-material/LiveTv";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import MusicNoteIcon from "@mui/icons-material/MusicNote";
-import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
-import MicIcon from "@mui/icons-material/Mic";
-import Tooltip from "@mui/material/Tooltip";
+import { Container, StyledEngineProvider, TextField, ThemeProvider } from "@mui/material";
 import SearchClient from "../../client/SearchClient";
 import SearchResults from "./SearchResults";
 import SearchResultsMobile from "./SearchResultsMobile";
@@ -33,6 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 const useStyles = makeStyles({
   container: {
@@ -50,75 +34,88 @@ const useStyles = makeStyles({
   }
 });
 
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+
+  return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
+};
+
 const Search = () => {
   const classes = useStyles();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [mediaType, setMediaType] = useState("movie");
+  const [searchTabType, setSearchTabType] = useState(0);
   const [resultType, setResultType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleMediaType = (event, media) => {
-    if (media !== null) {
-      setMediaType(media);
-    }
+  const changeSearchTabType = (event, search) => {
+    setSearchTabType(search);
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTabType]);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
+    if (event.target.value === "") {
+      setSearchResults([]);
+      setResultType("");
+      setHasSearched(false);
+    }
   };
 
   const resetSearch = () => {
     setSearchKeyword("");
+    setSearchResults([]);
+    setResultType("");
+    setHasSearched(false);
   };
 
-  const mediaTypeToggle = () => (
-    <Stack direction="row" spacing={4}>
-      <ToggleButtonGroup value={mediaType} exclusive onChange={handleMediaType}>
-        <ToggleButton value="movie">
-          <Tooltip title="Movie">
-            <MovieIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="tv">
-          <Tooltip title="TV Show">
-            <LiveTvIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="book" disabled>
-          <Tooltip title="Book">
-            <MenuBookIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="music">
-          <Tooltip title="Music">
-            <MusicNoteIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="theatre" disabled>
-          <Tooltip title="Theatre Play">
-            <TheaterComedyIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="podcast" disabled>
-          <Tooltip title="Podcast">
-            <MicIcon />
-          </Tooltip>
-        </ToggleButton>
-      </ToggleButtonGroup>
-    </Stack>
-  );
-
   const handleSearch = async () => {
-    setLoading(true);
     if (searchKeyword.length > 0) {
-      const result = await SearchClient.searchMedia(mediaType, searchKeyword);
+      setLoading(true);
+      setHasSearched(true);
+      const searchMapping = {
+        0: "movie",
+        1: "tv",
+        2: "music",
+        3: "user",
+      };
+      let searchType = searchMapping[searchTabType];
+      const result = await SearchClient.searchMedia(searchType, searchKeyword);
       const finalList = result.data.mediaList;
       setResultType(result.mediaType);
       setSearchResults(finalList);
     }
     setLoading(false);
   };
+
+  const displayMediaSearchResults = () => (
+    <>
+      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+        {loading ? (
+          <SearchResultsMobileLoading />
+        ) : searchResults.length > 0 && (
+          <SearchResultsMobile
+            results={searchResults}
+            resultType={resultType}
+          />
+        )}
+      </Box>
+      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+        {loading ? (
+          <SearchResultsDesktopLoading />
+        ) : searchResults.length > 0 && (
+          <SearchResults
+            results={searchResults}
+            resultType={resultType}
+          />
+        )}
+      </Box>
+    </>
+  );
 
   return (
     <Provider>
@@ -128,7 +125,7 @@ const Search = () => {
             <Box
               sx={{
                 width: "100%",
-                height: (searchResults.length > 0) || loading ? "100%" : 200,
+                height: hasSearched || loading ? "100%" : 85,
                 margin: "auto"
               }}
             >
@@ -136,7 +133,7 @@ const Search = () => {
                 elevation={6}
                 sx={{
                   width: "100%",
-                  height: (searchResults.length > 0) || loading ? "100%" : 200,
+                  height: hasSearched || loading ? "100%" : 85,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                   borderRadius: "17px"
@@ -149,13 +146,16 @@ const Search = () => {
                       spacing={{ xs: 2, md: 2, xl: 5 }}
                       columns={{ md: 12 }}
                     >
-                      <Grid item xs={12}>
-                        {mediaTypeToggle()}
-                      </Grid>
                       <Grid item xs={12} sx={{ width: "100%" }}>
-                        <Paper elevation={4}
-                          component="form"
-                          sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 'auto', borderRadius: "17px" }}
+                        <Paper elevation={2}
+                               component="form"
+                               sx={{
+                                 p: "2px 4px",
+                                 display: "flex",
+                                 alignItems: "center",
+                                 width: "auto",
+                                 borderRadius: "17px"
+                               }}
                         >
                           <TextField
                             sx={{
@@ -165,7 +165,7 @@ const Search = () => {
                               }
                             }}
                             size="small"
-                            placeholder="Search for your favorite media"
+                            placeholder="Search Rate It"
                             value={searchKeyword}
                             onChange={onChangeSearch}
                             required
@@ -176,35 +176,92 @@ const Search = () => {
                             </IconButton>
                           )}
                           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                          <IconButton  sx={{ p: "10px" }} onClick={handleSearch}>
+                          <IconButton sx={{ p: "10px" }} onClick={handleSearch}>
                             <SearchIcon />
                           </IconButton>
                         </Paper>
                       </Grid>
                     </Grid>
                   </Box>
-                  <>
-                    <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                      {loading ? (
-                        <SearchResultsMobileLoading />
-                      ) : searchResults.length > 0 && (
-                        <SearchResultsMobile
-                          results={searchResults}
-                          resultType={resultType}
-                        />
-                      )}
+                  {hasSearched && (
+                    <Box sx={{ width: "100%", marginTop: "10px" }}>
+                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <Tabs
+                          value={searchTabType}
+                          onChange={changeSearchTabType}
+                          variant="scrollable"
+                          allowScrollButtonsMobile
+                          sx={{ color: "#00a8ff" }}
+                          TabIndicatorProps={{ style: { background: "#00a8ff" } }}
+                        >
+                          <Tab
+                            sx={{
+                              fontSize: "13px",
+                              "&.Mui-selected": {
+                                color: "#40a9ff",
+                                fontSize: "13px"
+                              },
+                              "&.Mui-focusVisible": {
+                                backgroundColor: "#40a9ff"
+                              }
+                            }}
+                            label="Movies"
+                          />
+                          <Tab
+                            sx={{
+                              fontSize: "13px",
+                              "&.Mui-selected": {
+                                color: "#40a9ff",
+                                fontSize: "13px"
+                              },
+                              "&.Mui-focusVisible": {
+                                backgroundColor: "#40a9ff"
+                              }
+                            }}
+                            label="TV Shows"
+                          />
+                          <Tab
+                            sx={{
+                              fontSize: "13px",
+                              "&.Mui-selected": {
+                                color: "#40a9ff",
+                                fontSize: "13px"
+                              },
+                              "&.Mui-focusVisible": {
+                                backgroundColor: "#40a9ff"
+                              }
+                            }}
+                            label="Music"
+                          />
+                          <Tab
+                            sx={{
+                              fontSize: "13px",
+                              "&.Mui-selected": {
+                                color: "#40a9ff",
+                                fontSize: "13px"
+                              },
+                              "&.Mui-focusVisible": {
+                                backgroundColor: "#40a9ff"
+                              }
+                            }}
+                            label="Users"
+                          />
+                        </Tabs>
+                      </Box>
+                      <TabPanel value={searchTabType} index={0}>
+                        {displayMediaSearchResults()}
+                      </TabPanel>
+                      <TabPanel value={searchTabType} index={1}>
+                        {displayMediaSearchResults()}
+                      </TabPanel>
+                      <TabPanel value={searchTabType} index={2}>
+                        {displayMediaSearchResults()}
+                      </TabPanel>
+                      <TabPanel value={searchTabType} index={3}>
+                        {displayMediaSearchResults()}
+                      </TabPanel>
                     </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                      {loading ? (
-                        <SearchResultsDesktopLoading />
-                      ) : searchResults.length > 0 && (
-                        <SearchResults
-                          results={searchResults}
-                          resultType={resultType}
-                        />
-                      )}
-                    </Box>
-                  </>
+                  )}
                 </div>
               </Paper>
             </Box>
