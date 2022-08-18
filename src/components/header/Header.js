@@ -252,7 +252,6 @@ const Header = ({ displayMenu }) => {
             <>
               <Button
                 variant="text"
-                component={Link}
                 sx={{
                   border: "transparent",
                   height: "35px",
@@ -261,17 +260,13 @@ const Header = ({ displayMenu }) => {
                     border: "transparent"
                   }
                 }}
-                startIcon={<AccountCircleIcon
-                  style={{ color: "#000000" }}
-                />}
-                to="/login"
                 onClick={handleOpenUserMenu}
               >
                 <Typography sx={{
                   fontSize: "14px",
                   color: "#000000",
                   fontWeight: "500"
-                }}>Logout</Typography>
+                }}>{user.userName}</Typography>
               </Button>
               <Menu
                 sx={{ mt: "45px" }}
@@ -398,6 +393,18 @@ const Header = ({ displayMenu }) => {
                   sx={{ color: "#232b2b", fontWeight: tabValue == 0 && "bold" }}
                 >
                   Home
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem key={"search"} component={Link} to={`/search`}>
+              <ListItemIcon>
+                <SearchIcon sx={{ color: "#232b2b" }} />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography
+                  sx={{ color: "#232b2b", fontWeight: tabValue == 1 && "bold" }}
+                >
+                  Search
                 </Typography>
               </ListItemText>
             </ListItem>

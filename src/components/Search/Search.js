@@ -121,7 +121,7 @@ const Search = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+          <Container maxWidth={"sm"} sx={{ marginTop: "50px", marginBottom: '20px' }}>
             <Box
               sx={{
                 width: "100%",
