@@ -32,7 +32,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import { Alert, Collapse } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles({
   title: {
@@ -106,7 +108,7 @@ const Header = ({ displayMenu }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [userMenu, setUserMenu] = useState(null);
-
+  const [openLoginAlert, setOpenLoginAlert] = useState(true);
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [localUserLoggedIn, setLocalUserLoggedIn] = useState(false);
@@ -129,6 +131,7 @@ const Header = ({ displayMenu }) => {
       setLocalUserLoggedIn(true);
     } else {
       setLocalUserLoggedIn(false);
+      setOpenLoginAlert(true);
     }
   }, [userLoggedIn]);
 
@@ -500,14 +503,45 @@ const Header = ({ displayMenu }) => {
   );
 
   return (
-    <AppBar position="static" className={classes.appBar}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {displayBigScreenHeader()}
-          {displaySmallScreenHeader()}
-        </Toolbar>
-      </Container>
-    </AppBar>
+    <>
+      <AppBar position="static" className={classes.appBar}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {displayBigScreenHeader()}
+            {displaySmallScreenHeader()}
+          </Toolbar>
+        </Container>
+      </AppBar>
+      {!localUserLoggedIn && <Box sx={{ width: "100%" }}>
+        <Collapse in={openLoginAlert}>
+          <Alert
+            severity="info"
+            variant="filled"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenLoginAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            <Typography sx={{fontSize: '13px'}}>Please login to get the full experience!
+              <Button component={Link} to="/login" variant="text" sx={{height: '10px'}} onClick={() => setOpenLoginAlert(false)}>
+                <Typography sx={{ color: '#fff', fontSize: '13px' }}>
+                  Login
+                </Typography>
+              </Button>
+            </Typography>
+          </Alert>
+        </Collapse>
+      </Box>}
+    </>
   );
 };
 
