@@ -91,7 +91,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                         }
                       }}
                       size="small"
-                      placeholder="Search for users using name or username"
+                      placeholder="Search for users"
                       value={searchKeyword}
                       onClick={handleSearch}
                       onChange={filterUsers}
@@ -131,7 +131,6 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                 </>
                               </Stack>
                             </ListItem>
-                            {/*<Divider />*/}
                           </>
                         )) :
                         <div>No users match this search.</div>}
