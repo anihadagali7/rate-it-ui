@@ -48,6 +48,10 @@ const Login = () => {
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [loading, setLoading] = useState(false);
+  const [errorValue, setErrorValue] = useState({
+    email: false,
+    password: false
+  })
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -57,30 +61,35 @@ const Login = () => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
   };
 
+  const errorHandler = (id, value) => {
+    const currentValue = errorValue;
+    currentValue[id] = value;
+    setErrorValue(currentValue);
+  }
+
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
   const validateInput = () => {
     const emailValidity = isValidEmail(login.email);
-    const passwordValidity = login.password.length > 4;
 
-    return emailValidity && passwordValidity;
+    if(!emailValidity) {
+      errorHandler("email", true);
+    }
+
+    return emailValidity;
   };
 
   const handleLogin = async () => {
-    setLoading(true);
     if (validateInput()) {
-      console.log("valid");
+      setLoading(true);
       const result = await AuthClient.login(login.email, login.password);
       if (result.status === "success") {
-        console.log("result success ");
         setUserLoggedIn(true);
         setUser(result.data.user);
         navigate("/");
       }
-    } else {
-      console.log("not valid");
     }
   };
 
@@ -145,6 +154,8 @@ const Login = () => {
                             value={login.email}
                             onChange={onChangeEmail}
                             required
+                            error={errorValue['email']}
+                            helperText={errorValue['email'] && "Value should be a valid email."}
                           />
                         </InputLabel>
                         <InputLabel>
@@ -196,9 +207,9 @@ const Login = () => {
                               background: "#9E9E9E",
                             }
                           }}
-                          disabled={loading}
+                          disabled={loading || (errorValue['email'])}
                         >
-                          {loading && (
+                          {(loading || (!errorValue['email'])) && (
                             <div style={{color: '#ffffff'}}>
                               <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
                             </div>
