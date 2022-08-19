@@ -24,18 +24,18 @@ import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
-    margin: "20px 35px",
+    margin: "20px 35px"
   },
   loginBtn: {
     backgroundColor: "#f4afc2",
     "&:hover": {
-      backgroundColor: "#f4afc2",
-    },
+      backgroundColor: "#f4afc2"
+    }
   },
   login: {
     fontWeight: "900",
-    fontSize: "15px",
-  },
+    fontSize: "15px"
+  }
 });
 
 const Login = () => {
@@ -43,16 +43,15 @@ const Login = () => {
   const classes = useStyles();
   const [login, setLogin] = useState({
     email: "",
-    password: "",
+    password: ""
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [loading, setLoading] = useState(false);
   const [errorValue, setErrorValue] = useState({
     email: { value: false, message: "" },
-    password: { value: false, message: "" },
+    password: { value: false, message: "" }
   });
-  const [apiError, setApiError] = useState();
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -66,7 +65,8 @@ const Login = () => {
     const currentValue = JSON.parse(JSON.stringify(errorValue));
     currentValue[id] = { value: value, message: message };
     setErrorValue(currentValue);
-  }
+    value && setLoading(false);
+  };
 
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
@@ -75,7 +75,7 @@ const Login = () => {
   const validateInput = () => {
     const emailValidity = isValidEmail(login.email);
 
-    if(!emailValidity) {
+    if (!emailValidity) {
       errorHandler("email", true, "Value should be a valid email.");
     }
 
@@ -85,12 +85,10 @@ const Login = () => {
   const handleLogin = async () => {
     if (validateInput()) {
       setLoading(true);
-      const result = await AuthClient.login(login.email, login.password, setApiError);
-      if (result.status === "success") {
-        setUserLoggedIn(true);
-        setUser(result.data.user);
-        navigate("/");
-      }
+      const result = await AuthClient.login(login.email, login.password, errorHandler);
+      setUserLoggedIn(true);
+      setUser(result.data.user);
+      navigate("/");
     }
   };
 
@@ -110,7 +108,7 @@ const Login = () => {
               sx={{
                 width: "100%",
                 height: 500,
-                margin: "auto",
+                margin: "auto"
               }}
             >
               <Paper
@@ -120,7 +118,7 @@ const Login = () => {
                   maxHeight: "480px",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px",
+                  borderRadius: "17px"
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -134,7 +132,7 @@ const Login = () => {
                         <Typography
                           sx={{
                             fontWeight: "bold",
-                            fontSize: "22px",
+                            fontSize: "22px"
                           }}
                         >
                           Sign In
@@ -142,7 +140,7 @@ const Login = () => {
                         <Typography
                           sx={{
                             fontSize: "14px",
-                            marginTop: "7px",
+                            marginTop: "7px"
                           }}
                         >
                           Stay updated on your media
@@ -155,15 +153,15 @@ const Login = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             value={login.email}
                             onChange={onChangeEmail}
                             required
-                            error={errorValue['email']['value']}
-                            helperText={errorValue['email']['value'] && errorValue['email']['message']}
+                            error={errorValue["email"]["value"]}
+                            helperText={errorValue["email"]["value"] && errorValue["email"]["message"]}
                           />
                         </InputLabel>
                         <InputLabel>
@@ -174,8 +172,8 @@ const Login = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             type={"password"}
@@ -190,7 +188,7 @@ const Login = () => {
                           sx={{
                             marginTop: "10px",
                             fontWeight: "bold",
-                            fontSize: '14px'
+                            fontSize: "14px"
                           }}
                           variant="blueText"
                         >
@@ -206,20 +204,21 @@ const Login = () => {
                             float: "right",
                             border: "transparent",
                             "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
+                              border: "transparent"
                             },
                             borderRadius: "17px",
-                            maxHeight: '35px',
+                            maxHeight: "35px",
                             "&.Mui-disabled": {
                               color: "#fff",
-                              background: "#9E9E9E",
+                              background: "#9E9E9E"
                             }
                           }}
                           disabled={loading}
                         >
                           {loading && (
-                            <div style={{color: '#ffffff'}}>
-                              <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
+                            <div style={{ color: "#ffffff" }}>
+                              <CircularProgress size={20} color="inherit"
+                                                sx={{ marginTop: "5px", marginRight: "7px" }} />
                             </div>
                           )}
 
@@ -238,21 +237,21 @@ const Login = () => {
                     sx={{
                       marginTop: "25px",
                       marginLeft: "0",
-                      marginRight: "0",
+                      marginRight: "0"
                     }}
                   />
                   <Box
                     sx={{
                       margin: "auto",
                       marginTop: "20px",
-                      marginBottom: "30px",
+                      marginBottom: "30px"
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        alignItems: "center",
+                        alignItems: "center"
                       }}
                     >
                       <Typography sx={{ fontWeight: 550 }}>
