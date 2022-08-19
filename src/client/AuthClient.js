@@ -29,7 +29,7 @@ const login = (email, password, onError) => {
   });
 };
 
-const signup = (newAccount, onError, onSuccess) => {
+const signup = (newAccount, onError) => {
   return new Promise(async (resolve, reject) => {
     try {
       const { data, status, accessToken } = await axios.post(
@@ -49,6 +49,8 @@ const signup = (newAccount, onError, onSuccess) => {
       }
     } catch (error) {
       console.log("some error in catch ", error);
+      let errors = error.response.data.errors;
+      onError("email", true, errors.msg);
     }
   });
 };

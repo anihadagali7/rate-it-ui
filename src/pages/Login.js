@@ -92,13 +92,6 @@ const Login = () => {
     }
   };
 
-  // useEffect(() => {
-  //   errorHandler(apiError, false)
-  //   if(apiError.length > 0){
-  //     errorHandler(apiError, true)
-  //   }
-  // }, [apiError])
-
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
