@@ -17,6 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import LoginErrorModal from "../../shared/errorModals/LoginErrorModal";
 
 const useStyles = makeStyles({
   container: {
@@ -48,6 +49,7 @@ const Search = () => {
   const [resultType, setResultType] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
   const changeSearchTabType = (event, search) => {
     setSearchTabType(search);
@@ -71,6 +73,7 @@ const Search = () => {
     setSearchResults([]);
     setResultType("");
     setHasSearched(false);
+    setLoading(false);
   };
 
   const handleSearch = async () => {
@@ -84,7 +87,7 @@ const Search = () => {
         3: "user",
       };
       let searchType = searchMapping[searchTabType];
-      const result = await SearchClient.searchMedia(searchType, searchKeyword);
+      const result = await SearchClient.searchMedia(searchType, searchKeyword, setDisplayTokenModal);
       const finalList = result.data.mediaList;
       setResultType(result.mediaType);
       setSearchResults(finalList);
@@ -266,6 +269,11 @@ const Search = () => {
               </Paper>
             </Box>
           </Container>
+          {displayTokenModal && (
+            <LoginErrorModal open={displayTokenModal} onClose={() => {
+              resetSearch()
+              setDisplayTokenModal(false)}} />
+          )}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
