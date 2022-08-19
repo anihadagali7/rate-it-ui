@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider } from "jotai";
 import {
   CircularProgress,
@@ -49,9 +49,10 @@ const Login = () => {
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [loading, setLoading] = useState(false);
   const [errorValue, setErrorValue] = useState({
-    email: false,
-    password: false
-  })
+    email: { value: false, message: "" },
+    password: { value: false, message: "" },
+  });
+  const [apiError, setApiError] = useState();
 
   const onChangeEmail = (event) => {
     setLogin((credentials) => ({ ...login, email: event.target.value }));
@@ -61,9 +62,9 @@ const Login = () => {
     setLogin((credentials) => ({ ...login, password: event.target.value }));
   };
 
-  const errorHandler = (id, value) => {
-    const currentValue = errorValue;
-    currentValue[id] = value;
+  const errorHandler = async (id, value, message) => {
+    const currentValue = JSON.parse(JSON.stringify(errorValue));
+    currentValue[id] = { value: value, message: message };
     setErrorValue(currentValue);
   }
 
@@ -75,7 +76,7 @@ const Login = () => {
     const emailValidity = isValidEmail(login.email);
 
     if(!emailValidity) {
-      errorHandler("email", true);
+      errorHandler("email", true, "Value should be a valid email.");
     }
 
     return emailValidity;
@@ -84,7 +85,7 @@ const Login = () => {
   const handleLogin = async () => {
     if (validateInput()) {
       setLoading(true);
-      const result = await AuthClient.login(login.email, login.password);
+      const result = await AuthClient.login(login.email, login.password, setApiError);
       if (result.status === "success") {
         setUserLoggedIn(true);
         setUser(result.data.user);
@@ -92,6 +93,13 @@ const Login = () => {
       }
     }
   };
+
+  // useEffect(() => {
+  //   errorHandler(apiError, false)
+  //   if(apiError.length > 0){
+  //     errorHandler(apiError, true)
+  //   }
+  // }, [apiError])
 
   return (
     <Provider>
@@ -154,8 +162,8 @@ const Login = () => {
                             value={login.email}
                             onChange={onChangeEmail}
                             required
-                            error={errorValue['email']}
-                            helperText={errorValue['email'] && "Value should be a valid email."}
+                            error={errorValue['email']['value']}
+                            helperText={errorValue['email']['value'] && errorValue['email']['message']}
                           />
                         </InputLabel>
                         <InputLabel>
@@ -207,9 +215,9 @@ const Login = () => {
                               background: "#9E9E9E",
                             }
                           }}
-                          disabled={loading || (errorValue['email'])}
+                          disabled={loading}
                         >
-                          {(loading || (!errorValue['email'])) && (
+                          {loading && (
                             <div style={{color: '#ffffff'}}>
                               <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
                             </div>
