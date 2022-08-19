@@ -38,6 +38,15 @@ const useStyles = makeStyles({
   }
 });
 
+const initialErrorState = {
+  firstName: { value: false, message: "" },
+  lastName: { value: false, message: "" },
+  email: { value: false, message: "" },
+  userName: { value: false, message: "" },
+  phoneNumber: { value: false, message: "" },
+  password: { value: false, message: "" }
+}
+
 const Signup = () => {
   let navigate = useNavigate();
   const classes = useStyles();
@@ -52,14 +61,7 @@ const Signup = () => {
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [loading, setLoading] = useState(false);
-  const [errorValue, setErrorValue] = useState({
-    firstName: { value: false, message: "" },
-    lastName: { value: false, message: "" },
-    email: { value: false, message: "" },
-    userName: { value: false, message: "" },
-    phoneNumber: { value: false, message: "" },
-    password: { value: false, message: "" }
-  });
+  const [errorValue, setErrorValue] = useState(initialErrorState);
 
   const onChangeFirstName = (event) => {
     setNewAccount((credentials) => ({
@@ -112,6 +114,11 @@ const Signup = () => {
     return validPassword.test(password);
   };
 
+  const isValidPhoneNumber = (phoneNumber) => {
+    const validPassword = new RegExp("^\\d{3}-\\d{3}-\\d{4}$");
+    return validPassword.test(phoneNumber);
+  };
+
   const errorHandler = async (id, value, message) => {
     console.log("-> error", id, value, message);
     const currentValue = JSON.parse(JSON.stringify(errorValue));
@@ -120,32 +127,48 @@ const Signup = () => {
     value && setLoading(false);
   };
 
-  const validateInput = () => {
+  const validateInput = async () => {
     const emailValidity = isValidEmail(newAccount.email);
     const passwordValidity = isValidPassword(newAccount.password);
-    const phoneNumberValidity = newAccount.phoneNumber.length === 10;
+    const phoneNumberValidity = isValidPhoneNumber(newAccount.phoneNumber);
     const firstNameValidity = newAccount.firstName.length > 0;
     const lastNameValidity = newAccount.lastName.length > 0;
     const userNameValidity = newAccount.userName.length > 0;
 
-    !emailValidity && errorHandler("email", true, "Value should be a valid email.");
-    !passwordValidity && errorHandler("password", true, "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit.");
-    !phoneNumberValidity && errorHandler("phoneNumber", true, "Value should be 10 digits.");
-    !firstNameValidity && errorHandler("firstName", true, "Required");
-    !lastNameValidity && errorHandler("lastName", true, "Required");
-    !userNameValidity && errorHandler("userName", true, "Required");
+    const currentValue = JSON.parse(JSON.stringify(errorValue));
 
-    return (
-      emailValidity &&
+    !emailValidity
+      ? currentValue["email"] = { value: true, message: "Value should be a valid email." }
+      : currentValue["email"] = { value: false, message: "" };
+    !passwordValidity
+      ? currentValue["password"] = { value: true, message: "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit." }
+      : currentValue["password"] = { value: false, message: "" };
+    !phoneNumberValidity
+      ? currentValue["phoneNumber"] = { value: true, message: "Value should be 10 digits." }
+      : currentValue["phoneNumber"] = { value: false, message: "" };
+    !firstNameValidity
+      ? currentValue["firstName"] = { value: true, message: "Required" }
+      : currentValue["firstName"] = { value: false, message: "" };
+    !lastNameValidity
+      ? currentValue["lastName"] = { value: true, message: "Required" }
+      : currentValue["lastName"] = { value: false, message: "" };
+    !userNameValidity
+      ? currentValue["userName"] = { value: true, message: "Required" }
+      : currentValue["userName"] = { value: false, message: "" };
+
+    await setErrorValue(currentValue);
+
+    return emailValidity &&
       passwordValidity &&
       phoneNumberValidity &&
       firstNameValidity &&
       lastNameValidity &&
       userNameValidity
-    );
+    ;
   };
 
   const handleSignup = async () => {
+    await setErrorValue(initialErrorState);
     const newUser = {
       firstName: newAccount.firstName,
       lastName: newAccount.lastName,
@@ -155,7 +178,7 @@ const Signup = () => {
       phoneNumber: newAccount.phoneNumber
     };
 
-    if (validateInput()) {
+    if (await validateInput()) {
       setLoading(true);
       const result = await AuthClient.signup(newUser);
       setUserLoggedIn(true);
@@ -319,7 +342,7 @@ const Signup = () => {
                                   <li>one upper case letter</li>
                                   <li>one lower case letter</li>
                                   <li>one special character</li>
-                                  <li>one digit.</li>
+                                  <li>one digit</li>
                                 </ul>
                               </>
                             )}
