@@ -87,7 +87,7 @@ const Login = () => {
       setLoading(true);
       const result = await AuthClient.login(login.email, login.password, errorHandler);
       setUserLoggedIn(true);
-      setUser(result.data.user);
+      setUser(result.user);
       navigate("/");
     }
   };

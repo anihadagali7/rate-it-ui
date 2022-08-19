@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_BASE_URL;
 const login = (email, password, onError) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { data, status, accessToken } = await axios.post(
+      const { data, status } = await axios.post(
         API_URL + "/api/login",
         {
           email,
@@ -14,13 +14,12 @@ const login = (email, password, onError) => {
       );
 
       if (status === 200) {
-        resolve(status);
-        if (accessToken) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("accessToken", accessToken);
+        if (data.accessToken) {
+          localStorage.setItem("user", JSON.stringify(data.data.user));
+          localStorage.setItem("accessToken", data.accessToken);
         }
 
-        return data;
+        resolve(data.data);
       }
     } catch (error) {
       let errors = error.response.data.errors;
@@ -32,25 +31,26 @@ const login = (email, password, onError) => {
 const signup = (newAccount, onError) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { data, status, accessToken } = await axios.post(
+      const { data, status } = await axios.post(
         API_URL + "/api/create-user",
         newAccount
       );
-      console.log("-> data", data, status);
-
       if (status === 201) {
-        resolve(status);
-        if (accessToken) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("accessToken", accessToken);
+        if (data.accessToken) {
+          localStorage.setItem("user", JSON.stringify(data.data.user));
+          localStorage.setItem("accessToken", data.accessToken);
         }
 
-        return data;
+        resolve(data.data);
       }
     } catch (error) {
-      console.log("some error in catch ", error);
       let errors = error.response.data.errors;
-      onError("email", true, errors.msg);
+      if(errors.msg.includes("email")){
+        onError("email", true, errors.msg);
+      }
+      if(errors.msg.includes("username")){
+        onError("userName", true, errors.msg);
+      }
     }
   });
 };

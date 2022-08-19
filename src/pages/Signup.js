@@ -110,7 +110,7 @@ const Signup = () => {
   };
 
   const isValidPassword = (password) => {
-    const validPassword = new RegExp("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{6}$\n");
+    const validPassword = new RegExp("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{6,}$");
     return validPassword.test(password);
   };
 
@@ -120,7 +120,6 @@ const Signup = () => {
   };
 
   const errorHandler = async (id, value, message) => {
-    console.log("-> error", id, value, message);
     const currentValue = JSON.parse(JSON.stringify(errorValue));
     currentValue[id] = { value: value, message: message };
     setErrorValue(currentValue);
@@ -133,7 +132,7 @@ const Signup = () => {
     const phoneNumberValidity = isValidPhoneNumber(newAccount.phoneNumber);
     const firstNameValidity = newAccount.firstName.length > 0;
     const lastNameValidity = newAccount.lastName.length > 0;
-    const userNameValidity = newAccount.userName.length > 0;
+    const userNameValidity = newAccount.userName.length > 3;
 
     const currentValue = JSON.parse(JSON.stringify(errorValue));
 
@@ -153,7 +152,7 @@ const Signup = () => {
       ? currentValue["lastName"] = { value: true, message: "Required" }
       : currentValue["lastName"] = { value: false, message: "" };
     !userNameValidity
-      ? currentValue["userName"] = { value: true, message: "Required" }
+      ? currentValue["userName"] = { value: true, message: "Value must be at least 4 characters." }
       : currentValue["userName"] = { value: false, message: "" };
 
     await setErrorValue(currentValue);
@@ -180,9 +179,9 @@ const Signup = () => {
 
     if (await validateInput()) {
       setLoading(true);
-      const result = await AuthClient.signup(newUser);
+      const result = await AuthClient.signup(newUser, errorHandler);
       setUserLoggedIn(true);
-      setUser(result.data.user);
+      setUser(result.user);
       navigate("/");
     }
   };
@@ -294,6 +293,7 @@ const Signup = () => {
                             }}
                             size="small"
                             required
+                            placeholder={"123-456-7890"}
                             value={newAccount.phoneNumber}
                             onChange={onChangePhoneNumber}
                             error={errorValue["phoneNumber"]["value"]}
