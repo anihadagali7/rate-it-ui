@@ -25,6 +25,7 @@ import { currentUser } from "../state/user";
 import RatingClient from "../client/RatingClient";
 import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
+import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -32,6 +33,7 @@ const MediaInfo = () => {
   const [ratingsList, setRatingsList] = useState([]);
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [user, setUser] = useAtom(currentUser);
+  const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
@@ -39,7 +41,7 @@ const MediaInfo = () => {
   }, [id, mediaType]);
 
   const getRatingsForMedia = async (id) => {
-    const result = await RatingClient.getAllRatingsForMedia(id);
+    const result = await RatingClient.getAllRatingsForMedia(id, setDisplayTokenModal);
     setRatingsList(result.data.ratingsList);
   };
 
@@ -401,6 +403,10 @@ const MediaInfo = () => {
           {openRatingModal && (
             <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media}
                             user={user} />
+          )}
+          {displayTokenModal && (
+            <LoginErrorModal open={displayTokenModal} onClose={() => {
+              setDisplayTokenModal(false)}} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>
