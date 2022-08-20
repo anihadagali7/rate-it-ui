@@ -144,11 +144,13 @@ const Header = ({ displayMenu }) => {
       setTabValue(1);
     } else if (pathname.includes("/profile/")) {
       setTabValue(2);
-    } else if (pathname === "/playlist") {
-      setTabValue(3);
-    } else if (pathname === "/wishlist") {
-      setTabValue(4);
-    } else {
+    }
+    // else if (pathname === "/playlist") {
+    //   setTabValue(3);
+    // } else if (pathname === "/wishlist") {
+    //   setTabValue(4);
+    // }
+    else {
       setTabValue(false);
     }
   };
@@ -236,20 +238,20 @@ const Header = ({ displayMenu }) => {
               component={Link}
               to={`/profile/${user.userName}`}
             />
-            <AntTab
-              icon={<PlaylistAddIcon />}
-              label="Playlist"
-              iconPosition="start"
-              component={Link}
-              to="/"
-            />
-            <AntTab
-              icon={<BookmarkIcon />}
-              iconPosition="start"
-              component={Link}
-              label="Wishlist"
-              to="/"
-            />
+            {/*<AntTab*/}
+            {/*  icon={<PlaylistAddIcon />}*/}
+            {/*  label="Playlist"*/}
+            {/*  iconPosition="start"*/}
+            {/*  component={Link}*/}
+            {/*  to="/"*/}
+            {/*/>*/}
+            {/*<AntTab*/}
+            {/*  icon={<BookmarkIcon />}*/}
+            {/*  iconPosition="start"*/}
+            {/*  component={Link}*/}
+            {/*  label="Wishlist"*/}
+            {/*  to="/"*/}
+            {/*/>*/}
           </AntTabs>
           {localUserLoggedIn ? (
             <>
@@ -423,26 +425,26 @@ const Header = ({ displayMenu }) => {
                 </Typography>
               </ListItemText>
             </ListItem>
-            <ListItem key={"playlist"} component={Link} to={"/playlist"}>
-              <ListItemIcon>
-                <PlaylistAddIcon sx={{ color: "#232b2b" }} />
-              </ListItemIcon>
-              <Typography
-                sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}
-              >
-                Playlist
-              </Typography>
-            </ListItem>
-            <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
-              <ListItemIcon>
-                <BookmarkIcon sx={{ color: "#232b2b" }} />
-              </ListItemIcon>
-              <Typography
-                sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}
-              >
-                Wishlist
-              </Typography>
-            </ListItem>
+            {/*<ListItem key={"playlist"} component={Link} to={"/playlist"}>*/}
+            {/*  <ListItemIcon>*/}
+            {/*    <PlaylistAddIcon sx={{ color: "#232b2b" }} />*/}
+            {/*  </ListItemIcon>*/}
+            {/*  <Typography*/}
+            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}*/}
+            {/*  >*/}
+            {/*    Playlist*/}
+            {/*  </Typography>*/}
+            {/*</ListItem>*/}
+            {/*<ListItem key={"wishlist"} component={Link} to={"/wishlist"}>*/}
+            {/*  <ListItemIcon>*/}
+            {/*    <BookmarkIcon sx={{ color: "#232b2b" }} />*/}
+            {/*  </ListItemIcon>*/}
+            {/*  <Typography*/}
+            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}*/}
+            {/*  >*/}
+            {/*    Wishlist*/}
+            {/*  </Typography>*/}
+            {/*</ListItem>*/}
           </List>
           <Divider />
           <List>
