@@ -32,7 +32,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import { Alert, Collapse } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles({
   title: {
@@ -106,7 +108,7 @@ const Header = ({ displayMenu }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [userMenu, setUserMenu] = useState(null);
-
+  const [openLoginAlert, setOpenLoginAlert] = useState(true);
   const [drawer, setDrawer] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [localUserLoggedIn, setLocalUserLoggedIn] = useState(false);
@@ -129,6 +131,7 @@ const Header = ({ displayMenu }) => {
       setLocalUserLoggedIn(true);
     } else {
       setLocalUserLoggedIn(false);
+      setOpenLoginAlert(true);
     }
   }, [userLoggedIn]);
 
@@ -141,11 +144,13 @@ const Header = ({ displayMenu }) => {
       setTabValue(1);
     } else if (pathname.includes("/profile/")) {
       setTabValue(2);
-    } else if (pathname === "/playlist") {
-      setTabValue(3);
-    } else if (pathname === "/wishlist") {
-      setTabValue(4);
-    } else {
+    }
+    // else if (pathname === "/playlist") {
+    //   setTabValue(3);
+    // } else if (pathname === "/wishlist") {
+    //   setTabValue(4);
+    // }
+    else {
       setTabValue(false);
     }
   };
@@ -233,20 +238,20 @@ const Header = ({ displayMenu }) => {
               component={Link}
               to={`/profile/${user.userName}`}
             />
-            <AntTab
-              icon={<PlaylistAddIcon />}
-              label="Playlist"
-              iconPosition="start"
-              component={Link}
-              to="/"
-            />
-            <AntTab
-              icon={<BookmarkIcon />}
-              iconPosition="start"
-              component={Link}
-              label="Wishlist"
-              to="/"
-            />
+            {/*<AntTab*/}
+            {/*  icon={<PlaylistAddIcon />}*/}
+            {/*  label="Playlist"*/}
+            {/*  iconPosition="start"*/}
+            {/*  component={Link}*/}
+            {/*  to="/"*/}
+            {/*/>*/}
+            {/*<AntTab*/}
+            {/*  icon={<BookmarkIcon />}*/}
+            {/*  iconPosition="start"*/}
+            {/*  component={Link}*/}
+            {/*  label="Wishlist"*/}
+            {/*  to="/"*/}
+            {/*/>*/}
           </AntTabs>
           {localUserLoggedIn ? (
             <>
@@ -420,26 +425,26 @@ const Header = ({ displayMenu }) => {
                 </Typography>
               </ListItemText>
             </ListItem>
-            <ListItem key={"playlist"} component={Link} to={"/playlist"}>
-              <ListItemIcon>
-                <PlaylistAddIcon sx={{ color: "#232b2b" }} />
-              </ListItemIcon>
-              <Typography
-                sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}
-              >
-                Playlist
-              </Typography>
-            </ListItem>
-            <ListItem key={"wishlist"} component={Link} to={"/wishlist"}>
-              <ListItemIcon>
-                <BookmarkIcon sx={{ color: "#232b2b" }} />
-              </ListItemIcon>
-              <Typography
-                sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}
-              >
-                Wishlist
-              </Typography>
-            </ListItem>
+            {/*<ListItem key={"playlist"} component={Link} to={"/playlist"}>*/}
+            {/*  <ListItemIcon>*/}
+            {/*    <PlaylistAddIcon sx={{ color: "#232b2b" }} />*/}
+            {/*  </ListItemIcon>*/}
+            {/*  <Typography*/}
+            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}*/}
+            {/*  >*/}
+            {/*    Playlist*/}
+            {/*  </Typography>*/}
+            {/*</ListItem>*/}
+            {/*<ListItem key={"wishlist"} component={Link} to={"/wishlist"}>*/}
+            {/*  <ListItemIcon>*/}
+            {/*    <BookmarkIcon sx={{ color: "#232b2b" }} />*/}
+            {/*  </ListItemIcon>*/}
+            {/*  <Typography*/}
+            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}*/}
+            {/*  >*/}
+            {/*    Wishlist*/}
+            {/*  </Typography>*/}
+            {/*</ListItem>*/}
           </List>
           <Divider />
           <List>
@@ -500,14 +505,45 @@ const Header = ({ displayMenu }) => {
   );
 
   return (
-    <AppBar position="static" className={classes.appBar}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {displayBigScreenHeader()}
-          {displaySmallScreenHeader()}
-        </Toolbar>
-      </Container>
-    </AppBar>
+    <>
+      <AppBar position="static" className={classes.appBar}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {displayBigScreenHeader()}
+            {displaySmallScreenHeader()}
+          </Toolbar>
+        </Container>
+      </AppBar>
+      {!localUserLoggedIn && <Box sx={{ width: "100%" }}>
+        <Collapse in={openLoginAlert}>
+          <Alert
+            severity="info"
+            variant="filled"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenLoginAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            <Typography sx={{fontSize: '13px'}}>Please login to get the full experience!
+              <Button component={Link} to="/login" variant="text" sx={{height: '10px'}} onClick={() => setOpenLoginAlert(false)}>
+                <Typography sx={{ color: '#fff', fontSize: '13px' }}>
+                  Login
+                </Typography>
+              </Button>
+            </Typography>
+          </Alert>
+        </Collapse>
+      </Box>}
+    </>
   );
 };
 

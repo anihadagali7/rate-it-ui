@@ -24,19 +24,28 @@ import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles({
   container: {
-    margin: "20px 35px",
+    margin: "20px 35px"
   },
   loginBtn: {
     backgroundColor: "#f4afc2",
     "&:hover": {
-      backgroundColor: "#f4afc2",
-    },
+      backgroundColor: "#f4afc2"
+    }
   },
   login: {
     fontWeight: "900",
-    marginLeft: "5px",
-  },
+    marginLeft: "5px"
+  }
 });
+
+const initialErrorState = {
+  firstName: { value: false, message: "" },
+  lastName: { value: false, message: "" },
+  email: { value: false, message: "" },
+  userName: { value: false, message: "" },
+  phoneNumber: { value: false, message: "" },
+  password: { value: false, message: "" }
+}
 
 const Signup = () => {
   let navigate = useNavigate();
@@ -47,51 +56,52 @@ const Signup = () => {
     userName: "",
     email: "",
     password: "",
-    phoneNumber: "",
+    phoneNumber: ""
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [loading, setLoading] = useState(false);
+  const [errorValue, setErrorValue] = useState(initialErrorState);
 
   const onChangeFirstName = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      firstName: event.target.value,
+      firstName: event.target.value
     }));
   };
 
   const onChangeLastName = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      lastName: event.target.value,
+      lastName: event.target.value
     }));
   };
 
   const onChangeUserName = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      userName: event.target.value,
+      userName: event.target.value
     }));
   };
 
   const onChangeEmail = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      email: event.target.value,
+      email: event.target.value
     }));
   };
 
   const onChangePassword = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      password: event.target.value,
+      password: event.target.value
     }));
   };
 
   const onChangePhoneNumber = (event) => {
     setNewAccount((credentials) => ({
       ...newAccount,
-      phoneNumber: event.target.value,
+      phoneNumber: event.target.value
     }));
   };
 
@@ -99,42 +109,80 @@ const Signup = () => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  const validateInput = () => {
-    const emailValidity = isValidEmail(newAccount.email);
-    const passwordValidity = newAccount.password.length > 4;
-    const phoneNumberValidity = newAccount.phoneNumber.length == 10;
-    const firstNameValidity = newAccount.firstName.length > 1;
-    const lastNameValidity = newAccount.lastName.length > 1;
-    const userNameValidity = newAccount.userName.length > 1;
+  const isValidPassword = (password) => {
+    const validPassword = new RegExp("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{6,}$");
+    return validPassword.test(password);
+  };
 
-    return (
-      emailValidity &&
+  const isValidPhoneNumber = (phoneNumber) => {
+    const validPassword = new RegExp("^\\d{3}-\\d{3}-\\d{4}$");
+    return validPassword.test(phoneNumber);
+  };
+
+  const errorHandler = async (id, value, message) => {
+    const currentValue = JSON.parse(JSON.stringify(errorValue));
+    currentValue[id] = { value: value, message: message };
+    setErrorValue(currentValue);
+    value && setLoading(false);
+  };
+
+  const validateInput = async () => {
+    const emailValidity = isValidEmail(newAccount.email);
+    const passwordValidity = isValidPassword(newAccount.password);
+    const phoneNumberValidity = isValidPhoneNumber(newAccount.phoneNumber);
+    const firstNameValidity = newAccount.firstName.length > 0;
+    const lastNameValidity = newAccount.lastName.length > 0;
+    const userNameValidity = newAccount.userName.length > 3;
+
+    const currentValue = JSON.parse(JSON.stringify(errorValue));
+
+    !emailValidity
+      ? currentValue["email"] = { value: true, message: "Value should be a valid email." }
+      : currentValue["email"] = { value: false, message: "" };
+    !passwordValidity
+      ? currentValue["password"] = { value: true, message: "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit." }
+      : currentValue["password"] = { value: false, message: "" };
+    !phoneNumberValidity
+      ? currentValue["phoneNumber"] = { value: true, message: "Value should be 10 digits." }
+      : currentValue["phoneNumber"] = { value: false, message: "" };
+    !firstNameValidity
+      ? currentValue["firstName"] = { value: true, message: "Required" }
+      : currentValue["firstName"] = { value: false, message: "" };
+    !lastNameValidity
+      ? currentValue["lastName"] = { value: true, message: "Required" }
+      : currentValue["lastName"] = { value: false, message: "" };
+    !userNameValidity
+      ? currentValue["userName"] = { value: true, message: "Value must be at least 4 characters." }
+      : currentValue["userName"] = { value: false, message: "" };
+
+    await setErrorValue(currentValue);
+
+    return emailValidity &&
       passwordValidity &&
       phoneNumberValidity &&
       firstNameValidity &&
       lastNameValidity &&
       userNameValidity
-    );
+    ;
   };
 
   const handleSignup = async () => {
-    setLoading(true);
+    await setErrorValue(initialErrorState);
     const newUser = {
       firstName: newAccount.firstName,
       lastName: newAccount.lastName,
       email: newAccount.email,
       userName: newAccount.userName,
       password: newAccount.password,
-      phoneNumber: newAccount.phoneNumber,
+      phoneNumber: newAccount.phoneNumber
     };
 
-    if (validateInput()) {
-      const result = await AuthClient.signup(newUser);
-      if (result.status === "success") {
-        setUserLoggedIn(true);
-        setUser(result.data.user);
-        navigate("/");
-      }
+    if (await validateInput()) {
+      setLoading(true);
+      const result = await AuthClient.signup(newUser, errorHandler);
+      setUserLoggedIn(true);
+      setUser(result.user);
+      navigate("/");
     }
   };
 
@@ -147,7 +195,7 @@ const Signup = () => {
               sx={{
                 width: "100%",
                 height: "100%",
-                margin: "auto",
+                margin: "auto"
               }}
             >
               <Paper
@@ -158,7 +206,7 @@ const Signup = () => {
                   margin: "auto",
                   height: isMobile ? "685px" : "100%",
                   borderRadius: "17px",
-                  marginBottom: "20px",
+                  marginBottom: "20px"
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -172,7 +220,7 @@ const Signup = () => {
                         <Typography
                           sx={{
                             fontWeight: "bold",
-                            fontSize: "22px",
+                            fontSize: "22px"
                           }}
                         >
                           Create an Account
@@ -185,13 +233,15 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             required
                             value={newAccount.firstName}
                             onChange={onChangeFirstName}
+                            error={errorValue["firstName"]["value"]}
+                            helperText={errorValue["firstName"]["value"] && errorValue["firstName"]["message"]}
                           />
                         </InputLabel>
                       </Grid>
@@ -202,13 +252,15 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             required
                             value={newAccount.lastName}
                             onChange={onChangeLastName}
+                            error={errorValue["lastName"]["value"]}
+                            helperText={errorValue["lastName"]["value"] && errorValue["lastName"]["message"]}
                           />
                         </InputLabel>
                       </Grid>
@@ -219,13 +271,15 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             required
                             value={newAccount.userName}
                             onChange={onChangeUserName}
+                            error={errorValue["userName"]["value"]}
+                            helperText={errorValue["userName"]["value"] && errorValue["userName"]["message"]}
                           />
                         </InputLabel>
                         <InputLabel sx={{ marginTop: "15px" }}>
@@ -234,13 +288,16 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             required
+                            placeholder={"123-456-7890"}
                             value={newAccount.phoneNumber}
                             onChange={onChangePhoneNumber}
+                            error={errorValue["phoneNumber"]["value"]}
+                            helperText={errorValue["phoneNumber"]["value"] && errorValue["phoneNumber"]["message"]}
                           />
                         </InputLabel>
                         <InputLabel sx={{ marginTop: "15px" }}>
@@ -249,14 +306,16 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             required
                             type={"email"}
                             value={newAccount.email}
                             onChange={onChangeEmail}
+                            error={errorValue["email"]["value"]}
+                            helperText={errorValue["email"]["value"] && errorValue["email"]["message"]}
                           />
                         </InputLabel>
                         <InputLabel>
@@ -267,14 +326,26 @@ const Signup = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px",
-                              },
+                                borderRadius: "17px"
+                              }
                             }}
                             size="small"
                             type={"password"}
                             required
                             value={newAccount.password}
                             onChange={onChangePassword}
+                            error={errorValue["password"]["value"]}
+                            helperText={errorValue["password"]["value"] && (
+                              <>
+                                <span>Password should contain at least</span>
+                                <ul>
+                                  <li>one upper case letter</li>
+                                  <li>one lower case letter</li>
+                                  <li>one special character</li>
+                                  <li>one digit</li>
+                                </ul>
+                              </>
+                            )}
                           />
                         </InputLabel>
                       </Grid>
@@ -290,20 +361,21 @@ const Signup = () => {
                             width: "100%",
                             border: "transparent",
                             "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
+                              border: "transparent"
                             },
                             borderRadius: "17px",
-                            maxHeight: '35px',
+                            maxHeight: "35px",
                             "&.Mui-disabled": {
                               color: "#fff",
-                              background: "#9E9E9E",
+                              background: "#9E9E9E"
                             }
                           }}
                           disabled={loading}
                         >
                           {loading && (
-                            <div style={{color: '#ffffff'}}>
-                              <CircularProgress size={20} color="inherit" sx={{marginTop: '5px', marginRight: '7px'}} />
+                            <div style={{ color: "#ffffff" }}>
+                              <CircularProgress size={20} color="inherit"
+                                                sx={{ marginTop: "5px", marginRight: "7px" }} />
                             </div>
                           )}
                           <Typography
@@ -321,7 +393,7 @@ const Signup = () => {
                           marginTop: "0px",
                           display: "flex",
                           justifyContent: "center",
-                          width: "100%",
+                          width: "100%"
                         }}
                       >
                         <Button
@@ -334,7 +406,7 @@ const Signup = () => {
                             sx={{
                               fontWeight: 600,
                               marginLeft: "-8px",
-                              fontSize: "15px",
+                              fontSize: "15px"
                             }}
                           >
                             Sign in instead

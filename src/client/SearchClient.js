@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
-const searchMedia = (mediaType, keyWord) => {
+const searchMedia = (mediaType, keyWord, onError) => {
   const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(
@@ -16,6 +16,9 @@ const searchMedia = (mediaType, keyWord) => {
     )
     .then((response) => {
       return response.data;
+    }).catch((error) => {
+      let errors = error.response.data.errors;
+      onError(errors.msg.length > 0);
     });
 };
 

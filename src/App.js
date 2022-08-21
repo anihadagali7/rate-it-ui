@@ -11,6 +11,7 @@ import Header from "./components/header/Header";
 import Signup from "./pages/Signup";
 import MediaInfo from "./pages/MediaInfo";
 import Search from "./components/Search/Search";
+import Protected from "./shared/Protected";
 
 export default class App extends Component {
   render() {
@@ -25,10 +26,10 @@ export default class App extends Component {
                 <Route exact path="/search" element={<Search />}></Route>
                 <Route exact path="/login" element={<Login />}></Route>
                 <Route exact path="/signup" element={<Signup />}></Route>
-                <Route exact path="/:mediaType/:id" element={<MediaInfo />}></Route>
-                <Route exact path="/profile/:userName" element={<Profile />}></Route>
-                <Route exact path="/playlist" element={<Login />}></Route>
-                <Route exact path="/wishlist" element={<Login />}></Route>
+                <Route exact path="/:mediaType/:id" element={<Protected><MediaInfo /></Protected>}></Route>
+                <Route exact path="/profile/:userName" element={<Protected><Profile /></Protected>}></Route>
+                {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
+                {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
               </Routes>
             </BrowserRouter>
           </ThemeProvider>
