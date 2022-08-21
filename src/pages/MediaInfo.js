@@ -34,11 +34,16 @@ const MediaInfo = () => {
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [user, setUser] = useAtom(currentUser);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
+  const [ratingAdded, setRatingAdded] = useState(false);
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
     getRatingsForMedia(id);
   }, [id, mediaType]);
+
+  useEffect(() => {
+    getRatingsForMedia(id);
+  }, [ratingAdded]);
 
   const getRatingsForMedia = async (id) => {
     const result = await RatingClient.getAllRatingsForMedia(id, setDisplayTokenModal);
@@ -402,7 +407,7 @@ const MediaInfo = () => {
           </Container>
           {openRatingModal && (
             <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media}
-                            user={user} />
+                            user={user} ratingAdded={ratingAdded} setRatingAdded={setRatingAdded} />
           )}
           {displayTokenModal && (
             <LoginErrorModal open={displayTokenModal} onClose={() => {

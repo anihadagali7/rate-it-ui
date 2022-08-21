@@ -20,7 +20,7 @@ import Button from "@mui/material/Button";
 import RatingClient from "../../client/RatingClient";
 
 
-const AddRatingModal = ({ open, onClose, mediaDetails, user }) => {
+const AddRatingModal = ({ open, onClose, mediaDetails, user, ratingAdded, setRatingAdded }) => {
   const [comments, setComments] = useState("");
   const [rating, setRating] = React.useState(5);
 
@@ -47,6 +47,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails, user }) => {
     requestBody.comments = comments;
     requestBody.rating = rating;
     await RatingClient.submitRating(requestBody);
+    setRatingAdded(!ratingAdded);
     onClose();
   };
 
