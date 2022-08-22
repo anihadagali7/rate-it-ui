@@ -54,4 +54,17 @@ const getAllExploreRatings= () => {
     });
 };
 
-export default { submitRating, getAllRatingsForUser, getAllRatingsForMedia, getAllExploreRatings };
+const getFeedRatings= (userName) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + `/api/ratings/following/${userName}`, {
+      headers: {
+        Authorization: ACCESS_TOKEN,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export default { submitRating, getAllRatingsForUser, getAllRatingsForMedia, getAllExploreRatings, getFeedRatings };
