@@ -41,4 +41,30 @@ const getAllRatingsForMedia = (mediaId) => {
     });
 };
 
-export default { submitRating, getAllRatingsForUser, getAllRatingsForMedia };
+const getAllExploreRatings= () => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + `/api/ratings/explore`, {
+      headers: {
+        Authorization: ACCESS_TOKEN,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const getFeedRatings= (userName) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .get(API_URL + `/api/ratings/following/${userName}`, {
+      headers: {
+        Authorization: ACCESS_TOKEN,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export default { submitRating, getAllRatingsForUser, getAllRatingsForMedia, getAllExploreRatings, getFeedRatings };
