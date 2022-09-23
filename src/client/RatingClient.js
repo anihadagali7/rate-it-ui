@@ -44,11 +44,7 @@ const getAllRatingsForMedia = (mediaId) => {
 const getAllExploreRatings= () => {
   const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
-    .get(API_URL + `/api/ratings/explore`, {
-      headers: {
-        Authorization: ACCESS_TOKEN,
-      },
-    })
+    .get(API_URL + `/api/ratings/explore`, {})
     .then((response) => {
       return response.data;
     });

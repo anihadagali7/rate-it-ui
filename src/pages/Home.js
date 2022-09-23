@@ -19,22 +19,27 @@ const Home = () => {
 
   const getAllExploreRatings = async () => {
     const result = await RatingClient.getAllExploreRatings();
-    setExploreRatingsList(result.data.ratingsList);
+    setExploreRatingsList(result.data.ratingsList.reverse());
   };
 
   const getFeedRatings = async () => {
     const result = await RatingClient.getFeedRatings(localUser.userName && localUser.userName);
-    setFeedRatingsList(result.data.ratingsList);
+    setFeedRatingsList(result.data.ratingsList.reverse());
   };
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
-    return "" + timeAgo.split(" ")[0] + units[0];
+    if(units.includes("second") || units.includes("minute") || units.includes("day")){
+      return "" + timeAgo.split(" ")[0] + units[0];
+    }
+    else {
+      return moment(date).format("M-D-YY");
+    }
   };
 
   useEffect(() => {
-    localUser && getFeedRatings();
+    // localUser && getFeedRatings();
     getAllExploreRatings();
   }, [localUser]);
 

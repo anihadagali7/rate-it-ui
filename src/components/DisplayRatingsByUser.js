@@ -31,7 +31,12 @@ const DisplayRatingsByUser = ({ user }) => {
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
-    return "" + timeAgo.split(" ")[0] + units[0]
+    if(units.includes("second") || units.includes("minute") || units.includes("day")){
+      return "" + timeAgo.split(" ")[0] + units[0];
+    }
+    else {
+      return moment(date).format("M-D-YY");
+    }
   }
 
   return (
