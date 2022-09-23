@@ -76,8 +76,12 @@ const Search = () => {
     setLoading(false);
   };
 
-  const handleSearch = async (e) => {
+  const submitSearch = (e) => {
     e.preventDefault();
+    handleSearch();
+  }
+
+  const handleSearch = async (e) => {
     if (searchKeyword.length > 0) {
       setLoading(true);
       setHasSearched(true);
@@ -153,7 +157,7 @@ const Search = () => {
                       <Grid item xs={12} sx={{ width: "100%" }}>
                         <Paper elevation={2}
                                component="form"
-                               onSubmit={handleSearch}
+                               onSubmit={submitSearch}
                                sx={{
                                  p: "2px 4px",
                                  display: "flex",
