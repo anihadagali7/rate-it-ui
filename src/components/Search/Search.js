@@ -76,7 +76,8 @@ const Search = () => {
     setLoading(false);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    e.preventDefault();
     if (searchKeyword.length > 0) {
       setLoading(true);
       setHasSearched(true);
@@ -152,6 +153,7 @@ const Search = () => {
                       <Grid item xs={12} sx={{ width: "100%" }}>
                         <Paper elevation={2}
                                component="form"
+                               onSubmit={handleSearch}
                                sx={{
                                  p: "2px 4px",
                                  display: "flex",
@@ -179,7 +181,7 @@ const Search = () => {
                             </IconButton>
                           )}
                           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                          <IconButton sx={{ p: "10px" }} onClick={handleSearch}>
+                          <IconButton sx={{ p: "10px" }} type="submit">
                             <SearchIcon />
                           </IconButton>
                         </Paper>

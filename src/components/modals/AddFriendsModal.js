@@ -39,11 +39,13 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
     setUsers(result.data);
   };
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
     setFilteredUsersList(usersList);
   };
 
   const filterUsers = (event) => {
+    event.preventDefault();
     setSearchKeyword(event.target.value);
     const updatedList = usersList.filter(user => {
       return (
@@ -72,6 +74,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                 <Box sx={{ width: "100%" }}>
                   <Paper elevation={4}
                          component="form"
+                         onSubmit={handleSearch}
                          sx={{
                            p: "2px 4px",
                            display: "flex",

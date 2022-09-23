@@ -82,7 +82,8 @@ const Login = () => {
     return emailValidity;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     if (validateInput()) {
       setLoading(true);
       const result = await AuthClient.login(login.email, login.password, errorHandler);
@@ -118,6 +119,8 @@ const Login = () => {
                   <Box>
                     <Grid
                       container
+                      component="form"
+                      onSubmit={handleLogin}
                       spacing={{ xs: 2, md: 2, xl: 5 }}
                       columns={{ md: 12 }}
                     >
@@ -192,7 +195,7 @@ const Login = () => {
                         <Button
                           variant="outlined"
                           className={classes.loginBtn}
-                          onClick={handleLogin}
+                          type="submit"
                           sx={{
                             float: "right",
                             border: "transparent",

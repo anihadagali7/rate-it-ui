@@ -115,8 +115,7 @@ const Signup = () => {
   };
 
   const isValidPhoneNumber = (phoneNumber) => {
-    const validPassword = new RegExp("^\\d{3}-\\d{3}-\\d{4}$");
-    return validPassword.test(phoneNumber);
+    return phoneNumber.length === 10;
   };
 
   const errorHandler = async (id, value, message) => {
@@ -166,7 +165,8 @@ const Signup = () => {
     ;
   };
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault();
     await setErrorValue(initialErrorState);
     const newUser = {
       firstName: newAccount.firstName,
@@ -210,7 +210,7 @@ const Signup = () => {
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box>
+                  <Box component="form" onSubmit={handleSignup}>
                     <Grid
                       container
                       spacing={{ xs: 2, md: 2, xl: 2 }}
@@ -353,7 +353,7 @@ const Signup = () => {
                         <Button
                           variant="outlined"
                           className={classes.loginBtn}
-                          onClick={handleSignup}
+                          type="submit"
                           sx={{
                             float: "right",
                             marginLeft: "43px",
