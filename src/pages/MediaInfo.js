@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
+import WishlistClient from "../client/WishlistClient";
 import {
   Container,
   StyledEngineProvider,
@@ -71,6 +72,13 @@ const MediaInfo = () => {
 
   const handleAddRatingModalClose = () => {
     setOpenRatingModal(false);
+  };
+
+  const handleAddToWishlist = async () => {
+    let requestBody = {};
+    requestBody.mediaId = media.mediaId;
+    requestBody.userName = user.userName;
+    await WishlistClient.addToWishlist(requestBody);
   };
 
   const displayMovieTvShow = (media) => (
@@ -208,18 +216,22 @@ const MediaInfo = () => {
           </Button>
           <Button
             variant="outlined"
-            startIcon={<PlaylistAddIcon style={{ color: "#FFFFFF" }} />}
+            startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
             sx={{
               border: "transparent",
-              backgroundColor: "#00a8ff",
+              backgroundColor: "#ffffff",
               borderRadius: "17px",
+              width: "100%",
               "&.MuiButtonBase-root:hover": {
                 border: "transparent",
-                backgroundColor: "#00a8ff"
+                backgroundColor: "#ffffff"
               }
             }}
+            onClick={handleAddToWishlist}
           >
-            <Typography variant="normalText">Add to Playlist</Typography>
+            <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+              Add to Wishlist
+            </Typography>
           </Button>
         </Stack>
       </Grid>
@@ -275,9 +287,10 @@ const MediaInfo = () => {
               backgroundColor: "#ffffff"
             }
           }}
+          onClick={handleAddToWishlist}
         >
           <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
-            Add to Playlist
+            Add to Wishlist
           </Typography>
         </Button>
       </Grid>
@@ -356,7 +369,7 @@ const MediaInfo = () => {
                 >
                   User reviews
                 </Typography>
-                <List component="nav" sx={{marginLeft: '15px', marginRight: '15px'}}>
+                <List component="nav" sx={{ marginLeft: "15px", marginRight: "15px" }}>
                   {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
                     <>
                       <ListItem>
@@ -411,7 +424,8 @@ const MediaInfo = () => {
           )}
           {displayTokenModal && (
             <LoginErrorModal open={displayTokenModal} onClose={() => {
-              setDisplayTokenModal(false)}} />
+              setDisplayTokenModal(false);
+            }} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

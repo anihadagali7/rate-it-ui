@@ -23,6 +23,7 @@ import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/DisplayRatingsByUser";
+import DisplayWishlistByUser from "../components/DisplayWishlistByUser";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -289,6 +290,19 @@ const Profile = () => {
                             backgroundColor: "#40a9ff"
                           }
                         }}
+                        label="Wishlist"
+                      />
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px"
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff"
+                          }
+                        }}
                         label="Likes"
                       />
                       <Tab
@@ -310,9 +324,12 @@ const Profile = () => {
                     <DisplayRatingsByUser user={user} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
-                    Likes
+                    <DisplayWishlistByUser user={user} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={2}>
+                    Likes
+                  </TabPanel>
+                  <TabPanel value={tabValue} index={3}>
                     Comments
                   </TabPanel>
                 </Box>
