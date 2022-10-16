@@ -15,10 +15,10 @@ const addToWishlist = (wishlist) => {
     });
 };
 
-const getAllRatingsForUser = (userName) => {
+const getAllWishlistForUser = (userName) => {
   const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
-    .get(API_URL + `/api/ratings/user/${userName}`, {
+    .get(API_URL + `/api/wishlist/user/${userName}`, {
       headers: {
         Authorization: ACCESS_TOKEN,
       },
@@ -28,4 +28,4 @@ const getAllRatingsForUser = (userName) => {
     });
 };
 
-export default { addToWishlist, getAllRatingsForUser };
+export default { addToWishlist, getAllWishlistForUser };
