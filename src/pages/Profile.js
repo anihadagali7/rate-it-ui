@@ -39,6 +39,7 @@ const Profile = () => {
   const [currentlyFollowsProfile, setCurrentlyFollowsProfile] = useState(false);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
+  const [updated, setUpdated] = useState(false);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
 
@@ -48,27 +49,24 @@ const Profile = () => {
 
   const getProfileDetails = async () => {
     const result = await UserClient.getUserInfo(userName);
-    console.log(user.userName, userName);
-    if (user.userName === userName) {
-      setIsCurrentUserProfile(true);
-    }
     setCurrentProfile(result.data.user);
-    if (result.data.user.followers.includes(user.userName)) {
-      setCurrentlyFollowsProfile(true);
-    }
   };
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName);
+    await UserClient.followUser(user.userName, currentProfile.userName).then(() => {
+      setUpdated(!updated);
+    });
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName);
+    await UserClient.unFollowUser(user.userName, currentProfile.userName).then(() => {
+      setUpdated(!updated);
+    });
   };
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName]);
+  }, [userName, updated]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -89,7 +87,10 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (isCurrentUserProfile) {
+    console.log("logged in user ", user)
+    console.log("current profile ", currentProfile)
+
+    if (user.userName === userName) {
       return (
         <Button
           variant="outlined"
@@ -111,7 +112,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (currentlyFollowsProfile) {
+    } else if (user.followers.includes(userName)) {
       return (
         <Button
           variant="outlined"
@@ -249,14 +250,17 @@ const Profile = () => {
                       <span style={{ fontWeight: "normal" }}> followers</span>
                     </span>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />}
-                            sx={{ color: "#00a8ff", marginLeft: "15px" }}
-                            onClick={handleAddFriendsModalOpen}>
-                      Add friends
-                    </Button>
+                  {user.userName === userName && (
+                    <Grid item xs={12}>
+                      <Button variant="text" endIcon={<PersonAddAltSharpIcon />}
+                              sx={{ color: "#00a8ff", marginLeft: "15px" }}
+                              onClick={handleAddFriendsModalOpen}>
+                        Add friends
+                      </Button>
 
-                  </Grid>
+                    </Grid>
+                  )}
+
                 </Grid>
                 <Box sx={{ width: "100%" }}>
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -321,10 +325,10 @@ const Profile = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
-                    <DisplayRatingsByUser user={user} />
+                    <DisplayRatingsByUser user={currentProfile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
-                    <DisplayWishlistByUser user={user} />
+                    <DisplayWishlistByUser user={currentProfile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={2}>
                     Likes
