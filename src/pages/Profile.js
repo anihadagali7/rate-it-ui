@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import { Box, Button, Container, Grid, Paper, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
@@ -20,7 +11,6 @@ import UserClient from "../client/UserClient";
 import FriendsModal from "../components/modals/FriendsModal";
 import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/DisplayRatingsByUser";
 import DisplayWishlistByUser from "../components/DisplayWishlistByUser";
@@ -34,7 +24,7 @@ const TabPanel = (props) => {
 const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
-  const [currentProfile, setCurrentProfile] = useState({});
+  const [currentProfile, setCurrentProfile] = useState(null);
   const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
   const [currentlyFollowsProfile, setCurrentlyFollowsProfile] = useState(false);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
@@ -45,11 +35,6 @@ const Profile = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-  };
-
-  const getProfileDetails = async () => {
-    const result = await UserClient.getUserInfo(userName);
-    setCurrentProfile(result.data.user);
   };
 
   const followProfile = async () => {
@@ -64,9 +49,15 @@ const Profile = () => {
     });
   };
 
+  const getProfileDetails = async () => {
+    const result = await UserClient.getUserInfo(userName);
+    setCurrentProfile(result.data.user);
+    setOpenFriendsModal(false);
+  };
+
   useEffect(() => {
     getProfileDetails();
-  }, [userName, updated]);
+  }, [userName]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -87,9 +78,6 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    console.log("logged in user ", user)
-    console.log("current profile ", currentProfile)
-
     if (user.userName === userName) {
       return (
         <Button
@@ -179,7 +167,7 @@ const Profile = () => {
                 sx={{
                   width: "100%",
                   minHeight: "300px",
-                  height: '100%',
+                  height: "100%",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                   borderRadius: "17px"
@@ -208,7 +196,7 @@ const Profile = () => {
                         fontWeight: "bold"
                       }}
                     >
-                      {currentProfile.firstName}
+                      {currentProfile?.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -219,7 +207,7 @@ const Profile = () => {
                         fontSize: "13px"
                       }}
                     >
-                      @{currentProfile.userName}
+                      @{currentProfile?.userName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>

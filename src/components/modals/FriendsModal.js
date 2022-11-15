@@ -185,7 +185,6 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                   sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                   component={Link}
                                   to={`/profile/${profile.userName}`}
-                                  onClick={onClose}
                                 >
                                   {profile.firstName[0]}
                                   {profile.lastName[0]}
@@ -222,7 +221,6 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
                                   sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                   component={Link}
                                   to={`/profile/${profile.userName}`}
-                                  onClick={onClose}
                                 >
                                   {profile.firstName[0]}
                                   {profile.lastName[0]}
