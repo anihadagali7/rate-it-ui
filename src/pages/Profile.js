@@ -25,8 +25,6 @@ const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const [currentProfile, setCurrentProfile] = useState(null);
-  const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
-  const [currentlyFollowsProfile, setCurrentlyFollowsProfile] = useState(false);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [updated, setUpdated] = useState(false);
