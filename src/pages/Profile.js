@@ -98,7 +98,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (currentProfile.followers.includes(user.userName)) {
+    } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
       return (
         <Button
           variant="outlined"
