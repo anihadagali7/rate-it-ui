@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import { Box, Button, Container, Grid, Paper, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
@@ -20,7 +11,6 @@ import UserClient from "../client/UserClient";
 import FriendsModal from "../components/modals/FriendsModal";
 import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/DisplayRatingsByUser";
 import DisplayWishlistByUser from "../components/DisplayWishlistByUser";
@@ -34,11 +24,10 @@ const TabPanel = (props) => {
 const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
-  const [currentProfile, setCurrentProfile] = useState({});
-  const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
-  const [currentlyFollowsProfile, setCurrentlyFollowsProfile] = useState(false);
+  const [currentProfile, setCurrentProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
+  const [updated, setUpdated] = useState(false);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
 
@@ -46,24 +35,22 @@ const Profile = () => {
     setTabValue(newValue);
   };
 
-  const getProfileDetails = async () => {
-    const result = await UserClient.getUserInfo(userName);
-    console.log(user.userName, userName);
-    if (user.userName === userName) {
-      setIsCurrentUserProfile(true);
-    }
-    setCurrentProfile(result.data.user);
-    if (result.data.user.followers.includes(user.userName)) {
-      setCurrentlyFollowsProfile(true);
-    }
-  };
-
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName);
+    await UserClient.followUser(user.userName, currentProfile.userName).then(() => {
+      setUpdated(!updated);
+    });
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName);
+    await UserClient.unFollowUser(user.userName, currentProfile.userName).then(() => {
+      setUpdated(!updated);
+    });
+  };
+
+  const getProfileDetails = async () => {
+    const result = await UserClient.getUserInfo(userName);
+    setCurrentProfile(result.data.user);
+    setOpenFriendsModal(false);
   };
 
   useEffect(() => {
@@ -89,7 +76,7 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (isCurrentUserProfile) {
+    if (user.userName === userName) {
       return (
         <Button
           variant="outlined"
@@ -111,7 +98,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (currentlyFollowsProfile) {
+    } else if (user.followers.includes(userName)) {
       return (
         <Button
           variant="outlined"
@@ -178,7 +165,7 @@ const Profile = () => {
                 sx={{
                   width: "100%",
                   minHeight: "300px",
-                  height: '100%',
+                  height: "100%",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
                   borderRadius: "17px"
@@ -207,7 +194,7 @@ const Profile = () => {
                         fontWeight: "bold"
                       }}
                     >
-                      {currentProfile.firstName}
+                      {currentProfile?.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -218,7 +205,7 @@ const Profile = () => {
                         fontSize: "13px"
                       }}
                     >
-                      @{currentProfile.userName}
+                      @{currentProfile?.userName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -249,14 +236,17 @@ const Profile = () => {
                       <span style={{ fontWeight: "normal" }}> followers</span>
                     </span>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Button variant="text" endIcon={<PersonAddAltSharpIcon />}
-                            sx={{ color: "#00a8ff", marginLeft: "15px" }}
-                            onClick={handleAddFriendsModalOpen}>
-                      Add friends
-                    </Button>
+                  {user.userName === userName && (
+                    <Grid item xs={12}>
+                      <Button variant="text" endIcon={<PersonAddAltSharpIcon />}
+                              sx={{ color: "#00a8ff", marginLeft: "15px" }}
+                              onClick={handleAddFriendsModalOpen}>
+                        Add friends
+                      </Button>
 
-                  </Grid>
+                    </Grid>
+                  )}
+
                 </Grid>
                 <Box sx={{ width: "100%" }}>
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -321,10 +311,10 @@ const Profile = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
-                    <DisplayRatingsByUser user={user} />
+                    <DisplayRatingsByUser user={currentProfile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
-                    <DisplayWishlistByUser user={user} />
+                    <DisplayWishlistByUser user={currentProfile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={2}>
                     Likes
