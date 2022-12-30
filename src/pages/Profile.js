@@ -55,7 +55,7 @@ const Profile = () => {
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName]);
+  }, [userName, updated]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -98,7 +98,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (user.followers.includes(userName)) {
+    } else if (currentProfile.followers.includes(user.userName)) {
       return (
         <Button
           variant="outlined"
