@@ -48,7 +48,7 @@ const Home = () => {
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           {feedRatingsList && feedRatingsList.length > 0 && (
-            <Container maxWidth={"sm"} sx={{ marginTop: "10px", marginBottom: "15px" }}>
+            <Container maxWidth={"sm"} sx={{ marginTop: "10px", marginBottom: "25px" }}>
               <Typography
                 sx={{
                   fontWeight: "bold",

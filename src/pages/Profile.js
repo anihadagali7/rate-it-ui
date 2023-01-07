@@ -48,6 +48,8 @@ const Profile = () => {
   };
 
   const getProfileDetails = async () => {
+    const currentUser = await UserClient.getUserInfo(user.userName);
+    setUser(currentUser.data.user);
     const result = await UserClient.getUserInfo(userName);
     setCurrentProfile(result.data.user);
     setOpenFriendsModal(false);
@@ -55,7 +57,7 @@ const Profile = () => {
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName]);
+  }, [userName, updated]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -98,7 +100,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (user.followers.includes(userName)) {
+    } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
       return (
         <Button
           variant="outlined"
@@ -152,7 +154,7 @@ const Profile = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+          <Container maxWidth={"sm"} sx={{ marginTop: "50px", marginBottom: "25px" }}>
             <Box
               sx={{
                 width: "100%",
