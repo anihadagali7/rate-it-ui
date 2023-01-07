@@ -52,7 +52,7 @@ const Profile = () => {
     setUser(currentUser.data.user);
     const result = await UserClient.getUserInfo(userName);
     setCurrentProfile(result.data.user);
-    // setOpenFriendsModal(false);
+    setOpenFriendsModal(false);
   };
 
   useEffect(() => {
