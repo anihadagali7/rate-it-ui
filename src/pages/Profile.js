@@ -48,9 +48,11 @@ const Profile = () => {
   };
 
   const getProfileDetails = async () => {
+    const currentUser = await UserClient.getUserInfo(user.userName);
+    setUser(currentUser.data.user);
     const result = await UserClient.getUserInfo(userName);
     setCurrentProfile(result.data.user);
-    setOpenFriendsModal(false);
+    // setOpenFriendsModal(false);
   };
 
   useEffect(() => {
@@ -152,7 +154,7 @@ const Profile = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+          <Container maxWidth={"sm"} sx={{ marginTop: "50px", marginBottom: "25px" }}>
             <Box
               sx={{
                 width: "100%",
