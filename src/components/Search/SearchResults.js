@@ -1,12 +1,6 @@
-import {
-  Container,
-  Grid,
-  Paper,
-  StyledEngineProvider,
-  ThemeProvider
-} from "@mui/material";
-import { Provider } from "jotai";
-import React from "react";
+import { Button, Container, Grid, Paper, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { Provider, useAtom } from "jotai";
+import React, { useState } from "react";
 import { theme } from "../../Theme/Theme";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -18,9 +12,14 @@ import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import UserClient from "../../client/UserClient";
+import { currentUser } from "../../state/user";
 
 const SearchResults = ({ results, resultType }) => {
+
+  const [updateList, setUpdateList] = useState(false);
+  const [user, setUser] = useAtom(currentUser);
+
   const listItem = (row) => (
     <ListItem
       component={Link}
@@ -180,48 +179,108 @@ const SearchResults = ({ results, resultType }) => {
     );
   };
 
-  const listItemUser = (row) => {
-    return (
-      <ListItem
-        component={Link}
-        to={`/profile/${row.userName}`}
-        sx={{
-          width: 700,
-          "&.MuiListItem-root": { marginLeft: "-12px" }
-        }}
-      >
-        <Box
+  const determineActionButton = (profile) => {
+    if (profile.userName === user.userName) {
+      return (
+        <></>
+      );
+    } else if (profile && profile.followers && profile.followers.includes(user && user.userName)) {
+      return (
+        <Button
+          variant="outlined"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            borderRadius: "17px"
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%"
           }}
+          onClick={() => unFollowUser(user.userName, profile.userName)}
         >
-          <Paper elevation={8} sx={{ width: 500, borderRadius: "17px", }}>
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{ margin: '15px 0 15px 15px'}}
-            >
-              <>
-                <Avatar
-                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
-                  src={AccountCircleIcon}
-                />
-                <div>
-                  <Stack direction="column">
-                    <Typography sx={{ fontWeight: "bold" }}>
-                      {row.firstName} {row.lastName}
-                    </Typography>
-                    <Typography>@{row.userName}</Typography>
-                  </Stack>
-                </div>
-              </>
-            </Stack>
-          </Paper>
-        </Box>
-      </ListItem>
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#00a8ff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Following
+          </Typography>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="contained"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%",
+            backgroundColor: "#00a8ff"
+          }}
+          onClick={() => followUser(user.userName, profile.userName)}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#ffffff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Follow
+          </Typography>
+        </Button>
+      );
+    }
+  };
+
+  const unFollowUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  };
+
+  const followUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.followUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  };
+
+  const listItemUser = (profile) => {
+    return (
+      <>
+        <ListItem>
+          <Stack
+            direction="row"
+            spacing={2}
+          >
+            <>
+              <Avatar
+                sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                component={Link}
+                to={`/profile/${profile.userName}`}
+              >
+                {profile.firstName[0]}
+                {profile.lastName[0]}
+              </Avatar>
+              <div>
+                <Stack direction="column">
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {profile.firstName} {profile.lastName}
+                  </Typography>
+                  <Typography>@{profile.userName}</Typography>
+                </Stack>
+              </div>
+              <div style={{
+                position: "absolute",
+                right: "10px",
+                margin: "0 0 50px 0"
+              }}>
+                {/*{determineActionButton(profile)}*/}
+              </div>
+            </>
+          </Stack>
+        </ListItem>
+        <Divider />
+      </>
     );
   };
 
