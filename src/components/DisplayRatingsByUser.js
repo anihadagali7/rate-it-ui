@@ -25,7 +25,7 @@ const DisplayRatingsByUser = ({ user }) => {
 
   const getRatingsForUser = async () => {
     const result = await RatingClient.getAllRatingsForUser(user.userName);
-    setRatingsList(result.data.ratingsList);
+    setRatingsList(result.data.ratingsList.reverse());
   };
 
   const getTimeAgo = (date) => {

@@ -21,7 +21,7 @@ const DisplayWishlistByUser = ({ user }) => {
 
   const getWishlistForUser = async () => {
     const result = await WishlistClient.getAllWishlistForUser(user.userName);
-    setWishlistList(result.data.wishlistList);
+    setWishlistList(result.data.wishlistList.reverse());
   };
 
   const getTimeAgo = (date) => {
