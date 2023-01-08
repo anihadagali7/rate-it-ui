@@ -39,7 +39,6 @@ const MediaInfo = () => {
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
-    getRatingsForMedia(id);
   }, [id, mediaType]);
 
   useEffect(() => {
