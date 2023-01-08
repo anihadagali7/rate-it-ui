@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
+  Box, Button,
   Container,
   Dialog,
   DialogTitle,
@@ -21,12 +21,14 @@ import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Divider from "@mui/material/Divider";
 
 const AddFriendsModal = ({ open, onClose, currentUser }) => {
 
   const [usersList, setUsers] = useState([]);
   const [filteredUsersList, setFilteredUsersList] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [updateList, setUpdateList] = useState(false);
 
   const resetSearch = () => {
     setSearchKeyword("");
@@ -37,6 +39,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
     const index = result.data.findIndex(item => item.userName === currentUser.userName);
     result.data.splice(index, 1);
     setUsers(result.data);
+    setFilteredUsersList(result.data)
   };
 
   const handleSearch = (e) => {
@@ -58,7 +61,72 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [updateList]);
+
+  const determineActionButton = (profile) => {
+    if (profile.userName === currentUser.userName) {
+      return (
+        <></>
+      );
+    } else if (profile && profile.followers && profile.followers.includes(currentUser && currentUser.userName)) {
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%"
+          }}
+          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#00a8ff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Following
+          </Typography>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="contained"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%",
+            backgroundColor: "#00a8ff"
+          }}
+          onClick={() => followUser(currentUser.userName, profile.userName)}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#ffffff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Follow
+          </Typography>
+        </Button>
+      );
+    }
+  };
+
+  const unFollowUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  };
+
+  const followUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.followUser(currentUser, userToUnfollow);
+    result == 200 && setUpdateList(!updateList);
+  };
 
   return (
     <>
@@ -119,10 +187,11 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                   <Avatar
                                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                     component={Link}
-                                    src={AccountCircleIcon}
                                     to={`/profile/${profile.userName}`}
-                                    onClick={onClose}
-                                  />
+                                  >
+                                    {profile.firstName[0]}
+                                    {profile.lastName[0]}
+                                  </Avatar>
                                   <div>
                                     <Stack direction="column">
                                       <Typography sx={{ fontWeight: "bold" }}>
@@ -131,9 +200,17 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                       <Typography>@{profile.userName}</Typography>
                                     </Stack>
                                   </div>
+                                  <div style={{
+                                    position: "absolute",
+                                    right: "10px",
+                                    margin: "0 0 50px 0"
+                                  }}>
+                                    {determineActionButton(profile)}
+                                  </div>
                                 </>
                               </Stack>
                             </ListItem>
+                            <Divider />
                           </>
                         )) :
                         <div>No users match this search.</div>}

@@ -48,6 +48,7 @@ const Profile = () => {
   };
 
   const getProfileDetails = async () => {
+    // TODO only make this call once if user and userName are the same
     const currentUser = await UserClient.getUserInfo(user.userName);
     setUser(currentUser.data.user);
     const result = await UserClient.getUserInfo(userName);
@@ -70,6 +71,7 @@ const Profile = () => {
   };
 
   const handleAddFriendsModalClose = () => {
+    getProfileDetails();
     setOpenAddFriendsModal(false);
   };
 
