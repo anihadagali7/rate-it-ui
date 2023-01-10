@@ -82,25 +82,26 @@ const Profile = () => {
   const determineActionButton = () => {
     if (user.userName === userName) {
       return (
-        <Button
-          variant="outlined"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%"
-          }}
-        >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#00a8ff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Edit profile
-          </Typography>
-        </Button>
+        <></>
+        // <Button
+        //   variant="outlined"
+        //   sx={{
+        //     borderRadius: "17px",
+        //     marginTop: "20px",
+        //     marginRight: "3px",
+        //     width: "100%"
+        //   }}
+        // >
+        //   <Typography component="div"
+        //               sx={{
+        //                 fontSize: "12px",
+        //                 color: "#00a8ff",
+        //                 fontWeight: "bold"
+        //               }}
+        //   >
+        //     Edit profile
+        //   </Typography>
+        // </Button>
       );
     } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
       return (
@@ -286,32 +287,32 @@ const Profile = () => {
                         }}
                         label="Wishlist"
                       />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px"
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff"
-                          }
-                        }}
-                        label="Likes"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px"
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff"
-                          }
-                        }}
-                        label="Comments"
-                      />
+                      {/*<Tab*/}
+                      {/*  sx={{*/}
+                      {/*    fontSize: "13px",*/}
+                      {/*    "&.Mui-selected": {*/}
+                      {/*      color: "#40a9ff",*/}
+                      {/*      fontSize: "13px"*/}
+                      {/*    },*/}
+                      {/*    "&.Mui-focusVisible": {*/}
+                      {/*      backgroundColor: "#40a9ff"*/}
+                      {/*    }*/}
+                      {/*  }}*/}
+                      {/*  label="Likes"*/}
+                      {/*/>*/}
+                      {/*<Tab*/}
+                      {/*  sx={{*/}
+                      {/*    fontSize: "13px",*/}
+                      {/*    "&.Mui-selected": {*/}
+                      {/*      color: "#40a9ff",*/}
+                      {/*      fontSize: "13px"*/}
+                      {/*    },*/}
+                      {/*    "&.Mui-focusVisible": {*/}
+                      {/*      backgroundColor: "#40a9ff"*/}
+                      {/*    }*/}
+                      {/*  }}*/}
+                      {/*  label="Comments"*/}
+                      {/*/>*/}
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
@@ -320,12 +321,12 @@ const Profile = () => {
                   <TabPanel value={tabValue} index={1}>
                     <DisplayWishlistByUser user={currentProfile} />
                   </TabPanel>
-                  <TabPanel value={tabValue} index={2}>
-                    Likes
-                  </TabPanel>
-                  <TabPanel value={tabValue} index={3}>
-                    Comments
-                  </TabPanel>
+                  {/*<TabPanel value={tabValue} index={2}>*/}
+                  {/*  Likes*/}
+                  {/*</TabPanel>*/}
+                  {/*<TabPanel value={tabValue} index={3}>*/}
+                  {/*  Comments*/}
+                  {/*</TabPanel>*/}
                 </Box>
               </Paper>
             </Box>

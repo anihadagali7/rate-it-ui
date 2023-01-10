@@ -4,12 +4,7 @@ import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
-import {
-  Container,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import { Container, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -27,6 +22,7 @@ import RatingClient from "../client/RatingClient";
 import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -313,6 +309,27 @@ const MediaInfo = () => {
             maxWidth={"sm"}
             sx={{ marginTop: "50px", marginBottom: "25px" }}
           >
+            <Button
+              variant="outlined"
+              startIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+              sx={{
+                border: "transparent",
+                backgroundColor: "#f0f2f5",
+                borderRadius: "17px",
+                justifyContent: "flex-start",
+                marginBottom: '10px',
+                "&.MuiButtonBase-root:hover": {
+                  border: "transparent",
+                  backgroundColor: "#f0f2f5"
+                }
+              }}
+              to={`/`}
+              component={Link}
+            >
+              <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
+                Return to home
+              </Typography>
+            </Button>
             <Box
               sx={{
                 width: "100%",
