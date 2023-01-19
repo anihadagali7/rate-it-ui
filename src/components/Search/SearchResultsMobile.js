@@ -55,6 +55,53 @@ const SearchResultsMobile = ({ results, resultType }) => {
     </Grid>
   );
 
+  const listItemBook = (row, index) => (
+    <Grid
+      item
+      xs={6}
+      sx={{
+        paddingLeft: index % 2 == 0 ? "0px" : "20px",
+        textDecoration: "none"
+      }}
+      component={Link}
+      to={`/${resultType}/${row.mediaId}`}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%"
+        }}
+      >
+        <div>
+          <Typography
+            component="div"
+            sx={{
+              marginTop: "10px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              paddingLeft: index % 2 == 0 ? "5px" : "10px",
+              paddingBottom: "5px",
+              maxHeight: "20px",
+              color: "#000000"
+            }}
+          >
+            {row.name}
+          </Typography>
+          <ListItemAvatar sx={{ marginTop: "15px" }}>
+            <img
+              width={150}
+              height={175}
+              style={{ marginBottom: "10px" }}
+              alt="poster"
+              src={row.poster ? row.poster : NotFoundImage}
+            />
+          </ListItemAvatar>
+        </div>
+      </Box>
+    </Grid>
+  );
+
   const listItemMusic = (row, index) => (
     <Grid
       item
@@ -228,6 +275,8 @@ const SearchResultsMobile = ({ results, resultType }) => {
                 results.map((row, index) => listItem(row, index))}
               {resultType === "user" &&
                 results.map((row, index) => listItemUser(row))}
+              {resultType === "book" &&
+                results.map((row, index) => listItemBook(row))}
             </Grid>
           </Container>
         </ThemeProvider>

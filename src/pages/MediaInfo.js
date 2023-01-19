@@ -4,12 +4,7 @@ import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
-import {
-  Container,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import { Container, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -27,6 +22,7 @@ import RatingClient from "../client/RatingClient";
 import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -39,7 +35,6 @@ const MediaInfo = () => {
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
-    getRatingsForMedia(id);
   }, [id, mediaType]);
 
   useEffect(() => {
@@ -130,6 +125,55 @@ const MediaInfo = () => {
                   Cast:{" "}
                 </span>
                 {listToString(media.cast)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+        </List>
+      </Grid>
+    </>
+  );
+
+  const displayBook = (media) => (
+    <>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <Typography
+          component="div"
+          sx={{
+            marginTop: "10px",
+            fontSize: "18px",
+            fontWeight: "bold"
+          }}
+        >
+          {media.name}
+        </Typography>
+        <div>
+          <Typography component="div">{media.description}</Typography>
+        </div>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <List component="nav">
+          <Divider />
+          {media.author && media.author.length > 0 && (
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Authors:{" "}
+                </span>
+                {listToString(media.author)}
+              </Typography>
+            </ListItem>
+          )}
+          <Divider />
+          {media.genre && (
+            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
+              <Typography component="div">
+                <span style={{ fontWeight: "550", fontSize: "17px" }}>
+                  Genre:{" "}
+                </span>
+                <span style={{ fontWeight: "400", fontSize: "16px" }}>
+                  {media.genre}
+                </span>
               </Typography>
             </ListItem>
           )}
@@ -238,6 +282,7 @@ const MediaInfo = () => {
       {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
         displayMovieTvShow(media)}
       {media.mediaType === "MUSIC" && displayMusic(media)}
+      {media.mediaType === "BOOK" && displayBook(media)}
     </Grid>
   );
 
@@ -297,6 +342,7 @@ const MediaInfo = () => {
       {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
         displayMovieTvShow(media)}
       {media.mediaType === "MUSIC" && displayMusic(media)}
+      {media.mediaType === "BOOK" && displayBook(media)}
     </Grid>
   );
 
@@ -314,6 +360,27 @@ const MediaInfo = () => {
             maxWidth={"sm"}
             sx={{ marginTop: "50px", marginBottom: "25px" }}
           >
+            <Button
+              variant="outlined"
+              startIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+              sx={{
+                border: "transparent",
+                backgroundColor: "#f0f2f5",
+                borderRadius: "17px",
+                justifyContent: "flex-start",
+                marginBottom: '10px',
+                "&.MuiButtonBase-root:hover": {
+                  border: "transparent",
+                  backgroundColor: "#f0f2f5"
+                }
+              }}
+              to={`/`}
+              component={Link}
+            >
+              <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
+                Return to home
+              </Typography>
+            </Button>
             <Box
               sx={{
                 width: "100%",
@@ -341,82 +408,84 @@ const MediaInfo = () => {
                 </div>
               </Paper>
             </Box>
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                margin: "auto",
-                marginTop: "15px"
-              }}
-            >
-              <Paper
-                elevation={6}
+            {ratingsList && ratingsList.length > 0 && (
+              <Box
                 sx={{
                   width: "100%",
                   height: "100%",
-                  backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px"
+                  marginTop: "15px"
                 }}
               >
-                <Typography
+                <Paper
+                  elevation={6}
                   sx={{
-                    fontWeight: "bold",
-                    fontSize: "22px",
-                    paddingTop: "15px",
-                    paddingLeft: "25px"
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#FFFFFF",
+                    margin: "auto",
+                    borderRadius: "17px"
                   }}
                 >
-                  User reviews
-                </Typography>
-                <List component="nav" sx={{ marginLeft: "15px", marginRight: "15px" }}>
-                  {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
-                    <>
-                      <ListItem>
-                        <Stack
-                          direction="row"
-                          spacing={2}
-                        >
-                          <>
-                            <Avatar
-                              sx={{
-                                bgcolor: "#00a8ff",
-                                textDecoration: "none",
-                                marginTop: "auto",
-                                marginBottom: "auto"
-                              }}
-                              component={Link}
-                              to={`/profile/${rating.ratedBy.userName}`}
-                            >
-                              {rating.ratedBy.firstName[0]}
-                              {rating.ratedBy.lastName[0]}
-                            </Avatar>
-                            <div>
-                              <Stack direction="column">
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "22px",
+                      paddingTop: "15px",
+                      paddingLeft: "25px"
+                    }}
+                  >
+                    User reviews
+                  </Typography>
+                  <List component="nav" sx={{ marginLeft: "15px", marginRight: "15px" }}>
+                    {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
+                      <>
+                        <ListItem>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                          >
+                            <>
+                              <Avatar
+                                sx={{
+                                  bgcolor: "#00a8ff",
+                                  textDecoration: "none",
+                                  marginTop: "auto",
+                                  marginBottom: "auto"
+                                }}
+                                component={Link}
+                                to={`/profile/${rating.ratedBy.userName}`}
+                              >
+                                {rating.ratedBy.firstName[0]}
+                                {rating.ratedBy.lastName[0]}
+                              </Avatar>
+                              <div>
+                                <Stack direction="column">
                                 <span style={{ fontWeight: "bold" }}>
                                   {rating.ratedBy.firstName} {rating.ratedBy.lastName}
                                   <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
                                 <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
                                 </span>
-                                <span>
+                                  <span>
                                   <Typography component={Link} sx={{ textDecoration: "none" }}
                                               to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
                                    -{rating.media.name}
                                 </Typography>
                               </span>
-                                <Typography>Rating: {rating.rating}</Typography>
-                                <Typography>Comments: {rating.comments}</Typography>
-                              </Stack>
-                            </div>
-                          </>
-                        </Stack>
-                      </ListItem>
-                      <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
-                    </>
-                  ))}
-                </List>
-              </Paper>
-            </Box>
+                                  <Typography>Rating: {rating.rating}</Typography>
+                                  <Typography>Comments: {rating.comments}</Typography>
+                                </Stack>
+                              </div>
+                            </>
+                          </Stack>
+                        </ListItem>
+                        <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
+                      </>
+                    ))}
+                  </List>
+                </Paper>
+              </Box>
+            )}
           </Container>
           {openRatingModal && (
             <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media}

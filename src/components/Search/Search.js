@@ -88,8 +88,9 @@ const Search = () => {
       const searchMapping = {
         0: "movie",
         1: "tv",
-        2: "music",
-        3: "user",
+        2: "book",
+        3: "music",
+        4: "user",
       };
       let searchType = searchMapping[searchTabType];
       const result = await SearchClient.searchMedia(searchType, searchKeyword, setDisplayTokenModal);
@@ -240,6 +241,19 @@ const Search = () => {
                                 backgroundColor: "#40a9ff"
                               }
                             }}
+                            label="Books"
+                          />
+                          <Tab
+                            sx={{
+                              fontSize: "13px",
+                              "&.Mui-selected": {
+                                color: "#40a9ff",
+                                fontSize: "13px"
+                              },
+                              "&.Mui-focusVisible": {
+                                backgroundColor: "#40a9ff"
+                              }
+                            }}
                             label="Music"
                           />
                           <Tab
@@ -267,6 +281,9 @@ const Search = () => {
                         {displayMediaSearchResults()}
                       </TabPanel>
                       <TabPanel value={searchTabType} index={3}>
+                        {displayMediaSearchResults()}
+                      </TabPanel>
+                      <TabPanel value={searchTabType} index={4}>
                         {displayMediaSearchResults()}
                       </TabPanel>
                     </Box>
