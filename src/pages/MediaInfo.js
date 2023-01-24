@@ -23,6 +23,8 @@ import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
+import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -32,6 +34,7 @@ const MediaInfo = () => {
   const [user, setUser] = useAtom(currentUser);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const [ratingAdded, setRatingAdded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
@@ -47,8 +50,10 @@ const MediaInfo = () => {
   };
 
   const getMediaInfoDetails = async (mediaType, id) => {
+    setLoading(true);
     const result = await MediaClient.getMediaInfoDetails(mediaType, id);
     setMedia(result.data.media);
+    setLoading(false);
   };
 
   const listToString = (list) => {
@@ -368,7 +373,7 @@ const MediaInfo = () => {
                 backgroundColor: "#f0f2f5",
                 borderRadius: "17px",
                 justifyContent: "flex-start",
-                marginBottom: '10px',
+                marginBottom: "10px",
                 "&.MuiButtonBase-root:hover": {
                   border: "transparent",
                   backgroundColor: "#f0f2f5"
@@ -400,10 +405,18 @@ const MediaInfo = () => {
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
                   <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                    {mobileView(media)}
+                    {
+                      loading ? (
+                        <MediaInfoMobileLoading />
+                      ) : media && (mobileView(media))
+                    }
                   </Box>
                   <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                    {desktopView(media)}
+                    {
+                      loading ? (
+                        <MediaInfoDesktopLoading />
+                      ) : media && (desktopView(media))
+                    }
                   </Box>
                 </div>
               </Paper>
