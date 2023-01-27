@@ -4,20 +4,20 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { Provider } from "jotai";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../Theme/Theme";
 import { Container, StyledEngineProvider, TextField, ThemeProvider } from "@mui/material";
-import SearchClient from "../../client/SearchClient";
-import SearchResults from "./SearchResults";
-import SearchResultsMobile from "./SearchResultsMobile";
-import SearchResultsDesktopLoading from "../../shared/loading/SearchResultsDesktopLoading";
-import SearchResultsMobileLoading from "../../shared/loading/SearchResultsMobileLoading";
+import SearchClient from "../client/SearchClient";
+import SearchResults from "../components/Search/SearchResults";
+import SearchResultsMobile from "../components/Search/SearchResultsMobile";
+import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
+import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import LoginErrorModal from "../../shared/errorModals/LoginErrorModal";
+import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 
 const useStyles = makeStyles({
   container: {

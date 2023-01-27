@@ -10,7 +10,7 @@ import { theme } from "./Theme/Theme";
 import Header from "./components/header/Header";
 import Signup from "./pages/Signup";
 import MediaInfo from "./pages/MediaInfo";
-import Search from "./components/Search/Search";
+import Search from "./pages/Search";
 import Protected from "./shared/Protected";
 
 export default class App extends Component {
