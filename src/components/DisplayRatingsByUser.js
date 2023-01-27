@@ -15,17 +15,22 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import RatingsLoading from "../shared/loading/RatingsLoading";
+import ProfileRatingsLoading from "../shared/loading/ProfileRatingsLoading";
 
 const DisplayRatingsByUser = ({ user }) => {
   const [ratingsList, setRatingsList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getRatingsForUser();
   }, [user]);
 
   const getRatingsForUser = async () => {
+    setLoading(true);
     const result = await RatingClient.getAllRatingsForUser(user.userName);
     setRatingsList(result.data.ratingsList.reverse());
+    setLoading(false);
   };
 
   const getTimeAgo = (date) => {
@@ -39,6 +44,48 @@ const DisplayRatingsByUser = ({ user }) => {
     }
   }
 
+  const displayRatings = () => {
+    return <>
+      {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
+        <>
+          <ListItem>
+            <Stack
+              direction="row"
+              spacing={2}
+            >
+              <>
+                <Avatar
+                  sx={{ bgcolor: "#00a8ff", textDecoration: "none", marginTop: "auto", marginBottom: "auto" }}
+                  component={Link}
+                  src={AccountCircleIcon}
+                  to={`/profile/${rating.ratedBy.userName}`}
+                />
+                <div>
+                  <Stack direction="column">
+                                <span style={{ fontWeight: "bold" }}>
+                                  {rating.ratedBy.firstName} {rating.ratedBy.lastName}
+                                  <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
+                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
+                                </span>
+                    <span>
+                                  <Typography component={Link} sx={{ textDecoration: "none" }}
+                                              to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
+                                   -{rating.media.name}
+                                </Typography>
+                              </span>
+                    <Typography>Rating: {rating.rating}</Typography>
+                    <Typography>Comments: {rating.comments}</Typography>
+                  </Stack>
+                </div>
+              </>
+            </Stack>
+          </ListItem>
+          <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
+        </>
+      ))}
+    </>;
+  }
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
@@ -50,43 +97,7 @@ const DisplayRatingsByUser = ({ user }) => {
             }}
           >
             <List component="nav">
-              {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
-                  <>
-                    <ListItem>
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                      >
-                        <>
-                          <Avatar
-                            sx={{ bgcolor: "#00a8ff", textDecoration: "none", marginTop: "auto", marginBottom: "auto" }}
-                            component={Link}
-                            src={AccountCircleIcon}
-                            to={`/profile/${rating.ratedBy.userName}`}
-                          />
-                          <div>
-                            <Stack direction="column">
-                                <span style={{ fontWeight: "bold" }}>
-                                  {rating.ratedBy.firstName} {rating.ratedBy.lastName}
-                                  <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
-                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
-                                </span>
-                              <span>
-                                  <Typography component={Link} sx={{textDecoration: "none"}}
-                                              to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
-                                   -{rating.media.name}
-                                </Typography>
-                              </span>
-                              <Typography>Rating: {rating.rating}</Typography>
-                              <Typography>Comments: {rating.comments}</Typography>
-                            </Stack>
-                          </div>
-                        </>
-                      </Stack>
-                    </ListItem>
-                    <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
-                  </>
-                ))}
+              {loading ? (<ProfileRatingsLoading />) : displayRatings()}
             </List>
           </Box>
         </ThemeProvider>
