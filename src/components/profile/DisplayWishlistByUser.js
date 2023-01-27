@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
-import RatingClient from "../client/RatingClient";
-import { theme } from "../Theme/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider, Typography
-} from "@mui/material";
+import { theme } from "../../Theme/Theme";
+import { Box, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import { Provider } from "jotai";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -15,38 +10,37 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import RatingsLoading from "../shared/loading/RatingsLoading";
-import ProfileRatingsLoading from "../shared/loading/ProfileRatingsLoading";
+import WishlistClient from "../../client/WishlistClient";
+import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 
-const DisplayRatingsByUser = ({ user }) => {
-  const [ratingsList, setRatingsList] = useState([]);
+const DisplayWishlistByUser = ({ user }) => {
+  const [wishlistList, setWishlistList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getRatingsForUser();
+    getWishlistForUser();
   }, [user]);
 
-  const getRatingsForUser = async () => {
+  const getWishlistForUser = async () => {
     setLoading(true);
-    const result = await RatingClient.getAllRatingsForUser(user.userName);
-    setRatingsList(result.data.ratingsList.reverse());
+    const result = await WishlistClient.getAllWishlistForUser(user.userName);
+    setWishlistList(result.data.wishlistList.reverse());
     setLoading(false);
   };
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
-    if(units.includes("second") || units.includes("minute") || units.includes("day")){
+    if (units.includes("second") || units.includes("minute") || units.includes("day")) {
       return "" + timeAgo.split(" ")[0] + units[0];
-    }
-    else {
+    } else {
       return moment(date).format("M-D-YY");
     }
-  }
+  };
 
-  const displayRatings = () => {
+  const displayWishlist = () => {
     return <>
-      {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
+      {wishlistList && wishlistList.length > 0 && wishlistList.map((media) => (
         <>
           <ListItem>
             <Stack
@@ -58,23 +52,21 @@ const DisplayRatingsByUser = ({ user }) => {
                   sx={{ bgcolor: "#00a8ff", textDecoration: "none", marginTop: "auto", marginBottom: "auto" }}
                   component={Link}
                   src={AccountCircleIcon}
-                  to={`/profile/${rating.ratedBy.userName}`}
+                  to={`/profile/${media.addedBy.userName}`}
                 />
                 <div>
                   <Stack direction="column">
                                 <span style={{ fontWeight: "bold" }}>
-                                  {rating.ratedBy.firstName} {rating.ratedBy.lastName}
-                                  <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
-                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
+                                  {media.addedBy.firstName} {media.addedBy.lastName}
+                                  <span style={{ fontWeight: "normal" }}> @{media.addedBy.userName}</span>
+                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(media.dateCreated)}</span>
                                 </span>
                     <span>
                                   <Typography component={Link} sx={{ textDecoration: "none" }}
-                                              to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
-                                   -{rating.media.name}
+                                              to={`/${media.media.mediaType}/${media.media.mediaId}`}>
+                                   {media.media.name}
                                 </Typography>
                               </span>
-                    <Typography>Rating: {rating.rating}</Typography>
-                    <Typography>Comments: {rating.comments}</Typography>
                   </Stack>
                 </div>
               </>
@@ -97,7 +89,7 @@ const DisplayRatingsByUser = ({ user }) => {
             }}
           >
             <List component="nav">
-              {loading ? (<ProfileRatingsLoading />) : displayRatings()}
+              {loading ? (<ProfileWishlistLoading />) : displayWishlist()}
             </List>
           </Box>
         </ThemeProvider>
@@ -106,4 +98,4 @@ const DisplayRatingsByUser = ({ user }) => {
   );
 };
 
-export default DisplayRatingsByUser;
+export default DisplayWishlistByUser;

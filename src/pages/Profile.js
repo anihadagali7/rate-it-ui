@@ -12,8 +12,8 @@ import FriendsModal from "../components/modals/FriendsModal";
 import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
-import DisplayRatingsByUser from "../components/DisplayRatingsByUser";
-import DisplayWishlistByUser from "../components/DisplayWishlistByUser";
+import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
+import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
