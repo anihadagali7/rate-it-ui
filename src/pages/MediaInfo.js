@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
@@ -35,6 +35,7 @@ const MediaInfo = () => {
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const [ratingAdded, setRatingAdded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMediaInfoDetails(mediaType, id);
@@ -379,11 +380,10 @@ const MediaInfo = () => {
                   backgroundColor: "#f0f2f5"
                 }
               }}
-              to={`/`}
-              component={Link}
+              onClick={() => navigate(-1)}
             >
               <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
-                Return to home
+                Return
               </Typography>
             </Button>
             <Box
