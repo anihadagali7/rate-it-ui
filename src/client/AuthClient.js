@@ -55,4 +55,31 @@ const signup = (newAccount, onError) => {
   });
 };
 
-export default { login, signup };
+const editProfile = (newAccount, onError) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, status } = await axios.put(
+        API_URL + "/api/account/update",
+        newAccount, {
+          headers: {
+            Authorization: ACCESS_TOKEN,
+          },
+        }
+      );
+      if (status === 200) {
+        resolve(data.data);
+      }
+    } catch (error) {
+      let errors = error.response.data.errors;
+      if(errors.msg.includes("email")){
+        onError("email", true, errors.msg);
+      }
+      if(errors.msg.includes("username")){
+        onError("userName", true, errors.msg);
+      }
+    }
+  });
+};
+
+export default { login, signup, editProfile };
