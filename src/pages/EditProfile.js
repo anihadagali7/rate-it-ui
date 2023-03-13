@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Provider, useAtom } from "jotai";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "../Theme/Theme";
@@ -7,6 +7,7 @@ import { currentUser } from "../state/user";
 
 const EditProfile = () => {
   const [user, setUser] = useAtom(currentUser);
+
   return (
     <Provider>
       <StyledEngineProvider injectFirst>
