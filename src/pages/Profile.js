@@ -6,7 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/modals/FriendsModal";
 import { currentUser } from "../state/user";
@@ -82,26 +82,27 @@ const Profile = () => {
   const determineActionButton = () => {
     if (user.userName === userName) {
       return (
-        <></>
-        // <Button
-        //   variant="outlined"
-        //   sx={{
-        //     borderRadius: "17px",
-        //     marginTop: "20px",
-        //     marginRight: "3px",
-        //     width: "100%"
-        //   }}
-        // >
-        //   <Typography component="div"
-        //               sx={{
-        //                 fontSize: "12px",
-        //                 color: "#00a8ff",
-        //                 fontWeight: "bold"
-        //               }}
-        //   >
-        //     Edit profile
-        //   </Typography>
-        // </Button>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "17px",
+            marginTop: "20px",
+            marginRight: "3px",
+            width: "100%"
+          }}
+          component={Link}
+          to={"/profile/edit"}
+        >
+          <Typography component="div"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#00a8ff",
+                        fontWeight: "bold"
+                      }}
+          >
+            Edit profile
+          </Typography>
+        </Button>
       );
     } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
       return (

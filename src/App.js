@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import MediaInfo from "./pages/MediaInfo";
 import Search from "./pages/Search";
 import Protected from "./shared/Protected";
+import EditProfile from "./pages/EditProfile";
 
 export default class App extends Component {
   render() {
@@ -28,6 +29,7 @@ export default class App extends Component {
                 <Route exact path="/signup" element={<Signup />}></Route>
                 <Route exact path="/:mediaType/:id" element={<Protected><MediaInfo /></Protected>}></Route>
                 <Route exact path="/profile/:userName" element={<Protected><Profile /></Protected>}></Route>
+                <Route exact path="/profile/edit" element={<Protected><EditProfile /></Protected>}></Route>
                 {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
                 {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
               </Routes>
