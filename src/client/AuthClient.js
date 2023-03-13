@@ -97,16 +97,11 @@ const resetPassword = (newPasswordRequest, onError) => {
       if (status === 200) {
         resolve(data.data);
       }
-      console.log("part of status now", status)
     } catch (error) {
       let errors = error.response.data.errors;
-      console.log("part of error now", errors)
       if(errors.msg.includes("Current password is not valid")){
         onError("currentPassword", true, errors.msg);
       }
-      // if(errors.msg.includes("username")){
-      //   onError("userName", true, errors.msg);
-      // }
     }
   });
 };

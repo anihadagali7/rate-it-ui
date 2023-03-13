@@ -149,11 +149,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
   };
 
   const errorHandler = async (id, value, message) => {
-    console.log("-> inside error handler", errorValue, id, value, message);
-    const currentValue = JSON.parse(JSON.stringify(errorValue));
+    const currentValue = JSON.parse(JSON.stringify(initialErrorState));
     currentValue[id] = { value: value, message: message };
     await setErrorValue(currentValue);
-    // console.log("-> inside error handler after change", errorValue);
     value && setLoading(false);
   };
 
@@ -249,7 +247,6 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
       : currentValue["confirmNewPassword"] = { value: false, message: "" };
 
     await setErrorValue(currentValue);
-    // console.log("error value after validating passwords ", currentValue)
 
     return newPasswordValidity && confirmNewPasswordValidity;
   };
@@ -258,7 +255,6 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
     e.preventDefault();
     const errorValueCopy = JSON.parse(JSON.stringify(initialErrorState));
     await setErrorValue(errorValueCopy);
-    console.log("error value in reset ", errorValueCopy)
 
     const passwordRequest = {
       userName: currentProfile.userName,
@@ -287,7 +283,6 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                 margin: "auto"
               }}
             >
-              {console.log("inside the render ", errorValue["newPassword"]["value"])}
               <Paper
                 elevation={6}
                 sx={{
