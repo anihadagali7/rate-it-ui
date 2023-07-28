@@ -14,6 +14,7 @@ import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
 import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
+import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -301,19 +302,19 @@ const Profile = () => {
                       {/*  }}*/}
                       {/*  label="Likes"*/}
                       {/*/>*/}
-                      {/*<Tab*/}
-                      {/*  sx={{*/}
-                      {/*    fontSize: "13px",*/}
-                      {/*    "&.Mui-selected": {*/}
-                      {/*      color: "#40a9ff",*/}
-                      {/*      fontSize: "13px"*/}
-                      {/*    },*/}
-                      {/*    "&.Mui-focusVisible": {*/}
-                      {/*      backgroundColor: "#40a9ff"*/}
-                      {/*    }*/}
-                      {/*  }}*/}
-                      {/*  label="Comments"*/}
-                      {/*/>*/}
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px"
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff"
+                          }
+                        }}
+                        label="Playlists"
+                      />
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
@@ -325,9 +326,9 @@ const Profile = () => {
                   {/*<TabPanel value={tabValue} index={2}>*/}
                   {/*  Likes*/}
                   {/*</TabPanel>*/}
-                  {/*<TabPanel value={tabValue} index={3}>*/}
-                  {/*  Comments*/}
-                  {/*</TabPanel>*/}
+                  <TabPanel value={tabValue} index={2}>
+                    <DisplayPlaylistByUser user={currentProfile} />
+                  </TabPanel>
                 </Box>
               </Paper>
             </Box>
