@@ -9,16 +9,21 @@ import List from "@mui/material/List";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import PlaylistClient from "../../client/PlaylistClient";
 import DisplayOnePlaylist from "./DisplayOnePlaylist";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import Button from "@mui/material/Button";
+import AddPlaylistModal from "../modals/AddPlaylistModal";
 
 const DisplayPlaylistByUser = ({ user }) => {
   const [playlistList, setPlaylistList] = useState([]);
   const [displayOnePlaylist, setDisplayOnePlaylist] = useState(false);
   const [playListId, setPlaylistId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
+  const [playlistAdded, setPlaylistAdded] = useState(false);
 
   useEffect(() => {
     getPlaylistForUser();
-  }, [user]);
+  }, [playlistAdded]);
 
   const getPlaylistForUser = async () => {
     setLoading(true);
@@ -37,8 +42,35 @@ const DisplayPlaylistByUser = ({ user }) => {
     setPlaylistId(null);
   };
 
-  const displayWishlist = () => {
+  const handleNewPlaylistModalOpen = () => {
+    setNewPlaylistModal(true);
+  };
+
+  const handleNewPlaylistModalClose = () => {
+    setNewPlaylistModal(false);
+  };
+
+  const displayPlaylist = () => {
     return <>
+      <Button
+        variant="outlined"
+        startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+        sx={{
+          border: "transparent",
+          backgroundColor: "#ffffff",
+          borderRadius: "17px",
+          width: "100%",
+          "&.MuiButtonBase-root:hover": {
+            border: "transparent",
+            backgroundColor: "#ffffff"
+          }
+        }}
+        onClick={handleNewPlaylistModalOpen}
+      >
+        <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+          Create New Playlist
+        </Typography>
+      </Button>
       {playlistList && playlistList.length > 0 && playlistList.map((playlist) => (
         <>
           <ListItem key={playlist._id} onClick={() => viewOnePlaylist(playlist)} sx={{cursor: "pointer"}}>
@@ -79,10 +111,14 @@ const DisplayPlaylistByUser = ({ user }) => {
               {loading ? (<ProfileWishlistLoading />) :
                 displayOnePlaylist ?
                   (<DisplayOnePlaylist user={user} playListId={playListId} viewAllPlaylists={viewAllPlaylists} />) :
-                  displayWishlist()
+                  displayPlaylist()
               }
             </List>
           </Box>
+          {openNewPlaylistModal && (
+            <AddPlaylistModal open={openNewPlaylistModal} onClose={handleNewPlaylistModalClose}
+                            user={user} playlistAdded={playlistAdded} setPlaylistAdded={setPlaylistAdded} />
+          )}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

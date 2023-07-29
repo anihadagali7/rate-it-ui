@@ -11,10 +11,15 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import Button from "@mui/material/Button";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import List from "@mui/material/List";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import AddFriendsModal from "../modals/AddFriendsModal";
+import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
 
 const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
   const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] = useState(false);
+  const [mediaAdded, setMediaAdded] = useState(false);
 
   useEffect(() => {
     getAllMediaForPlaylist();
@@ -25,6 +30,14 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
     const result = await PlaylistClient.getAllMediaForPlaylist(playListId);
     setMediaByPlaylist(result.data.mediaByPlaylist);
     setLoading(false);
+  };
+
+  const handleAddMediaToPlaylistModalOpen = () => {
+    setAddMediaToPlaylistModal(true);
+  };
+
+  const handleAddMediaToPlaylistModalClose = () => {
+    setAddMediaToPlaylistModal(false);
   };
 
   const displayMediaList = () => {
@@ -71,19 +84,37 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
               startIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
               sx={{
                 border: "transparent",
-                backgroundColor: "#f0f2f5",
                 borderRadius: "17px",
                 justifyContent: "flex-start",
                 marginBottom: "10px",
                 "&.MuiButtonBase-root:hover": {
                   border: "transparent",
-                  backgroundColor: "#f0f2f5"
+                  backgroundColor: "#ffffff"
                 }
               }}
               onClick={() => viewAllPlaylists()}
             >
               <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
                 Return
+              </Typography>
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+              sx={{
+                border: "transparent",
+                backgroundColor: "#ffffff",
+                borderRadius: "17px",
+                width: "100%",
+                "&.MuiButtonBase-root:hover": {
+                  border: "transparent",
+                  backgroundColor: "#ffffff"
+                }
+              }}
+              onClick={handleAddMediaToPlaylistModalOpen}
+            >
+              <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+                Add Media to Playlist
               </Typography>
             </Button>
               <>
@@ -103,6 +134,10 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
                 </List>
               </>
           </Box>
+          {openAddMediaToPlaylistModal && (
+            <AddMediaToPlaylistModal open={openAddMediaToPlaylistModal} onClose={handleAddMediaToPlaylistModalClose}
+                             user={user} mediaByPlaylist={mediaByPlaylist} />
+          )}
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>
