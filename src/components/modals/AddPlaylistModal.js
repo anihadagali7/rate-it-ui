@@ -22,7 +22,6 @@ import PlaylistClient from "../../client/PlaylistClient";
 const AddPlaylistModal = ({ open, onClose, user, playlistAdded, setPlaylistAdded }) => {
   const [name, setName] = useState("");
 
-
   const onChangeName = (event) => {
     setName(event.target.value);
   };
@@ -30,10 +29,6 @@ const AddPlaylistModal = ({ open, onClose, user, playlistAdded, setPlaylistAdded
   const resetName = () => {
     setName("");
   };
-
-  useEffect(() => {
-    console.log("user ", user)
-  }, []);
 
   const handleSubmitPlaylist = async () => {
     let requestBody = {};

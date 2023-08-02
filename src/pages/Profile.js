@@ -333,12 +333,11 @@ const Profile = () => {
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}
                           currentUser={user} openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user}
-                          friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}/>
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>

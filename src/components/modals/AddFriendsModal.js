@@ -21,61 +21,58 @@ import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
+import SearchClient from "../../client/SearchClient";
+import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 
 const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsAdded }) => {
 
-  const [originalUsersList, setOriginalUsersList] = useState([]);
-  const [filteredUsersList, setFilteredUsersList] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-
-  useEffect(() => {
-    (async () => {
-      getAllUsers();
-      if (searchKeyword !== ""){
-        actuallyDoTheFilter(searchKeyword);
-      }
-    })();
-  }, [friendsAdded, searchKeyword]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const resetSearch = () => {
     setSearchKeyword("");
+    setSearchResults([]);
+    setHasSearched(false);
+    setLoading(false);
   };
 
-  const getAllUsers = async () => {
-    const result = await UserClient.getAllUsers();
-    const index = result.data.findIndex(item => item.userName === currentUser.userName);
-    result.data.splice(index, 1);
-    setOriginalUsersList(result.data);
-    setFilteredUsersList(result.data)
+  const onChangeSearch = (event) => {
+    setSearchKeyword(event.target.value);
+    if (event.target.value === "") {
+      setSearchResults([]);
+      setHasSearched(false);
+    }
   };
 
-  function actuallyDoTheFilter(value) {
-    const updatedList = originalUsersList.filter(user => {
-      return (
-        user.userName.toLowerCase().search(value.toLowerCase()) !== -1 ||
-        user.firstName.toLowerCase().search(value.toLowerCase()) !== -1
-      );
-    });
-    setFilteredUsersList(updatedList);
-  }
+  const handleSearch = async () => {
+    if (searchKeyword.length > 0) {
+      setLoading(true);
+      setHasSearched(true);
 
-  const handleSearch = (e) => {
+      const result = await SearchClient.searchMedia("user", searchKeyword, null);
+      const finalList = result.data.mediaList;
+      console.log("results, finalList ", result, finalList)
+      setSearchResults(finalList);
+    }
+    setLoading(false);
+  };
+
+  const submitSearch = (e) => {
     e.preventDefault();
-  };
-
-  const filterUsers = (event) => {
-    event.preventDefault();
-    let value = event.target.value;
-    setSearchKeyword(value);
+    handleSearch();
   };
 
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    handleSearch();
     result === 200 && setFriendsAdded(friendsAdded+1);
   };
 
   const followUser = async (currentUser, userToFollow) => {
     let result = await UserClient.followUser(currentUser, userToFollow);
+    handleSearch();
     result === 200 && setFriendsAdded(friendsAdded+1);
   };
 
@@ -148,7 +145,7 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                 <Box sx={{ width: "100%" }}>
                   <Paper elevation={4}
                          component="form"
-                         onSubmit={handleSearch}
+                         onSubmit={submitSearch}
                          sx={{
                            p: "2px 4px",
                            display: "flex",
@@ -170,8 +167,7 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                       size="small"
                       placeholder="Search for users"
                       value={searchKeyword}
-                      onClick={handleSearch}
-                      onChange={filterUsers}
+                      onChange={onChangeSearch}
                       required
                     />
                     {searchKeyword.length > 0 && (
@@ -180,9 +176,11 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                       </IconButton>
                     )}
                   </Paper>
-                  {searchKeyword.length > 0 && (
+                  {hasSearched && (
                     <List component="nav" sx={{ margin: "0 10px" }}>
-                      {filteredUsersList && filteredUsersList.length > 0 ? filteredUsersList.map((profile) => (
+                      {loading ? (
+                        <ProfileWishlistLoading />
+                      ) : searchResults && searchResults.length > 0 ? searchResults.map((profile) => (
                           <>
                             <ListItem>
                               <Stack
@@ -219,7 +217,8 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                             <Divider />
                           </>
                         )) :
-                        <div>No users match this search.</div>}
+                        <div>No users match this search.</div>
+                      }
                     </List>
                   )}
                 </Box>
