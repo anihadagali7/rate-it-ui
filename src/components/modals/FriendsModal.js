@@ -22,12 +22,10 @@ const TabPanel = (props) => {
   return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
 };
 
-const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
+const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friendsAdded, setFriendsAdded }) => {
   const [tabValue, setTabValue] = useState(openingTab);
   const [followingList, setFollowingList] = useState({});
   const [followersList, setFollowersList] = useState({});
-  const [updateList, setUpdateList] = useState(false);
-
   const [unfollowPopover, setUnfollowPopover] = useState(false);
   const openPopover = Boolean(unfollowPopover);
 
@@ -44,7 +42,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
   useEffect(() => {
     getFollowers();
     getFollowing();
-  }, [updateList]);
+  }, [friendsAdded]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -221,12 +219,12 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser }) => {
 
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
+    result === 200 && setFriendsAdded(friendsAdded+1);
   };
 
   const followUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
+    result == 200 && setFriendsAdded(friendsAdded+1);
   };
 
   return (

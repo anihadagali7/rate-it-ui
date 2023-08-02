@@ -58,8 +58,11 @@ const Profile = () => {
   }, [userName]);
 
   const handleFriendsModalClose = () => {
-    getProfileDetails();
     setOpenFriendsModal(false);
+    if (friendsAdded > 0){
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleFriendsModalOpen = (initialTab) => {

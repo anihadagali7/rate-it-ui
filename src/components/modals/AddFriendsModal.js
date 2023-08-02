@@ -53,7 +53,6 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
 
       const result = await SearchClient.searchMedia("user", searchKeyword, null);
       const finalList = result.data.mediaList;
-      console.log("results, finalList ", result, finalList)
       setSearchResults(finalList);
     }
     setLoading(false);
