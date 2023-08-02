@@ -12,14 +12,13 @@ import Button from "@mui/material/Button";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import List from "@mui/material/List";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import AddFriendsModal from "../modals/AddFriendsModal";
 import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
 
 const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
   const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] = useState(false);
-  const [mediaAdded, setMediaAdded] = useState(false);
+  const [mediaAdded, setMediaAdded] = useState(0);
 
   useEffect(() => {
     getAllMediaForPlaylist();
@@ -38,6 +37,10 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
 
   const handleAddMediaToPlaylistModalClose = () => {
     setAddMediaToPlaylistModal(false);
+    if (mediaAdded > 0){
+      getAllMediaForPlaylist();
+    }
+    setMediaAdded(0);
   };
 
   const displayMediaList = () => {
@@ -136,7 +139,7 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
           </Box>
           {openAddMediaToPlaylistModal && (
             <AddMediaToPlaylistModal open={openAddMediaToPlaylistModal} onClose={handleAddMediaToPlaylistModalClose}
-                             user={user} mediaByPlaylist={mediaByPlaylist} />
+                             user={user} mediaByPlaylist={mediaByPlaylist} setMediaAdded={setMediaAdded} mediaAdded={mediaAdded} />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

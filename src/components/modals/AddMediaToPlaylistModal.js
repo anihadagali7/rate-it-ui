@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import {
-  Box, Button,
+  Box,
+  Button,
   Container,
   Dialog,
   DialogTitle,
+  Grid,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
@@ -16,24 +18,22 @@ import ClearIcon from "@mui/icons-material/Clear";
 import Paper from "@mui/material/Paper";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import PlaylistClient from "../../client/PlaylistClient";
 import SearchClient from "../../client/SearchClient";
 import SearchIcon from "@mui/icons-material/Search";
-import SearchResultsDesktopLoading from "../../shared/loading/SearchResultsDesktopLoading";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import MediaClient from "../../client/MediaClient";
+import AddIcon from "@mui/icons-material/Add";
 
-const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
+const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist, setMediaAdded, mediaAdded }) => {
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [updateList, setUpdateList] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +67,7 @@ const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
   };
 
   const addMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
-    let mediaDetails;
+    let mediaDetails = null;
     if (mediaType && mediaId) {
       mediaDetails = await MediaClient.getMediaInfoDetails(mediaType, mediaId);
     }
@@ -75,7 +75,7 @@ const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
     requestBody.playlistId = playlistId;
     requestBody.mediaId = mediaDetails?.data?.media?._id;
     let result = await PlaylistClient.addMediaToPlaylist(requestBody);
-    result === 200 && setUpdateList(!updateList);
+    result?.status === "success" && setMediaAdded(mediaAdded+1);
   };
 
   const submitSearch = (e) => {
@@ -93,7 +93,7 @@ const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
                       "& .MuiDialog-paper": {
                         width: "100%",
                         height: 500,
-                        maxWidth: 400,
+                        maxWidth: 400
                       }
                     }}>
               <DialogTitle sx={{ fontSize: "13px", fontWeight: "bold", height: "0px", textAlign: "center" }}>
@@ -139,20 +139,19 @@ const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
                     </IconButton>
                   </Paper>
                   {hasSearched && (
-                    <div style={{zIndex: "1000", overflowY: "auto", width: "100%",
+                    <div style={{
+                      zIndex: "1000", overflowY: "auto", width: "100%",
                       height: 350,
-                      maxWidth: 400,}}>
+                      maxWidth: 400
+                    }}>
                       <List component="nav" sx={{ margin: "0 10px" }}>
                         {loading ? (
                           <ProfileWishlistLoading />
                         ) : hasSearched && searchResults && searchResults.length > 0 ? searchResults.map((media) => (
                             <>
-                              <ListItem component={Link} to={`/${media.mediaType}/${media.mediaId}`}>
-                                <Stack
-                                  direction="row"
-                                  spacing={2}
-                                >
-                                  <>
+                              <ListItem>
+                                <Grid container>
+                                  <Grid item xs={3} component={Link} to={`/${media.mediaType}/${media.mediaId}`} sx={{textDecoration: "none"}}>
                                     <ListItemAvatar sx={{ marginTop: "15px" }}>
                                       <img
                                         width={50}
@@ -162,51 +161,48 @@ const AddMediaToPlaylistModal = ({ open, onClose, user, mediaByPlaylist }) => {
                                         src={media?.poster ? media.poster : NotFoundImage}
                                       />
                                     </ListItemAvatar>
-                                    <div>
-                                      <Stack direction="column">
-                                        <Typography sx={{ fontWeight: "bold" }}>
-                                          {media.name.length > 15
-                                            ? `${media.name.substring(0, 15)}...`
-                                            : media.name}
-                                        </Typography>
-                                        <Typography component="div">
-                                          {media.mediaType.charAt(0).toUpperCase() + media.mediaType.slice(1)}
-                                        </Typography>
-                                      </Stack>
-                                    </div>
-                                    <div style={{
-                                      position: "absolute",
-                                      right: "10px",
-                                      margin: "0 0 50px 0"
-                                    }}>
-                                      <Button
-                                        variant="outlined"
-                                        sx={{
-                                          borderRadius: "17px",
-                                          marginTop: "30px",
-                                          marginRight: "3px",
-                                          width: "100%"
-                                        }}
-                                        onClick={() => addMediaToPlaylist(mediaByPlaylist?.playlist?._id, media?._id, media?.mediaType)}
+                                  </Grid>
+                                  <Grid item xs={6} component={Link} to={`/${media.mediaType}/${media.mediaId}`} sx={{textDecoration: "none"}}>
+                                    <Stack direction="column">
+                                      <Typography sx={{ fontWeight: "bold" }}>
+                                        {media.name.length > 15
+                                          ? `${media.name.substring(0, 15)}...`
+                                          : media.name}
+                                      </Typography>
+                                      <Typography component="div">
+                                        {media.mediaType.charAt(0).toUpperCase() + media.mediaType.slice(1)}
+                                      </Typography>
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <Button
+                                      variant="outlined"
+                                      startIcon={<AddIcon style={{ color: "#00a8ff" }} />}
+                                      sx={{
+                                        borderRadius: "17px",
+                                        marginTop: "30px",
+                                        marginRight: "3px",
+                                        width: "100%"
+                                      }}
+                                      onClick={() => {addMediaToPlaylist(mediaByPlaylist.playlist._id, media.mediaId, media.mediaType)}}
+                                    >
+                                      <Typography component="div"
+                                                  sx={{
+                                                    fontSize: "12px",
+                                                    color: "#00a8ff",
+                                                    fontWeight: "bold"
+                                                  }}
                                       >
-                                        <Typography component="div"
-                                                    sx={{
-                                                      fontSize: "12px",
-                                                      color: "#00a8ff",
-                                                      fontWeight: "bold"
-                                                    }}
-                                        >
-                                          Add Media
-                                        </Typography>
-                                      </Button>
-                                    </div>
-                                  </>
-                                </Stack>
+                                        Add
+                                      </Typography>
+                                    </Button>
+                                  </Grid>
+                                </Grid>
                               </ListItem>
                               <Divider />
                             </>
                           )) :
-                          <div>No users match this search.</div>}
+                          <div>No media match this search.</div>}
                       </List>
                     </div>
                   )}
