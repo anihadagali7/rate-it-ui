@@ -28,7 +28,7 @@ const Profile = () => {
   const [currentProfile, setCurrentProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
-  const [updated, setUpdated] = useState(false);
+  const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
 
@@ -37,15 +37,11 @@ const Profile = () => {
   };
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.followUser(user.userName, currentProfile.userName);
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.unFollowUser(user.userName, currentProfile.userName);
   };
 
   const getProfileDetails = async () => {
@@ -59,7 +55,7 @@ const Profile = () => {
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName, updated]);
+  }, [userName]);
 
   const handleFriendsModalClose = () => {
     getProfileDetails();
@@ -72,8 +68,11 @@ const Profile = () => {
   };
 
   const handleAddFriendsModalClose = () => {
-    getProfileDetails();
     setOpenAddFriendsModal(false);
+    if (friendsAdded > 0){
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleAddFriendsModalOpen = () => {
@@ -335,11 +334,11 @@ const Profile = () => {
           </Container>
           {openFriendsModal && (
             <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
-                          currentUser={user}
-                          openingTab={friendsTab} />
+                          currentUser={user} openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} />
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user}
+                          friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>

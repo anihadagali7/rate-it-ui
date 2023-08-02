@@ -20,15 +20,22 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Divider from "@mui/material/Divider";
 
-const AddFriendsModal = ({ open, onClose, currentUser }) => {
+const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsAdded }) => {
 
-  const [usersList, setUsers] = useState([]);
+  const [originalUsersList, setOriginalUsersList] = useState([]);
   const [filteredUsersList, setFilteredUsersList] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [updateList, setUpdateList] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      getAllUsers();
+      if (searchKeyword !== ""){
+        actuallyDoTheFilter(searchKeyword);
+      }
+    })();
+  }, [friendsAdded, searchKeyword]);
 
   const resetSearch = () => {
     setSearchKeyword("");
@@ -38,30 +45,39 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
     const result = await UserClient.getAllUsers();
     const index = result.data.findIndex(item => item.userName === currentUser.userName);
     result.data.splice(index, 1);
-    setUsers(result.data);
+    setOriginalUsersList(result.data);
     setFilteredUsersList(result.data)
   };
 
+  function actuallyDoTheFilter(value) {
+    const updatedList = originalUsersList.filter(user => {
+      return (
+        user.userName.toLowerCase().search(value.toLowerCase()) !== -1 ||
+        user.firstName.toLowerCase().search(value.toLowerCase()) !== -1
+      );
+    });
+    setFilteredUsersList(updatedList);
+  }
+
   const handleSearch = (e) => {
     e.preventDefault();
-    setFilteredUsersList(usersList);
   };
 
   const filterUsers = (event) => {
     event.preventDefault();
-    setSearchKeyword(event.target.value);
-    const updatedList = usersList.filter(user => {
-      return (
-        user.userName.toLowerCase().search(event.target.value.toLowerCase()) !== -1 ||
-        user.firstName.toLowerCase().search(event.target.value.toLowerCase()) !== -1
-      );
-    });
-    setFilteredUsersList(updatedList);
+    let value = event.target.value;
+    setSearchKeyword(value);
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [updateList]);
+  const unFollowUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    result === 200 && setFriendsAdded(friendsAdded+1);
+  };
+
+  const followUser = async (currentUser, userToFollow) => {
+    let result = await UserClient.followUser(currentUser, userToFollow);
+    result === 200 && setFriendsAdded(friendsAdded+1);
+  };
 
   const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
@@ -116,16 +132,6 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
         </Button>
       );
     }
-  };
-
-  const unFollowUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
-  };
-
-  const followUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
   };
 
   return (
