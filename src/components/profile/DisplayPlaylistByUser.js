@@ -23,7 +23,7 @@ const DisplayPlaylistByUser = ({ user }) => {
 
   useEffect(() => {
     getPlaylistForUser();
-  }, [playlistAdded]);
+  }, [playlistAdded, user]);
 
   const getPlaylistForUser = async () => {
     setLoading(true);

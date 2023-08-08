@@ -38,10 +38,12 @@ const Profile = () => {
 
   const followProfile = async () => {
     await UserClient.followUser(user.userName, currentProfile.userName);
+    getProfileDetails();
   };
 
   const unFollowProfile = async () => {
     await UserClient.unFollowUser(user.userName, currentProfile.userName);
+    getProfileDetails();
   };
 
   const getProfileDetails = async () => {
@@ -72,7 +74,7 @@ const Profile = () => {
 
   const handleAddFriendsModalClose = () => {
     setOpenAddFriendsModal(false);
-    if (friendsAdded > 0){
+    if (friendsAdded > 0) {
       getProfileDetails();
     }
     setFriendsAdded(0);
@@ -291,19 +293,6 @@ const Profile = () => {
                         }}
                         label="Wishlist"
                       />
-                      {/*<Tab*/}
-                      {/*  sx={{*/}
-                      {/*    fontSize: "13px",*/}
-                      {/*    "&.Mui-selected": {*/}
-                      {/*      color: "#40a9ff",*/}
-                      {/*      fontSize: "13px"*/}
-                      {/*    },*/}
-                      {/*    "&.Mui-focusVisible": {*/}
-                      {/*      backgroundColor: "#40a9ff"*/}
-                      {/*    }*/}
-                      {/*  }}*/}
-                      {/*  label="Likes"*/}
-                      {/*/>*/}
                       <Tab
                         sx={{
                           fontSize: "13px",
@@ -325,9 +314,6 @@ const Profile = () => {
                   <TabPanel value={tabValue} index={1}>
                     <DisplayWishlistByUser user={currentProfile} />
                   </TabPanel>
-                  {/*<TabPanel value={tabValue} index={2}>*/}
-                  {/*  Likes*/}
-                  {/*</TabPanel>*/}
                   <TabPanel value={tabValue} index={2}>
                     <DisplayPlaylistByUser user={currentProfile} />
                   </TabPanel>

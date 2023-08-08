@@ -66,13 +66,13 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
     handleSearch();
-    result === 200 && setFriendsAdded(friendsAdded+1);
+    result === 200 && setFriendsAdded(friendsAdded + 1);
   };
 
   const followUser = async (currentUser, userToFollow) => {
     let result = await UserClient.followUser(currentUser, userToFollow);
     handleSearch();
-    result === 200 && setFriendsAdded(friendsAdded+1);
+    result === 200 && setFriendsAdded(friendsAdded + 1);
   };
 
   const determineActionButton = (profile) => {
@@ -177,9 +177,7 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                   </Paper>
                   {hasSearched && (
                     <List component="nav" sx={{ margin: "0 10px" }}>
-                      {loading ? (
-                        <ProfileWishlistLoading />
-                      ) : searchResults && searchResults.length > 0 ? searchResults.map((profile) => (
+                      {searchResults && searchResults.length > 0 ? searchResults.map((profile) => (
                           <>
                             <ListItem>
                               <Stack
@@ -187,7 +185,7 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                                 spacing={2}
                               >
                                 <>
-                                  <Avatar
+                                  <Avatar onClick={onClose}
                                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                     component={Link}
                                     to={`/profile/${profile.userName}`}
@@ -196,7 +194,9 @@ const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsA
                                     {profile.lastName[0]}
                                   </Avatar>
                                   <div>
-                                    <Stack direction="column">
+                                    <Stack direction="column" sx={{ textDecoration: "none" }}
+                                           component={Link} onClick={onClose}
+                                           to={`/profile/${profile.userName}`}>
                                       <Typography sx={{ fontWeight: "bold" }}>
                                         {profile.firstName} {profile.lastName}
                                       </Typography>
