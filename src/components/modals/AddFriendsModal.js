@@ -20,48 +20,60 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Divider from "@mui/material/Divider";
+import SearchClient from "../../client/SearchClient";
+import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 
-const AddFriendsModal = ({ open, onClose, currentUser }) => {
+const AddFriendsModal = ({ open, onClose, currentUser, friendsAdded, setFriendsAdded }) => {
 
-  const [usersList, setUsers] = useState([]);
-  const [filteredUsersList, setFilteredUsersList] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [updateList, setUpdateList] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const resetSearch = () => {
     setSearchKeyword("");
+    setSearchResults([]);
+    setHasSearched(false);
+    setLoading(false);
   };
 
-  const getAllUsers = async () => {
-    const result = await UserClient.getAllUsers();
-    const index = result.data.findIndex(item => item.userName === currentUser.userName);
-    result.data.splice(index, 1);
-    setUsers(result.data);
-    setFilteredUsersList(result.data)
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setFilteredUsersList(usersList);
-  };
-
-  const filterUsers = (event) => {
-    event.preventDefault();
+  const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
-    const updatedList = usersList.filter(user => {
-      return (
-        user.userName.toLowerCase().search(event.target.value.toLowerCase()) !== -1 ||
-        user.firstName.toLowerCase().search(event.target.value.toLowerCase()) !== -1
-      );
-    });
-    setFilteredUsersList(updatedList);
+    if (event.target.value === "") {
+      setSearchResults([]);
+      setHasSearched(false);
+    }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [updateList]);
+  const handleSearch = async () => {
+    if (searchKeyword.length > 0) {
+      setLoading(true);
+      setHasSearched(true);
+
+      const result = await SearchClient.searchMedia("user", searchKeyword, null);
+      const finalList = result.data.mediaList;
+      setSearchResults(finalList);
+    }
+    setLoading(false);
+  };
+
+  const submitSearch = (e) => {
+    e.preventDefault();
+    handleSearch();
+  };
+
+  const unFollowUser = async (currentUser, userToUnfollow) => {
+    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
+    handleSearch();
+    result === 200 && setFriendsAdded(friendsAdded + 1);
+  };
+
+  const followUser = async (currentUser, userToFollow) => {
+    let result = await UserClient.followUser(currentUser, userToFollow);
+    handleSearch();
+    result === 200 && setFriendsAdded(friendsAdded + 1);
+  };
 
   const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
@@ -118,16 +130,6 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
     }
   };
 
-  const unFollowUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
-  };
-
-  const followUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
-  };
-
   return (
     <>
       <Provider>
@@ -142,7 +144,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                 <Box sx={{ width: "100%" }}>
                   <Paper elevation={4}
                          component="form"
-                         onSubmit={handleSearch}
+                         onSubmit={submitSearch}
                          sx={{
                            p: "2px 4px",
                            display: "flex",
@@ -164,8 +166,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                       size="small"
                       placeholder="Search for users"
                       value={searchKeyword}
-                      onClick={handleSearch}
-                      onChange={filterUsers}
+                      onChange={onChangeSearch}
                       required
                     />
                     {searchKeyword.length > 0 && (
@@ -174,9 +175,9 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                       </IconButton>
                     )}
                   </Paper>
-                  {searchKeyword.length > 0 && (
+                  {hasSearched && (
                     <List component="nav" sx={{ margin: "0 10px" }}>
-                      {filteredUsersList && filteredUsersList.length > 0 ? filteredUsersList.map((profile) => (
+                      {searchResults && searchResults.length > 0 ? searchResults.map((profile) => (
                           <>
                             <ListItem>
                               <Stack
@@ -184,7 +185,7 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                 spacing={2}
                               >
                                 <>
-                                  <Avatar
+                                  <Avatar onClick={onClose}
                                     sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                                     component={Link}
                                     to={`/profile/${profile.userName}`}
@@ -193,7 +194,9 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                                     {profile.lastName[0]}
                                   </Avatar>
                                   <div>
-                                    <Stack direction="column">
+                                    <Stack direction="column" sx={{ textDecoration: "none" }}
+                                           component={Link} onClick={onClose}
+                                           to={`/profile/${profile.userName}`}>
                                       <Typography sx={{ fontWeight: "bold" }}>
                                         {profile.firstName} {profile.lastName}
                                       </Typography>
@@ -213,7 +216,8 @@ const AddFriendsModal = ({ open, onClose, currentUser }) => {
                             <Divider />
                           </>
                         )) :
-                        <div>No users match this search.</div>}
+                        <div>No users match this search.</div>
+                      }
                     </List>
                   )}
                 </Box>

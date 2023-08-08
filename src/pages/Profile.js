@@ -28,7 +28,7 @@ const Profile = () => {
   const [currentProfile, setCurrentProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
-  const [updated, setUpdated] = useState(false);
+  const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
 
@@ -37,15 +37,13 @@ const Profile = () => {
   };
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.followUser(user.userName, currentProfile.userName);
+    getProfileDetails();
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.unFollowUser(user.userName, currentProfile.userName);
+    getProfileDetails();
   };
 
   const getProfileDetails = async () => {
@@ -59,11 +57,14 @@ const Profile = () => {
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName, updated]);
+  }, [userName]);
 
   const handleFriendsModalClose = () => {
-    getProfileDetails();
     setOpenFriendsModal(false);
+    if (friendsAdded > 0){
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleFriendsModalOpen = (initialTab) => {
@@ -72,8 +73,11 @@ const Profile = () => {
   };
 
   const handleAddFriendsModalClose = () => {
-    getProfileDetails();
     setOpenAddFriendsModal(false);
+    if (friendsAdded > 0) {
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleAddFriendsModalOpen = () => {
@@ -289,19 +293,6 @@ const Profile = () => {
                         }}
                         label="Wishlist"
                       />
-                      {/*<Tab*/}
-                      {/*  sx={{*/}
-                      {/*    fontSize: "13px",*/}
-                      {/*    "&.Mui-selected": {*/}
-                      {/*      color: "#40a9ff",*/}
-                      {/*      fontSize: "13px"*/}
-                      {/*    },*/}
-                      {/*    "&.Mui-focusVisible": {*/}
-                      {/*      backgroundColor: "#40a9ff"*/}
-                      {/*    }*/}
-                      {/*  }}*/}
-                      {/*  label="Likes"*/}
-                      {/*/>*/}
                       <Tab
                         sx={{
                           fontSize: "13px",
@@ -323,9 +314,6 @@ const Profile = () => {
                   <TabPanel value={tabValue} index={1}>
                     <DisplayWishlistByUser user={currentProfile} />
                   </TabPanel>
-                  {/*<TabPanel value={tabValue} index={2}>*/}
-                  {/*  Likes*/}
-                  {/*</TabPanel>*/}
                   <TabPanel value={tabValue} index={2}>
                     <DisplayPlaylistByUser user={currentProfile} />
                   </TabPanel>
@@ -334,12 +322,11 @@ const Profile = () => {
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
-                          currentUser={user}
-                          openingTab={friendsTab} />
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}
+                          currentUser={user} openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} />
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>
