@@ -13,7 +13,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import Button from "@mui/material/Button";
 import AddPlaylistModal from "../modals/AddPlaylistModal";
 
-const DisplayPlaylistByUser = ({ user }) => {
+const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
   const [playlistList, setPlaylistList] = useState([]);
   const [displayOnePlaylist, setDisplayOnePlaylist] = useState(false);
   const [playListId, setPlaylistId] = useState(null);
@@ -52,25 +52,27 @@ const DisplayPlaylistByUser = ({ user }) => {
 
   const displayPlaylist = () => {
     return <>
-      <Button
-        variant="outlined"
-        startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-        sx={{
-          border: "transparent",
-          backgroundColor: "#ffffff",
-          borderRadius: "17px",
-          width: "100%",
-          "&.MuiButtonBase-root:hover": {
+      {userViewingOwnProfile && (
+        <Button
+          variant="outlined"
+          startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+          sx={{
             border: "transparent",
-            backgroundColor: "#ffffff"
-          }
-        }}
-        onClick={handleNewPlaylistModalOpen}
-      >
-        <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
-          Create New Playlist
-        </Typography>
-      </Button>
+            backgroundColor: "#ffffff",
+            borderRadius: "17px",
+            width: "100%",
+            "&.MuiButtonBase-root:hover": {
+              border: "transparent",
+              backgroundColor: "#ffffff"
+            }
+          }}
+          onClick={handleNewPlaylistModalOpen}
+        >
+          <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+            Create New Playlist
+          </Typography>
+        </Button>
+      )}
       {playlistList && playlistList.length > 0 && playlistList.map((playlist) => (
         <>
           <ListItem key={playlist._id} onClick={() => viewOnePlaylist(playlist)} sx={{cursor: "pointer"}}>

@@ -25,33 +25,39 @@ const TabPanel = (props) => {
 const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
-  const [currentProfile, setCurrentProfile] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
+  const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName);
+    await UserClient.followUser(user.userName, profile.userName);
     getProfileDetails();
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName);
+    await UserClient.unFollowUser(user.userName, profile.userName);
     getProfileDetails();
   };
 
   const getProfileDetails = async () => {
-    // TODO only make this call once if user and userName are the same
+    const userAndProfile = user.userName === userName;
     const currentUser = await UserClient.getUserInfo(user.userName);
     setUser(currentUser.data.user);
-    const result = await UserClient.getUserInfo(userName);
-    setCurrentProfile(result.data.user);
+    if (!userAndProfile) {
+      const result = await UserClient.getUserInfo(userName);
+      setProfile(result.data.user);
+    } else {
+      setProfile(currentUser.data.user);
+    }
+    setUserViewingOwnProfile(userAndProfile);
     setOpenFriendsModal(false);
   };
 
@@ -85,7 +91,7 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (user.userName === userName) {
+    if (userViewingOwnProfile) {
       return (
         <Button
           variant="outlined"
@@ -109,7 +115,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
+    } else if (profile && profile.followers && profile.followers.includes(user && user.userName)) {
       return (
         <Button
           variant="outlined"
@@ -205,7 +211,7 @@ const Profile = () => {
                         fontWeight: "bold"
                       }}
                     >
-                      {currentProfile?.firstName}
+                      {profile?.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -216,7 +222,7 @@ const Profile = () => {
                         fontSize: "13px"
                       }}
                     >
-                      @{currentProfile?.userName}
+                      @{profile?.userName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -230,7 +236,7 @@ const Profile = () => {
                       }}
                       onClick={() => handleFriendsModalOpen(0)}
                     >
-                      {currentProfile && currentProfile.following && currentProfile.following.length}
+                      {profile && profile.following && profile.following.length}
                       <span style={{ fontWeight: "normal" }}> following</span>
                     </span>
                     <span
@@ -243,7 +249,7 @@ const Profile = () => {
                       }}
                       onClick={() => handleFriendsModalOpen(1)}
                     >
-                      {currentProfile && currentProfile.followers && currentProfile.followers.length}
+                      {profile && profile.followers && profile.followers.length}
                       <span style={{ fontWeight: "normal" }}> followers</span>
                     </span>
                   </Grid>
@@ -309,20 +315,20 @@ const Profile = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
-                    <DisplayRatingsByUser user={currentProfile} />
+                    <DisplayRatingsByUser user={profile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
-                    <DisplayWishlistByUser user={currentProfile} />
+                    <DisplayWishlistByUser user={profile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={2}>
-                    <DisplayPlaylistByUser user={currentProfile} />
+                    <DisplayPlaylistByUser user={profile} userViewingOwnProfile={userViewingOwnProfile} />
                   </TabPanel>
                 </Box>
               </Paper>
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={profile.userName} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}
                           currentUser={user} openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
