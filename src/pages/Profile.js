@@ -14,6 +14,7 @@ import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
 import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
+import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -24,45 +25,52 @@ const TabPanel = (props) => {
 const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
-  const [currentProfile, setCurrentProfile] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
-  const [updated, setUpdated] = useState(false);
+  const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
+  const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.followUser(user.userName, profile.userName);
+    getProfileDetails();
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, currentProfile.userName).then(() => {
-      setUpdated(!updated);
-    });
+    await UserClient.unFollowUser(user.userName, profile.userName);
+    getProfileDetails();
   };
 
   const getProfileDetails = async () => {
-    // TODO only make this call once if user and userName are the same
+    const userAndProfile = user.userName === userName;
     const currentUser = await UserClient.getUserInfo(user.userName);
     setUser(currentUser.data.user);
-    const result = await UserClient.getUserInfo(userName);
-    setCurrentProfile(result.data.user);
+    if (!userAndProfile) {
+      const result = await UserClient.getUserInfo(userName);
+      setProfile(result.data.user);
+    } else {
+      setProfile(currentUser.data.user);
+    }
+    setUserViewingOwnProfile(userAndProfile);
     setOpenFriendsModal(false);
   };
 
   useEffect(() => {
     getProfileDetails();
-  }, [userName, updated]);
+  }, [userName]);
 
   const handleFriendsModalClose = () => {
-    getProfileDetails();
     setOpenFriendsModal(false);
+    if (friendsAdded > 0){
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleFriendsModalOpen = (initialTab) => {
@@ -71,8 +79,11 @@ const Profile = () => {
   };
 
   const handleAddFriendsModalClose = () => {
-    getProfileDetails();
     setOpenAddFriendsModal(false);
+    if (friendsAdded > 0) {
+      getProfileDetails();
+    }
+    setFriendsAdded(0);
   };
 
   const handleAddFriendsModalOpen = () => {
@@ -80,7 +91,7 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (user.userName === userName) {
+    if (userViewingOwnProfile) {
       return (
         <Button
           variant="outlined"
@@ -104,7 +115,7 @@ const Profile = () => {
           </Typography>
         </Button>
       );
-    } else if (currentProfile && currentProfile.followers && currentProfile.followers.includes(user && user.userName)) {
+    } else if (profile && profile.followers && profile.followers.includes(user && user.userName)) {
       return (
         <Button
           variant="outlined"
@@ -200,7 +211,7 @@ const Profile = () => {
                         fontWeight: "bold"
                       }}
                     >
-                      {currentProfile?.firstName}
+                      {profile?.firstName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -211,7 +222,7 @@ const Profile = () => {
                         fontSize: "13px"
                       }}
                     >
-                      @{currentProfile?.userName}
+                      @{profile?.userName}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -225,7 +236,7 @@ const Profile = () => {
                       }}
                       onClick={() => handleFriendsModalOpen(0)}
                     >
-                      {currentProfile && currentProfile.following && currentProfile.following.length}
+                      {profile && profile.following && profile.following.length}
                       <span style={{ fontWeight: "normal" }}> following</span>
                     </span>
                     <span
@@ -238,7 +249,7 @@ const Profile = () => {
                       }}
                       onClick={() => handleFriendsModalOpen(1)}
                     >
-                      {currentProfile && currentProfile.followers && currentProfile.followers.length}
+                      {profile && profile.followers && profile.followers.length}
                       <span style={{ fontWeight: "normal" }}> followers</span>
                     </span>
                   </Grid>
@@ -288,57 +299,40 @@ const Profile = () => {
                         }}
                         label="Wishlist"
                       />
-                      {/*<Tab*/}
-                      {/*  sx={{*/}
-                      {/*    fontSize: "13px",*/}
-                      {/*    "&.Mui-selected": {*/}
-                      {/*      color: "#40a9ff",*/}
-                      {/*      fontSize: "13px"*/}
-                      {/*    },*/}
-                      {/*    "&.Mui-focusVisible": {*/}
-                      {/*      backgroundColor: "#40a9ff"*/}
-                      {/*    }*/}
-                      {/*  }}*/}
-                      {/*  label="Likes"*/}
-                      {/*/>*/}
-                      {/*<Tab*/}
-                      {/*  sx={{*/}
-                      {/*    fontSize: "13px",*/}
-                      {/*    "&.Mui-selected": {*/}
-                      {/*      color: "#40a9ff",*/}
-                      {/*      fontSize: "13px"*/}
-                      {/*    },*/}
-                      {/*    "&.Mui-focusVisible": {*/}
-                      {/*      backgroundColor: "#40a9ff"*/}
-                      {/*    }*/}
-                      {/*  }}*/}
-                      {/*  label="Comments"*/}
-                      {/*/>*/}
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px"
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff"
+                          }
+                        }}
+                        label="Playlists"
+                      />
                     </Tabs>
                   </Box>
                   <TabPanel value={tabValue} index={0}>
-                    <DisplayRatingsByUser user={currentProfile} />
+                    <DisplayRatingsByUser user={profile} />
                   </TabPanel>
                   <TabPanel value={tabValue} index={1}>
-                    <DisplayWishlistByUser user={currentProfile} />
+                    <DisplayWishlistByUser user={profile} />
                   </TabPanel>
-                  {/*<TabPanel value={tabValue} index={2}>*/}
-                  {/*  Likes*/}
-                  {/*</TabPanel>*/}
-                  {/*<TabPanel value={tabValue} index={3}>*/}
-                  {/*  Comments*/}
-                  {/*</TabPanel>*/}
+                  <TabPanel value={tabValue} index={2}>
+                    <DisplayPlaylistByUser user={profile} userViewingOwnProfile={userViewingOwnProfile} />
+                  </TabPanel>
                 </Box>
               </Paper>
             </Box>
           </Container>
           {openFriendsModal && (
-            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={currentProfile.userName}
-                          currentUser={user}
-                          openingTab={friendsTab} />
+            <FriendsModal open={openFriendsModal} onClose={handleFriendsModalClose} userName={profile.userName} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}
+                          currentUser={user} openingTab={friendsTab} />
           )}
           {openAddFriendsModal && (
-            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} />
+            <AddFriendsModal open={openAddFriendsModal} onClose={handleAddFriendsModalClose} currentUser={user} friendsAdded={friendsAdded} setFriendsAdded={setFriendsAdded}/>
           )}
         </ThemeProvider>
       </StyledEngineProvider>

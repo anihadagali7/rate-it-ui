@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import RatingClient from "../../client/RatingClient";
 import { theme } from "../../Theme/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider, Typography
-} from "@mui/material";
+import { Box, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
 import { Provider } from "jotai";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -15,7 +11,6 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import RatingsLoading from "../../shared/loading/RatingsLoading";
 import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
 
 const DisplayRatingsByUser = ({ user }) => {
@@ -52,6 +47,7 @@ const DisplayRatingsByUser = ({ user }) => {
             <Stack
               direction="row"
               spacing={2}
+              key={rating._id}
             >
               <>
                 <Avatar

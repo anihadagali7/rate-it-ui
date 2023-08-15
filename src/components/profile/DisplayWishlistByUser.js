@@ -42,7 +42,7 @@ const DisplayWishlistByUser = ({ user }) => {
     return <>
       {wishlistList && wishlistList.length > 0 && wishlistList.map((media) => (
         <>
-          <ListItem>
+          <ListItem key={media._id}>
             <Stack
               direction="row"
               spacing={2}

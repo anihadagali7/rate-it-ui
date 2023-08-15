@@ -22,4 +22,24 @@ const searchMedia = (mediaType, keyWord, onError) => {
     });
 };
 
-export default { searchMedia };
+const searchAllMedia = (keyWord, onError) => {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  return axios
+    .post(
+      API_URL + `/api/search/all`,
+      { keyWord: keyWord },
+      {
+        headers: {
+          Authorization: ACCESS_TOKEN,
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    }).catch((error) => {
+      let errors = error.response.data.errors;
+      onError(errors.msg.length > 0);
+    });
+};
+
+export default { searchMedia, searchAllMedia };
