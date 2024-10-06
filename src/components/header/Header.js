@@ -35,14 +35,15 @@ import Stack from "@mui/material/Stack";
 import SearchIcon from "@mui/icons-material/Search";
 import { Alert, Collapse } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const useStyles = makeStyles({
   title: {
-    fontFamily: "Black Signature"
+    fontFamily: "Black Signature",
   },
   appBar: {
-    backgroundColor: "#FFFFFF"
-  }
+    backgroundColor: "#FFFFFF",
+  },
 });
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -51,14 +52,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: "flex-end"
+  justifyContent: "flex-end",
 }));
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
   "& .MuiTabs-indicator": {
-    backgroundColor: "#f195ac"
-  }
+    backgroundColor: "#f195ac",
+  },
 });
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
@@ -66,7 +67,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     textTransform: "none",
     minWidth: 0,
     [theme.breakpoints.up("sm")]: {
-      minWidth: 0
+      minWidth: 0,
     },
     fontWeight: "bold",
     fontSize: "16px",
@@ -75,30 +76,30 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
-      "\"Segoe UI\"",
+      '"Segoe UI"',
       "Roboto",
-      "\"Helvetica Neue\"",
+      '"Helvetica Neue"',
       "Arial",
       "sans-serif",
-      "\"Apple Color Emoji\"",
-      "\"Segoe UI Emoji\"",
-      "\"Segoe UI Symbol\""
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
     ].join(","),
     "& .root": {
-      borderBottom: "none"
+      borderBottom: "none",
     },
     "&:hover": {
       color: "#232b2b",
-      opacity: 1
+      opacity: 1,
     },
     "&.Mui-selected": {
       color: "#40a9ff",
       fontWeight: "bold",
-      fontSize: "18px"
+      fontSize: "18px",
     },
     "&.Mui-focusVisible": {
-      backgroundColor: "#40a9ff"
-    }
+      backgroundColor: "#40a9ff",
+    },
   })
 );
 
@@ -194,7 +195,7 @@ const Header = ({ displayMenu }) => {
           fontWeight: 700,
           letterSpacing: ".3rem",
           color: "#00a8ff",
-          textDecoration: "none"
+          textDecoration: "none",
         }}
       >
         RATE IT
@@ -203,7 +204,7 @@ const Header = ({ displayMenu }) => {
         <Box
           sx={{
             flexGrow: 1,
-            display: { xs: "none", md: "flex" }
+            display: { xs: "none", md: "flex" },
           }}
         >
           <AntTabs
@@ -211,7 +212,7 @@ const Header = ({ displayMenu }) => {
               marginLeft: "32%",
               color: "#f195ac",
               borderBottom: "none",
-              margin: "auto"
+              margin: "auto",
             }}
             value={tabValue}
             onChange={handleTabChange}
@@ -262,16 +263,20 @@ const Header = ({ displayMenu }) => {
                   height: "35px",
                   marginTop: "17px",
                   "&.MuiButtonBase-root:hover": {
-                    border: "transparent"
-                  }
+                    border: "transparent",
+                  },
                 }}
                 onClick={handleOpenUserMenu}
               >
-                <Typography sx={{
-                  fontSize: "14px",
-                  color: "#000000",
-                  fontWeight: "500"
-                }}>{user.userName}</Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    color: "#000000",
+                    fontWeight: "500",
+                  }}
+                >
+                  {user.userName}
+                </Typography>
               </Button>
               <Menu
                 sx={{ mt: "45px" }}
@@ -279,12 +284,12 @@ const Header = ({ displayMenu }) => {
                 anchorEl={userMenu}
                 anchorOrigin={{
                   vertical: "top",
-                  horizontal: "right"
+                  horizontal: "right",
                 }}
                 keepMounted
                 transformOrigin={{
                   vertical: "top",
-                  horizontal: "right"
+                  horizontal: "right",
                 }}
                 open={userMenu}
                 onClose={handleCloseUserMenu}
@@ -309,8 +314,8 @@ const Header = ({ displayMenu }) => {
                   marginTop: "17px",
                   "&.MuiButtonBase-root:hover": {
                     border: "transparent",
-                    backgroundColor: "#00a8ff"
-                  }
+                    backgroundColor: "#00a8ff",
+                  },
                 }}
                 to="/login"
                 onClick={() => setTabValue(false)}
@@ -345,8 +350,8 @@ const Header = ({ displayMenu }) => {
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              boxSizing: "border-box"
-            }
+              boxSizing: "border-box",
+            },
           }}
           open={drawer}
           onClose={toggleDrawer(false)}
@@ -413,7 +418,11 @@ const Header = ({ displayMenu }) => {
                 </Typography>
               </ListItemText>
             </ListItem>
-            <ListItem key={"profile"} component={Link} to={`/profile/${user.userName}`}>
+            <ListItem
+              key={"profile"}
+              component={Link}
+              to={`/profile/${user.userName}`}
+            >
               <ListItemIcon>
                 <AccountCircleIcon sx={{ color: "#232b2b" }} />
               </ListItemIcon>
@@ -496,7 +505,7 @@ const Header = ({ displayMenu }) => {
           fontWeight: 700,
           letterSpacing: ".3rem",
           color: "#00a8ff",
-          textDecoration: "none"
+          textDecoration: "none",
         }}
       >
         RATE IT
@@ -514,35 +523,44 @@ const Header = ({ displayMenu }) => {
           </Toolbar>
         </Container>
       </AppBar>
-      {!localUserLoggedIn && <Box sx={{ width: "100%" }}>
-        <Collapse in={openLoginAlert}>
-          <Alert
-            severity="info"
-            variant="filled"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setOpenLoginAlert(false);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            <Typography sx={{fontSize: '13px'}}>Please login to get the full experience!
-              <Button component={Link} to="/login" variant="text" sx={{height: '10px'}} onClick={() => setOpenLoginAlert(false)}>
-                <Typography sx={{ color: '#fff', fontSize: '13px' }}>
-                  Login
-                </Typography>
-              </Button>
-            </Typography>
-          </Alert>
-        </Collapse>
-      </Box>}
+      {!localUserLoggedIn && (
+        <Box sx={{ width: "100%" }}>
+          <Collapse in={openLoginAlert}>
+            <Alert
+              severity="info"
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setOpenLoginAlert(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              <Typography sx={{ fontSize: "13px" }}>
+                Please login to get the full experience!
+                <PrimaryButton
+                  testId="loginErrorModal"
+                  buttonElement={Link}
+                  variant="text"
+                  link="/login"
+                  onClick={() => setOpenLoginAlert(false)}
+                >
+                  <Typography sx={{ color: "#fff", fontSize: "13px" }}>
+                    Login
+                  </Typography>
+                </PrimaryButton>
+              </Typography>
+            </Alert>
+          </Collapse>
+        </Box>
+      )}
     </>
   );
 };
