@@ -4,7 +4,6 @@ import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
 import {
-  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
@@ -12,32 +11,14 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { theme } from "../../Theme/Theme";
 import { Provider, useAtom } from "jotai";
 import { currentlyLoggedIn, currentUser } from "../../state/user";
 import AuthClient from "../../client/AuthClient";
-import { makeStyles } from "@mui/styles";
 import Divider from "@mui/material/Divider";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import ResetPassword from "./ResetPassword";
-
-const useStyles = makeStyles({
-  container: {
-    margin: "20px 35px",
-  },
-  loginBtn: {
-    backgroundColor: "#f4afc2",
-    "&:hover": {
-      backgroundColor: "#f4afc2",
-    },
-  },
-  login: {
-    fontWeight: "900",
-    marginLeft: "5px",
-  },
-});
 
 const initialErrorState = {
   firstName: { value: false, message: "" },
@@ -46,16 +27,12 @@ const initialErrorState = {
   userName: { value: false, message: "" },
   phoneNumber: { value: false, message: "" },
   password: { value: false, message: "" },
-  currentPassword: { value: false, message: "" },
-  newPassword: { value: false, message: "" },
-  confirmNewPassword: { value: false, message: "" },
 };
 
 const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
   let navigate = useNavigate();
-  const classes = useStyles();
 
-  const [newAccount, setNewAccount] = useState({
+  const [payload, setPayload] = useState({
     firstName:
       updateProfile && currentProfile && currentProfile.firstName
         ? currentProfile.firstName
@@ -84,50 +61,16 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
 
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [loading, setLoading] = useState(false);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
   const [errorValue, setErrorValue] = useState(initialErrorState);
 
-  const onChangeFirstName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      firstName: event.target.value,
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPayload((prevValues) => ({
+      ...prevValues,
+      [name]: value,
     }));
-  };
-
-  const onChangeLastName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      lastName: event.target.value,
-    }));
-  };
-
-  const onChangeUserName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      userName: event.target.value,
-    }));
-  };
-
-  const onChangeEmail = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      email: event.target.value,
-    }));
-  };
-
-  const onChangePassword = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      password: event.target.value,
-    }));
-  };
-
-  const onChangePhoneNumber = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      phoneNumber: event.target.value,
-    }));
+    console.log("payload: ", payload);
   };
 
   const isValidEmail = (email) => {
@@ -149,16 +92,15 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
     const currentValue = JSON.parse(JSON.stringify(initialErrorState));
     currentValue[id] = { value: value, message: message };
     await setErrorValue(currentValue);
-    value && setLoading(false);
   };
 
   const validateInput = async () => {
-    const emailValidity = isValidEmail(newAccount.email);
-    const passwordValidity = isValidPassword(newAccount.password);
-    const phoneNumberValidity = isValidPhoneNumber(newAccount.phoneNumber);
-    const firstNameValidity = newAccount.firstName.length > 0;
-    const lastNameValidity = newAccount.lastName.length > 0;
-    const userNameValidity = newAccount.userName.length > 3;
+    const emailValidity = isValidEmail(payload.email);
+    const passwordValidity = isValidPassword(payload.password);
+    const phoneNumberValidity = isValidPhoneNumber(payload.phoneNumber);
+    const firstNameValidity = payload.firstName.length > 0;
+    const lastNameValidity = payload.lastName.length > 0;
+    const userNameValidity = payload.userName.length > 3;
 
     const currentValue = JSON.parse(JSON.stringify(errorValue));
 
@@ -206,27 +148,42 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
     );
   };
 
+  const checkToDisable = () => {
+    return !(
+      payload.hasOwnProperty("firstName") &&
+      payload.firstName !== "" &&
+      payload.hasOwnProperty("lastName") &&
+      payload.lastName !== "" &&
+      payload.hasOwnProperty("userName") &&
+      payload.userName !== "" &&
+      payload.hasOwnProperty("phoneNumber") &&
+      payload.phoneNumber !== "" &&
+      payload.hasOwnProperty("email") &&
+      payload.email !== "" &&
+      payload.hasOwnProperty("password") &&
+      payload.password !== ""
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await setErrorValue(initialErrorState);
     const newUser = {
-      firstName: newAccount.firstName,
-      lastName: newAccount.lastName,
-      email: newAccount.email,
-      userName: newAccount.userName,
-      password: newAccount.password,
-      phoneNumber: newAccount.phoneNumber,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      userName: payload.userName,
+      password: payload.password,
+      phoneNumber: payload.phoneNumber,
     };
 
     if (createProfile && (await validateInput())) {
-      setLoading(true);
       const result = await AuthClient.signup(newUser, errorHandler);
       setUserLoggedIn(true);
       setUser(result.user);
       navigate("/");
     }
     if (updateProfile && (await validateInput())) {
-      setLoading(true);
       const result = await AuthClient.editProfile(newUser, errorHandler);
       setUserLoggedIn(true);
       setUser(result.user);
@@ -291,8 +248,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               }}
                               size="small"
                               required
-                              value={newAccount.firstName}
-                              onChange={onChangeFirstName}
+                              value={payload.firstName}
+                              name="firstName"
+                              onChange={handleChange}
                               error={errorValue["firstName"]["value"]}
                               helperText={
                                 errorValue["firstName"]["value"] &&
@@ -313,8 +271,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               }}
                               size="small"
                               required
-                              value={newAccount.lastName}
-                              onChange={onChangeLastName}
+                              value={payload.lastName}
+                              onChange={handleChange}
+                              name="lastName"
                               error={errorValue["lastName"]["value"]}
                               helperText={
                                 errorValue["lastName"]["value"] &&
@@ -335,8 +294,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               }}
                               size="small"
                               required
-                              value={newAccount.userName}
-                              onChange={onChangeUserName}
+                              value={payload.userName}
+                              name="userName"
+                              onChange={handleChange}
                               disabled={updateProfile}
                               error={errorValue["userName"]["value"]}
                               helperText={
@@ -357,8 +317,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               size="small"
                               required
                               placeholder={"1234567890"}
-                              value={newAccount.phoneNumber}
-                              onChange={onChangePhoneNumber}
+                              value={payload.phoneNumber}
+                              name="phoneNumber"
+                              onChange={handleChange}
                               error={errorValue["phoneNumber"]["value"]}
                               helperText={
                                 errorValue["phoneNumber"]["value"] &&
@@ -379,8 +340,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               required
                               disabled={updateProfile}
                               type={"email"}
-                              value={newAccount.email}
-                              onChange={onChangeEmail}
+                              value={payload.email}
+                              name="email"
+                              onChange={handleChange}
                               error={errorValue["email"]["value"]}
                               helperText={
                                 errorValue["email"]["value"] &&
@@ -403,8 +365,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                                 size="small"
                                 type={"password"}
                                 required
-                                value={newAccount.password}
-                                onChange={onChangePassword}
+                                value={payload.password}
+                                name="password"
+                                onChange={handleChange}
                                 error={errorValue["password"]["value"]}
                                 helperText={
                                   errorValue["password"]["value"] && (
@@ -428,49 +391,11 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                         <Grid item md={12} sx={{ width: "100%" }}>
                           <PrimaryButton
                             onClick={handleSubmit}
+                            disabled={checkToDisable()}
                             variant="contained"
                           >
                             {createProfile ? "Sign Up" : "Save"}
                           </PrimaryButton>
-                          {/* <Button
-                            variant="outlined"
-                            className={classes.loginBtn}
-                            type="submit"
-                            sx={{
-                              float: "right",
-                              marginLeft: "43px",
-                              marginTop: "10px",
-                              marginBottom: updateProfile && "15px",
-                              width: "100%",
-                              border: "transparent",
-                              "&.MuiButtonBase-root:hover": {
-                                border: "transparent",
-                              },
-                              borderRadius: "17px",
-                              maxHeight: "35px",
-                              "&.Mui-disabled": {
-                                color: "#fff",
-                                background: "#9E9E9E",
-                              },
-                            }}
-                            disabled={loading}
-                          >
-                            {loading && (
-                              <div style={{ color: "#ffffff" }}>
-                                <CircularProgress
-                                  size={20}
-                                  color="inherit"
-                                  sx={{ marginTop: "5px", marginRight: "7px" }}
-                                />
-                              </div>
-                            )}
-                            <Typography
-                              variant="normalText"
-                              className={classes.login}
-                            >
-                              {createProfile ? "Sign Up" : "Save"}
-                            </Typography>
-                          </Button> */}
                         </Grid>
                         {createProfile && (
                           <Grid
@@ -483,22 +408,14 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                               width: "100%",
                             }}
                           >
-                            <Button
-                              component={Link}
-                              to="/login"
-                              sx={{ marginTop: "10px" }}
+                            <PrimaryButton
+                              testId="loginInstead"
+                              buttonElement={Link}
+                              variant="text"
+                              link="/login"
                             >
-                              <Typography
-                                variant="blueText"
-                                sx={{
-                                  fontWeight: 600,
-                                  marginLeft: "-8px",
-                                  fontSize: "15px",
-                                }}
-                              >
-                                Sign in instead
-                              </Typography>
-                            </Button>
+                              Sign in instead
+                            </PrimaryButton>
                           </Grid>
                         )}
                       </Grid>
@@ -526,16 +443,13 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                                 alignItems: "center",
                               }}
                             >
-                              <Button
+                              <PrimaryButton
+                                testId="loginInstead"
+                                variant="text"
                                 onClick={() => setDisplayResetPassword(true)}
                               >
-                                <Typography
-                                  variant="blueText"
-                                  sx={{ fontWeight: 600 }}
-                                >
-                                  Reset password
-                                </Typography>
-                              </Button>
+                                Reset password
+                              </PrimaryButton>
                             </div>
                           </Box>
                         </>
