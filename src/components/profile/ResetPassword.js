@@ -4,7 +4,6 @@ import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
 import {
-  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
@@ -12,76 +11,37 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
-import { makeStyles } from "@mui/styles";
+import { useNavigate } from "react-router-dom";
 import { Provider, useAtom } from "jotai";
 import { theme } from "../../Theme/Theme";
 import AuthClient from "../../client/AuthClient";
 import { currentlyLoggedIn, currentUser } from "../../state/user";
-
-const useStyles = makeStyles({
-  container: {
-    margin: "20px 35px",
-  },
-  loginBtn: {
-    backgroundColor: "#f4afc2",
-    "&:hover": {
-      backgroundColor: "#f4afc2",
-    },
-  },
-  login: {
-    fontWeight: "900",
-    marginLeft: "5px",
-  },
-});
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const initialErrorState = {
-  firstName: { value: false, message: "" },
-  lastName: { value: false, message: "" },
-  email: { value: false, message: "" },
-  userName: { value: false, message: "" },
-  phoneNumber: { value: false, message: "" },
-  password: { value: false, message: "" },
   currentPassword: { value: false, message: "" },
   newPassword: { value: false, message: "" },
   confirmNewPassword: { value: false, message: "" },
 };
 
-const ResetPassword = ({ updateProfile, currentProfile }) => {
+const ResetPassword = ({ currentProfile }) => {
   let navigate = useNavigate();
-  const classes = useStyles();
 
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [loading, setLoading] = useState(false);
 
   const [errorValue, setErrorValue] = useState(initialErrorState);
-  const [resetPassword, setResetPassword] = useState({
+  const [payload, setPayload] = useState({
     currentPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
-  const [displayResetPassword, setDisplayResetPassword] = useState(false);
 
-  const onChangeCurrentPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      currentPassword: event.target.value,
-    }));
-  };
-
-  const onChangeNewPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      newPassword: event.target.value,
-    }));
-  };
-
-  const onChangeConfirmNewPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      confirmNewPassword: event.target.value,
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPayload((prevValues) => ({
+      ...prevValues,
+      [name]: value,
     }));
   };
 
@@ -93,9 +53,9 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
   };
 
   const validatePasswordReset = async () => {
-    const newPasswordValidity = isValidPassword(resetPassword.newPassword);
+    const newPasswordValidity = isValidPassword(payload.newPassword);
     const confirmNewPasswordValidity =
-      resetPassword.newPassword === resetPassword.confirmNewPassword;
+      payload.newPassword === payload.confirmNewPassword;
 
     const currentValue = JSON.parse(JSON.stringify(errorValue));
 
@@ -126,12 +86,11 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
 
     const passwordRequest = {
       userName: currentProfile.userName,
-      currentPassword: resetPassword.currentPassword,
-      newPassword: resetPassword.newPassword,
+      currentPassword: payload.currentPassword,
+      newPassword: payload.newPassword,
     };
 
     if (await validatePasswordReset()) {
-      setLoading(true);
       const result = await AuthClient.resetPassword(
         passwordRequest,
         errorHandler
@@ -146,7 +105,17 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
     const currentValue = JSON.parse(JSON.stringify(initialErrorState));
     currentValue[id] = { value: value, message: message };
     await setErrorValue(currentValue);
-    value && setLoading(false);
+  };
+
+  const checkToDisable = () => {
+    return !(
+      payload.hasOwnProperty("currentPassword") &&
+      payload.currentPassword !== "" &&
+      payload.hasOwnProperty("newPassword") &&
+      payload.newPassword !== "" &&
+      payload.hasOwnProperty("confirmNewPassword") &&
+      payload.confirmNewPassword !== ""
+    );
   };
 
   return (
@@ -173,7 +142,7 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box component="form" onSubmit={resetPasswordSubmit}>
+                  <Box>
                     <Grid
                       container
                       spacing={{ xs: 2, md: 2, xl: 2 }}
@@ -203,9 +172,10 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
                             }}
                             size="small"
                             type={"password"}
+                            name="currentPassword"
                             required
-                            value={resetPassword.currentPassword}
-                            onChange={onChangeCurrentPassword}
+                            value={payload.currentPassword}
+                            onChange={handleChange}
                             error={errorValue["currentPassword"]["value"]}
                             helperText={
                               errorValue["currentPassword"]["value"] && (
@@ -232,8 +202,9 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
                             size="small"
                             type={"password"}
                             required
-                            value={resetPassword.newPassword}
-                            onChange={onChangeNewPassword}
+                            value={payload.newPassword}
+                            name="newPassword"
+                            onChange={handleChange}
                             error={errorValue["newPassword"]["value"]}
                             helperText={
                               errorValue["newPassword"]["value"] && (
@@ -266,8 +237,9 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
                             size="small"
                             type={"password"}
                             required
-                            value={resetPassword.confirmNewPassword}
-                            onChange={onChangeConfirmNewPassword}
+                            value={payload.confirmNewPassword}
+                            name="confirmNewPassword"
+                            onChange={handleChange}
                             error={errorValue["confirmNewPassword"]["value"]}
                             helperText={
                               errorValue["confirmNewPassword"]["value"] && (
@@ -280,45 +252,13 @@ const ResetPassword = ({ updateProfile, currentProfile }) => {
                         </InputLabel>
                       </Grid>
                       <Grid item md={12} sx={{ width: "100%" }}>
-                        <Button
-                          variant="outlined"
-                          className={classes.loginBtn}
-                          type="submit"
-                          sx={{
-                            float: "right",
-                            marginLeft: "43px",
-                            marginTop: "10px",
-                            marginBottom: updateProfile && "15px",
-                            width: "100%",
-                            border: "transparent",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent",
-                            },
-                            borderRadius: "17px",
-                            maxHeight: "35px",
-                            "&.Mui-disabled": {
-                              color: "#fff",
-                              background: "#9E9E9E",
-                            },
-                          }}
-                          disabled={loading}
+                        <PrimaryButton
+                          onClick={resetPasswordSubmit}
+                          disabled={checkToDisable()}
+                          variant="contained"
                         >
-                          {loading && (
-                            <div style={{ color: "#ffffff" }}>
-                              <CircularProgress
-                                size={20}
-                                color="inherit"
-                                sx={{ marginTop: "5px", marginRight: "7px" }}
-                              />
-                            </div>
-                          )}
-                          <Typography
-                            variant="normalText"
-                            className={classes.login}
-                          >
-                            Reset
-                          </Typography>
-                        </Button>
+                          Reset
+                        </PrimaryButton>
                       </Grid>
                     </Grid>
                   </Box>

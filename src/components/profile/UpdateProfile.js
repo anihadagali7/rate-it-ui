@@ -259,10 +259,7 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
                   {displayResetPassword ? (
-                    <ResetPassword
-                      updateProfile={updateProfile}
-                      currentProfile={currentProfile}
-                    />
+                    <ResetPassword currentProfile={currentProfile} />
                   ) : (
                     <Box component="form" onSubmit={handleSubmit}>
                       <Grid

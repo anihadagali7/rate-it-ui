@@ -12,7 +12,6 @@ import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import AuthClient from "../client/AuthClient";
 import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
@@ -111,8 +110,6 @@ const Login = () => {
                   <Box>
                     <Grid
                       container
-                      component="form"
-                      onSubmit={handleLogin}
                       spacing={{ xs: 2, md: 2, xl: 5 }}
                       columns={{ md: 12 }}
                     >
