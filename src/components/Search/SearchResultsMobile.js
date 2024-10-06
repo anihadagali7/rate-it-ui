@@ -1,9 +1,8 @@
 import {
-  Button,
   Container,
   Grid,
   StyledEngineProvider,
-  ThemeProvider
+  ThemeProvider,
 } from "@mui/material";
 import { Provider, useAtom } from "jotai";
 import React, { useState } from "react";
@@ -19,9 +18,9 @@ import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import { currentUser } from "../../state/user";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const SearchResultsMobile = ({ results, resultType }) => {
-
   const [updateList, setUpdateList] = useState(false);
   const [user, setUser] = useAtom(currentUser);
 
@@ -37,7 +36,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "100%"
+          width: "100%",
         }}
       >
         <div>
@@ -61,7 +60,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
       xs={6}
       sx={{
         paddingLeft: index % 2 == 0 ? "0px" : "20px",
-        textDecoration: "none"
+        textDecoration: "none",
       }}
       component={Link}
       to={`/${resultType}/${row.mediaId}`}
@@ -70,7 +69,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "100%"
+          width: "100%",
         }}
       >
         <div>
@@ -83,7 +82,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
               paddingLeft: index % 2 == 0 ? "5px" : "10px",
               paddingBottom: "5px",
               maxHeight: "20px",
-              color: "#000000"
+              color: "#000000",
             }}
           >
             {row.name}
@@ -108,7 +107,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
       xs={6}
       sx={{
         paddingLeft: index % 2 == 0 ? "0px" : "20px",
-        textDecoration: "none"
+        textDecoration: "none",
       }}
       component={Link}
       to={`/${resultType}/${row.mediaId}`}
@@ -117,7 +116,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "100%"
+          width: "100%",
         }}
       >
         <div>
@@ -130,7 +129,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
               paddingLeft: index % 2 == 0 ? "5px" : "10px",
               paddingBottom: "5px",
               maxHeight: "20px",
-              color: "#000000"
+              color: "#000000",
             }}
           >
             {row.name}
@@ -151,55 +150,28 @@ const SearchResultsMobile = ({ results, resultType }) => {
 
   const determineActionButton = (profile) => {
     if (profile.userName === user.userName) {
+      return <></>;
+    } else if (
+      profile &&
+      profile.followers &&
+      profile.followers.includes(user && user.userName)
+    ) {
       return (
-        <></>
-      );
-    } else if (profile && profile.followers && profile.followers.includes(user && user.userName)) {
-      return (
-        <Button
-          variant="outlined"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%"
-          }}
+        <PrimaryButton
+          variant="contained"
           onClick={() => unFollowUser(user.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#00a8ff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Following
-          </Typography>
-        </Button>
+          Following
+        </PrimaryButton>
       );
     } else {
       return (
-        <Button
+        <PrimaryButton
           variant="contained"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%",
-            backgroundColor: "#00a8ff"
-          }}
           onClick={() => followUser(user.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#ffffff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Follow
-          </Typography>
-        </Button>
+          Follow
+        </PrimaryButton>
       );
     }
   };
@@ -218,10 +190,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
     return (
       <>
         <ListItem>
-          <Stack
-            direction="row"
-            spacing={2}
-          >
+          <Stack direction="row" spacing={2}>
             <>
               <Avatar
                 sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
@@ -239,11 +208,13 @@ const SearchResultsMobile = ({ results, resultType }) => {
                   <Typography>@{profile.userName}</Typography>
                 </Stack>
               </div>
-              <div style={{
-                position: "absolute",
-                right: "10px",
-                margin: "0 0 50px 0"
-              }}>
+              <div
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  margin: "0 0 50px 0",
+                }}
+              >
                 {/*{determineActionButton(profile)}*/}
               </div>
             </>
@@ -264,8 +235,8 @@ const SearchResultsMobile = ({ results, resultType }) => {
             sx={{
               "&.MuiContainer-root": {
                 marginLeft: "-23px !important",
-                paddingRight: "0px !important"
-              }
+                paddingRight: "0px !important",
+              },
             }}
           >
             <Grid container>

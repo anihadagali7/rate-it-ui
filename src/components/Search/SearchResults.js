@@ -1,4 +1,10 @@
-import { Button, Container, Grid, Paper, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Paper,
+  StyledEngineProvider,
+  ThemeProvider,
+} from "@mui/material";
 import { Provider, useAtom } from "jotai";
 import React, { useState } from "react";
 import { theme } from "../../Theme/Theme";
@@ -14,9 +20,9 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import UserClient from "../../client/UserClient";
 import { currentUser } from "../../state/user";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const SearchResults = ({ results, resultType }) => {
-
   const [updateList, setUpdateList] = useState(false);
   const [user, setUser] = useAtom(currentUser);
 
@@ -26,20 +32,20 @@ const SearchResults = ({ results, resultType }) => {
       to={`/${resultType}/${row.mediaId}`}
       sx={{
         width: 525,
-        "&.MuiListItem-root": { marginLeft: "-12px" }
+        "&.MuiListItem-root": { marginLeft: "-12px" },
       }}
     >
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         <Paper
           elevation={2}
           sx={{
             width: 500,
-            borderRadius: "17px"
+            borderRadius: "17px",
           }}
         >
           <Grid
@@ -52,7 +58,7 @@ const SearchResults = ({ results, resultType }) => {
               item
               xs={2}
               sx={{
-                "&.MuiGrid-root": { marginLeft: "-16px !important" }
+                "&.MuiGrid-root": { marginLeft: "-16px !important" },
               }}
             >
               <div>
@@ -72,7 +78,7 @@ const SearchResults = ({ results, resultType }) => {
               xs={7}
               sx={{
                 marginTop: "0px",
-                marginRight: "50px"
+                marginRight: "50px",
               }}
             >
               <div style={{ marginLeft: "40px", width: "100%" }}>
@@ -81,7 +87,7 @@ const SearchResults = ({ results, resultType }) => {
                   sx={{
                     marginTop: "10px",
                     fontSize: "18px",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                   }}
                 >
                   {row.name.length > 25
@@ -107,20 +113,20 @@ const SearchResults = ({ results, resultType }) => {
       to={`/${resultType}/${row.mediaId}`}
       sx={{
         width: 525,
-        "&.MuiListItem-root": { marginLeft: "-12px" }
+        "&.MuiListItem-root": { marginLeft: "-12px" },
       }}
     >
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         <Paper
           elevation={2}
           sx={{
             width: 500,
-            borderRadius: "17px"
+            borderRadius: "17px",
           }}
         >
           <Grid
@@ -133,7 +139,7 @@ const SearchResults = ({ results, resultType }) => {
               item
               xs={2}
               sx={{
-                "&.MuiGrid-root": { marginLeft: "-16px !important" }
+                "&.MuiGrid-root": { marginLeft: "-16px !important" },
               }}
             >
               <div>
@@ -153,7 +159,7 @@ const SearchResults = ({ results, resultType }) => {
               xs={7}
               sx={{
                 marginTop: "0px",
-                marginRight: "50px"
+                marginRight: "50px",
               }}
             >
               <div style={{ marginLeft: "40px", width: "100%" }}>
@@ -162,14 +168,17 @@ const SearchResults = ({ results, resultType }) => {
                   sx={{
                     marginTop: "10px",
                     fontSize: "18px",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                   }}
                 >
                   {row.name.length > 25
                     ? `${row.name.substring(0, 25)}...`
                     : row.name}
                 </Typography>
-                <Typography component="div" sx={{fontSize: '15px', fontStyle: "italic"}}>
+                <Typography
+                  component="div"
+                  sx={{ fontSize: "15px", fontStyle: "italic" }}
+                >
                   {row.author.length > 25
                     ? `${row.author.substring(0, 25)}...`
                     : row.author}
@@ -194,7 +203,7 @@ const SearchResults = ({ results, resultType }) => {
         to={`/${resultType}/${row.mediaId}`}
         sx={{
           width: 700,
-          "&.MuiListItem-root": { marginLeft: "-12px" }
+          "&.MuiListItem-root": { marginLeft: "-12px" },
         }}
       >
         <Box
@@ -202,7 +211,7 @@ const SearchResults = ({ results, resultType }) => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            borderRadius: "17px"
+            borderRadius: "17px",
           }}
         >
           <Paper elevation={8} sx={{ width: 500, borderRadius: "17px" }}>
@@ -216,7 +225,7 @@ const SearchResults = ({ results, resultType }) => {
                 item
                 xs={3}
                 sx={{
-                  "&.MuiGrid-root": { marginLeft: "-16px !important" }
+                  "&.MuiGrid-root": { marginLeft: "-16px !important" },
                 }}
               >
                 <div>
@@ -236,7 +245,7 @@ const SearchResults = ({ results, resultType }) => {
                 xs={7}
                 sx={{
                   marginTop: "0px",
-                  marginRight: "50px"
+                  marginRight: "50px",
                 }}
               >
                 <div style={{ marginLeft: "40px", width: "100%" }}>
@@ -245,7 +254,7 @@ const SearchResults = ({ results, resultType }) => {
                     sx={{
                       marginTop: "10px",
                       fontSize: "18px",
-                      fontWeight: "bold"
+                      fontWeight: "bold",
                     }}
                   >
                     {row.name}{" "}
@@ -267,55 +276,28 @@ const SearchResults = ({ results, resultType }) => {
 
   const determineActionButton = (profile) => {
     if (profile.userName === user.userName) {
+      return <></>;
+    } else if (
+      profile &&
+      profile.followers &&
+      profile.followers.includes(user && user.userName)
+    ) {
       return (
-        <></>
-      );
-    } else if (profile && profile.followers && profile.followers.includes(user && user.userName)) {
-      return (
-        <Button
-          variant="outlined"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%"
-          }}
+        <PrimaryButton
+          variant="contained"
           onClick={() => unFollowUser(user.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#00a8ff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Following
-          </Typography>
-        </Button>
+          Following
+        </PrimaryButton>
       );
     } else {
       return (
-        <Button
+        <PrimaryButton
           variant="contained"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%",
-            backgroundColor: "#00a8ff"
-          }}
           onClick={() => followUser(user.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#ffffff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Follow
-          </Typography>
-        </Button>
+          Follow
+        </PrimaryButton>
       );
     }
   };
@@ -334,10 +316,7 @@ const SearchResults = ({ results, resultType }) => {
     return (
       <>
         <ListItem>
-          <Stack
-            direction="row"
-            spacing={2}
-          >
+          <Stack direction="row" spacing={2}>
             <>
               <Avatar
                 sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
@@ -355,12 +334,14 @@ const SearchResults = ({ results, resultType }) => {
                   <Typography>@{profile.userName}</Typography>
                 </Stack>
               </div>
-              <div style={{
-                position: "absolute",
-                right: "10px",
-                margin: "0 0 50px 0"
-              }}>
-                {/*{determineActionButton(profile)}*/}
+              <div
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  margin: "0 0 50px 0",
+                }}
+              >
+                {/* {determineActionButton(profile)} */}
               </div>
             </>
           </Stack>
@@ -386,7 +367,7 @@ const SearchResults = ({ results, resultType }) => {
               results.map((row, index) => listItemBook(row))}
             {(resultType === "movie" || resultType === "tv") &&
               results.map((row, index) => listItem(row))}
-            {(resultType === "user") &&
+            {resultType === "user" &&
               results.map((row, index) => listItemUser(row))}
           </List>
         </Container>

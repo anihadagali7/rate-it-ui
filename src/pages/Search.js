@@ -2,38 +2,26 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { makeStyles } from "@mui/styles";
 import { Provider } from "jotai";
 import { theme } from "../Theme/Theme";
-import { Container, StyledEngineProvider, TextField, ThemeProvider } from "@mui/material";
+import {
+  Container,
+  StyledEngineProvider,
+  TextField,
+  ThemeProvider,
+} from "@mui/material";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
 import SearchResultsMobile from "../components/Search/SearchResultsMobile";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
-import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
-
-const useStyles = makeStyles({
-  container: {
-    margin: "20px 35px"
-  },
-  searchBtn: {
-    backgroundColor: "#f4afc2",
-    "&:hover": {
-      backgroundColor: "#f4afc2"
-    }
-  },
-  search: {
-    fontWeight: "900",
-    fontSize: "15px"
-  }
-});
+import PrimaryButton from "../shared/buttons/PrimaryButton";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -42,7 +30,6 @@ const TabPanel = (props) => {
 };
 
 const Search = () => {
-  const classes = useStyles();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchTabType, setSearchTabType] = useState(0);
@@ -79,7 +66,7 @@ const Search = () => {
   const submitSearch = (e) => {
     e.preventDefault();
     handleSearch();
-  }
+  };
 
   const handleSearch = async (e) => {
     if (searchKeyword.length > 0) {
@@ -93,7 +80,11 @@ const Search = () => {
         4: "user",
       };
       let searchType = searchMapping[searchTabType];
-      const result = await SearchClient.searchMedia(searchType, searchKeyword, setDisplayTokenModal);
+      const result = await SearchClient.searchMedia(
+        searchType,
+        searchKeyword,
+        setDisplayTokenModal
+      );
       const finalList = result.data.mediaList;
       setResultType(result.mediaType);
       setSearchResults(finalList);
@@ -106,21 +97,22 @@ const Search = () => {
       <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
         {loading ? (
           <SearchResultsMobileLoading />
-        ) : searchResults.length > 0 && (
-          <SearchResultsMobile
-            results={searchResults}
-            resultType={resultType}
-          />
+        ) : (
+          searchResults.length > 0 && (
+            <SearchResultsMobile
+              results={searchResults}
+              resultType={resultType}
+            />
+          )
         )}
       </Box>
       <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
         {loading ? (
           <SearchResultsDesktopLoading />
-        ) : searchResults.length > 0 && (
-          <SearchResults
-            results={searchResults}
-            resultType={resultType}
-          />
+        ) : (
+          searchResults.length > 0 && (
+            <SearchResults results={searchResults} resultType={resultType} />
+          )
         )}
       </Box>
     </>
@@ -130,12 +122,15 @@ const Search = () => {
     <Provider>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px", marginBottom: '20px' }}>
+          <Container
+            maxWidth={"sm"}
+            sx={{ marginTop: "50px", marginBottom: "20px" }}
+          >
             <Box
               sx={{
                 width: "100%",
                 height: hasSearched || loading ? "100%" : 85,
-                margin: "auto"
+                margin: "auto",
               }}
             >
               <Paper
@@ -145,7 +140,7 @@ const Search = () => {
                   height: hasSearched || loading ? "100%" : 85,
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px"
+                  borderRadius: "17px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
@@ -156,23 +151,22 @@ const Search = () => {
                       columns={{ md: 12 }}
                     >
                       <Grid item xs={12} sx={{ width: "100%" }}>
-                        <Paper elevation={2}
-                               component="form"
-                               onSubmit={submitSearch}
-                               sx={{
-                                 p: "2px 4px",
-                                 display: "flex",
-                                 alignItems: "center",
-                                 width: "auto",
-                                 borderRadius: "17px"
-                               }}
+                        <Paper
+                          elevation={2}
+                          sx={{
+                            p: "2px 4px",
+                            display: "flex",
+                            alignItems: "center",
+                            width: "auto",
+                            borderRadius: "17px",
+                          }}
                         >
                           <TextField
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                border: "none"
-                              }
+                                border: "none",
+                              },
                             }}
                             size="small"
                             placeholder="Search Rate It"
@@ -181,14 +175,23 @@ const Search = () => {
                             required
                           />
                           {searchKeyword.length > 0 && (
-                            <IconButton sx={{ p: "10px" }} onClick={resetSearch}>
-                              <ClearIcon />
-                            </IconButton>
+                            <>
+                              <PrimaryButton
+                                variant="text"
+                                onClick={resetSearch}
+                                leftIcon={<ClearIcon />}
+                              ></PrimaryButton>
+                            </>
                           )}
-                          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                          <IconButton sx={{ p: "10px" }} type="submit">
-                            <SearchIcon />
-                          </IconButton>
+                          <Divider
+                            sx={{ height: 28, m: 0.5 }}
+                            orientation="vertical"
+                          />
+                          <PrimaryButton
+                            variant="text"
+                            onClick={submitSearch}
+                            leftIcon={<SearchIcon />}
+                          ></PrimaryButton>
                         </Paper>
                       </Grid>
                     </Grid>
@@ -202,18 +205,20 @@ const Search = () => {
                           variant="scrollable"
                           allowScrollButtonsMobile
                           sx={{ color: "#00a8ff" }}
-                          TabIndicatorProps={{ style: { background: "#00a8ff" } }}
+                          TabIndicatorProps={{
+                            style: { background: "#00a8ff" },
+                          }}
                         >
                           <Tab
                             sx={{
                               fontSize: "13px",
                               "&.Mui-selected": {
                                 color: "#40a9ff",
-                                fontSize: "13px"
+                                fontSize: "13px",
                               },
                               "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff"
-                              }
+                                backgroundColor: "#40a9ff",
+                              },
                             }}
                             label="Movies"
                           />
@@ -222,11 +227,11 @@ const Search = () => {
                               fontSize: "13px",
                               "&.Mui-selected": {
                                 color: "#40a9ff",
-                                fontSize: "13px"
+                                fontSize: "13px",
                               },
                               "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff"
-                              }
+                                backgroundColor: "#40a9ff",
+                              },
                             }}
                             label="TV Shows"
                           />
@@ -235,11 +240,11 @@ const Search = () => {
                               fontSize: "13px",
                               "&.Mui-selected": {
                                 color: "#40a9ff",
-                                fontSize: "13px"
+                                fontSize: "13px",
                               },
                               "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff"
-                              }
+                                backgroundColor: "#40a9ff",
+                              },
                             }}
                             label="Books"
                           />
@@ -248,11 +253,11 @@ const Search = () => {
                               fontSize: "13px",
                               "&.Mui-selected": {
                                 color: "#40a9ff",
-                                fontSize: "13px"
+                                fontSize: "13px",
                               },
                               "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff"
-                              }
+                                backgroundColor: "#40a9ff",
+                              },
                             }}
                             label="Music"
                           />
@@ -261,11 +266,11 @@ const Search = () => {
                               fontSize: "13px",
                               "&.Mui-selected": {
                                 color: "#40a9ff",
-                                fontSize: "13px"
+                                fontSize: "13px",
                               },
                               "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff"
-                              }
+                                backgroundColor: "#40a9ff",
+                              },
                             }}
                             label="Users"
                           />
@@ -293,9 +298,13 @@ const Search = () => {
             </Box>
           </Container>
           {displayTokenModal && (
-            <LoginErrorModal open={displayTokenModal} onClose={() => {
-              resetSearch()
-              setDisplayTokenModal(false)}} />
+            <LoginErrorModal
+              open={displayTokenModal}
+              onClose={() => {
+                resetSearch();
+                setDisplayTokenModal(false);
+              }}
+            />
           )}
         </ThemeProvider>
       </StyledEngineProvider>
