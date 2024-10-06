@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "data": {
+    "media": {
+      "_id": "640d1cc06fa96442869edf8a",
+      "name": "Succession",
+      "artist": [],
+      "author": [],
+      "producer": [],
+      "director": [],
+      "host": [],
+      "cast": ["Jeremy Strong", "Sarah Snook", "Kieran Culkin", "Brian Cox"],
+      "description": "Follow the lives of the Roy family as they contemplate their future once their aging father begins to step back from the media and entertainment conglomerate they control.",
+      "mediaType": "TV",
+      "picture": "https://image.tmdb.org/t/p/w500/e2X32jUfJ2kb4QtNg3WCTnLyGxD.jpg",
+      "dateReleased": "2018-06-03T00:00:00.000Z",
+      "mediaId": "76331",
+      "__v": 0
+    }
+  }
+}

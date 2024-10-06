@@ -1,0 +1,366 @@
+{
+  "status": "success",
+  "data": {
+    "wishlistList": [
+      {
+        "_id": "640d1cc56fa96442869edf90",
+        "media": {
+          "_id": "640d1cc06fa96442869edf8a",
+          "name": "Succession",
+          "artist": [],
+          "author": [],
+          "producer": [],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jeremy Strong",
+            "Sarah Snook",
+            "Kieran Culkin",
+            "Brian Cox"
+          ],
+          "description": "Follow the lives of the Roy family as they contemplate their future once their aging father begins to step back from the media and entertainment conglomerate they control.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/e2X32jUfJ2kb4QtNg3WCTnLyGxD.jpg",
+          "dateReleased": "2018-06-03T00:00:00.000Z",
+          "mediaId": "76331",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-03-12T00:28:53.651Z",
+        "__v": 0
+      },
+      {
+        "_id": "63ba500bf16929959bb409e6",
+        "media": {
+          "_id": "63238befb36ff5c935452b00",
+          "name": "Friends",
+          "artist": [],
+          "author": [],
+          "producer": [
+            "Richard Choi",
+            "Wendy Knoller",
+            "Todd Stevens",
+            "Kevin S. Bright"
+          ],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jennifer Aniston",
+            "Courteney Cox",
+            "Lisa Kudrow",
+            "Matt LeBlanc"
+          ],
+          "description": "Six young people from New York City, on their own and struggling to survive in the real world, find the companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+          "dateReleased": "1994-09-22T00:00:00.000Z",
+          "mediaId": "1668",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-01-08T05:09:31.015Z",
+        "__v": 0
+      },
+      {
+        "_id": "63ba500df16929959bb409f2",
+        "media": {
+          "_id": "63238befb36ff5c935452b00",
+          "name": "Friends",
+          "artist": [],
+          "author": [],
+          "producer": [
+            "Richard Choi",
+            "Wendy Knoller",
+            "Todd Stevens",
+            "Kevin S. Bright"
+          ],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jennifer Aniston",
+            "Courteney Cox",
+            "Lisa Kudrow",
+            "Matt LeBlanc"
+          ],
+          "description": "Six young people from New York City, on their own and struggling to survive in the real world, find the companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+          "dateReleased": "1994-09-22T00:00:00.000Z",
+          "mediaId": "1668",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-01-08T05:09:33.293Z",
+        "__v": 0
+      },
+      {
+        "_id": "63ba500cf16929959bb409ee",
+        "media": {
+          "_id": "63238befb36ff5c935452b00",
+          "name": "Friends",
+          "artist": [],
+          "author": [],
+          "producer": [
+            "Richard Choi",
+            "Wendy Knoller",
+            "Todd Stevens",
+            "Kevin S. Bright"
+          ],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jennifer Aniston",
+            "Courteney Cox",
+            "Lisa Kudrow",
+            "Matt LeBlanc"
+          ],
+          "description": "Six young people from New York City, on their own and struggling to survive in the real world, find the companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+          "dateReleased": "1994-09-22T00:00:00.000Z",
+          "mediaId": "1668",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-01-08T05:09:32.605Z",
+        "__v": 0
+      },
+      {
+        "_id": "63ba500bf16929959bb409ea",
+        "media": {
+          "_id": "63238befb36ff5c935452b00",
+          "name": "Friends",
+          "artist": [],
+          "author": [],
+          "producer": [
+            "Richard Choi",
+            "Wendy Knoller",
+            "Todd Stevens",
+            "Kevin S. Bright"
+          ],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jennifer Aniston",
+            "Courteney Cox",
+            "Lisa Kudrow",
+            "Matt LeBlanc"
+          ],
+          "description": "Six young people from New York City, on their own and struggling to survive in the real world, find the companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+          "dateReleased": "1994-09-22T00:00:00.000Z",
+          "mediaId": "1668",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-01-08T05:09:31.948Z",
+        "__v": 0
+      },
+      {
+        "_id": "64b4c4380a7c14bc6beaa255",
+        "media": {
+          "_id": "645c9811e9a12418ed434a86",
+          "name": "The Menu",
+          "artist": [],
+          "author": [],
+          "producer": ["Mary Vernieu", "Matt Akey", "Michael Sledd"],
+          "director": ["Adam McKay", "Mark Mylod", "Lisa Molinaro"],
+          "host": [],
+          "cast": [
+            "Ralph Fiennes",
+            "Anya Taylor-Joy",
+            "Nicholas Hoult",
+            "Hong Chau"
+          ],
+          "description": "A young couple travels to a remote island to eat at an exclusive restaurant where the chef has prepared a lavish menu, with some shocking surprises.",
+          "mediaType": "MOVIE",
+          "picture": "https://image.tmdb.org/t/p/w500/fPtUgMcLIboqlTlPrq0bQpKK8eq.jpg",
+          "dateReleased": "2022-11-17T00:00:00.000Z",
+          "mediaId": "593643",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-07-17T04:31:52.701Z",
+        "__v": 0
+      },
+      {
+        "_id": "634c89bd816d69376d13e77a",
+        "media": {
+          "_id": "6301a114d4fcea908d076ec2",
+          "name": "The White Lotus",
+          "artist": [],
+          "author": [],
+          "producer": [],
+          "director": [],
+          "host": [],
+          "cast": ["Jennifer Coolidge"],
+          "description": "Follow the exploits of various guests and employees at an exclusive tropical resort over the span of a week as with each passing day, a darker complexity emerges in these picture-perfect travelers, the hotel’s cheerful employees and the idyllic locale itself.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/4gBYNDdczkFOqjR4dgYamqbp6cS.jpg",
+          "dateReleased": "2021-07-11T00:00:00.000Z",
+          "mediaId": "111803",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2022-10-16T22:46:21.789Z",
+        "__v": 0
+      },
+      {
+        "_id": "634c82925a5537f58f1860ac",
+        "media": {
+          "_id": "62f990de5f6d0f19ab40ed1d",
+          "name": "Ozark",
+          "artist": [],
+          "author": [],
+          "producer": [],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jason Bateman",
+            "Laura Linney",
+            "Sofia Hublitz",
+            "Skylar Gaertner"
+          ],
+          "description": "A financial adviser drags his family from Chicago to the Missouri Ozarks, where he must launder $500 million in five years to appease a drug boss.",
+          "mediaType": "TV SHOW",
+          "picture": "https://image.tmdb.org/t/p/w500/m73bD8VjibSKuTWg597GQVyVhSb.jpg",
+          "dateReleased": "2017-07-21T00:00:00.000Z",
+          "mediaId": "69740",
+          "__v": 0
+        },
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2022-10-16T22:15:46.246Z",
+        "__v": 0
+      }
+    ]
+  }
+}

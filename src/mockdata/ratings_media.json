@@ -1,0 +1,53 @@
+{
+  "status": "success",
+  "data": {
+    "ratingsList": [
+      {
+        "_id": "640d1cd26fa96442869edf94",
+        "media": {
+          "_id": "640d1cc06fa96442869edf8a",
+          "name": "Succession",
+          "artist": [],
+          "author": [],
+          "producer": [],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Jeremy Strong",
+            "Sarah Snook",
+            "Kieran Culkin",
+            "Brian Cox"
+          ],
+          "description": "Follow the lives of the Roy family as they contemplate their future once their aging father begins to step back from the media and entertainment conglomerate they control.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/e2X32jUfJ2kb4QtNg3WCTnLyGxD.jpg",
+          "dateReleased": "2018-06-03T00:00:00.000Z",
+          "mediaId": "76331",
+          "__v": 0
+        },
+        "ratedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "rating": "9",
+        "comments": "great story",
+        "isActive": true,
+        "dateCreated": "2023-03-12T00:29:06.715Z",
+        "dateUpdated": "2023-03-12T00:29:06.715Z",
+        "__v": 0
+      }
+    ]
+  }
+}
