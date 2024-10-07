@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, Button, Dialog, DialogTitle, Popover, StyledEngineProvider,
-  ThemeProvider, Typography
+  Box,
+  Dialog,
+  DialogTitle,
+  Popover,
+  StyledEngineProvider,
+  ThemeProvider,
+  Typography,
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -15,6 +20,7 @@ import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -22,7 +28,15 @@ const TabPanel = (props) => {
   return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
 };
 
-const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friendsAdded, setFriendsAdded }) => {
+const FriendsModal = ({
+  open,
+  onClose,
+  userName,
+  openingTab,
+  currentUser,
+  friendsAdded,
+  setFriendsAdded,
+}) => {
   const [tabValue, setTabValue] = useState(openingTab);
   const [followingList, setFollowingList] = useState({});
   const [followersList, setFollowersList] = useState({});
@@ -53,7 +67,7 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
   };
 
   const handleUnFollowPopoverOpen = (event) => {
-    setUnfollowPopover((event.currentTarget));
+    setUnfollowPopover(event.currentTarget);
   };
 
   const displayFollowingButton = (profile) => {
@@ -62,45 +76,29 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
     let buttonType = currentlyFollows ? "outlined" : "contained";
     return (
       <>
-        <Button
+        <PrimaryButton
           variant={buttonType}
-          sx={{
-            borderRadius: "17px",
-            width: "100%",
-            height: "30px",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: currentlyFollows ? "#ffffff" : "#00a8ff"
-          }}
           // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
           onClick={handleUnFollowPopoverOpen}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: currentlyFollows ? "#00a8ff" : "#ffffff",
-                        fontWeight: "bold"
-                      }}
-          >
-            {text}
-          </Typography>
-        </Button>
+          {text}
+        </PrimaryButton>
         <Popover
           open={openPopover}
           anchorEl={unfollowPopover}
           onClose={handleUnFollowPopoverClose}
           anchorOrigin={{
             vertical: "bottom",
-            horizontal: "right"
+            horizontal: "right",
           }}
           transformOrigin={{
             vertical: "top",
-            horizontal: "right"
+            horizontal: "right",
           }}
         >
-          <Button variant="outlined" endIcon={<PersonRemoveIcon />}>
+          <PrimaryButton variant="outlined" rightIcon={<PersonRemoveIcon />}>
             Unfollow @{profile}
-          </Button>
+          </PrimaryButton>
         </Popover>
       </>
     );
@@ -108,123 +106,68 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
 
   const determineActionButtonFollowingList = (profile) => {
     if (profile.userName === currentUser.userName) {
+      return <></>;
+    } else if (
+      profile &&
+      profile.followers &&
+      profile.followers.includes(currentUser && currentUser.userName)
+    ) {
       return (
-        <></>
-      );
-    } else if (profile && profile.followers && profile.followers.includes(currentUser && currentUser.userName)) {
-      return (
-        <Button
+        <PrimaryButton
           variant="outlined"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%"
-          }}
           onClick={() => unFollowUser(currentUser.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#00a8ff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Following
-          </Typography>
-        </Button>
+          Following
+        </PrimaryButton>
       );
     } else {
       return (
-        <Button
+        <PrimaryButton
           variant="contained"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%",
-            backgroundColor: "#00a8ff"
-          }}
           onClick={() => followUser(currentUser.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#ffffff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Follow
-          </Typography>
-        </Button>
+          Follow
+        </PrimaryButton>
       );
     }
   };
 
   const determineActionButtonFollowersList = (profile) => {
     if (profile.userName === currentUser.userName) {
+      return <></>;
+    } else if (
+      profile &&
+      profile.followers &&
+      profile.followers.includes(currentUser && currentUser.userName)
+    ) {
       return (
-        <></>
-      );
-    }
-    else if (profile && profile.followers && profile.followers.includes(currentUser && currentUser.userName)) {
-      return (
-        <Button
+        <PrimaryButton
           variant="outlined"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%"
-          }}
           onClick={() => unFollowUser(currentUser.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#00a8ff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Following
-          </Typography>
-        </Button>
+          Following
+        </PrimaryButton>
       );
     } else {
       return (
-        <Button
+        <PrimaryButton
           variant="contained"
-          sx={{
-            borderRadius: "17px",
-            marginTop: "20px",
-            marginRight: "3px",
-            width: "100%",
-            backgroundColor: "#00a8ff"
-          }}
           onClick={() => followUser(currentUser.userName, profile.userName)}
         >
-          <Typography component="div"
-                      sx={{
-                        fontSize: "12px",
-                        color: "#ffffff",
-                        fontWeight: "bold"
-                      }}
-          >
-            Follow
-          </Typography>
-        </Button>
+          Follow
+        </PrimaryButton>
       );
     }
   };
 
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result === 200 && setFriendsAdded(friendsAdded+1);
+    result === 200 && setFriendsAdded(friendsAdded + 1);
   };
 
   const followUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setFriendsAdded(friendsAdded+1);
+    result == 200 && setFriendsAdded(friendsAdded + 1);
   };
 
   return (
@@ -232,15 +175,28 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
       <Provider>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>
-            <Dialog open={open} onClose={onClose}
-                    sx={{ "& .MuiDialog-paper": { width: "100%", height: 300, maxWidth: 500, overflowY: "hidden" } }}>
+            <Dialog
+              open={open}
+              onClose={onClose}
+              sx={{
+                "& .MuiDialog-paper": {
+                  width: "100%",
+                  height: 300,
+                  maxWidth: 500,
+                  overflowY: "hidden",
+                },
+              }}
+            >
               <DialogTitle
                 sx={{
                   fontSize: "13px",
                   fontWeight: "bold",
                   height: "0px",
-                  textAlign: "center"
-                }}>{userName}</DialogTitle>
+                  textAlign: "center",
+                }}
+              >
+                {userName}
+              </DialogTitle>
               <Box sx={{ width: "100%" }}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <Tabs
@@ -255,11 +211,11 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                         fontSize: "13px",
                         "&.Mui-selected": {
                           color: "#40a9ff",
-                          fontSize: "13px"
+                          fontSize: "13px",
                         },
                         "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff"
-                        }
+                          backgroundColor: "#40a9ff",
+                        },
                       }}
                       label="Following"
                     />
@@ -268,28 +224,32 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                         fontSize: "13px",
                         "&.Mui-selected": {
                           color: "#40a9ff",
-                          fontSize: "13px"
+                          fontSize: "13px",
                         },
                         "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff"
-                        }
+                          backgroundColor: "#40a9ff",
+                        },
                       }}
                       label="Followers"
                     />
                   </Tabs>
                 </Box>
                 <TabPanel value={tabValue} index={0}>
-                  <List component="nav" style={{ maxHeight: 200, overflow: "auto" }}>
-                    {followingList && followingList.length > 0 ? followingList.map((profile) => (
+                  <List
+                    component="nav"
+                    style={{ maxHeight: 200, overflow: "auto" }}
+                  >
+                    {followingList && followingList.length > 0 ? (
+                      followingList.map((profile) => (
                         <>
                           <ListItem>
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                            >
+                            <Stack direction="row" spacing={2}>
                               <>
                                 <Avatar
-                                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                                  sx={{
+                                    bgcolor: "#00a8ff",
+                                    textDecoration: "none",
+                                  }}
                                   component={Link}
                                   to={`/profile/${profile.userName}`}
                                 >
@@ -304,11 +264,13 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                                     <Typography>@{profile.userName}</Typography>
                                   </Stack>
                                 </div>
-                                <div style={{
-                                  position: "absolute",
-                                  right: "10px",
-                                  margin: "0 0 50px 0"
-                                }}>
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    right: "10px",
+                                    margin: "0 0 50px 0",
+                                  }}
+                                >
                                   {determineActionButtonFollowingList(profile)}
                                 </div>
                               </>
@@ -316,22 +278,28 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                           </ListItem>
                           <Divider />
                         </>
-                      )) :
-                      <div>No following</div>}
+                      ))
+                    ) : (
+                      <div>No following</div>
+                    )}
                   </List>
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
-                  <List component="nav" style={{ maxHeight: 200, overflow: "auto" }}>
-                    {followersList && followersList.length > 0 ? followersList.map((profile) => (
+                  <List
+                    component="nav"
+                    style={{ maxHeight: 200, overflow: "auto" }}
+                  >
+                    {followersList && followersList.length > 0 ? (
+                      followersList.map((profile) => (
                         <>
                           <ListItem>
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                            >
+                            <Stack direction="row" spacing={2}>
                               <>
                                 <Avatar
-                                  sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
+                                  sx={{
+                                    bgcolor: "#00a8ff",
+                                    textDecoration: "none",
+                                  }}
                                   component={Link}
                                   to={`/profile/${profile.userName}`}
                                 >
@@ -346,11 +314,13 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                                     <Typography>@{profile.userName}</Typography>
                                   </Stack>
                                 </div>
-                                <div style={{
-                                  position: "absolute",
-                                  right: "10px",
-                                  margin: "0 0 50px 0"
-                                }}>
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    right: "10px",
+                                    margin: "0 0 50px 0",
+                                  }}
+                                >
                                   {determineActionButtonFollowersList(profile)}
                                 </div>
                               </>
@@ -358,8 +328,10 @@ const FriendsModal = ({ open, onClose, userName, openingTab, currentUser, friend
                           </ListItem>
                           <Divider />
                         </>
-                      )) :
-                      <div>No followers</div>}
+                      ))
+                    ) : (
+                      <div>No followers</div>
+                    )}
                   </List>
                 </TabPanel>
               </Box>

@@ -175,13 +175,11 @@ const Search = () => {
                             required
                           />
                           {searchKeyword.length > 0 && (
-                            <>
-                              <PrimaryButton
-                                variant="text"
-                                onClick={resetSearch}
-                                leftIcon={<ClearIcon />}
-                              ></PrimaryButton>
-                            </>
+                            <PrimaryButton
+                              variant="text"
+                              onClick={resetSearch}
+                              leftIcon={<ClearIcon />}
+                            ></PrimaryButton>
                           )}
                           <Divider
                             sx={{ height: 28, m: 0.5 }}
