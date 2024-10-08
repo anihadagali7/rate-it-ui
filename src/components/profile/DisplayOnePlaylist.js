@@ -8,11 +8,11 @@ import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import PlaylistClient from "../../client/PlaylistClient";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import Button from "@mui/material/Button";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import List from "@mui/material/List";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
   const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
@@ -79,67 +79,47 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
           <Box
             sx={{
               width: "100%",
-              height: "100%"
+              height: "100%",
             }}
           >
-            <Button
+            <PrimaryButton
               variant="outlined"
-              startIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              sx={{
-                border: "transparent",
-                borderRadius: "17px",
-                justifyContent: "flex-start",
-                marginBottom: "10px",
-                "&.MuiButtonBase-root:hover": {
-                  border: "transparent",
-                  backgroundColor: "#ffffff"
-                }
-              }}
+              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
               onClick={() => viewAllPlaylists()}
             >
-              <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
-                Return
-              </Typography>
-            </Button>
-            <Button
+              Return
+            </PrimaryButton>
+            <PrimaryButton
               variant="outlined"
-              startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-              sx={{
-                border: "transparent",
-                backgroundColor: "#ffffff",
-                borderRadius: "17px",
-                width: "100%",
-                "&.MuiButtonBase-root:hover": {
-                  border: "transparent",
-                  backgroundColor: "#ffffff"
-                }
-              }}
+              leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
               onClick={handleAddMediaToPlaylistModalOpen}
             >
-              <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
-                Add Media to Playlist
+              Add Media to Playlist
+            </PrimaryButton>
+            <>
+              <Typography
+                sx={{
+                  marginLeft: "22px",
+                  marginTop: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                {mediaByPlaylist?.playlist?.name}
               </Typography>
-            </Button>
-              <>
-                <Typography
-                  sx={{
-                    marginLeft: "22px",
-                    marginTop: "10px",
-                    fontWeight: "bold"
-                  }}
-                >
-                  {mediaByPlaylist?.playlist?.name}
-                </Typography>
-                <List component="nav">
-                  {loading ? (<ProfileWishlistLoading />) :
-                    displayMediaList()
-                  }
-                </List>
-              </>
+              <List component="nav">
+                {loading ? <ProfileWishlistLoading /> : displayMediaList()}
+              </List>
+            </>
           </Box>
           {openAddMediaToPlaylistModal && (
-            <AddMediaToPlaylistModal open={openAddMediaToPlaylistModal} onClose={handleAddMediaToPlaylistModalClose}
-                             user={user} mediaByPlaylist={mediaByPlaylist} setMediaAdded={setMediaAdded} mediaAdded={mediaAdded} />
+            <AddMediaToPlaylistModal
+              open={openAddMediaToPlaylistModal}
+              onClose={handleAddMediaToPlaylistModalClose}
+              user={user}
+              mediaByPlaylist={mediaByPlaylist}
+              setMediaAdded={setMediaAdded}
+              mediaAdded={mediaAdded}
+            />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

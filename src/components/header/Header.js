@@ -10,14 +10,11 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAtom } from "jotai";
 import { currentUser, currentlyLoggedIn } from "../../state/user";
@@ -256,28 +253,9 @@ const Header = ({ displayMenu }) => {
           </AntTabs>
           {localUserLoggedIn ? (
             <>
-              <Button
-                variant="text"
-                sx={{
-                  border: "transparent",
-                  height: "35px",
-                  marginTop: "17px",
-                  "&.MuiButtonBase-root:hover": {
-                    border: "transparent",
-                  },
-                }}
-                onClick={handleOpenUserMenu}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "14px",
-                    color: "#000000",
-                    fontWeight: "500",
-                  }}
-                >
-                  {user.userName}
-                </Typography>
-              </Button>
+              <PrimaryButton variant="text" onClick={handleOpenUserMenu}>
+                {user.userName}
+              </PrimaryButton>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
@@ -303,26 +281,15 @@ const Header = ({ displayMenu }) => {
             </>
           ) : (
             <>
-              <Button
-                variant="outlined"
-                component={Link}
-                sx={{
-                  border: "transparent",
-                  backgroundColor: "#00a8ff",
-                  borderRadius: "17px",
-                  height: "35px",
-                  marginTop: "17px",
-                  "&.MuiButtonBase-root:hover": {
-                    border: "transparent",
-                    backgroundColor: "#00a8ff",
-                  },
-                }}
-                to="/login"
+              <PrimaryButton
+                variant="text"
+                buttonElement={Link}
+                link="/login"
                 onClick={() => setTabValue(false)}
-                startIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
+                leftIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
               >
-                <Typography variant="normalText">Sign In</Typography>
-              </Button>
+                {user.userName}
+              </PrimaryButton>
             </>
           )}
         </Box>
