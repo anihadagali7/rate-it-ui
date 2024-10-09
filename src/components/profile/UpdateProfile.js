@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
@@ -59,6 +59,7 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
         : "",
   });
 
+  const [prevProfileValues] = useState(payload);
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
@@ -70,7 +71,6 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
       ...prevValues,
       [name]: value,
     }));
-    console.log("payload: ", payload);
   };
 
   const isValidEmail = (email) => {
@@ -149,20 +149,18 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
   };
 
   const checkToDisable = () => {
-    return !(
-      payload.hasOwnProperty("firstName") &&
-      payload.firstName !== "" &&
-      payload.hasOwnProperty("lastName") &&
-      payload.lastName !== "" &&
-      payload.hasOwnProperty("userName") &&
-      payload.userName !== "" &&
-      payload.hasOwnProperty("phoneNumber") &&
-      payload.phoneNumber !== "" &&
-      payload.hasOwnProperty("email") &&
-      payload.email !== "" &&
-      payload.hasOwnProperty("password") &&
-      payload.password !== ""
-    );
+    const { firstName, lastName, phoneNumber, userName, email, password } =
+      payload;
+
+    const hasRequiredFields =
+      firstName && lastName && userName && phoneNumber && email && password;
+
+    const isSameProfile =
+      prevProfileValues.firstName === firstName &&
+      prevProfileValues.lastName === lastName &&
+      prevProfileValues.phoneNumber === phoneNumber;
+
+    return isSameProfile || !hasRequiredFields;
   };
 
   const handleSubmit = async (e) => {
@@ -218,7 +216,7 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                   {displayResetPassword ? (
                     <ResetPassword currentProfile={currentProfile} />
                   ) : (
-                    <Box component="form" onSubmit={handleSubmit}>
+                    <Box>
                       <Grid
                         container
                         spacing={{ xs: 2, md: 2, xl: 2 }}
@@ -388,7 +386,7 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                             </InputLabel>
                           )}
                         </Grid>
-                        <Grid item md={12} sx={{ width: "100%" }}>
+                        <Grid item xs={12} container justifyContent="end">
                           <PrimaryButton
                             onClick={handleSubmit}
                             disabled={checkToDisable()}
@@ -397,17 +395,31 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                             {createProfile ? "Sign Up" : "Save"}
                           </PrimaryButton>
                         </Grid>
-                        {createProfile && (
-                          <Grid
-                            item
-                            md={12}
+                        <Grid item xs={12}>
+                          <Divider
+                            variant="middle"
                             sx={{
-                              marginTop: "0px",
-                              display: "flex",
-                              justifyContent: "center",
-                              width: "100%",
+                              marginTop: "25px",
                             }}
-                          >
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          container
+                          justifyContent="center"
+                          sx={{ marginBottom: "15px" }}
+                        >
+                          {updateProfile && (
+                            <PrimaryButton
+                              testId="loginInstead"
+                              variant="text"
+                              onClick={() => setDisplayResetPassword(true)}
+                            >
+                              Reset password
+                            </PrimaryButton>
+                          )}
+                          {createProfile && (
                             <PrimaryButton
                               testId="loginInstead"
                               buttonElement={Link}
@@ -416,44 +428,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                             >
                               Sign in instead
                             </PrimaryButton>
-                          </Grid>
-                        )}
+                          )}
+                        </Grid>
                       </Grid>
-                      {updateProfile && (
-                        <>
-                          <Divider
-                            variant="middle"
-                            sx={{
-                              marginTop: "25px",
-                              marginLeft: "0",
-                              marginRight: "0",
-                            }}
-                          />
-                          <Box
-                            sx={{
-                              margin: "auto",
-                              marginTop: "5px",
-                              marginBottom: "30px",
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <PrimaryButton
-                                testId="loginInstead"
-                                variant="text"
-                                onClick={() => setDisplayResetPassword(true)}
-                              >
-                                Reset password
-                              </PrimaryButton>
-                            </div>
-                          </Box>
-                        </>
-                      )}
                     </Box>
                   )}
                 </div>

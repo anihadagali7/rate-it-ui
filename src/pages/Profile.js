@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
   Container,
   Grid,
   Paper,
@@ -138,175 +137,157 @@ const Profile = () => {
             maxWidth={"sm"}
             sx={{ marginTop: "50px", marginBottom: "25px" }}
           >
-            <Box
+            <Paper
+              elevation={6}
               sx={{
                 width: "100%",
+                minHeight: "300px",
                 height: "100%",
+                backgroundColor: "#FFFFFF",
                 margin: "auto",
+                borderRadius: "17px",
               }}
             >
-              <Paper
-                elevation={6}
-                sx={{
-                  width: "100%",
-                  minHeight: "300px",
-                  height: "100%",
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                  borderRadius: "17px",
-                }}
-              >
-                <Grid container>
-                  <Grid item xs={8}>
-                    <Avatar
-                      src={AccountCircleIcon}
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        marginLeft: "30px",
-                        marginTop: "10px",
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <div
-                      style={{
-                        marginTop: "20px",
-                        width: "100%",
-                        justifyItems: "end",
-                      }}
-                    >
-                      {determineActionButton()}
-                    </div>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        marginLeft: "22px",
-                        marginTop: "10px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {profile?.firstName}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      sx={{
-                        marginLeft: "22px",
-                        marginTop: "0px",
-                        fontSize: "13px",
-                      }}
-                    >
-                      @{profile?.userName}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <span
-                      style={{
-                        marginLeft: "22px",
-                        marginTop: "0px",
-                        fontSize: "13px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFriendsModalOpen(0)}
-                    >
-                      {profile && profile.following && profile.following.length}
-                      <span style={{ fontWeight: "normal" }}> following</span>
-                    </span>
-                    <span
-                      style={{
-                        marginLeft: "22px",
-                        marginTop: "0px",
-                        fontSize: "13px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFriendsModalOpen(1)}
-                    >
-                      {profile && profile.followers && profile.followers.length}
-                      <span style={{ fontWeight: "normal" }}> followers</span>
-                    </span>
-                  </Grid>
-                  {user.userName === userName && (
-                    <Grid item xs={12}>
-                      <div style={{ marginLeft: "4px" }}>
-                        <PrimaryButton
-                          variant="text"
-                          rightIcon={<PersonAddAltSharpIcon />}
-                          onClick={handleAddFriendsModalOpen}
-                        >
-                          Add friends
-                        </PrimaryButton>
-                      </div>
-                    </Grid>
-                  )}
+              <Grid container sx={{ padding: "15px 35px" }}>
+                <Grid item xs={3}>
+                  <Avatar
+                    src={AccountCircleIcon}
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      marginTop: "10px",
+                    }}
+                  />
                 </Grid>
-                <Box sx={{ width: "100%" }}>
-                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                    <Tabs
-                      value={tabValue}
-                      onChange={handleTabChange}
-                      sx={{ color: "#00a8ff" }}
-                      TabIndicatorProps={{ style: { background: "#00a8ff" } }}
+                <Grid
+                  item
+                  xs={9}
+                  container
+                  justifyContent="end"
+                  alignContent="center"
+                >
+                  {determineActionButton()}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      marginTop: "10px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {profile?.firstName}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    @{profile?.userName}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleFriendsModalOpen(0)}
+                  >
+                    {profile && profile.following && profile.following.length}
+                    <span style={{ fontWeight: "normal" }}> following</span>
+                  </span>
+                </Grid>
+                <Grid item xs={2}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleFriendsModalOpen(1)}
+                  >
+                    {profile && profile.followers && profile.followers.length}
+                    <span style={{ fontWeight: "normal" }}> followers</span>
+                  </span>
+                </Grid>
+                {user.userName === userName && (
+                  <Grid item xs={12}>
+                    <PrimaryButton
+                      variant="text"
+                      rightIcon={<PersonAddAltSharpIcon />}
+                      onClick={handleAddFriendsModalOpen}
                     >
-                      <Tab
-                        sx={{
+                      Add friends
+                    </PrimaryButton>
+                  </Grid>
+                )}
+              </Grid>
+              <Box sx={{ width: "100%" }}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleTabChange}
+                    sx={{ color: "#00a8ff" }}
+                    TabIndicatorProps={{ style: { background: "#00a8ff" } }}
+                  >
+                    <Tab
+                      sx={{
+                        fontSize: "13px",
+                        "&.Mui-selected": {
+                          color: "#40a9ff",
                           fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Ratings"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Wishlist"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Playlists"
-                      />
-                    </Tabs>
-                  </Box>
-                  <TabPanel value={tabValue} index={0}>
-                    <DisplayRatingsByUser user={profile} />
-                  </TabPanel>
-                  <TabPanel value={tabValue} index={1}>
-                    <DisplayWishlistByUser user={profile} />
-                  </TabPanel>
-                  <TabPanel value={tabValue} index={2}>
-                    <DisplayPlaylistByUser
-                      user={profile}
-                      userViewingOwnProfile={userViewingOwnProfile}
+                        },
+                        "&.Mui-focusVisible": {
+                          backgroundColor: "#40a9ff",
+                        },
+                      }}
+                      label="Ratings"
                     />
-                  </TabPanel>
+                    <Tab
+                      sx={{
+                        fontSize: "13px",
+                        "&.Mui-selected": {
+                          color: "#40a9ff",
+                          fontSize: "13px",
+                        },
+                        "&.Mui-focusVisible": {
+                          backgroundColor: "#40a9ff",
+                        },
+                      }}
+                      label="Wishlist"
+                    />
+                    <Tab
+                      sx={{
+                        fontSize: "13px",
+                        "&.Mui-selected": {
+                          color: "#40a9ff",
+                          fontSize: "13px",
+                        },
+                        "&.Mui-focusVisible": {
+                          backgroundColor: "#40a9ff",
+                        },
+                      }}
+                      label="Playlists"
+                    />
+                  </Tabs>
                 </Box>
-              </Paper>
-            </Box>
+                <TabPanel value={tabValue} index={0}>
+                  <DisplayRatingsByUser user={profile} />
+                </TabPanel>
+                <TabPanel value={tabValue} index={1}>
+                  <DisplayWishlistByUser user={profile} />
+                </TabPanel>
+                <TabPanel value={tabValue} index={2}>
+                  <DisplayPlaylistByUser
+                    user={profile}
+                    userViewingOwnProfile={userViewingOwnProfile}
+                  />
+                </TabPanel>
+              </Box>
+            </Paper>
           </Container>
           {openFriendsModal && (
             <FriendsModal

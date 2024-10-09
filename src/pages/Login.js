@@ -173,7 +173,7 @@ const Login = () => {
                           />
                         </InputLabel>
                       </Grid>
-                      <Grid item xs={8} sx={{ marginTop: "8px" }}>
+                      <Grid item xs={8} container alignContent="center">
                         <PrimaryButton
                           testId="forgotPassword"
                           buttonElement={Link}
@@ -184,14 +184,16 @@ const Login = () => {
                           Forgot password
                         </PrimaryButton>
                       </Grid>
-                      <Grid item xs={4}>
-                        <PrimaryButton
-                          variant="contained"
-                          disabled={checkToDisable()}
-                          onClick={handleLogin}
-                        >
-                          Sign In
-                        </PrimaryButton>
+                      <Grid item xs={4} container justifyContent="flex-end">
+                        <div style={{}}>
+                          <PrimaryButton
+                            variant="contained"
+                            disabled={checkToDisable()}
+                            onClick={handleLogin}
+                          >
+                            Sign In
+                          </PrimaryButton>
+                        </div>
                       </Grid>
                     </Grid>
                   </Box>
@@ -210,25 +212,21 @@ const Login = () => {
                       marginBottom: "30px",
                     }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography sx={{ fontWeight: 550 }}>
-                        New to Rate It?
-                      </Typography>
-                      <PrimaryButton
-                        testId="signUpLink"
-                        buttonElement={Link}
-                        variant="text"
-                        link="/signup"
-                      >
-                        Join Now
-                      </PrimaryButton>
-                    </div>
+                    <Grid container>
+                      <Grid item xs={12} container justifyContent="center">
+                        <Typography sx={{ fontWeight: 550 }}>
+                          New to Rate It?
+                          <PrimaryButton
+                            testId="signUpLink"
+                            buttonElement={Link}
+                            variant="text"
+                            link="/signup"
+                          >
+                            Join Now
+                          </PrimaryButton>
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   </Box>
                 </div>
               </Paper>
