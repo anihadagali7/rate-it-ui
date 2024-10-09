@@ -58,12 +58,11 @@ const AddRatingModal = ({
   };
 
   const checkToDisable = () => {
-    return !(
-      payload.hasOwnProperty("rating") &&
-      payload.rating !== "" &&
-      payload.hasOwnProperty("comments") &&
-      payload.comments !== ""
-    );
+    const { rating, comments } = payload;
+
+    const hasAllRequiredFields = rating && comments;
+
+    return !hasAllRequiredFields;
   };
 
   return (

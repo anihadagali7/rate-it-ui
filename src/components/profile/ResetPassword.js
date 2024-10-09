@@ -1,19 +1,8 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
-import {
-  Container,
-  InputLabel,
-  StyledEngineProvider,
-  TextField,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
+import { InputLabel, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Provider, useAtom } from "jotai";
-import { theme } from "../../Theme/Theme";
+import { useAtom } from "jotai";
 import AuthClient from "../../client/AuthClient";
 import { currentlyLoggedIn, currentUser } from "../../state/user";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
@@ -108,167 +97,129 @@ const ResetPassword = ({ currentProfile }) => {
   };
 
   const checkToDisable = () => {
-    return !(
-      payload.hasOwnProperty("currentPassword") &&
-      payload.currentPassword !== "" &&
-      payload.hasOwnProperty("newPassword") &&
-      payload.newPassword !== "" &&
-      payload.hasOwnProperty("confirmNewPassword") &&
-      payload.confirmNewPassword !== ""
-    );
+    const { currentPassword, newPassword, confirmNewPassword } = payload;
+
+    const hasAllRequiredPasswords =
+      currentPassword && newPassword && confirmNewPassword;
+
+    return !hasAllRequiredPasswords;
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                margin: "auto",
-              }}
-            >
-              <Paper
-                elevation={6}
-                sx={{
-                  width: "100%",
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                  height: isMobile ? "685px" : "100%",
-                  borderRadius: "17px",
-                  marginBottom: "20px",
-                }}
-              >
-                <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box>
-                    <Grid
-                      container
-                      spacing={{ xs: 2, md: 2, xl: 2 }}
-                      columns={{ md: 12 }}
-                    >
-                      <Grid item xs={8}>
-                        <Typography
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "22px",
-                          }}
-                        >
-                          Reset password
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} sx={{ width: "100%" }}>
-                        <InputLabel>
-                          <Typography sx={{ marginTop: "15px" }}>
-                            Current Password
-                          </Typography>
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                borderRadius: "17px",
-                              },
-                            }}
-                            size="small"
-                            type={"password"}
-                            name="currentPassword"
-                            required
-                            value={payload.currentPassword}
-                            onChange={handleChange}
-                            error={errorValue["currentPassword"]["value"]}
-                            helperText={
-                              errorValue["currentPassword"]["value"] && (
-                                <>
-                                  <span>Current password is not valid</span>
-                                </>
-                              )
-                            }
-                          />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item xs={12} sx={{ width: "100%" }}>
-                        <InputLabel>
-                          <Typography sx={{ marginTop: "15px" }}>
-                            New Password
-                          </Typography>
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                borderRadius: "17px",
-                              },
-                            }}
-                            size="small"
-                            type={"password"}
-                            required
-                            value={payload.newPassword}
-                            name="newPassword"
-                            onChange={handleChange}
-                            error={errorValue["newPassword"]["value"]}
-                            helperText={
-                              errorValue["newPassword"]["value"] && (
-                                <>
-                                  <span>Password should contain at least</span>
-                                  <ul>
-                                    <li>one upper case letter</li>
-                                    <li>one lower case letter</li>
-                                    <li>one special character</li>
-                                    <li>one digit</li>
-                                  </ul>
-                                </>
-                              )
-                            }
-                          />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item xs={12} sx={{ width: "100%" }}>
-                        <InputLabel>
-                          <Typography sx={{ marginTop: "15px" }}>
-                            Re-enter new password
-                          </Typography>
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                borderRadius: "17px",
-                              },
-                            }}
-                            size="small"
-                            type={"password"}
-                            required
-                            value={payload.confirmNewPassword}
-                            name="confirmNewPassword"
-                            onChange={handleChange}
-                            error={errorValue["confirmNewPassword"]["value"]}
-                            helperText={
-                              errorValue["confirmNewPassword"]["value"] && (
-                                <>
-                                  <span>Passwords are not equal</span>
-                                </>
-                              )
-                            }
-                          />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item md={12} sx={{ width: "100%" }}>
-                        <PrimaryButton
-                          onClick={resetPasswordSubmit}
-                          disabled={checkToDisable()}
-                          variant="contained"
-                        >
-                          Reset
-                        </PrimaryButton>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </div>
-              </Paper>
-            </Box>
-          </Container>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <Grid container spacing={{ xs: 2, md: 2, xl: 2 }} columns={{ md: 12 }}>
+      <Grid item xs={8}>
+        <Typography
+          sx={{
+            fontWeight: "bold",
+            fontSize: "22px",
+          }}
+        >
+          Reset password
+        </Typography>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%", marginTop: "15px" }}>
+        <InputLabel>
+          <Typography>Current Password</Typography>
+          <TextField
+            sx={{
+              width: "100%",
+              "& fieldset": {
+                borderRadius: "17px",
+              },
+            }}
+            size="small"
+            type={"password"}
+            name="currentPassword"
+            required
+            value={payload.currentPassword}
+            onChange={handleChange}
+            error={errorValue["currentPassword"]["value"]}
+            helperText={
+              errorValue["currentPassword"]["value"] && (
+                <>
+                  <span>Current password is not valid</span>
+                </>
+              )
+            }
+          />
+        </InputLabel>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <InputLabel>
+          <Typography>New Password</Typography>
+          <TextField
+            sx={{
+              width: "100%",
+              "& fieldset": {
+                borderRadius: "17px",
+              },
+            }}
+            size="small"
+            type={"password"}
+            required
+            value={payload.newPassword}
+            name="newPassword"
+            onChange={handleChange}
+            error={errorValue["newPassword"]["value"]}
+            helperText={
+              errorValue["newPassword"]["value"] && (
+                <>
+                  <span>Password should contain at least</span>
+                  <ul>
+                    <li>one upper case letter</li>
+                    <li>one lower case letter</li>
+                    <li>one special character</li>
+                    <li>one digit</li>
+                  </ul>
+                </>
+              )
+            }
+          />
+        </InputLabel>
+      </Grid>
+      <Grid item xs={12} sx={{ width: "100%" }}>
+        <InputLabel>
+          <Typography>Re-enter new password</Typography>
+          <TextField
+            sx={{
+              width: "100%",
+              "& fieldset": {
+                borderRadius: "17px",
+              },
+            }}
+            size="small"
+            type={"password"}
+            required
+            value={payload.confirmNewPassword}
+            name="confirmNewPassword"
+            onChange={handleChange}
+            error={errorValue["confirmNewPassword"]["value"]}
+            helperText={
+              errorValue["confirmNewPassword"]["value"] && (
+                <>
+                  <span>Passwords are not equal</span>
+                </>
+              )
+            }
+          />
+        </InputLabel>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        container
+        justifyContent="end"
+        sx={{ margin: "20px 0" }}
+      >
+        <PrimaryButton
+          onClick={resetPasswordSubmit}
+          disabled={checkToDisable()}
+          variant="contained"
+        >
+          Reset
+        </PrimaryButton>
+      </Grid>
+    </Grid>
   );
 };
 

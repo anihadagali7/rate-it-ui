@@ -42,12 +42,11 @@ const Login = () => {
   };
 
   const checkToDisable = () => {
-    return !(
-      payload.hasOwnProperty("email") &&
-      payload.email !== "" &&
-      payload.hasOwnProperty("password") &&
-      payload.password !== ""
-    );
+    const { email, password } = payload;
+
+    const hasAllRequiredFields = email && password;
+
+    return !hasAllRequiredFields;
   };
 
   const errorHandler = async (id, value, message) => {
