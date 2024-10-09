@@ -4,6 +4,7 @@ import {
   Container,
   Dialog,
   DialogTitle,
+  Grid,
   Rating,
   StyledEngineProvider,
   TextField,
@@ -97,60 +98,75 @@ const AddRatingModal = ({
                   maxWidth={"sm"}
                   sx={{ marginTop: "20px", marginBottom: "25px" }}
                 >
-                  <Typography component="legend">Enter a rating: </Typography>
-                  <Rating
-                    defaultValue={5}
-                    max={10}
-                    precision={0.5}
-                    value={payload.rating}
-                    name="rating"
-                    onChange={handleChange}
-                    sx={{ marginBottom: "15px" }}
-                  />
-                  <Paper
-                    elevation={4}
-                    component="form"
-                    sx={{
-                      p: "2px 4px",
-                      display: "flex",
-                      alignItems: "center",
-                      width: "auto",
-                      borderRadius: "17px",
-                    }}
+                  <Grid
+                    container
+                    spacing={{ xs: 2, md: 2, xl: 2 }}
+                    columns={{ md: 12 }}
                   >
-                    <TextField
-                      sx={{
-                        width: "100%",
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      }}
-                      size="small"
-                      placeholder="Enter comments"
-                      multiline
-                      value={payload.comments}
-                      name="comments"
-                      onChange={handleChange}
-                      required
-                      helperText="Max character count: 100"
-                      inputProps={{ maxLength: 100 }}
-                    />
-                    {payload.comments.length > 0 && (
+                    <Grid item xs={12}>
+                      <Typography component="legend">
+                        Enter a rating:{" "}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Rating
+                        defaultValue={5}
+                        max={10}
+                        precision={0.1}
+                        value={payload.rating}
+                        name="rating"
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Paper
+                        elevation={4}
+                        component="form"
+                        sx={{
+                          p: "2px 4px",
+                          display: "flex",
+                          alignItems: "center",
+                          width: "auto",
+                          borderRadius: "17px",
+                        }}
+                      >
+                        <TextField
+                          sx={{
+                            width: "100%",
+                            "& fieldset": {
+                              border: "none",
+                            },
+                          }}
+                          size="small"
+                          placeholder="Enter comments"
+                          multiline
+                          value={payload.comments}
+                          name="comments"
+                          onChange={handleChange}
+                          required
+                          helperText="Max character count: 100"
+                          inputProps={{ maxLength: 100 }}
+                        />
+                        {payload.comments.length > 0 && (
+                          <PrimaryButton
+                            variant="text"
+                            onClick={resetComments}
+                            leftIcon={<ClearIcon />}
+                          ></PrimaryButton>
+                        )}
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12} container justifyContent="end">
                       <PrimaryButton
-                        variant="text"
-                        onClick={resetComments}
-                        leftIcon={<ClearIcon />}
-                      ></PrimaryButton>
-                    )}
-                  </Paper>
-                  <PrimaryButton
-                    variant="contained"
-                    disabled={checkToDisable()}
-                    leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-                    onClick={handleSubmitRating}
-                  >
-                    Submit
-                  </PrimaryButton>
+                        variant="contained"
+                        disabled={checkToDisable()}
+                        leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+                        onClick={handleSubmitRating}
+                      >
+                        Submit
+                      </PrimaryButton>
+                    </Grid>
+                  </Grid>
                 </Container>
               </Box>
             </Dialog>
