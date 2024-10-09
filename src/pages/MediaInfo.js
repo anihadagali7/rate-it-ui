@@ -4,7 +4,12 @@ import { Provider, useAtom } from "jotai";
 import { theme } from "../Theme/Theme";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
-import { Container, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
+import {
+  Container,
+  StyledEngineProvider,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -13,7 +18,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddRatingModal from "../components/modals/AddRatingModal";
@@ -25,6 +29,7 @@ import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
+import PrimaryButton from "../shared/buttons/PrimaryButton";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -46,7 +51,10 @@ const MediaInfo = () => {
   }, [ratingAdded]);
 
   const getRatingsForMedia = async (id) => {
-    const result = await RatingClient.getAllRatingsForMedia(id, setDisplayTokenModal);
+    const result = await RatingClient.getAllRatingsForMedia(
+      id,
+      setDisplayTokenModal
+    );
     setRatingsList(result.data.ratingsList);
   };
 
@@ -90,7 +98,7 @@ const MediaInfo = () => {
           sx={{
             marginTop: "10px",
             fontSize: "18px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           {media.name}
@@ -148,7 +156,7 @@ const MediaInfo = () => {
           sx={{
             marginTop: "10px",
             fontSize: "18px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           {media.name}
@@ -197,7 +205,7 @@ const MediaInfo = () => {
           sx={{
             marginTop: "10px",
             fontSize: "18px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           {media.name}
@@ -248,41 +256,20 @@ const MediaInfo = () => {
       </Grid>
       <Grid item xs={6} align="center" justify="center" direction="column">
         <Stack spacing={4} sx={{ marginTop: "80px" }}>
-          <Button
-            variant="outlined"
-            startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-            sx={{
-              border: "transparent",
-              backgroundColor: "#00a8ff",
-              borderRadius: "17px",
-              "&.MuiButtonBase-root:hover": {
-                border: "transparent",
-                backgroundColor: "#00a8ff"
-              }
-            }}
+          <PrimaryButton
+            variant="contained"
+            leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
             onClick={handleAddRatingModalOpen}
           >
-            <Typography variant="normalText">Add Rating</Typography>
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-            sx={{
-              border: "transparent",
-              backgroundColor: "#ffffff",
-              borderRadius: "17px",
-              width: "100%",
-              "&.MuiButtonBase-root:hover": {
-                border: "transparent",
-                backgroundColor: "#ffffff"
-              }
-            }}
+            Add Rating
+          </PrimaryButton>
+          <PrimaryButton
+            variant="contained"
+            leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
             onClick={handleAddToWishlist}
           >
-            <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
-              Add to Wishlist
-            </Typography>
-          </Button>
+            Add to Wishlist
+          </PrimaryButton>
         </Stack>
       </Grid>
       {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
@@ -306,44 +293,22 @@ const MediaInfo = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
-        <Button
-          variant="outlined"
-          startIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-          sx={{
-            border: "transparent",
-            backgroundColor: "#00a8ff",
-            width: "100%",
-            borderRadius: "17px",
-            "&.MuiButtonBase-root:hover": {
-              border: "transparent",
-              backgroundColor: "#00a8ff"
-            }
-          }}
+        <PrimaryButton
+          variant="contained"
+          leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
           onClick={handleAddRatingModalOpen}
         >
-          <Typography variant="normalText">Add Rating</Typography>
-        </Button>
+          Add Rating
+        </PrimaryButton>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
-        <Button
-          variant="outlined"
-          startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-          sx={{
-            border: "transparent",
-            backgroundColor: "#ffffff",
-            borderRadius: "17px",
-            width: "100%",
-            "&.MuiButtonBase-root:hover": {
-              border: "transparent",
-              backgroundColor: "#ffffff"
-            }
-          }}
+        <PrimaryButton
+          variant="contained"
+          leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
           onClick={handleAddToWishlist}
         >
-          <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
-            Add to Wishlist
-          </Typography>
-        </Button>
+          Add to Wishlist
+        </PrimaryButton>
       </Grid>
       {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
         displayMovieTvShow(media)}
@@ -366,31 +331,18 @@ const MediaInfo = () => {
             maxWidth={"sm"}
             sx={{ marginTop: "50px", marginBottom: "25px" }}
           >
-            <Button
-              variant="outlined"
-              startIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              sx={{
-                border: "transparent",
-                backgroundColor: "#f0f2f5",
-                borderRadius: "17px",
-                justifyContent: "flex-start",
-                marginBottom: "10px",
-                "&.MuiButtonBase-root:hover": {
-                  border: "transparent",
-                  backgroundColor: "#f0f2f5"
-                }
-              }}
+            <PrimaryButton
+              variant="text"
+              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
               onClick={() => navigate(-1)}
             >
-              <Typography variant="normalText" sx={{ color: "#000", fontSize: "11px" }}>
-                Return
-              </Typography>
-            </Button>
+              Return
+            </PrimaryButton>
             <Box
               sx={{
                 width: "100%",
                 height: "100%",
-                margin: "auto"
+                margin: "auto",
               }}
             >
               <Paper
@@ -400,23 +352,27 @@ const MediaInfo = () => {
                   height: "100%",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px"
+                  borderRadius: "17px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                    {
-                      loading ? (
-                        <MediaInfoMobileLoading />
-                      ) : media && (mobileView(media))
-                    }
+                  <Box
+                    sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+                  >
+                    {loading ? (
+                      <MediaInfoMobileLoading />
+                    ) : (
+                      media && mobileView(media)
+                    )}
                   </Box>
-                  <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                    {
-                      loading ? (
-                        <MediaInfoDesktopLoading />
-                      ) : media && (desktopView(media))
-                    }
+                  <Box
+                    sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
+                  >
+                    {loading ? (
+                      <MediaInfoDesktopLoading />
+                    ) : (
+                      media && desktopView(media)
+                    )}
                   </Box>
                 </div>
               </Paper>
@@ -427,7 +383,7 @@ const MediaInfo = () => {
                   width: "100%",
                   height: "100%",
                   margin: "auto",
-                  marginTop: "15px"
+                  marginTop: "15px",
                 }}
               >
                 <Paper
@@ -437,7 +393,7 @@ const MediaInfo = () => {
                     height: "100%",
                     backgroundColor: "#FFFFFF",
                     margin: "auto",
-                    borderRadius: "17px"
+                    borderRadius: "17px",
                   }}
                 >
                   <Typography
@@ -445,69 +401,100 @@ const MediaInfo = () => {
                       fontWeight: "bold",
                       fontSize: "22px",
                       paddingTop: "15px",
-                      paddingLeft: "25px"
+                      paddingLeft: "25px",
                     }}
                   >
                     User reviews
                   </Typography>
-                  <List component="nav" sx={{ marginLeft: "15px", marginRight: "15px" }}>
-                    {ratingsList && ratingsList.length > 0 && ratingsList.map((rating) => (
-                      <>
-                        <ListItem>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                          >
-                            <>
-                              <Avatar
-                                sx={{
-                                  bgcolor: "#00a8ff",
-                                  textDecoration: "none",
-                                  marginTop: "auto",
-                                  marginBottom: "auto"
-                                }}
-                                component={Link}
-                                to={`/profile/${rating.ratedBy.userName}`}
-                              >
-                                {rating.ratedBy.firstName[0]}
-                                {rating.ratedBy.lastName[0]}
-                              </Avatar>
-                              <div>
-                                <Stack direction="column">
-                                <span style={{ fontWeight: "bold" }}>
-                                  {rating.ratedBy.firstName} {rating.ratedBy.lastName}
-                                  <span style={{ fontWeight: "normal" }}> @{rating.ratedBy.userName}</span>
-                                <span style={{ fontWeight: "normal" }}> &#8226; {getTimeAgo(rating.dateCreated)}</span>
-                                </span>
-                                  <span>
-                                  <Typography component={Link} sx={{ textDecoration: "none" }}
-                                              to={`/${rating.media.mediaType}/${rating.media.mediaId}`}>
-                                   -{rating.media.name}
-                                </Typography>
-                              </span>
-                                  <Typography>Rating: {rating.rating}</Typography>
-                                  <Typography>Comments: {rating.comments}</Typography>
-                                </Stack>
-                              </div>
-                            </>
-                          </Stack>
-                        </ListItem>
-                        <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
-                      </>
-                    ))}
+                  <List
+                    component="nav"
+                    sx={{ marginLeft: "15px", marginRight: "15px" }}
+                  >
+                    {ratingsList &&
+                      ratingsList.length > 0 &&
+                      ratingsList.map((rating) => (
+                        <>
+                          <ListItem>
+                            <Stack direction="row" spacing={2}>
+                              <>
+                                <Avatar
+                                  sx={{
+                                    bgcolor: "#00a8ff",
+                                    textDecoration: "none",
+                                    marginTop: "auto",
+                                    marginBottom: "auto",
+                                  }}
+                                  component={Link}
+                                  to={`/profile/${rating.ratedBy.userName}`}
+                                >
+                                  {rating.ratedBy.firstName[0]}
+                                  {rating.ratedBy.lastName[0]}
+                                </Avatar>
+                                <div>
+                                  <Stack direction="column">
+                                    <span style={{ fontWeight: "bold" }}>
+                                      {rating.ratedBy.firstName}{" "}
+                                      {rating.ratedBy.lastName}
+                                      <span style={{ fontWeight: "normal" }}>
+                                        {" "}
+                                        @{rating.ratedBy.userName}
+                                      </span>
+                                      <span style={{ fontWeight: "normal" }}>
+                                        {" "}
+                                        &#8226; {getTimeAgo(rating.dateCreated)}
+                                      </span>
+                                    </span>
+                                    <span>
+                                      <Typography
+                                        component={Link}
+                                        sx={{ textDecoration: "none" }}
+                                        to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
+                                      >
+                                        -{rating.media.name}
+                                      </Typography>
+                                    </span>
+                                    <Typography>
+                                      Rating: {rating.rating}
+                                    </Typography>
+                                    <Typography>
+                                      Comments: {rating.comments}
+                                    </Typography>
+                                  </Stack>
+                                </div>
+                              </>
+                            </Stack>
+                          </ListItem>
+                          <Divider
+                            sx={{
+                              width: "95%",
+                              marginLeft: "auto",
+                              marginRight: "auto",
+                            }}
+                          />
+                        </>
+                      ))}
                   </List>
                 </Paper>
               </Box>
             )}
           </Container>
           {openRatingModal && (
-            <AddRatingModal open={openRatingModal} onClose={handleAddRatingModalClose} mediaDetails={media}
-                            user={user} ratingAdded={ratingAdded} setRatingAdded={setRatingAdded} />
+            <AddRatingModal
+              open={openRatingModal}
+              onClose={handleAddRatingModalClose}
+              mediaDetails={media}
+              user={user}
+              ratingAdded={ratingAdded}
+              setRatingAdded={setRatingAdded}
+            />
           )}
           {displayTokenModal && (
-            <LoginErrorModal open={displayTokenModal} onClose={() => {
-              setDisplayTokenModal(false);
-            }} />
+            <LoginErrorModal
+              open={displayTokenModal}
+              onClose={() => {
+                setDisplayTokenModal(false);
+              }}
+            />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

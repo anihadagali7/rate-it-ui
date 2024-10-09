@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { theme } from "../../Theme/Theme";
-import { Box, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
+import {
+  Box,
+  StyledEngineProvider,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import { Provider } from "jotai";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -10,8 +15,8 @@ import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading"
 import PlaylistClient from "../../client/PlaylistClient";
 import DisplayOnePlaylist from "./DisplayOnePlaylist";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import Button from "@mui/material/Button";
 import AddPlaylistModal from "../modals/AddPlaylistModal";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
   const [playlistList, setPlaylistList] = useState([]);
@@ -51,52 +56,47 @@ const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
   };
 
   const displayPlaylist = () => {
-    return <>
-      {userViewingOwnProfile && (
-        <Button
-          variant="outlined"
-          startIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-          sx={{
-            border: "transparent",
-            backgroundColor: "#ffffff",
-            borderRadius: "17px",
-            width: "100%",
-            "&.MuiButtonBase-root:hover": {
-              border: "transparent",
-              backgroundColor: "#ffffff"
-            }
-          }}
-          onClick={handleNewPlaylistModalOpen}
-        >
-          <Typography variant="normalText" sx={{ color: "#00a8ff" }}>
+    return (
+      <>
+        {userViewingOwnProfile && (
+          <PrimaryButton
+            variant="outlined"
+            leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+            onClick={handleNewPlaylistModalOpen}
+          >
             Create New Playlist
-          </Typography>
-        </Button>
-      )}
-      {playlistList && playlistList.length > 0 && playlistList.map((playlist) => (
-        <>
-          <ListItem key={playlist._id} onClick={() => viewOnePlaylist(playlist)} sx={{cursor: "pointer"}}>
-            <Stack
-              direction="row"
-              spacing={2}
-            >
-              <>
-                <div>
-                  <Stack direction="column">
-                    <span>
-                      <Typography sx={{ textDecoration: "none" }}>
-                       {playlist.name}
-                      </Typography>
-                    </span>
-                  </Stack>
-                </div>
-              </>
-            </Stack>
-          </ListItem>
-          <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
-        </>
-      ))}
-    </>;
+          </PrimaryButton>
+        )}
+        {playlistList &&
+          playlistList.length > 0 &&
+          playlistList.map((playlist) => (
+            <>
+              <ListItem
+                key={playlist._id}
+                onClick={() => viewOnePlaylist(playlist)}
+                sx={{ cursor: "pointer" }}
+              >
+                <Stack direction="row" spacing={2}>
+                  <>
+                    <div>
+                      <Stack direction="column">
+                        <span>
+                          <Typography sx={{ textDecoration: "none" }}>
+                            {playlist.name}
+                          </Typography>
+                        </span>
+                      </Stack>
+                    </div>
+                  </>
+                </Stack>
+              </ListItem>
+              <Divider
+                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
+              />
+            </>
+          ))}
+      </>
+    );
   };
 
   return (
@@ -106,20 +106,31 @@ const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
           <Box
             sx={{
               width: "100%",
-              height: "100%"
+              height: "100%",
             }}
           >
             <List component="nav">
-              {loading ? (<ProfileWishlistLoading />) :
-                displayOnePlaylist ?
-                  (<DisplayOnePlaylist user={user} playListId={playListId} viewAllPlaylists={viewAllPlaylists} />) :
-                  displayPlaylist()
-              }
+              {loading ? (
+                <ProfileWishlistLoading />
+              ) : displayOnePlaylist ? (
+                <DisplayOnePlaylist
+                  user={user}
+                  playListId={playListId}
+                  viewAllPlaylists={viewAllPlaylists}
+                />
+              ) : (
+                displayPlaylist()
+              )}
             </List>
           </Box>
           {openNewPlaylistModal && (
-            <AddPlaylistModal open={openNewPlaylistModal} onClose={handleNewPlaylistModalClose}
-                            user={user} playlistAdded={playlistAdded} setPlaylistAdded={setPlaylistAdded} />
+            <AddPlaylistModal
+              open={openNewPlaylistModal}
+              onClose={handleNewPlaylistModalClose}
+              user={user}
+              playlistAdded={playlistAdded}
+              setPlaylistAdded={setPlaylistAdded}
+            />
           )}
         </ThemeProvider>
       </StyledEngineProvider>

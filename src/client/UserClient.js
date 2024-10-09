@@ -1,5 +1,4 @@
 import axios from "axios";
-import { currentUser } from "../state/user";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 

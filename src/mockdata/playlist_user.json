@@ -1,0 +1,53 @@
+{
+  "status": "success",
+  "data": {
+    "playlistList": [
+      {
+        "_id": "64b9f87e6af3591fda5e1c38",
+        "name": "test playlist",
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-07-21T03:16:14.611Z",
+        "__v": 0
+      },
+      {
+        "_id": "64c48cc37b88b9f9dd5ec5d8",
+        "name": "Hot summer night",
+        "addedBy": {
+          "_id": "63019b905ccf53564ffb0c84",
+          "userName": "anihadagali7",
+          "firstName": "Anirudha",
+          "lastName": "Hadagali",
+          "email": "anihadagali7@gmail.com",
+          "password": "$2b$10$CXwC1Cu279hIovHKlxo0QugwQUeKO0fD7VRw8b/T52k8Rfcd/ZgX2",
+          "phoneNumber": "3135876974",
+          "followers": ["kangaru17", "anitapai1254", "shree"],
+          "following": ["kangaru17", "anitapai1254", "aparna_t"],
+          "isAdmin": false,
+          "isActive": true,
+          "dateCreated": "2022-08-21T02:42:24.622Z",
+          "dateUpdated": "2023-08-01T03:38:21.301Z",
+          "__v": 96
+        },
+        "isActive": true,
+        "dateCreated": "2023-07-29T03:51:31.371Z",
+        "__v": 0
+      }
+    ]
+  }
+}

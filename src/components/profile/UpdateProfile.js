@@ -1,41 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
 import {
-  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
-  Typography
+  Typography,
 } from "@mui/material";
-import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { theme } from "../../Theme/Theme";
 import { Provider, useAtom } from "jotai";
 import { currentlyLoggedIn, currentUser } from "../../state/user";
 import AuthClient from "../../client/AuthClient";
-import { makeStyles } from "@mui/styles";
 import Divider from "@mui/material/Divider";
-
-const useStyles = makeStyles({
-  container: {
-    margin: "20px 35px"
-  },
-  loginBtn: {
-    backgroundColor: "#f4afc2",
-    "&:hover": {
-      backgroundColor: "#f4afc2"
-    }
-  },
-  login: {
-    fontWeight: "900",
-    marginLeft: "5px"
-  }
-});
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import ResetPassword from "./ResetPassword";
 
 const initialErrorState = {
   firstName: { value: false, message: "" },
@@ -44,94 +27,49 @@ const initialErrorState = {
   userName: { value: false, message: "" },
   phoneNumber: { value: false, message: "" },
   password: { value: false, message: "" },
-  currentPassword: { value: false, message: "" },
-  newPassword: { value: false, message: "" },
-  confirmNewPassword: { value: false, message: "" },
 };
 
 const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
-
   let navigate = useNavigate();
-  const classes = useStyles();
-  const [newAccount, setNewAccount] = useState({
-    firstName: updateProfile && currentProfile && currentProfile.firstName ? currentProfile.firstName : "",
-    lastName: updateProfile && currentProfile && currentProfile.lastName ? currentProfile.lastName : "",
-    userName: updateProfile && currentProfile && currentProfile.userName ? currentProfile.userName : "",
-    email: updateProfile && currentProfile && currentProfile.email ? currentProfile.email : "",
-    password: updateProfile && currentProfile && currentProfile.password ? currentProfile.password : "",
-    phoneNumber: updateProfile && currentProfile && currentProfile.phoneNumber ? currentProfile.phoneNumber : ""
+
+  const [payload, setPayload] = useState({
+    firstName:
+      updateProfile && currentProfile && currentProfile.firstName
+        ? currentProfile.firstName
+        : "",
+    lastName:
+      updateProfile && currentProfile && currentProfile.lastName
+        ? currentProfile.lastName
+        : "",
+    userName:
+      updateProfile && currentProfile && currentProfile.userName
+        ? currentProfile.userName
+        : "",
+    email:
+      updateProfile && currentProfile && currentProfile.email
+        ? currentProfile.email
+        : "",
+    password:
+      updateProfile && currentProfile && currentProfile.password
+        ? currentProfile.password
+        : "",
+    phoneNumber:
+      updateProfile && currentProfile && currentProfile.phoneNumber
+        ? currentProfile.phoneNumber
+        : "",
   });
-  const [resetPassword, setResetPassword] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: ""
-  });
+
+  const [prevProfileValues] = useState(payload);
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [loading, setLoading] = useState(false);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
   const [errorValue, setErrorValue] = useState(initialErrorState);
 
-  const onChangeFirstName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      firstName: event.target.value
-    }));
-  };
-
-  const onChangeLastName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      lastName: event.target.value
-    }));
-  };
-
-  const onChangeUserName = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      userName: event.target.value
-    }));
-  };
-
-  const onChangeEmail = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      email: event.target.value
-    }));
-  };
-
-  const onChangePassword = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      password: event.target.value
-    }));
-  };
-
-  const onChangePhoneNumber = (event) => {
-    setNewAccount((credentials) => ({
-      ...newAccount,
-      phoneNumber: event.target.value
-    }));
-  };
-
-  const onChangeCurrentPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      currentPassword: event.target.value
-    }));
-  };
-
-  const onChangeNewPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      newPassword: event.target.value
-    }));
-  };
-
-  const onChangeConfirmNewPassword = (event) => {
-    setResetPassword((credentials) => ({
-      ...resetPassword,
-      confirmNewPassword: event.target.value
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPayload((prevValues) => ({
+      ...prevValues,
+      [name]: value,
     }));
   };
 
@@ -140,7 +78,9 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
   };
 
   const isValidPassword = (password) => {
-    const validPassword = new RegExp("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{6,}$");
+    const validPassword = new RegExp(
+      "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{6,}$"
+    );
     return validPassword.test(password);
   };
 
@@ -152,119 +92,97 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
     const currentValue = JSON.parse(JSON.stringify(initialErrorState));
     currentValue[id] = { value: value, message: message };
     await setErrorValue(currentValue);
-    value && setLoading(false);
   };
 
   const validateInput = async () => {
-    const emailValidity = isValidEmail(newAccount.email);
-    const passwordValidity = isValidPassword(newAccount.password);
-    const phoneNumberValidity = isValidPhoneNumber(newAccount.phoneNumber);
-    const firstNameValidity = newAccount.firstName.length > 0;
-    const lastNameValidity = newAccount.lastName.length > 0;
-    const userNameValidity = newAccount.userName.length > 3;
+    const emailValidity = isValidEmail(payload.email);
+    const passwordValidity = isValidPassword(payload.password);
+    const phoneNumberValidity = isValidPhoneNumber(payload.phoneNumber);
+    const firstNameValidity = payload.firstName.length > 0;
+    const lastNameValidity = payload.lastName.length > 0;
+    const userNameValidity = payload.userName.length > 3;
 
     const currentValue = JSON.parse(JSON.stringify(errorValue));
 
     !emailValidity
-      ? currentValue["email"] = { value: true, message: "Value should be a valid email." }
-      : currentValue["email"] = { value: false, message: "" };
+      ? (currentValue["email"] = {
+          value: true,
+          message: "Value should be a valid email.",
+        })
+      : (currentValue["email"] = { value: false, message: "" });
     !passwordValidity
-      ? currentValue["password"] = {
-        value: true,
-        message: "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit."
-      }
-      : currentValue["password"] = { value: false, message: "" };
+      ? (currentValue["password"] = {
+          value: true,
+          message:
+            "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit.",
+        })
+      : (currentValue["password"] = { value: false, message: "" });
     !phoneNumberValidity
-      ? currentValue["phoneNumber"] = { value: true, message: "Value should be 10 digits." }
-      : currentValue["phoneNumber"] = { value: false, message: "" };
+      ? (currentValue["phoneNumber"] = {
+          value: true,
+          message: "Value should be 10 digits.",
+        })
+      : (currentValue["phoneNumber"] = { value: false, message: "" });
     !firstNameValidity
-      ? currentValue["firstName"] = { value: true, message: "Required" }
-      : currentValue["firstName"] = { value: false, message: "" };
+      ? (currentValue["firstName"] = { value: true, message: "Required" })
+      : (currentValue["firstName"] = { value: false, message: "" });
     !lastNameValidity
-      ? currentValue["lastName"] = { value: true, message: "Required" }
-      : currentValue["lastName"] = { value: false, message: "" };
+      ? (currentValue["lastName"] = { value: true, message: "Required" })
+      : (currentValue["lastName"] = { value: false, message: "" });
     !userNameValidity
-      ? currentValue["userName"] = { value: true, message: "Value must be at least 4 characters." }
-      : currentValue["userName"] = { value: false, message: "" };
+      ? (currentValue["userName"] = {
+          value: true,
+          message: "Value must be at least 4 characters.",
+        })
+      : (currentValue["userName"] = { value: false, message: "" });
 
     await setErrorValue(currentValue);
 
-    return emailValidity &&
+    return (
+      emailValidity &&
       passwordValidity &&
       phoneNumberValidity &&
       firstNameValidity &&
       lastNameValidity &&
       userNameValidity
-      ;
+    );
+  };
+
+  const checkToDisable = () => {
+    const { firstName, lastName, phoneNumber, userName, email, password } =
+      payload;
+
+    const hasRequiredFields =
+      firstName && lastName && userName && phoneNumber && email && password;
+
+    const isSameProfile =
+      prevProfileValues.firstName === firstName &&
+      prevProfileValues.lastName === lastName &&
+      prevProfileValues.phoneNumber === phoneNumber;
+
+    return isSameProfile || !hasRequiredFields;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await setErrorValue(initialErrorState);
     const newUser = {
-      firstName: newAccount.firstName,
-      lastName: newAccount.lastName,
-      email: newAccount.email,
-      userName: newAccount.userName,
-      password: newAccount.password,
-      phoneNumber: newAccount.phoneNumber
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      userName: payload.userName,
+      password: payload.password,
+      phoneNumber: payload.phoneNumber,
     };
 
-    if (createProfile && await validateInput()) {
-      setLoading(true);
+    if (createProfile && (await validateInput())) {
       const result = await AuthClient.signup(newUser, errorHandler);
       setUserLoggedIn(true);
       setUser(result.user);
       navigate("/");
     }
-    if (updateProfile && await validateInput()) {
-      setLoading(true);
+    if (updateProfile && (await validateInput())) {
       const result = await AuthClient.editProfile(newUser, errorHandler);
-      setUserLoggedIn(true);
-      setUser(result.user);
-      navigate(`/profile/${result.user.userName}`);
-    }
-  };
-
-  const validatePasswordReset = async () => {
-    const newPasswordValidity = isValidPassword(resetPassword.newPassword);
-    const confirmNewPasswordValidity = resetPassword.newPassword === resetPassword.confirmNewPassword;
-
-    const currentValue = JSON.parse(JSON.stringify(errorValue));
-
-    !newPasswordValidity
-      ? currentValue["newPassword"] = {
-        value: true,
-        message: "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit."
-      }
-      : currentValue["newPassword"] = { value: false, message: "" };
-
-    !confirmNewPasswordValidity
-      ? currentValue["confirmNewPassword"] = {
-        value: true,
-        message: "Passwords should be equal"
-      }
-      : currentValue["confirmNewPassword"] = { value: false, message: "" };
-
-    await setErrorValue(currentValue);
-
-    return newPasswordValidity && confirmNewPasswordValidity;
-  };
-
-  const resetPasswordSubmit = async (e) => {
-    e.preventDefault();
-    const errorValueCopy = JSON.parse(JSON.stringify(initialErrorState));
-    await setErrorValue(errorValueCopy);
-
-    const passwordRequest = {
-      userName: currentProfile.userName,
-      currentPassword: resetPassword.currentPassword,
-      newPassword: resetPassword.newPassword
-    };
-
-    if (await validatePasswordReset()) {
-      setLoading(true);
-      const result = await AuthClient.resetPassword(passwordRequest, errorHandler);
       setUserLoggedIn(true);
       setUser(result.user);
       navigate(`/profile/${result.user.userName}`);
@@ -280,7 +198,7 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
               sx={{
                 width: "100%",
                 height: "100%",
-                margin: "auto"
+                margin: "auto",
               }}
             >
               <Paper
@@ -291,284 +209,170 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                   margin: "auto",
                   height: isMobile ? "685px" : "100%",
                   borderRadius: "17px",
-                  marginBottom: "20px"
+                  marginBottom: "20px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  {
-                    displayResetPassword ? (
-                      <Box component="form" onSubmit={resetPasswordSubmit}>
-                        <Grid
-                          container
-                          spacing={{ xs: 2, md: 2, xl: 2 }}
-                          columns={{ md: 12 }}
-                        >
-                          <Grid item xs={8}>
-                            <Typography
-                              sx={{
-                                fontWeight: "bold",
-                                fontSize: "22px"
-                              }}
-                            >
-                              Reset password
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12} sx={{ width: "100%" }}>
-                            <InputLabel>
-                              <Typography sx={{ marginTop: "15px" }}>
-                                Current Password
-                              </Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                type={"password"}
-                                required
-                                value={resetPassword.currentPassword}
-                                onChange={onChangeCurrentPassword}
-                                error={errorValue["currentPassword"]["value"]}
-                                helperText={errorValue["currentPassword"]["value"] && (
-                                  <>
-                                    <span>Current password is not valid</span>
-                                  </>
-                                )}
-                              />
-                            </InputLabel>
-                          </Grid>
-                          <Grid item xs={12} sx={{ width: "100%" }}>
-                            <InputLabel>
-                              <Typography sx={{ marginTop: "15px" }}>
-                                New Password
-                              </Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                type={"password"}
-                                required
-                                value={resetPassword.newPassword}
-                                onChange={onChangeNewPassword}
-                                error={errorValue["newPassword"]["value"]}
-                                helperText={errorValue["newPassword"]["value"] && (
-                                  <>
-                                    <span>Password should contain at least</span>
-                                    <ul>
-                                      <li>one upper case letter</li>
-                                      <li>one lower case letter</li>
-                                      <li>one special character</li>
-                                      <li>one digit</li>
-                                    </ul>
-                                  </>
-                                )}
-                              />
-                            </InputLabel>
-                          </Grid>
-                          <Grid item xs={12} sx={{ width: "100%" }}>
-                            <InputLabel>
-                              <Typography sx={{ marginTop: "15px" }}>
-                                Re-enter new password
-                              </Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                type={"password"}
-                                required
-                                value={resetPassword.confirmNewPassword}
-                                onChange={onChangeConfirmNewPassword}
-                                error={errorValue["confirmNewPassword"]["value"]}
-                                helperText={errorValue["confirmNewPassword"]["value"] && (
-                                  <>
-                                    <span>Passwords are not equal</span>
-                                  </>
-                                )}
-                              />
-                            </InputLabel>
-                          </Grid>
-                          <Grid item md={12} sx={{ width: "100%" }}>
-                            <Button
-                              variant="outlined"
-                              className={classes.loginBtn}
-                              type="submit"
-                              sx={{
-                                float: "right",
-                                marginLeft: "43px",
-                                marginTop: "10px",
-                                marginBottom: updateProfile && "15px",
-                                width: "100%",
-                                border: "transparent",
-                                "&.MuiButtonBase-root:hover": {
-                                  border: "transparent"
-                                },
-                                borderRadius: "17px",
-                                maxHeight: "35px",
-                                "&.Mui-disabled": {
-                                  color: "#fff",
-                                  background: "#9E9E9E"
-                                }
-                              }}
-                              disabled={loading}
-                            >
-                              {loading && (
-                                <div style={{ color: "#ffffff" }}>
-                                  <CircularProgress size={20} color="inherit"
-                                                    sx={{ marginTop: "5px", marginRight: "7px" }} />
-                                </div>
-                              )}
-                              <Typography
-                                variant="normalText"
-                                className={classes.login}
-                              >
-                                Reset
-                              </Typography>
-                            </Button>
-                          </Grid>
+                  {displayResetPassword ? (
+                    <ResetPassword currentProfile={currentProfile} />
+                  ) : (
+                    <Box>
+                      <Grid
+                        container
+                        spacing={{ xs: 2, md: 2, xl: 2 }}
+                        columns={{ md: 12 }}
+                      >
+                        <Grid item xs={8}>
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                              fontSize: "22px",
+                            }}
+                          >
+                            {createProfile
+                              ? "Create an Account"
+                              : "Edit profile"}
+                          </Typography>
                         </Grid>
-                      </Box>
-                    ) : (
-                      <Box component="form" onSubmit={handleSubmit}>
-                        <Grid
-                          container
-                          spacing={{ xs: 2, md: 2, xl: 2 }}
-                          columns={{ md: 12 }}
-                        >
-                          <Grid item xs={8}>
-                            <Typography
+                        <Grid item xs={6} sx={{ width: "100%" }}>
+                          <InputLabel>
+                            <Typography>First Name</Typography>
+                            <TextField
                               sx={{
-                                fontWeight: "bold",
-                                fontSize: "22px"
+                                width: "100%",
+                                "& fieldset": {
+                                  borderRadius: "17px",
+                                },
                               }}
-                            >
-                              {createProfile ? "Create an Account" : "Edit profile"}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6} sx={{ width: "100%" }}>
+                              size="small"
+                              required
+                              value={payload.firstName}
+                              name="firstName"
+                              onChange={handleChange}
+                              error={errorValue["firstName"]["value"]}
+                              helperText={
+                                errorValue["firstName"]["value"] &&
+                                errorValue["firstName"]["message"]
+                              }
+                            />
+                          </InputLabel>
+                        </Grid>
+                        <Grid item xs={6} sx={{ width: "100%" }}>
+                          <InputLabel>
+                            <Typography>Last Name</Typography>
+                            <TextField
+                              sx={{
+                                width: "100%",
+                                "& fieldset": {
+                                  borderRadius: "17px",
+                                },
+                              }}
+                              size="small"
+                              required
+                              value={payload.lastName}
+                              onChange={handleChange}
+                              name="lastName"
+                              error={errorValue["lastName"]["value"]}
+                              helperText={
+                                errorValue["lastName"]["value"] &&
+                                errorValue["lastName"]["message"]
+                              }
+                            />
+                          </InputLabel>
+                        </Grid>
+                        <Grid item xs={12} sx={{ width: "100%" }}>
+                          <InputLabel>
+                            <Typography>Username</Typography>
+                            <TextField
+                              sx={{
+                                width: "100%",
+                                "& fieldset": {
+                                  borderRadius: "17px",
+                                },
+                              }}
+                              size="small"
+                              required
+                              value={payload.userName}
+                              name="userName"
+                              onChange={handleChange}
+                              disabled={updateProfile}
+                              error={errorValue["userName"]["value"]}
+                              helperText={
+                                errorValue["userName"]["value"] &&
+                                errorValue["userName"]["message"]
+                              }
+                            />
+                          </InputLabel>
+                          <InputLabel sx={{ marginTop: "15px" }}>
+                            <Typography>Phone Number</Typography>
+                            <TextField
+                              sx={{
+                                width: "100%",
+                                "& fieldset": {
+                                  borderRadius: "17px",
+                                },
+                              }}
+                              size="small"
+                              required
+                              placeholder={"1234567890"}
+                              value={payload.phoneNumber}
+                              name="phoneNumber"
+                              onChange={handleChange}
+                              error={errorValue["phoneNumber"]["value"]}
+                              helperText={
+                                errorValue["phoneNumber"]["value"] &&
+                                errorValue["phoneNumber"]["message"]
+                              }
+                            />
+                          </InputLabel>
+                          <InputLabel sx={{ marginTop: "15px" }}>
+                            <Typography>Email</Typography>
+                            <TextField
+                              sx={{
+                                width: "100%",
+                                "& fieldset": {
+                                  borderRadius: "17px",
+                                },
+                              }}
+                              size="small"
+                              required
+                              disabled={updateProfile}
+                              type={"email"}
+                              value={payload.email}
+                              name="email"
+                              onChange={handleChange}
+                              error={errorValue["email"]["value"]}
+                              helperText={
+                                errorValue["email"]["value"] &&
+                                errorValue["email"]["message"]
+                              }
+                            />
+                          </InputLabel>
+                          {createProfile && (
                             <InputLabel>
-                              <Typography>First Name</Typography>
+                              <Typography sx={{ marginTop: "15px" }}>
+                                Password
+                              </Typography>
                               <TextField
                                 sx={{
                                   width: "100%",
                                   "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
+                                    borderRadius: "17px",
+                                  },
                                 }}
                                 size="small"
+                                type={"password"}
                                 required
-                                value={newAccount.firstName}
-                                onChange={onChangeFirstName}
-                                error={errorValue["firstName"]["value"]}
-                                helperText={errorValue["firstName"]["value"] && errorValue["firstName"]["message"]}
-                              />
-                            </InputLabel>
-                          </Grid>
-                          <Grid item xs={6} sx={{ width: "100%" }}>
-                            <InputLabel>
-                              <Typography>Last Name</Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                required
-                                value={newAccount.lastName}
-                                onChange={onChangeLastName}
-                                error={errorValue["lastName"]["value"]}
-                                helperText={errorValue["lastName"]["value"] && errorValue["lastName"]["message"]}
-                              />
-                            </InputLabel>
-                          </Grid>
-                          <Grid item xs={12} sx={{ width: "100%" }}>
-                            <InputLabel>
-                              <Typography>Username</Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                required
-                                value={newAccount.userName}
-                                onChange={onChangeUserName}
-                                disabled={updateProfile}
-                                error={errorValue["userName"]["value"]}
-                                helperText={errorValue["userName"]["value"] && errorValue["userName"]["message"]}
-                              />
-                            </InputLabel>
-                            <InputLabel sx={{ marginTop: "15px" }}>
-                              <Typography>Phone Number</Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                required
-                                placeholder={"1234567890"}
-                                value={newAccount.phoneNumber}
-                                onChange={onChangePhoneNumber}
-                                error={errorValue["phoneNumber"]["value"]}
-                                helperText={errorValue["phoneNumber"]["value"] && errorValue["phoneNumber"]["message"]}
-                              />
-                            </InputLabel>
-                            <InputLabel sx={{ marginTop: "15px" }}>
-                              <Typography>Email</Typography>
-                              <TextField
-                                sx={{
-                                  width: "100%",
-                                  "& fieldset": {
-                                    borderRadius: "17px"
-                                  }
-                                }}
-                                size="small"
-                                required
-                                disabled={updateProfile}
-                                type={"email"}
-                                value={newAccount.email}
-                                onChange={onChangeEmail}
-                                error={errorValue["email"]["value"]}
-                                helperText={errorValue["email"]["value"] && errorValue["email"]["message"]}
-                              />
-                            </InputLabel>
-                            {createProfile && (
-                              <InputLabel>
-                                <Typography sx={{ marginTop: "15px" }}>
-                                  Password
-                                </Typography>
-                                <TextField
-                                  sx={{
-                                    width: "100%",
-                                    "& fieldset": {
-                                      borderRadius: "17px"
-                                    }
-                                  }}
-                                  size="small"
-                                  type={"password"}
-                                  required
-                                  value={newAccount.password}
-                                  onChange={onChangePassword}
-                                  error={errorValue["password"]["value"]}
-                                  helperText={errorValue["password"]["value"] && (
+                                value={payload.password}
+                                name="password"
+                                onChange={handleChange}
+                                error={errorValue["password"]["value"]}
+                                helperText={
+                                  errorValue["password"]["value"] && (
                                     <>
-                                      <span>Password should contain at least</span>
+                                      <span>
+                                        Password should contain at least
+                                      </span>
                                       <ul>
                                         <li>one upper case letter</li>
                                         <li>one lower case letter</li>
@@ -576,115 +380,59 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
                                         <li>one digit</li>
                                       </ul>
                                     </>
-                                  )}
-                                />
-                              </InputLabel>
-                            )}
-                          </Grid>
-                          <Grid item md={12} sx={{ width: "100%" }}>
-                            <Button
-                              variant="outlined"
-                              className={classes.loginBtn}
-                              type="submit"
-                              sx={{
-                                float: "right",
-                                marginLeft: "43px",
-                                marginTop: "10px",
-                                marginBottom: updateProfile && "15px",
-                                width: "100%",
-                                border: "transparent",
-                                "&.MuiButtonBase-root:hover": {
-                                  border: "transparent"
-                                },
-                                borderRadius: "17px",
-                                maxHeight: "35px",
-                                "&.Mui-disabled": {
-                                  color: "#fff",
-                                  background: "#9E9E9E"
+                                  )
                                 }
-                              }}
-                              disabled={loading}
-                            >
-                              {loading && (
-                                <div style={{ color: "#ffffff" }}>
-                                  <CircularProgress size={20} color="inherit"
-                                                    sx={{ marginTop: "5px", marginRight: "7px" }} />
-                                </div>
-                              )}
-                              <Typography
-                                variant="normalText"
-                                className={classes.login}
-                              >
-                                {createProfile ? "Sign Up" : "Save"}
-                              </Typography>
-                            </Button>
-                          </Grid>
-                          {createProfile && (
-                            <Grid
-                              item
-                              md={12}
-                              sx={{
-                                marginTop: "0px",
-                                display: "flex",
-                                justifyContent: "center",
-                                width: "100%"
-                              }}
-                            >
-                              <Button
-                                component={Link}
-                                to="/login"
-                                sx={{ marginTop: "10px" }}
-                              >
-                                <Typography
-                                  variant="blueText"
-                                  sx={{
-                                    fontWeight: 600,
-                                    marginLeft: "-8px",
-                                    fontSize: "15px"
-                                  }}
-                                >
-                                  Sign in instead
-                                </Typography>
-                              </Button>
-                            </Grid>
+                              />
+                            </InputLabel>
                           )}
                         </Grid>
-                        {updateProfile && (
-                          <>
-                            <Divider
-                              variant="middle"
-                              sx={{
-                                marginTop: "25px",
-                                marginLeft: "0",
-                                marginRight: "0"
-                              }}
-                            />
-                            <Box
-                              sx={{
-                                margin: "auto",
-                                marginTop: "5px",
-                                marginBottom: "30px"
-                              }}
+                        <Grid item xs={12} container justifyContent="end">
+                          <PrimaryButton
+                            onClick={handleSubmit}
+                            disabled={checkToDisable()}
+                            variant="contained"
+                          >
+                            {createProfile ? "Sign Up" : "Save"}
+                          </PrimaryButton>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Divider
+                            variant="middle"
+                            sx={{
+                              marginTop: "25px",
+                            }}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          container
+                          justifyContent="center"
+                          sx={{ marginBottom: "15px" }}
+                        >
+                          {updateProfile && (
+                            <PrimaryButton
+                              testId="loginInstead"
+                              variant="text"
+                              onClick={() => setDisplayResetPassword(true)}
                             >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Button onClick={() => setDisplayResetPassword(true)}>
-                                  <Typography variant="blueText" sx={{ fontWeight: 600 }}>
-                                    Reset password
-                                  </Typography>
-                                </Button>
-                              </div>
-                            </Box>
-                          </>
-                        )}
-                      </Box>
-                    )
-                  }
+                              Reset password
+                            </PrimaryButton>
+                          )}
+                          {createProfile && (
+                            <PrimaryButton
+                              testId="loginInstead"
+                              buttonElement={Link}
+                              variant="text"
+                              link="/login"
+                            >
+                              Sign in instead
+                            </PrimaryButton>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  )}
                 </div>
               </Paper>
             </Box>

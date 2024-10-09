@@ -1,71 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Provider } from "jotai";
 import {
-  CircularProgress,
   Container,
   InputLabel,
   StyledEngineProvider,
   TextField,
   ThemeProvider,
-  Typography
+  Typography,
 } from "@mui/material";
 import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import AuthClient from "../client/AuthClient";
 import { currentUser, currentlyLoggedIn } from "../state/user";
 import { useAtom } from "jotai";
 import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-const useStyles = makeStyles({
-  container: {
-    margin: "20px 35px"
-  },
-  loginBtn: {
-    backgroundColor: "#f4afc2",
-    "&:hover": {
-      backgroundColor: "#f4afc2"
-    }
-  },
-  login: {
-    fontWeight: "900",
-    fontSize: "15px"
-  }
-});
+import PrimaryButton from "../shared/buttons/PrimaryButton";
 
 const Login = () => {
   let navigate = useNavigate();
-  const classes = useStyles();
-  const [login, setLogin] = useState({
+  const [payload, setPayload] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [user, setUser] = useAtom(currentUser);
   const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [loading, setLoading] = useState(false);
   const [errorValue, setErrorValue] = useState({
     email: { value: false, message: "" },
-    password: { value: false, message: "" }
+    password: { value: false, message: "" },
   });
 
-  const onChangeEmail = (event) => {
-    setLogin((credentials) => ({ ...login, email: event.target.value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setPayload((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
   };
 
-  const onChangePassword = (event) => {
-    setLogin((credentials) => ({ ...login, password: event.target.value }));
+  const checkToDisable = () => {
+    const { email, password } = payload;
+
+    const hasAllRequiredFields = email && password;
+
+    return !hasAllRequiredFields;
   };
 
   const errorHandler = async (id, value, message) => {
     const currentValue = JSON.parse(JSON.stringify(errorValue));
     currentValue[id] = { value: value, message: message };
     setErrorValue(currentValue);
-    value && setLoading(false);
   };
 
   const isValidEmail = (email) => {
@@ -73,7 +60,7 @@ const Login = () => {
   };
 
   const validateInput = () => {
-    const emailValidity = isValidEmail(login.email);
+    const emailValidity = isValidEmail(payload.email);
 
     if (!emailValidity) {
       errorHandler("email", true, "Value should be a valid email.");
@@ -85,8 +72,11 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (validateInput()) {
-      setLoading(true);
-      const result = await AuthClient.login(login.email, login.password, errorHandler);
+      const result = await AuthClient.login(
+        payload.email,
+        payload.password,
+        errorHandler
+      );
       setUserLoggedIn(true);
       setUser(result.user);
       navigate("/");
@@ -102,7 +92,7 @@ const Login = () => {
               sx={{
                 width: "100%",
                 height: 500,
-                margin: "auto"
+                margin: "auto",
               }}
             >
               <Paper
@@ -112,15 +102,13 @@ const Login = () => {
                   maxHeight: "480px",
                   backgroundColor: "#FFFFFF",
                   margin: "auto",
-                  borderRadius: "17px"
+                  borderRadius: "17px",
                 }}
               >
                 <div style={{ padding: "0 35px", minHeight: "385px" }}>
                   <Box>
                     <Grid
                       container
-                      component="form"
-                      onSubmit={handleLogin}
                       spacing={{ xs: 2, md: 2, xl: 5 }}
                       columns={{ md: 12 }}
                     >
@@ -128,7 +116,7 @@ const Login = () => {
                         <Typography
                           sx={{
                             fontWeight: "bold",
-                            fontSize: "22px"
+                            fontSize: "22px",
                           }}
                         >
                           Sign In
@@ -136,7 +124,7 @@ const Login = () => {
                         <Typography
                           sx={{
                             fontSize: "14px",
-                            marginTop: "7px"
+                            marginTop: "7px",
                           }}
                         >
                           Stay updated on your media
@@ -149,15 +137,19 @@ const Login = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px"
-                              }
+                                borderRadius: "17px",
+                              },
                             }}
                             size="small"
-                            value={login.email}
-                            onChange={onChangeEmail}
+                            value={payload.email}
+                            name="email"
+                            onChange={handleChange}
                             required
                             error={errorValue["email"]["value"]}
-                            helperText={errorValue["email"]["value"] && errorValue["email"]["message"]}
+                            helperText={
+                              errorValue["email"]["value"] &&
+                              errorValue["email"]["message"]
+                            }
                           />
                         </InputLabel>
                         <InputLabel>
@@ -168,63 +160,39 @@ const Login = () => {
                             sx={{
                               width: "100%",
                               "& fieldset": {
-                                borderRadius: "17px"
-                              }
+                                borderRadius: "17px",
+                              },
                             }}
                             size="small"
                             type={"password"}
-                            value={login.password}
-                            onChange={onChangePassword}
+                            value={payload.password}
+                            name="password"
+                            onChange={handleChange}
                             required
                           />
                         </InputLabel>
                       </Grid>
-                      <Grid item xs={8} sx={{ marginTop: "8px" }}>
-                        <Typography
-                          sx={{
-                            marginTop: "10px",
-                            fontWeight: "bold",
-                            fontSize: "14px"
-                          }}
-                          variant="blueText"
+                      <Grid item xs={8} container alignContent="center">
+                        <PrimaryButton
+                          testId="forgotPassword"
+                          buttonElement={Link}
+                          variant="text"
+                          link="/signup"
+                          disabled
                         >
-                          Forgot your password?
-                        </Typography>
+                          Forgot password
+                        </PrimaryButton>
                       </Grid>
-                      <Grid item xs={4}>
-                        <Button
-                          variant="outlined"
-                          className={classes.loginBtn}
-                          type="submit"
-                          sx={{
-                            float: "right",
-                            border: "transparent",
-                            "&.MuiButtonBase-root:hover": {
-                              border: "transparent"
-                            },
-                            borderRadius: "17px",
-                            maxHeight: "35px",
-                            "&.Mui-disabled": {
-                              color: "#fff",
-                              background: "#9E9E9E"
-                            }
-                          }}
-                          disabled={loading}
-                        >
-                          {loading && (
-                            <div style={{ color: "#ffffff" }}>
-                              <CircularProgress size={20} color="inherit"
-                                                sx={{ marginTop: "5px", marginRight: "7px" }} />
-                            </div>
-                          )}
-
-                          <Typography
-                            variant="normalText"
-                            className={classes.login}
+                      <Grid item xs={4} container justifyContent="flex-end">
+                        <div style={{}}>
+                          <PrimaryButton
+                            variant="contained"
+                            disabled={checkToDisable()}
+                            onClick={handleLogin}
                           >
                             Sign In
-                          </Typography>
-                        </Button>
+                          </PrimaryButton>
+                        </div>
                       </Grid>
                     </Grid>
                   </Box>
@@ -233,32 +201,31 @@ const Login = () => {
                     sx={{
                       marginTop: "25px",
                       marginLeft: "0",
-                      marginRight: "0"
+                      marginRight: "0",
                     }}
                   />
                   <Box
                     sx={{
                       margin: "auto",
                       marginTop: "20px",
-                      marginBottom: "30px"
+                      marginBottom: "30px",
                     }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center"
-                      }}
-                    >
-                      <Typography sx={{ fontWeight: 550 }}>
-                        New to Rate It?
-                      </Typography>
-                      <Button component={Link} to="/signup">
-                        <Typography variant="blueText" sx={{ fontWeight: 600 }}>
-                          Join Now
+                    <Grid container>
+                      <Grid item xs={12} container justifyContent="center">
+                        <Typography sx={{ fontWeight: 550 }}>
+                          New to Rate It?
+                          <PrimaryButton
+                            testId="signUpLink"
+                            buttonElement={Link}
+                            variant="text"
+                            link="/signup"
+                          >
+                            Join Now
+                          </PrimaryButton>
                         </Typography>
-                      </Button>
-                    </div>
+                      </Grid>
+                    </Grid>
                   </Box>
                 </div>
               </Paper>
@@ -271,4 +238,3 @@ const Login = () => {
 };
 
 export default Login;
-
