@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { Provider } from "jotai";
 import {
   Container,
-  StyledEngineProvider,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
