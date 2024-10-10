@@ -11,7 +11,7 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import { Provider } from "jotai";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -94,177 +94,164 @@ const AddMediaToPlaylistModal = ({
   };
 
   return (
-    <>
-      <Provider>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={theme}>
-            <Dialog
-              open={open}
-              onClose={onClose}
+    <Provider>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "100%",
+            height: 500,
+            maxWidth: 400,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: "13px",
+            fontWeight: "bold",
+            height: "0px",
+            textAlign: "center",
+          }}
+        >
+          Add Media to {mediaByPlaylist?.playlist?.name}
+        </DialogTitle>
+        <Container maxWidth={"sm"} sx={{ marginTop: "10px" }}>
+          <Box sx={{ width: "100%" }}>
+            <Paper
+              elevation={4}
+              component="form"
+              onSubmit={submitSearch}
               sx={{
-                "& .MuiDialog-paper": {
-                  width: "100%",
-                  height: 500,
-                  maxWidth: 400,
-                },
+                p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                width: "85%",
+                borderRadius: "17px",
+                marginTop: "20px",
+                marginLeft: "auto",
+                marginRight: "auto",
               }}
             >
-              <DialogTitle
+              <TextField
                 sx={{
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                  height: "0px",
-                  textAlign: "center",
+                  width: "100%",
+                  "& fieldset": {
+                    border: "none",
+                  },
+                }}
+                size="small"
+                placeholder="Search for media"
+                value={searchKeyword}
+                onChange={onChangeSearch}
+                required
+              />
+              {searchKeyword.length > 0 && (
+                <>
+                  <PrimaryButton
+                    variant="text"
+                    onClick={resetSearch}
+                    leftIcon={<ClearIcon />}
+                  ></PrimaryButton>
+                  <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                  <PrimaryButton
+                    variant="text"
+                    onClick={submitSearch}
+                    leftIcon={<SearchIcon />}
+                  ></PrimaryButton>
+                </>
+              )}
+            </Paper>
+            {hasSearched && (
+              <div
+                style={{
+                  zIndex: "1000",
+                  overflowY: "auto",
+                  width: "100%",
+                  height: 350,
+                  maxWidth: 400,
                 }}
               >
-                Add Media to {mediaByPlaylist?.playlist?.name}
-              </DialogTitle>
-              <Container maxWidth={"sm"} sx={{ marginTop: "10px" }}>
-                <Box sx={{ width: "100%" }}>
-                  <Paper
-                    elevation={4}
-                    component="form"
-                    onSubmit={submitSearch}
-                    sx={{
-                      p: "2px 4px",
-                      display: "flex",
-                      alignItems: "center",
-                      width: "85%",
-                      borderRadius: "17px",
-                      marginTop: "20px",
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                    }}
-                  >
-                    <TextField
-                      sx={{
-                        width: "100%",
-                        "& fieldset": {
-                          border: "none",
-                        },
-                      }}
-                      size="small"
-                      placeholder="Search for media"
-                      value={searchKeyword}
-                      onChange={onChangeSearch}
-                      required
-                    />
-                    {searchKeyword.length > 0 && (
+                <List component="nav" sx={{ margin: "0 10px" }}>
+                  {loading ? (
+                    <ProfileWishlistLoading />
+                  ) : hasSearched &&
+                    searchResults &&
+                    searchResults.length > 0 ? (
+                    searchResults.map((media) => (
                       <>
-                        <PrimaryButton
-                          variant="text"
-                          onClick={resetSearch}
-                          leftIcon={<ClearIcon />}
-                        ></PrimaryButton>
-                        <Divider
-                          sx={{ height: 28, m: 0.5 }}
-                          orientation="vertical"
-                        />
-                        <PrimaryButton
-                          variant="text"
-                          onClick={submitSearch}
-                          leftIcon={<SearchIcon />}
-                        ></PrimaryButton>
+                        <ListItem>
+                          <Grid container>
+                            <Grid
+                              item
+                              xs={3}
+                              component={Link}
+                              to={`/${media.mediaType}/${media.mediaId}`}
+                              sx={{ textDecoration: "none" }}
+                            >
+                              <ListItemAvatar sx={{ marginTop: "15px" }}>
+                                <img
+                                  width={50}
+                                  height={60}
+                                  style={{ marginBottom: "10px" }}
+                                  alt="poster"
+                                  src={
+                                    media?.poster ? media.poster : NotFoundImage
+                                  }
+                                />
+                              </ListItemAvatar>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={6}
+                              component={Link}
+                              to={`/${media.mediaType}/${media.mediaId}`}
+                              sx={{ textDecoration: "none" }}
+                            >
+                              <Stack direction="column">
+                                <Typography sx={{ fontWeight: "bold" }}>
+                                  {media.name.length > 15
+                                    ? `${media.name.substring(0, 15)}...`
+                                    : media.name}
+                                </Typography>
+                                <Typography component="div">
+                                  {media.mediaType.charAt(0).toUpperCase() +
+                                    media.mediaType.slice(1)}
+                                </Typography>
+                              </Stack>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <PrimaryButton
+                                variant="outlined"
+                                leftIcon={
+                                  <AddIcon style={{ color: "#00a8ff" }} />
+                                }
+                                onClick={() => {
+                                  addMediaToPlaylist(
+                                    mediaByPlaylist.playlist._id,
+                                    media.mediaId,
+                                    media.mediaType
+                                  );
+                                }}
+                              >
+                                Add
+                              </PrimaryButton>
+                            </Grid>
+                          </Grid>
+                        </ListItem>
+                        <Divider />
                       </>
-                    )}
-                  </Paper>
-                  {hasSearched && (
-                    <div
-                      style={{
-                        zIndex: "1000",
-                        overflowY: "auto",
-                        width: "100%",
-                        height: 350,
-                        maxWidth: 400,
-                      }}
-                    >
-                      <List component="nav" sx={{ margin: "0 10px" }}>
-                        {loading ? (
-                          <ProfileWishlistLoading />
-                        ) : hasSearched &&
-                          searchResults &&
-                          searchResults.length > 0 ? (
-                          searchResults.map((media) => (
-                            <>
-                              <ListItem>
-                                <Grid container>
-                                  <Grid
-                                    item
-                                    xs={3}
-                                    component={Link}
-                                    to={`/${media.mediaType}/${media.mediaId}`}
-                                    sx={{ textDecoration: "none" }}
-                                  >
-                                    <ListItemAvatar sx={{ marginTop: "15px" }}>
-                                      <img
-                                        width={50}
-                                        height={60}
-                                        style={{ marginBottom: "10px" }}
-                                        alt="poster"
-                                        src={
-                                          media?.poster
-                                            ? media.poster
-                                            : NotFoundImage
-                                        }
-                                      />
-                                    </ListItemAvatar>
-                                  </Grid>
-                                  <Grid
-                                    item
-                                    xs={6}
-                                    component={Link}
-                                    to={`/${media.mediaType}/${media.mediaId}`}
-                                    sx={{ textDecoration: "none" }}
-                                  >
-                                    <Stack direction="column">
-                                      <Typography sx={{ fontWeight: "bold" }}>
-                                        {media.name.length > 15
-                                          ? `${media.name.substring(0, 15)}...`
-                                          : media.name}
-                                      </Typography>
-                                      <Typography component="div">
-                                        {media.mediaType
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                          media.mediaType.slice(1)}
-                                      </Typography>
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={3}>
-                                    <PrimaryButton
-                                      variant="outlined"
-                                      leftIcon={
-                                        <AddIcon style={{ color: "#00a8ff" }} />
-                                      }
-                                      onClick={() => {
-                                        addMediaToPlaylist(
-                                          mediaByPlaylist.playlist._id,
-                                          media.mediaId,
-                                          media.mediaType
-                                        );
-                                      }}
-                                    >
-                                      Add
-                                    </PrimaryButton>
-                                  </Grid>
-                                </Grid>
-                              </ListItem>
-                              <Divider />
-                            </>
-                          ))
-                        ) : (
-                          <div>No media match this search.</div>
-                        )}
-                      </List>
-                    </div>
+                    ))
+                  ) : (
+                    <div>No media match this search.</div>
                   )}
-                </Box>
-              </Container>
-            </Dialog>
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
-    </>
+                </List>
+              </div>
+            )}
+          </Box>
+        </Container>
+      </Dialog>
+    </Provider>
   );
 };
 

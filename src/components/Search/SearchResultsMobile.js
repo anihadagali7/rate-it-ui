@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import { Provider, useAtom } from "jotai";
 import React, { useState } from "react";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import Divider from "@mui/material/Divider";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";

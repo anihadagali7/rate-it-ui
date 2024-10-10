@@ -9,7 +9,7 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import { Provider } from "jotai";
 import UserClient from "../../client/UserClient";
 import ClearIcon from "@mui/icons-material/Clear";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Provider, useAtom } from "jotai";
-import { theme } from "../Theme/Theme";
+import { theme } from "../styles/Theme";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
 import {
@@ -325,179 +325,169 @@ const MediaInfo = () => {
 
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Container
-            maxWidth={"sm"}
-            sx={{ marginTop: "50px", marginBottom: "25px" }}
+      <Container
+        maxWidth={"sm"}
+        sx={{ marginTop: "50px", marginBottom: "25px" }}
+      >
+        <PrimaryButton
+          variant="text"
+          leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+          onClick={() => navigate(-1)}
+        >
+          Return
+        </PrimaryButton>
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            margin: "auto",
+          }}
+        >
+          <Paper
+            elevation={6}
+            sx={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#FFFFFF",
+              margin: "auto",
+              borderRadius: "17px",
+            }}
           >
-            <PrimaryButton
-              variant="text"
-              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              onClick={() => navigate(-1)}
-            >
-              Return
-            </PrimaryButton>
-            <Box
+            <div style={{ padding: "0 35px", minHeight: "385px" }}>
+              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                {loading ? (
+                  <MediaInfoMobileLoading />
+                ) : (
+                  media && mobileView(media)
+                )}
+              </Box>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                {loading ? (
+                  <MediaInfoDesktopLoading />
+                ) : (
+                  media && desktopView(media)
+                )}
+              </Box>
+            </div>
+          </Paper>
+        </Box>
+        {ratingsList && ratingsList.length > 0 && (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              margin: "auto",
+              marginTop: "15px",
+            }}
+          >
+            <Paper
+              elevation={6}
               sx={{
                 width: "100%",
                 height: "100%",
+                backgroundColor: "#FFFFFF",
                 margin: "auto",
+                borderRadius: "17px",
               }}
             >
-              <Paper
-                elevation={6}
+              <Typography
                 sx={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                  borderRadius: "17px",
+                  fontWeight: "bold",
+                  fontSize: "22px",
+                  paddingTop: "15px",
+                  paddingLeft: "25px",
                 }}
               >
-                <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box
-                    sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
-                  >
-                    {loading ? (
-                      <MediaInfoMobileLoading />
-                    ) : (
-                      media && mobileView(media)
-                    )}
-                  </Box>
-                  <Box
-                    sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
-                  >
-                    {loading ? (
-                      <MediaInfoDesktopLoading />
-                    ) : (
-                      media && desktopView(media)
-                    )}
-                  </Box>
-                </div>
-              </Paper>
-            </Box>
-            {ratingsList && ratingsList.length > 0 && (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  margin: "auto",
-                  marginTop: "15px",
-                }}
+                User reviews
+              </Typography>
+              <List
+                component="nav"
+                sx={{ marginLeft: "15px", marginRight: "15px" }}
               >
-                <Paper
-                  elevation={6}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "#FFFFFF",
-                    margin: "auto",
-                    borderRadius: "17px",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "22px",
-                      paddingTop: "15px",
-                      paddingLeft: "25px",
-                    }}
-                  >
-                    User reviews
-                  </Typography>
-                  <List
-                    component="nav"
-                    sx={{ marginLeft: "15px", marginRight: "15px" }}
-                  >
-                    {ratingsList &&
-                      ratingsList.length > 0 &&
-                      ratingsList.map((rating) => (
-                        <>
-                          <ListItem>
-                            <Stack direction="row" spacing={2}>
-                              <>
-                                <Avatar
-                                  sx={{
-                                    bgcolor: "#00a8ff",
-                                    textDecoration: "none",
-                                    marginTop: "auto",
-                                    marginBottom: "auto",
-                                  }}
-                                  component={Link}
-                                  to={`/profile/${rating.ratedBy.userName}`}
-                                >
-                                  {rating.ratedBy.firstName[0]}
-                                  {rating.ratedBy.lastName[0]}
-                                </Avatar>
-                                <div>
-                                  <Stack direction="column">
-                                    <span style={{ fontWeight: "bold" }}>
-                                      {rating.ratedBy.firstName}{" "}
-                                      {rating.ratedBy.lastName}
-                                      <span style={{ fontWeight: "normal" }}>
-                                        {" "}
-                                        @{rating.ratedBy.userName}
-                                      </span>
-                                      <span style={{ fontWeight: "normal" }}>
-                                        {" "}
-                                        &#8226; {getTimeAgo(rating.dateCreated)}
-                                      </span>
-                                    </span>
-                                    <span>
-                                      <Typography
-                                        component={Link}
-                                        sx={{ textDecoration: "none" }}
-                                        to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                                      >
-                                        -{rating.media.name}
-                                      </Typography>
-                                    </span>
-                                    <Typography>
-                                      Rating: {rating.rating}
-                                    </Typography>
-                                    <Typography>
-                                      Comments: {rating.comments}
-                                    </Typography>
-                                  </Stack>
-                                </div>
-                              </>
-                            </Stack>
-                          </ListItem>
-                          <Divider
-                            sx={{
-                              width: "95%",
-                              marginLeft: "auto",
-                              marginRight: "auto",
-                            }}
-                          />
-                        </>
-                      ))}
-                  </List>
-                </Paper>
-              </Box>
-            )}
-          </Container>
-          {openRatingModal && (
-            <AddRatingModal
-              open={openRatingModal}
-              onClose={handleAddRatingModalClose}
-              mediaDetails={media}
-              user={user}
-              ratingAdded={ratingAdded}
-              setRatingAdded={setRatingAdded}
-            />
-          )}
-          {displayTokenModal && (
-            <LoginErrorModal
-              open={displayTokenModal}
-              onClose={() => {
-                setDisplayTokenModal(false);
-              }}
-            />
-          )}
-        </ThemeProvider>
-      </StyledEngineProvider>
+                {ratingsList &&
+                  ratingsList.length > 0 &&
+                  ratingsList.map((rating) => (
+                    <>
+                      <ListItem>
+                        <Stack direction="row" spacing={2}>
+                          <>
+                            <Avatar
+                              sx={{
+                                bgcolor: "#00a8ff",
+                                textDecoration: "none",
+                                marginTop: "auto",
+                                marginBottom: "auto",
+                              }}
+                              component={Link}
+                              to={`/profile/${rating.ratedBy.userName}`}
+                            >
+                              {rating.ratedBy.firstName[0]}
+                              {rating.ratedBy.lastName[0]}
+                            </Avatar>
+                            <div>
+                              <Stack direction="column">
+                                <span style={{ fontWeight: "bold" }}>
+                                  {rating.ratedBy.firstName}{" "}
+                                  {rating.ratedBy.lastName}
+                                  <span style={{ fontWeight: "normal" }}>
+                                    {" "}
+                                    @{rating.ratedBy.userName}
+                                  </span>
+                                  <span style={{ fontWeight: "normal" }}>
+                                    {" "}
+                                    &#8226; {getTimeAgo(rating.dateCreated)}
+                                  </span>
+                                </span>
+                                <span>
+                                  <Typography
+                                    component={Link}
+                                    sx={{ textDecoration: "none" }}
+                                    to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
+                                  >
+                                    -{rating.media.name}
+                                  </Typography>
+                                </span>
+                                <Typography>Rating: {rating.rating}</Typography>
+                                <Typography>
+                                  Comments: {rating.comments}
+                                </Typography>
+                              </Stack>
+                            </div>
+                          </>
+                        </Stack>
+                      </ListItem>
+                      <Divider
+                        sx={{
+                          width: "95%",
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                        }}
+                      />
+                    </>
+                  ))}
+              </List>
+            </Paper>
+          </Box>
+        )}
+      </Container>
+      {openRatingModal && (
+        <AddRatingModal
+          open={openRatingModal}
+          onClose={handleAddRatingModalClose}
+          mediaDetails={media}
+          user={user}
+          ratingAdded={ratingAdded}
+          setRatingAdded={setRatingAdded}
+        />
+      )}
+      {displayTokenModal && (
+        <LoginErrorModal
+          open={displayTokenModal}
+          onClose={() => {
+            setDisplayTokenModal(false);
+          }}
+        />
+      )}
     </Provider>
   );
 };

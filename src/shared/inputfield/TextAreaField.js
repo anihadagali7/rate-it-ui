@@ -14,6 +14,7 @@ const TextAreaField = ({
   onChange,
   minRows,
   value,
+  name
 }) => {
   const [text, setText] = React.useState(value || "");
 
@@ -37,6 +38,7 @@ const TextAreaField = ({
         value={value}
         minRows={minRows}
         maxRows={4}
+        name={name}
         placeholder={placeholder}
         required={required}
         maxLength={hasCharacterCount ? maxCharacters : null}

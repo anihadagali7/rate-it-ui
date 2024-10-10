@@ -8,7 +8,7 @@ import {
   TextField,
   ThemeProvider,
 } from "@mui/material";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import { Provider } from "jotai";
 import ClearIcon from "@mui/icons-material/Clear";
 import Paper from "@mui/material/Paper";
@@ -16,8 +16,13 @@ import StarIcon from "@mui/icons-material/Star";
 import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
-
-const AddPlaylistModal = ({ open, onClose, user, playlistAdded, setPlaylistAdded }) => {
+const AddPlaylistModal = ({
+  open,
+  onClose,
+  user,
+  playlistAdded,
+  setPlaylistAdded,
+}) => {
   const [name, setName] = useState("");
 
   const onChangeName = (event) => {

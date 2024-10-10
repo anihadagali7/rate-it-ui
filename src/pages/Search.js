@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Provider } from "jotai";
-import { theme } from "../Theme/Theme";
+import { theme } from "../styles/Theme";
 import {
   Container,
   StyledEngineProvider,
