@@ -1,0 +1,85 @@
+{
+  "status": "success",
+  "data": {
+    "mediaByPlaylist": {
+      "playlist": {
+        "_id": "64b9f87e6af3591fda5e1c38",
+        "name": "test playlist",
+        "addedBy": "63019b905ccf53564ffb0c84",
+        "isActive": true,
+        "dateCreated": "2023-07-21T03:16:14.611Z",
+        "__v": 0
+      },
+      "mediaList": [
+        {
+          "_id": "636a7292fab7fe4361cf22d1",
+          "name": "Mr. Robot",
+          "artist": [],
+          "author": [],
+          "producer": ["Muneeb Ibni"],
+          "director": [],
+          "host": [],
+          "cast": [
+            "Rami Malek",
+            "Christian Slater",
+            "Carly Chaikin",
+            "BD Wong"
+          ],
+          "description": "A contemporary and culturally resonant drama about a young programmer, Elliot, who suffers from a debilitating anti-social disorder and decides that he can only connect to people by hacking them. He wields his skills as a weapon to protect the people that he cares about. Elliot will find himself in the intersection between a cybersecurity firm he works for and the underworld organizations that are recruiting him to bring down corporate America.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/oKIBhzZzDX07SoE2bOLhq2EE8rf.jpg",
+          "dateReleased": "2015-06-24T00:00:00.000Z",
+          "mediaId": "62560",
+          "__v": 0
+        },
+        {
+          "_id": "6301a114d4fcea908d076ec2",
+          "name": "The White Lotus",
+          "artist": [],
+          "author": [],
+          "producer": [],
+          "director": [],
+          "host": [],
+          "cast": ["Jennifer Coolidge"],
+          "description": "Follow the exploits of various guests and employees at an exclusive tropical resort over the span of a week as with each passing day, a darker complexity emerges in these picture-perfect travelers, the hotel’s cheerful employees and the idyllic locale itself.",
+          "mediaType": "TV",
+          "picture": "https://image.tmdb.org/t/p/w500/4gBYNDdczkFOqjR4dgYamqbp6cS.jpg",
+          "dateReleased": "2021-07-11T00:00:00.000Z",
+          "mediaId": "111803",
+          "__v": 0
+        },
+        {
+          "_id": "64c5d9398dfa63af489ccf3b",
+          "name": "Batman",
+          "artist": [],
+          "author": [],
+          "producer": [
+            "Hugo Blick",
+            "Peter Guber",
+            "Jon Peters",
+            "Marion Dougherty"
+          ],
+          "director": [
+            "Tim Burton",
+            "Peter MacDonald",
+            "Derek Cracknell",
+            "Cheryl Leigh"
+          ],
+          "host": [],
+          "cast": [
+            "Michael Keaton",
+            "Jack Nicholson",
+            "Kim Basinger",
+            "Michael Gough"
+          ],
+          "description": "Batman must face his most ruthless nemesis when a deformed madman calling himself \"The Joker\" seizes control of Gotham's criminal underworld.",
+          "mediaType": "MOVIE",
+          "picture": "https://image.tmdb.org/t/p/w500/cij4dd21v2Rk2YtUQbV5kW69WB2.jpg",
+          "dateReleased": "1989-06-23T00:00:00.000Z",
+          "mediaId": "268",
+          "__v": 0
+        }
+      ]
+    }
+  }
+}
