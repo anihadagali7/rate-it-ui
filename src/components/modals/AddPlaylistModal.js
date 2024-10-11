@@ -77,7 +77,7 @@ const AddPlaylistModal = ({
               <PrimaryButton
                 variant="contained"
                 onClick={handleSubmitPlaylist}
-                disabled={checkToDisable}
+                disabled={checkToDisable()}
               >
                 Submit
               </PrimaryButton>

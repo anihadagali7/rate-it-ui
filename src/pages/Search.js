@@ -3,25 +3,19 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Provider } from "jotai";
-import { theme } from "../styles/Theme";
 import {
   Container,
-  StyledEngineProvider,
-  TextField,
-  ThemeProvider,
 } from "@mui/material";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
 import SearchResultsMobile from "../components/Search/SearchResultsMobile";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
-import Divider from "@mui/material/Divider";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -118,194 +112,168 @@ const Search = () => {
     </>
   );
 
+  const checkToDisable = () => {
+    return !searchKeyword;
+  };
+
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Container
-            maxWidth={"sm"}
-            sx={{ marginTop: "50px", marginBottom: "20px" }}
+      <Container
+        maxWidth={"sm"}
+        sx={{ marginTop: "50px", marginBottom: "20px" }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: hasSearched || loading ? "100%" : 85,
+            margin: "auto",
+          }}
+        >
+          <Paper
+            elevation={6}
+            sx={{
+              width: "100%",
+              height: hasSearched || loading ? "100%" : 85,
+              backgroundColor: "#FFFFFF",
+              margin: "auto",
+              borderRadius: "17px",
+            }}
           >
-            <Box
-              sx={{
-                width: "100%",
-                height: hasSearched || loading ? "100%" : 85,
-                margin: "auto",
-              }}
-            >
-              <Paper
-                elevation={6}
-                sx={{
-                  width: "100%",
-                  height: hasSearched || loading ? "100%" : 85,
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                  borderRadius: "17px",
-                }}
-              >
-                <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box>
-                    <Grid
-                      container
-                      spacing={{ xs: 2, md: 2, xl: 5 }}
-                      columns={{ md: 12 }}
+            <div style={{ padding: "0 35px", minHeight: "385px" }}>
+              <Box sx={{ paddingTop: "20px" }}>
+                <Grid
+                  container
+                  spacing={{ xs: 2, md: 2, xl: 5 }}
+                  columns={{ xs: 12 }}
+                >
+                  <Grid item xs={9}>
+                    <PrimaryInputField
+                      value={searchKeyword}
+                      name="search"
+                      onChange={onChangeSearch}
+                    />
+                  </Grid>
+                  <Grid item xs={3} container justifyContent="center">
+                    <PrimaryButton
+                      variant="contained"
+                      onClick={submitSearch}
+                      disabled={checkToDisable()}
                     >
-                      <Grid item xs={12} sx={{ width: "100%" }}>
-                        <Paper
-                          elevation={2}
-                          sx={{
-                            p: "2px 4px",
-                            display: "flex",
-                            alignItems: "center",
-                            width: "auto",
-                            borderRadius: "17px",
-                          }}
-                        >
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                border: "none",
-                              },
-                            }}
-                            size="small"
-                            placeholder="Search Rate It"
-                            value={searchKeyword}
-                            onChange={onChangeSearch}
-                            required
-                          />
-                          {searchKeyword.length > 0 && (
-                            <PrimaryButton
-                              variant="text"
-                              onClick={resetSearch}
-                              leftIcon={<ClearIcon />}
-                            ></PrimaryButton>
-                          )}
-                          <Divider
-                            sx={{ height: 28, m: 0.5 }}
-                            orientation="vertical"
-                          />
-                          <PrimaryButton
-                            variant="text"
-                            onClick={submitSearch}
-                            leftIcon={<SearchIcon />}
-                          ></PrimaryButton>
-                        </Paper>
-                      </Grid>
-                    </Grid>
+                      Search
+                    </PrimaryButton>
+                  </Grid>
+                </Grid>
+              </Box>
+              {hasSearched && (
+                <Box sx={{ width: "100%", marginTop: "10px" }}>
+                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <Tabs
+                      value={searchTabType}
+                      onChange={changeSearchTabType}
+                      variant="scrollable"
+                      allowScrollButtonsMobile
+                      sx={{ color: "#00a8ff" }}
+                      TabIndicatorProps={{
+                        style: { background: "#00a8ff" },
+                      }}
+                    >
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px",
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff",
+                          },
+                        }}
+                        label="Movies"
+                      />
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px",
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff",
+                          },
+                        }}
+                        label="TV Shows"
+                      />
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px",
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff",
+                          },
+                        }}
+                        label="Books"
+                      />
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px",
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff",
+                          },
+                        }}
+                        label="Music"
+                      />
+                      <Tab
+                        sx={{
+                          fontSize: "13px",
+                          "&.Mui-selected": {
+                            color: "#40a9ff",
+                            fontSize: "13px",
+                          },
+                          "&.Mui-focusVisible": {
+                            backgroundColor: "#40a9ff",
+                          },
+                        }}
+                        label="Users"
+                      />
+                    </Tabs>
                   </Box>
-                  {hasSearched && (
-                    <Box sx={{ width: "100%", marginTop: "10px" }}>
-                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                        <Tabs
-                          value={searchTabType}
-                          onChange={changeSearchTabType}
-                          variant="scrollable"
-                          allowScrollButtonsMobile
-                          sx={{ color: "#00a8ff" }}
-                          TabIndicatorProps={{
-                            style: { background: "#00a8ff" },
-                          }}
-                        >
-                          <Tab
-                            sx={{
-                              fontSize: "13px",
-                              "&.Mui-selected": {
-                                color: "#40a9ff",
-                                fontSize: "13px",
-                              },
-                              "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff",
-                              },
-                            }}
-                            label="Movies"
-                          />
-                          <Tab
-                            sx={{
-                              fontSize: "13px",
-                              "&.Mui-selected": {
-                                color: "#40a9ff",
-                                fontSize: "13px",
-                              },
-                              "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff",
-                              },
-                            }}
-                            label="TV Shows"
-                          />
-                          <Tab
-                            sx={{
-                              fontSize: "13px",
-                              "&.Mui-selected": {
-                                color: "#40a9ff",
-                                fontSize: "13px",
-                              },
-                              "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff",
-                              },
-                            }}
-                            label="Books"
-                          />
-                          <Tab
-                            sx={{
-                              fontSize: "13px",
-                              "&.Mui-selected": {
-                                color: "#40a9ff",
-                                fontSize: "13px",
-                              },
-                              "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff",
-                              },
-                            }}
-                            label="Music"
-                          />
-                          <Tab
-                            sx={{
-                              fontSize: "13px",
-                              "&.Mui-selected": {
-                                color: "#40a9ff",
-                                fontSize: "13px",
-                              },
-                              "&.Mui-focusVisible": {
-                                backgroundColor: "#40a9ff",
-                              },
-                            }}
-                            label="Users"
-                          />
-                        </Tabs>
-                      </Box>
-                      <TabPanel value={searchTabType} index={0}>
-                        {displayMediaSearchResults()}
-                      </TabPanel>
-                      <TabPanel value={searchTabType} index={1}>
-                        {displayMediaSearchResults()}
-                      </TabPanel>
-                      <TabPanel value={searchTabType} index={2}>
-                        {displayMediaSearchResults()}
-                      </TabPanel>
-                      <TabPanel value={searchTabType} index={3}>
-                        {displayMediaSearchResults()}
-                      </TabPanel>
-                      <TabPanel value={searchTabType} index={4}>
-                        {displayMediaSearchResults()}
-                      </TabPanel>
-                    </Box>
-                  )}
-                </div>
-              </Paper>
-            </Box>
-          </Container>
-          {displayTokenModal && (
-            <LoginErrorModal
-              open={displayTokenModal}
-              onClose={() => {
-                resetSearch();
-                setDisplayTokenModal(false);
-              }}
-            />
-          )}
-        </ThemeProvider>
-      </StyledEngineProvider>
+                  <TabPanel value={searchTabType} index={0}>
+                    {displayMediaSearchResults()}
+                  </TabPanel>
+                  <TabPanel value={searchTabType} index={1}>
+                    {displayMediaSearchResults()}
+                  </TabPanel>
+                  <TabPanel value={searchTabType} index={2}>
+                    {displayMediaSearchResults()}
+                  </TabPanel>
+                  <TabPanel value={searchTabType} index={3}>
+                    {displayMediaSearchResults()}
+                  </TabPanel>
+                  <TabPanel value={searchTabType} index={4}>
+                    {displayMediaSearchResults()}
+                  </TabPanel>
+                </Box>
+              )}
+            </div>
+          </Paper>
+        </Box>
+      </Container>
+      {displayTokenModal && (
+        <LoginErrorModal
+          open={displayTokenModal}
+          onClose={() => {
+            resetSearch();
+            setDisplayTokenModal(false);
+          }}
+        />
+      )}
     </Provider>
   );
 };

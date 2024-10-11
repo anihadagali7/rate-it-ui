@@ -134,7 +134,7 @@ const AddMediaToPlaylistModal = ({
               <Grid item xs={3}>
                 <PrimaryButton
                   variant="contained"
-                  disabled={checkToDisable}
+                  disabled={checkToDisable()}
                   onClick={submitSearch}
                 >
                   Search
