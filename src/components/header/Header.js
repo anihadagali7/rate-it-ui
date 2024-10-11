@@ -19,8 +19,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAtom } from "jotai";
 import { currentUser, currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import HomeIcon from "@mui/icons-material/Home";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -33,6 +31,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Alert, Collapse } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import PrimaryTabs from "../../shared/tabs/PrimaryTabs";
 
 const useStyles = makeStyles({
   title: {
@@ -51,55 +50,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
-
-const AntTabs = styled(Tabs)({
-  borderBottom: "1px solid #e8e8e8",
-  "& .MuiTabs-indicator": {
-    backgroundColor: "#f195ac",
-  },
-});
-
-const AntTab = styled((props) => <Tab disableRipple {...props} />)(
-  ({ theme }) => ({
-    textTransform: "none",
-    minWidth: 0,
-    [theme.breakpoints.up("sm")]: {
-      minWidth: 0,
-    },
-    fontWeight: "bold",
-    fontSize: "16px",
-    marginRight: theme.spacing(1),
-    color: "#232b2b",
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    "& .root": {
-      borderBottom: "none",
-    },
-    "&:hover": {
-      color: "#232b2b",
-      opacity: 1,
-    },
-    "&.Mui-selected": {
-      color: "#40a9ff",
-      fontWeight: "bold",
-      fontSize: "18px",
-    },
-    "&.Mui-focusVisible": {
-      backgroundColor: "#40a9ff",
-    },
-  })
-);
-
 const drawerWidth = 240;
 
 const Header = ({ displayMenu }) => {
@@ -114,9 +64,23 @@ const Header = ({ displayMenu }) => {
 
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  const tabItems = [
+    {
+      title: "Home",
+      value: 0,
+      to: "/",
+    },
+    {
+      value: 1,
+      title: "Search",
+      to: "/search",
+    },
+    {
+      value: 2,
+      title: "Profile",
+      to: `/profile/${user.userName}`,
+    },
+  ];
 
   useEffect(() => {
     checkPathnameValue();
@@ -142,13 +106,7 @@ const Header = ({ displayMenu }) => {
       setTabValue(1);
     } else if (pathname.includes("/profile/")) {
       setTabValue(2);
-    }
-    // else if (pathname === "/playlist") {
-    //   setTabValue(3);
-    // } else if (pathname === "/wishlist") {
-    //   setTabValue(4);
-    // }
-    else {
+    } else {
       setTabValue(false);
     }
   };
@@ -204,53 +162,13 @@ const Header = ({ displayMenu }) => {
             display: { xs: "none", md: "flex" },
           }}
         >
-          <AntTabs
-            sx={{
-              marginLeft: "32%",
-              color: "#f195ac",
-              borderBottom: "none",
-              margin: "auto",
-            }}
-            value={tabValue}
-            onChange={handleTabChange}
-            TabIndicatorProps={{ style: { background: "#f195ac" } }}
-          >
-            <AntTab
-              icon={<HomeIcon />}
-              label="Home"
-              iconPosition="start"
-              component={Link}
-              to="/"
-            />
-            <AntTab
-              icon={<SearchIcon />}
-              label="Search"
-              iconPosition="start"
-              component={Link}
-              to="/search"
-            />
-            <AntTab
-              icon={<AccountCircleIcon />}
-              label="Profile"
-              iconPosition="start"
-              component={Link}
-              to={`/profile/${user.userName}`}
-            />
-            {/*<AntTab*/}
-            {/*  icon={<PlaylistAddIcon />}*/}
-            {/*  label="Playlist"*/}
-            {/*  iconPosition="start"*/}
-            {/*  component={Link}*/}
-            {/*  to="/"*/}
-            {/*/>*/}
-            {/*<AntTab*/}
-            {/*  icon={<BookmarkIcon />}*/}
-            {/*  iconPosition="start"*/}
-            {/*  component={Link}*/}
-            {/*  label="Wishlist"*/}
-            {/*  to="/"*/}
-            {/*/>*/}
-          </AntTabs>
+          <PrimaryTabs
+            tabItems={tabItems}
+            navigation
+            handleChange={setTabValue}
+            activeTab={tabValue}
+            onTabChange={setTabValue}
+          />
           {localUserLoggedIn ? (
             <>
               <PrimaryButton variant="text" onClick={handleOpenUserMenu}>
@@ -401,26 +319,6 @@ const Header = ({ displayMenu }) => {
                 </Typography>
               </ListItemText>
             </ListItem>
-            {/*<ListItem key={"playlist"} component={Link} to={"/playlist"}>*/}
-            {/*  <ListItemIcon>*/}
-            {/*    <PlaylistAddIcon sx={{ color: "#232b2b" }} />*/}
-            {/*  </ListItemIcon>*/}
-            {/*  <Typography*/}
-            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 2 && "bold" }}*/}
-            {/*  >*/}
-            {/*    Playlist*/}
-            {/*  </Typography>*/}
-            {/*</ListItem>*/}
-            {/*<ListItem key={"wishlist"} component={Link} to={"/wishlist"}>*/}
-            {/*  <ListItemIcon>*/}
-            {/*    <BookmarkIcon sx={{ color: "#232b2b" }} />*/}
-            {/*  </ListItemIcon>*/}
-            {/*  <Typography*/}
-            {/*    sx={{ color: "#232b2b", fontWeight: tabValue == 3 && "bold" }}*/}
-            {/*  >*/}
-            {/*    Wishlist*/}
-            {/*  </Typography>*/}
-            {/*</ListItem>*/}
           </List>
           <Divider />
           <List>
