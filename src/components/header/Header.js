@@ -28,7 +28,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import SearchIcon from "@mui/icons-material/Search";
-import { Alert, Collapse } from "@mui/material";
+import { Alert, Collapse, Grid } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../../shared/tabs/PrimaryTabs";
@@ -138,80 +138,86 @@ const Header = ({ displayMenu }) => {
 
   const displayBigScreenHeader = () => (
     <>
-      <Typography
-        variant="h6"
-        noWrap
-        component="a"
-        href="/"
+      <Box
         sx={{
-          mr: 2,
+          flexGrow: 1,
           display: { xs: "none", md: "flex" },
-          fontFamily: "Black Signature",
-          fontWeight: 700,
-          letterSpacing: ".3rem",
-          color: "#00a8ff",
-          textDecoration: "none",
         }}
       >
-        RATE IT
-      </Typography>
-      <>
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: { xs: "none", md: "flex" },
-          }}
-        >
-          <PrimaryTabs
-            tabItems={tabItems}
-            navigation
-            handleChange={setTabValue}
-            activeTab={tabValue}
-            onTabChange={setTabValue}
-          />
-          {localUserLoggedIn ? (
-            <>
-              <PrimaryButton variant="text" onClick={handleOpenUserMenu}>
-                {user.userName}
-              </PrimaryButton>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={userMenu}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={userMenu}
-                onClose={handleCloseUserMenu}
-              >
-                <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={logoutUser}>
-                    Logout
-                  </Typography>
-                </MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <PrimaryButton
-                variant="text"
-                buttonElement={Link}
-                link="/login"
-                onClick={() => setTabValue(false)}
-                leftIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
-              >
-                {user.userName}
-              </PrimaryButton>
-            </>
-          )}
-        </Box>
-      </>
+        <Grid container>
+          <Grid item xs={2} container alignContent="center">
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "Black Signature",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "#00a8ff",
+                textDecoration: "none",
+              }}
+            >
+              RATE IT
+            </Typography>
+          </Grid>
+          <Grid item xs={8} container justifyContent="center">
+            <PrimaryTabs
+              tabItems={tabItems}
+              navigation
+              handleChange={setTabValue}
+              activeTab={tabValue}
+              onTabChange={setTabValue}
+            />
+          </Grid>
+          <Grid item xs={2} container justifyContent="end">
+            {localUserLoggedIn ? (
+              <>
+                <PrimaryButton variant="text" onClick={handleOpenUserMenu}>
+                  {user.userName}
+                </PrimaryButton>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={userMenu}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={userMenu}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center" onClick={logoutUser}>
+                      Logout
+                    </Typography>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <PrimaryButton
+                  variant="text"
+                  buttonElement={Link}
+                  link="/login"
+                  onClick={() => setTabValue(false)}
+                  leftIcon={<AccountCircleIcon style={{ color: "#FFFFFF" }} />}
+                >
+                  {user.userName}
+                </PrimaryButton>
+              </>
+            )}
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 
