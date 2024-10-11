@@ -97,9 +97,7 @@ const DisplayRatingsByUser = ({ user }) => {
                   </>
                 </Stack>
               </ListItem>
-              <Divider
-                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
-              />
+              <Divider />
             </>
           ))}
       </>
@@ -108,20 +106,11 @@ const DisplayRatingsByUser = ({ user }) => {
 
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <List component="nav">
-              {loading ? <ProfileRatingsLoading /> : displayRatings()}
-            </List>
-          </Box>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <Box>
+        <List component="nav">
+          {loading ? <ProfileRatingsLoading /> : displayRatings()}
+        </List>
+      </Box>
     </Provider>
   );
 };
