@@ -417,7 +417,7 @@ export const theme = createTheme({
         root: {
           fontFamily: "FordF1Regular, Arial, sans-serif",
           lineHeight: "28px",
-          fontSize: "20px",
+          fontSize: "17px",
           color: "#333333",
           padding: "8px 0px",
           alignItems: "flex-start",

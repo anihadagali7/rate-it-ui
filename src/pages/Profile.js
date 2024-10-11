@@ -1,19 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Container,
-  Grid,
-  Paper,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { theme } from "../styles/Theme";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import { Link, useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/modals/FriendsModal";
@@ -24,12 +13,7 @@ import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
 import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
 import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
-
-const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-
-  return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
-};
+import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -41,10 +25,6 @@ const Profile = () => {
   const [friendsTab, setFriendsTab] = useState(0);
   const [user, setUser] = useAtom(currentUser);
   const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
 
   const followProfile = async () => {
     await UserClient.followUser(user.userName, profile.userName);
@@ -129,188 +109,155 @@ const Profile = () => {
     }
   };
 
+  const tabItems = [
+    {
+      title: "Ratings",
+      value: 0,
+      content: <DisplayRatingsByUser user={profile} />,
+    },
+    {
+      value: 1,
+      title: "Wishlist",
+      content: <DisplayWishlistByUser user={profile} />,
+    },
+    {
+      value: 2,
+      title: "Playlist",
+      content: (
+        <DisplayPlaylistByUser
+          user={profile}
+          userViewingOwnProfile={userViewingOwnProfile}
+        />
+      ),
+    },
+  ];
+
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Container
-            maxWidth={"sm"}
-            sx={{ marginTop: "50px", marginBottom: "25px" }}
-          >
-            <Paper
-              elevation={6}
-              sx={{
-                width: "100%",
-                minHeight: "300px",
-                height: "100%",
-                backgroundColor: "#FFFFFF",
-                margin: "auto",
-                borderRadius: "17px",
-              }}
+      <Container
+        maxWidth={"sm"}
+        sx={{ marginTop: "50px", marginBottom: "25px" }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            width: "100%",
+            minHeight: "300px",
+            height: "100%",
+            backgroundColor: "#FFFFFF",
+            margin: "auto",
+            borderRadius: "17px",
+          }}
+        >
+          <Grid container sx={{ padding: "15px 35px" }}>
+            <Grid item xs={3}>
+              <Avatar
+                src={AccountCircleIcon}
+                sx={{
+                  width: 56,
+                  height: 56,
+                  marginTop: "10px",
+                }}
+              />
+            </Grid>
+            <Grid
+              item
+              xs={9}
+              container
+              justifyContent="end"
+              alignContent="center"
             >
-              <Grid container sx={{ padding: "15px 35px" }}>
-                <Grid item xs={3}>
-                  <Avatar
-                    src={AccountCircleIcon}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      marginTop: "10px",
-                    }}
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={9}
-                  container
-                  justifyContent="end"
-                  alignContent="center"
+              {determineActionButton()}
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  marginTop: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                {profile?.firstName}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                }}
+              >
+                @{profile?.userName}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleFriendsModalOpen(0)}
+              >
+                {profile && profile.following && profile.following.length}
+                <span style={{ fontWeight: "normal" }}> following</span>
+              </span>
+            </Grid>
+            <Grid item xs={2}>
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleFriendsModalOpen(1)}
+              >
+                {profile && profile.followers && profile.followers.length}
+                <span style={{ fontWeight: "normal" }}> followers</span>
+              </span>
+            </Grid>
+            {user.userName === userName && (
+              <Grid item xs={12}>
+                <PrimaryButton
+                  variant="text"
+                  rightIcon={<PersonAddAltSharpIcon />}
+                  onClick={handleAddFriendsModalOpen}
                 >
-                  {determineActionButton()}
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      marginTop: "10px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {profile?.firstName}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      fontSize: "13px",
-                    }}
-                  >
-                    @{profile?.userName}
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleFriendsModalOpen(0)}
-                  >
-                    {profile && profile.following && profile.following.length}
-                    <span style={{ fontWeight: "normal" }}> following</span>
-                  </span>
-                </Grid>
-                <Grid item xs={2}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleFriendsModalOpen(1)}
-                  >
-                    {profile && profile.followers && profile.followers.length}
-                    <span style={{ fontWeight: "normal" }}> followers</span>
-                  </span>
-                </Grid>
-                {user.userName === userName && (
-                  <Grid item xs={12}>
-                    <PrimaryButton
-                      variant="text"
-                      rightIcon={<PersonAddAltSharpIcon />}
-                      onClick={handleAddFriendsModalOpen}
-                    >
-                      Add friends
-                    </PrimaryButton>
-                  </Grid>
-                )}
+                  Add friends
+                </PrimaryButton>
               </Grid>
-              <Box sx={{ width: "100%" }}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    sx={{ color: "#00a8ff" }}
-                    TabIndicatorProps={{ style: { background: "#00a8ff" } }}
-                  >
-                    <Tab
-                      sx={{
-                        fontSize: "13px",
-                        "&.Mui-selected": {
-                          color: "#40a9ff",
-                          fontSize: "13px",
-                        },
-                        "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff",
-                        },
-                      }}
-                      label="Ratings"
-                    />
-                    <Tab
-                      sx={{
-                        fontSize: "13px",
-                        "&.Mui-selected": {
-                          color: "#40a9ff",
-                          fontSize: "13px",
-                        },
-                        "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff",
-                        },
-                      }}
-                      label="Wishlist"
-                    />
-                    <Tab
-                      sx={{
-                        fontSize: "13px",
-                        "&.Mui-selected": {
-                          color: "#40a9ff",
-                          fontSize: "13px",
-                        },
-                        "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff",
-                        },
-                      }}
-                      label="Playlists"
-                    />
-                  </Tabs>
-                </Box>
-                <TabPanel value={tabValue} index={0}>
-                  <DisplayRatingsByUser user={profile} />
-                </TabPanel>
-                <TabPanel value={tabValue} index={1}>
-                  <DisplayWishlistByUser user={profile} />
-                </TabPanel>
-                <TabPanel value={tabValue} index={2}>
-                  <DisplayPlaylistByUser
-                    user={profile}
-                    userViewingOwnProfile={userViewingOwnProfile}
-                  />
-                </TabPanel>
-              </Box>
-            </Paper>
-          </Container>
-          {openFriendsModal && (
-            <FriendsModal
-              open={openFriendsModal}
-              onClose={handleFriendsModalClose}
-              userName={profile.userName}
-              friendsAdded={friendsAdded}
-              setFriendsAdded={setFriendsAdded}
-              currentUser={user}
-              openingTab={friendsTab}
+            )}
+          </Grid>
+          <Box sx={{ padding: "0 35px" }}>
+            <PrimaryTabs
+              tabItems={tabItems}
+              navigation
+              user={profile}
+              handleChange={setTabValue}
+              activeTab={tabValue}
+              onTabChange={setTabValue}
             />
-          )}
-          {openAddFriendsModal && (
-            <AddFriendsModal
-              open={openAddFriendsModal}
-              onClose={handleAddFriendsModalClose}
-              currentUser={user}
-              friendsAdded={friendsAdded}
-              setFriendsAdded={setFriendsAdded}
-            />
-          )}
-        </ThemeProvider>
-      </StyledEngineProvider>
+          </Box>
+        </Paper>
+      </Container>
+      {openFriendsModal && (
+        <FriendsModal
+          open={openFriendsModal}
+          onClose={handleFriendsModalClose}
+          userName={profile.userName}
+          friendsAdded={friendsAdded}
+          setFriendsAdded={setFriendsAdded}
+          currentUser={user}
+          openingTab={friendsTab}
+        />
+      )}
+      {openAddFriendsModal && (
+        <AddFriendsModal
+          open={openAddFriendsModal}
+          onClose={handleAddFriendsModalClose}
+          currentUser={user}
+          friendsAdded={friendsAdded}
+          setFriendsAdded={setFriendsAdded}
+        />
+      )}
     </Provider>
   );
 };
