@@ -3,24 +3,43 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Provider } from "jotai";
-import {
-  Container,
-} from "@mui/material";
+import { Container } from "@mui/material";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
 import SearchResultsMobile from "../components/Search/SearchResultsMobile";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
+import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 
-const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-
-  return <div {...other}>{value === index && <Box>{children}</Box>}</div>;
+const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
+  return (
+    <>
+      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+        {loading ? (
+          <SearchResultsMobileLoading />
+        ) : (
+          searchResults.length > 0 && (
+            <SearchResultsMobile
+              results={searchResults}
+              resultType={resultType}
+            />
+          )
+        )}
+      </Box>
+      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+        {loading ? (
+          <SearchResultsDesktopLoading />
+        ) : (
+          searchResults.length > 0 && (
+            <SearchResults results={searchResults} resultType={resultType} />
+          )
+        )}
+      </Box>
+    </>
+  );
 };
 
 const Search = () => {
@@ -32,9 +51,63 @@ const Search = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
-  const changeSearchTabType = (event, search) => {
-    setSearchTabType(search);
-  };
+  const tabItems = [
+    {
+      title: "Movies",
+      value: 0,
+      content: (
+        <DisplayMediaSearchResults
+          searchResults={searchResults}
+          loading={loading}
+          resultType={resultType}
+        />
+      ),
+    },
+    {
+      value: 1,
+      title: "TV Shows",
+      content: (
+        <DisplayMediaSearchResults
+          searchResults={searchResults}
+          loading={loading}
+          resultType={resultType}
+        />
+      ),
+    },
+    {
+      value: 2,
+      title: "Books",
+      content: (
+        <DisplayMediaSearchResults
+          searchResults={searchResults}
+          loading={loading}
+          resultType={resultType}
+        />
+      ),
+    },
+    {
+      title: "Music",
+      value: 3,
+      content: (
+        <DisplayMediaSearchResults
+          searchResults={searchResults}
+          loading={loading}
+          resultType={resultType}
+        />
+      ),
+    },
+    {
+      value: 4,
+      title: "Users",
+      content: (
+        <DisplayMediaSearchResults
+          searchResults={searchResults}
+          loading={loading}
+          resultType={resultType}
+        />
+      ),
+    },
+  ];
 
   useEffect(() => {
     handleSearch();
@@ -85,32 +158,6 @@ const Search = () => {
     }
     setLoading(false);
   };
-
-  const displayMediaSearchResults = () => (
-    <>
-      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-        {loading ? (
-          <SearchResultsMobileLoading />
-        ) : (
-          searchResults.length > 0 && (
-            <SearchResultsMobile
-              results={searchResults}
-              resultType={resultType}
-            />
-          )
-        )}
-      </Box>
-      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-        {loading ? (
-          <SearchResultsDesktopLoading />
-        ) : (
-          searchResults.length > 0 && (
-            <SearchResults results={searchResults} resultType={resultType} />
-          )
-        )}
-      </Box>
-    </>
-  );
 
   const checkToDisable = () => {
     return !searchKeyword;
@@ -165,100 +212,13 @@ const Search = () => {
                 </Grid>
               </Box>
               {hasSearched && (
-                <Box sx={{ width: "100%", marginTop: "10px" }}>
-                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                    <Tabs
-                      value={searchTabType}
-                      onChange={changeSearchTabType}
-                      variant="scrollable"
-                      allowScrollButtonsMobile
-                      sx={{ color: "#00a8ff" }}
-                      TabIndicatorProps={{
-                        style: { background: "#00a8ff" },
-                      }}
-                    >
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Movies"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="TV Shows"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Books"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Music"
-                      />
-                      <Tab
-                        sx={{
-                          fontSize: "13px",
-                          "&.Mui-selected": {
-                            color: "#40a9ff",
-                            fontSize: "13px",
-                          },
-                          "&.Mui-focusVisible": {
-                            backgroundColor: "#40a9ff",
-                          },
-                        }}
-                        label="Users"
-                      />
-                    </Tabs>
-                  </Box>
-                  <TabPanel value={searchTabType} index={0}>
-                    {displayMediaSearchResults()}
-                  </TabPanel>
-                  <TabPanel value={searchTabType} index={1}>
-                    {displayMediaSearchResults()}
-                  </TabPanel>
-                  <TabPanel value={searchTabType} index={2}>
-                    {displayMediaSearchResults()}
-                  </TabPanel>
-                  <TabPanel value={searchTabType} index={3}>
-                    {displayMediaSearchResults()}
-                  </TabPanel>
-                  <TabPanel value={searchTabType} index={4}>
-                    {displayMediaSearchResults()}
-                  </TabPanel>
+                <Box sx={{ marginTop: "10px" }}>
+                  <PrimaryTabs
+                    tabItems={tabItems}
+                    handleChange={setSearchTabType}
+                    activeTab={searchTabType}
+                    onTabChange={setSearchTabType}
+                  />
                 </Box>
               )}
             </div>
