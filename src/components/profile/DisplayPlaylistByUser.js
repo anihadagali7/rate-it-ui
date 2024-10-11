@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import {
   Box,
   StyledEngineProvider,

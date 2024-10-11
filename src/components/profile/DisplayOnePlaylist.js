@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { theme } from "../../Theme/Theme";
-import { Box, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
+import { theme } from "../../styles/Theme";
+import {
+  Box,
+  StyledEngineProvider,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import { Provider } from "jotai";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -17,7 +22,8 @@ import PrimaryButton from "../../shared/buttons/PrimaryButton";
 const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
   const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] = useState(false);
+  const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] =
+    useState(false);
   const [mediaAdded, setMediaAdded] = useState(0);
 
   useEffect(() => {
@@ -37,7 +43,7 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
 
   const handleAddMediaToPlaylistModalClose = () => {
     setAddMediaToPlaylistModal(false);
-    if (mediaAdded > 0){
+    if (mediaAdded > 0) {
       getAllMediaForPlaylist();
     }
     setMediaAdded(0);
@@ -45,31 +51,36 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
 
   const displayMediaList = () => {
     const mediaList = mediaByPlaylist?.mediaList;
-    return <>
-      {mediaList && mediaList.length !== 0 && mediaList.map((media) => (
-        <>
-          <ListItem>
-            <Stack
-              direction="row"
-              spacing={2}
-              key={media._id}
-            >
-              <>
-                <div>
-                  <Stack direction="column">
-                    <Typography component={Link} sx={{ textDecoration: "none" }}
-                                to={`/${media.mediaType}/${media.mediaId}`}>
-                      {media.name}
-                    </Typography>
-                  </Stack>
-                </div>
-              </>
-            </Stack>
-          </ListItem>
-          <Divider sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }} />
-        </>
-      ))}
-    </>;
+    return (
+      <>
+        {mediaList &&
+          mediaList.length !== 0 &&
+          mediaList.map((media) => (
+            <>
+              <ListItem>
+                <Stack direction="row" spacing={2} key={media._id}>
+                  <>
+                    <div>
+                      <Stack direction="column">
+                        <Typography
+                          component={Link}
+                          sx={{ textDecoration: "none" }}
+                          to={`/${media.mediaType}/${media.mediaId}`}
+                        >
+                          {media.name}
+                        </Typography>
+                      </Stack>
+                    </div>
+                  </>
+                </Stack>
+              </ListItem>
+              <Divider
+                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
+              />
+            </>
+          ))}
+      </>
+    );
   };
 
   return (

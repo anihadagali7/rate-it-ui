@@ -2,13 +2,8 @@ import React, { useState } from "react";
 import { Provider } from "jotai";
 import {
   Container,
-  InputLabel,
-  StyledEngineProvider,
-  TextField,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../Theme/Theme";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -19,6 +14,7 @@ import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -85,154 +81,118 @@ const Login = () => {
 
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-            <Box
-              sx={{
-                width: "100%",
-                height: 500,
-                margin: "auto",
-              }}
-            >
-              <Paper
-                elevation={6}
-                sx={{
-                  width: "100%",
-                  maxHeight: "480px",
-                  backgroundColor: "#FFFFFF",
-                  margin: "auto",
-                  borderRadius: "17px",
-                }}
+      <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+        <Box
+          sx={{
+            width: "100%",
+            height: 500,
+            margin: "auto",
+          }}
+        >
+          <Paper
+            elevation={6}
+            sx={{
+              width: "100%",
+              maxHeight: "480px",
+              backgroundColor: "#FFFFFF",
+              margin: "auto",
+              borderRadius: "17px",
+            }}
+          >
+            <Box sx={{ padding: "10px 35px", minHeight: "385px" }} mb={2}>
+              <Grid
+                container
+                spacing={{ xs: 2, md: 2, xl: 5 }}
+                columns={{ md: 12 }}
               >
-                <div style={{ padding: "0 35px", minHeight: "385px" }}>
-                  <Box>
-                    <Grid
-                      container
-                      spacing={{ xs: 2, md: 2, xl: 5 }}
-                      columns={{ md: 12 }}
-                    >
-                      <Grid item xs={8}>
-                        <Typography
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "22px",
-                          }}
-                        >
-                          Sign In
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            marginTop: "7px",
-                          }}
-                        >
-                          Stay updated on your media
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} sx={{ width: "100%" }}>
-                        <InputLabel>
-                          <Typography>Email</Typography>
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                borderRadius: "17px",
-                              },
-                            }}
-                            size="small"
-                            value={payload.email}
-                            name="email"
-                            onChange={handleChange}
-                            required
-                            error={errorValue["email"]["value"]}
-                            helperText={
-                              errorValue["email"]["value"] &&
-                              errorValue["email"]["message"]
-                            }
-                          />
-                        </InputLabel>
-                        <InputLabel>
-                          <Typography sx={{ marginTop: "10px" }}>
-                            Password
-                          </Typography>
-                          <TextField
-                            sx={{
-                              width: "100%",
-                              "& fieldset": {
-                                borderRadius: "17px",
-                              },
-                            }}
-                            size="small"
-                            type={"password"}
-                            value={payload.password}
-                            name="password"
-                            onChange={handleChange}
-                            required
-                          />
-                        </InputLabel>
-                      </Grid>
-                      <Grid item xs={8} container alignContent="center">
-                        <PrimaryButton
-                          testId="forgotPassword"
-                          buttonElement={Link}
-                          variant="text"
-                          link="/signup"
-                          disabled
-                        >
-                          Forgot password
-                        </PrimaryButton>
-                      </Grid>
-                      <Grid item xs={4} container justifyContent="flex-end">
-                        <div style={{}}>
-                          <PrimaryButton
-                            variant="contained"
-                            disabled={checkToDisable()}
-                            onClick={handleLogin}
-                          >
-                            Sign In
-                          </PrimaryButton>
-                        </div>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Divider
-                    variant="middle"
+                <Grid item xs={8}>
+                  <Typography variant="h3">Sign In</Typography>
+                  <Typography
                     sx={{
-                      marginTop: "25px",
-                      marginLeft: "0",
-                      marginRight: "0",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      margin: "auto",
-                      marginTop: "20px",
-                      marginBottom: "30px",
+                      fontSize: "14px",
+                      marginTop: "7px",
                     }}
                   >
-                    <Grid container>
-                      <Grid item xs={12} container justifyContent="center">
-                        <Typography sx={{ fontWeight: 550 }}>
-                          New to Rate It?
-                          <PrimaryButton
-                            testId="signUpLink"
-                            buttonElement={Link}
-                            variant="text"
-                            link="/signup"
-                          >
-                            Join Now
-                          </PrimaryButton>
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                    Stay updated on your media
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sx={{ width: "100%" }}>
+                  <Box mb={2}>
+                    <PrimaryInputField
+                      label="Email"
+                      value={payload.email}
+                      name="email"
+                      required
+                      onChange={(e) => handleChange(e)}
+                      error={errorValue["email"]["value"]}
+                      helperText={
+                        (errorValue["email"]["value"] &&
+                          errorValue["email"]["message"]) ||
+                        " "
+                      }
+                    />
                   </Box>
-                </div>
-              </Paper>
+                  <Box mb={2}>
+                    <PrimaryInputField
+                      label="Password"
+                      value={payload.password}
+                      name="password"
+                      required
+                      type="password"
+                      onChange={(e) => handleChange(e)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={8} container alignContent="center">
+                  <PrimaryButton
+                    testId="forgotPassword"
+                    buttonElement={Link}
+                    variant="text"
+                    link="/signup"
+                    disabled
+                  >
+                    Forgot password
+                  </PrimaryButton>
+                </Grid>
+                <Grid item xs={4} container justifyContent="flex-end">
+                  <div style={{}}>
+                    <PrimaryButton
+                      variant="contained"
+                      disabled={checkToDisable()}
+                      onClick={handleLogin}
+                    >
+                      Sign In
+                    </PrimaryButton>
+                  </div>
+                </Grid>
+              </Grid>
+              <Divider
+                variant="middle"
+                sx={{
+                  marginTop: "25px",
+                }}
+              />
+              <Box mb={6} paddingTop={"20px"}>
+                <Grid container>
+                  <Grid item xs={12} container justifyContent="center">
+                    <Typography sx={{ fontWeight: 550 }}>
+                      New to Rate It?
+                      <PrimaryButton
+                        testId="signUpLink"
+                        buttonElement={Link}
+                        variant="text"
+                        link="/signup"
+                      >
+                        Join Now
+                      </PrimaryButton>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
             </Box>
-          </Container>
-        </ThemeProvider>
-      </StyledEngineProvider>
+          </Paper>
+        </Box>
+      </Container>
     </Provider>
   );
 };

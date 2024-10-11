@@ -1,0 +1,117 @@
+/** =============================================================================================
+**  Color Variables==============================================================================
+**  ==========================================================================================**/
+
+// Ford Motion Colors
+$concrete: #f2f2f2;
+
+// Brownish shades
+$tundora: #4a4a4a;
+$tundora-light: #4d4d4d;
+$brown-orange: #ca6825;
+$faux-old-lace: #fff2e2;
+
+// Blue shades
+$blue-zodiac: #102b4e;
+$zircon: #f9fcff;
+$zircon-dark: #f5f9ff;
+$lochmara: #2861a4;
+$soft-blue: #4a90e2;
+$alice-blue: #f2f8fd;
+$lincoln-navy-blue: #324047;
+$lincoln-oxford-blue: #233338;
+$dark-blue: #00095b;
+$dark-blue2: #00142e;
+$ford-accent: #0068d0;
+
+// Gray shades
+$alto: #d8d8d8;
+$alabaster: #f7f7f7;
+$alabaster-dark: #f9f9f9;
+$dusty-gray: #979797;
+$dusty-gray-light: #989898;
+$gray90: #e5e5e5;
+$gray88: #e0e0e0;
+$gray85: #ecedee;
+$gray86: #f2f2f2;
+$smoky-gray: #f3f3f3;
+$bold-gray: #333333;
+$pale-gray: #b8bec5;
+$white-gray: #676767;
+$medium-gray: #c7cdd3;
+$background-gray: #edf2f5;
+$dark-grey: #666666;
+$gray-brown: #f5f5f5;
+$dim-gray: #6e6e6e;
+
+// white
+$white: #ffffff;
+
+// red
+$alizarin-crimson: #dd1c3b;
+$cherub-red: #f4d5da;
+$red-text: #d0021b;
+$bright-red: #d92e14;
+$warning-bg-color-pink: #ffe8e9;
+$red-text2: #d62d0a;
+
+//yellow
+$warning-bg-color-yellow: #fff2e2;
+
+// green
+$faux-green: #1d9d01;
+$light-green: #00ad46;
+$dark-green: #00913b;
+$secondary-green: #61ba00;
+$accept-green: #3b822e;
+
+/** =============================================================================================
+**  Color Config==============================================================================
+**  ==========================================================================================**/
+$primary-text-color: $tundora;
+$secondary-text-color: $tundora-light;
+$primary-text-bold-color: $blue-zodiac; //might have to rename
+$warning-text-color: $alizarin-crimson;
+$header-bar-text-color: $white;
+$primary-link-color: $lochmara;
+
+$primary-bg-color: $white;
+$secondary-bg-color: $alto;
+$header-bar-bg-color: $alice-blue;
+$secondary-bar-bg-color: $smoky-gray;
+
+$secondary-border-color: $dusty-gray;
+
+$navigation-bg-color: $alabaster; //might have to rename
+$section-header: $zircon-dark;
+$section-secondary-header: $alabaster-dark;
+$table-row-bg-color: $zircon;
+$button-primary-text-color: $white;
+$button-primary-bg-color: $blue-zodiac;
+$section-header-bg: $gray90;
+$section-subheader-border-color: $gray90;
+$section-table-row-border-color: $gray88;
+$grid-item-bg-color: $zircon-dark;
+
+/** =============================================================================================
+**  Padding Size==============================================================================
+**  ==========================================================================================**/
+
+$horizontal-spacing: 6%;
+$vertical-spacing: 20px;
+
+/** =============================================================================================
+**  Grid Size==============================================================================
+**  ==========================================================================================**/
+
+$xs: 0;
+$sm: 600px;
+$md: 900px;
+$lg: 1200px;
+$xl: 1440px;
+
+/* Font Family*/
+$ford-antenna-regular: "Ford Antenna Regular", "FordAntennaRegular", sans-serif;
+$ford-antenna-bold: "FordAntennaBold", sans-serif;
+$ford-f1-regular: "FordF1Regular", "Arial", sans-serif;
+$ford-f1-bold: "FordF1Bold", "Arial", sans-serif;

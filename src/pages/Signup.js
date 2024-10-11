@@ -1,17 +1,13 @@
 import React from "react";
 import { Provider } from "jotai";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
-import { theme } from "../Theme/Theme";
+import { theme } from "../styles/Theme";
 import UpdateProfile from "../components/profile/UpdateProfile";
 
 const Signup = () => {
   return (
     <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <UpdateProfile createProfile={true} updateProfile={false} />
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <UpdateProfile createProfile={true} updateProfile={false} />
     </Provider>
   );
 };

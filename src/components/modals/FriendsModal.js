@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import { Provider } from "jotai";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";

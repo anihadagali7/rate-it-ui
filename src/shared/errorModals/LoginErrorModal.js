@@ -8,7 +8,7 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../../Theme/Theme";
+import { theme } from "../../styles/Theme";
 import { Provider } from "jotai";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";

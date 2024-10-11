@@ -1,0 +1,25 @@
+@import "../../styles/variables.scss";
+
+.empTextArea {
+  font-family: $ford-f1-regular;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: 1px solid #6b7786;
+  border: none;
+  resize: none;
+
+  &::placeholder {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  &:focus {
+    outline: 2px solid #066fef;
+  }
+}
