@@ -29,8 +29,8 @@ const BigScreenHeader = ({}) => {
     setUserMenu(false);
   };
 
-  const handleOpenSearchBar = () => {
-    setOpenSearchBar(true);
+  const handleOpenSearchBar = (value) => {
+    setOpenSearchBar(value);
   };
 
   const logoutUser = () => {
@@ -52,6 +52,7 @@ const BigScreenHeader = ({}) => {
       sx={{
         flexGrow: 1,
         display: { xs: "none", md: "flex" },
+        padding: "15px",
       }}
     >
       <Grid container>
@@ -77,8 +78,9 @@ const BigScreenHeader = ({}) => {
               <Grid item xs={6} container alignContent="center">
                 <PrimaryButton
                   buttonElement={Link}
-                  link="/search"
+                  link={`/search/${searchKeyword}`}
                   variant="text"
+                  onClick={() => handleOpenSearchBar(false)}
                   leftIcon={<SearchIcon />}
                 ></PrimaryButton>
               </Grid>

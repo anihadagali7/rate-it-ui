@@ -13,6 +13,7 @@ import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
+import { useParams } from "react-router-dom";
 
 const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
   return (
@@ -50,6 +51,7 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
+  const { keyword } = useParams();
 
   const tabItems = [
     {
@@ -110,7 +112,12 @@ const Search = () => {
   ];
 
   useEffect(() => {
-    handleSearch();
+    setSearchKeyword(keyword);
+    handleSearch(keyword);
+  }, [keyword]);
+
+  useEffect(() => {
+    handleSearch(searchKeyword);
   }, [searchTabType]);
 
   const onChangeSearch = (event) => {
@@ -130,13 +137,8 @@ const Search = () => {
     setLoading(false);
   };
 
-  const submitSearch = (e) => {
-    e.preventDefault();
-    handleSearch();
-  };
-
-  const handleSearch = async (e) => {
-    if (searchKeyword.length > 0) {
+  const handleSearch = async (searchKey) => {
+    if (searchKey.length > 0) {
       setLoading(true);
       setHasSearched(true);
       const searchMapping = {
@@ -149,7 +151,7 @@ const Search = () => {
       let searchType = searchMapping[searchTabType];
       const result = await SearchClient.searchMedia(
         searchType,
-        searchKeyword,
+        searchKey,
         setDisplayTokenModal
       );
       const finalList = result.data.mediaList;
@@ -203,7 +205,7 @@ const Search = () => {
                   <Grid item xs={3} container justifyContent="center">
                     <PrimaryButton
                       variant="contained"
-                      onClick={submitSearch}
+                      onClick={() => handleSearch(searchKeyword)}
                       disabled={checkToDisable()}
                     >
                       Search
