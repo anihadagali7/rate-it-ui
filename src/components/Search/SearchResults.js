@@ -149,7 +149,7 @@ const SearchResults = ({ results, resultType }) => {
                     height={150}
                     style={{ marginBottom: "10px" }}
                     alt="poster"
-                    src={row.poster ? row.poster : NotFoundImage}
+                    src={row?.poster ? row.poster : NotFoundImage}
                   />
                 </ListItemAvatar>
               </div>
@@ -171,22 +171,22 @@ const SearchResults = ({ results, resultType }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  {row.name.length > 25
-                    ? `${row.name.substring(0, 25)}...`
-                    : row.name}
+                  {row?.name?.length > 25
+                    ? `${row?.name?.substring(0, 25)}...`
+                    : row?.name}
                 </Typography>
                 <Typography
                   component="div"
                   sx={{ fontSize: "15px", fontStyle: "italic" }}
                 >
-                  {row.author.length > 25
-                    ? `${row.author.substring(0, 25)}...`
-                    : row.author}
+                  {row?.author?.length > 25
+                    ? `${row?.author?.substring(0, 25)}...`
+                    : row?.author}
                 </Typography>
                 <Typography component="div">
-                  {row.description.length > 75
-                    ? `${row.description.substring(0, 75)}...`
-                    : row.description}
+                  {row?.description?.length > 75
+                    ? `${row?.description?.substring(0, 75)}...`
+                    : row?.description}
                 </Typography>
               </div>
             </Grid>

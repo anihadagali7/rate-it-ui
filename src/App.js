@@ -24,7 +24,7 @@ export default class App extends Component {
               <Header displayMenu={true} />
               <Routes>
                 <Route exact path="/" element={<Home />}></Route>
-                <Route exact path="/search" element={<Search />}></Route>
+                <Route exact path="/search/:keyword" element={<Search />}></Route>
                 <Route exact path="/login" element={<Login />}></Route>
                 <Route exact path="/signup" element={<Signup />}></Route>
                 <Route
