@@ -1,4 +1,4 @@
-import { Box, Grid, Menu, MenuItem, Typography } from "@mui/material";
+import { Box, Grid, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import PrimaryTabs from "../../shared/tabs/PrimaryTabs";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import { useState } from "react";
@@ -52,7 +52,7 @@ const BigScreenHeader = ({}) => {
       sx={{
         flexGrow: 1,
         display: { xs: "none", md: "flex" },
-        padding: "15px",
+        padding: "0 15px",
       }}
     >
       <Grid container>
@@ -67,24 +67,20 @@ const BigScreenHeader = ({}) => {
         </Grid>
         <Grid item xs={6} container justifyContent="end">
           {openSearchBar ? (
-            <Grid container>
-              <Grid item xs={6}>
-                <PrimaryInputField
-                  value={searchKeyword}
-                  name="search"
-                  onChange={onChangeSearch}
-                />
-              </Grid>
-              <Grid item xs={6} container alignContent="center">
-                <PrimaryButton
-                  buttonElement={Link}
-                  link={`/search/${searchKeyword}`}
-                  variant="text"
-                  onClick={() => handleOpenSearchBar(false)}
-                  leftIcon={<SearchIcon />}
-                ></PrimaryButton>
-              </Grid>
-            </Grid>
+            <Stack direction="row" spacing={1}>
+              <PrimaryInputField
+                value={searchKeyword}
+                name="search"
+                onChange={onChangeSearch}
+              />
+              <PrimaryButton
+                buttonElement={Link}
+                link={`/search/${searchKeyword}`}
+                variant="text"
+                onClick={() => handleOpenSearchBar(false)}
+                leftIcon={<SearchIcon />}
+              ></PrimaryButton>
+            </Stack>
           ) : (
             <>
               <PrimaryButton
@@ -96,8 +92,8 @@ const BigScreenHeader = ({}) => {
           )}
         </Grid>
         <Grid item xs={2} container justifyContent="end">
-          {localUserLoggedIn ? (
-            <>
+          {user ? (
+            <Stack direction="row" spacing={2}>
               <PrimaryButton variant="text" onClick={handleOpenUserMenu}>
                 {user.userName}
               </PrimaryButton>
@@ -123,9 +119,9 @@ const BigScreenHeader = ({}) => {
                   </Typography>
                 </MenuItem>
               </Menu>
-            </>
+            </Stack>
           ) : (
-            <>
+            <Stack direction="row" spacing={2}>
               <PrimaryButton variant="text" buttonElement={Link} link="/signup">
                 Sign up
               </PrimaryButton>
@@ -137,7 +133,7 @@ const BigScreenHeader = ({}) => {
               >
                 Log in
               </PrimaryButton>
-            </>
+            </Stack>
           )}
         </Grid>
       </Grid>
