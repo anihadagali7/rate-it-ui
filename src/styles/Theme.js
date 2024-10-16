@@ -14,9 +14,7 @@ const fordF1Bold = {
   // src: `url(${FordF1Bold}) format('woff2')`,
 };
 
-const primaryColor = {
-  color: "#00a8ff",
-};
+const primaryColor = "#00a8ff";
 
 export const theme = createTheme({
   breakpoints: {
