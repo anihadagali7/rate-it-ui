@@ -13,6 +13,11 @@ const fordF1Bold = {
   fontWeight: 700,
   // src: `url(${FordF1Bold}) format('woff2')`,
 };
+
+const primaryColor = {
+  color: "#00a8ff",
+};
+
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -38,7 +43,7 @@ export const theme = createTheme({
       letterSpacing: "normal",
     },
     h3: {
-      fontFamily: "FordF1Regular, Arial, sans-serif",
+      fontFamily: "Roboto, Arial, sans-serif",
       fontSize: 28,
       lineHeight: "36px",
       letterSpacing: "normal",
@@ -63,10 +68,11 @@ export const theme = createTheme({
       letterSpacing: "normal",
     },
     body1: {
-      fontFamily: "FordF1Regular, Arial, sans-serif",
+      fontFamily: "Montserrat, Arial, sans-serif",
       fontSize: 16,
       lineHeight: "24px",
       letterSpacing: "normal",
+      fontWeight: 600,
     },
     body2: {
       fontFamily: "FordF1Regular, Arial, sans-serif",
@@ -94,10 +100,20 @@ export const theme = createTheme({
       color: "#666666",
     },
     button: {
-      fontFamily: "FordF1Bold, Arial, sans-serif",
-      lineHeight: "20px",
       textTransform: "none",
+      letterSpacing: "6px",
+      fontFamily: "Montserrat, Arial, sans-serif",
+      fontSize: 16,
+      lineHeight: "24px",
       letterSpacing: "normal",
+      fontWeight: 700,
+    },
+    logo: {
+      mr: 2,
+      fontFamily: "Signika Negative",
+      fontSize: "24px",
+      color: primaryColor,
+      textDecoration: "none",
     },
   },
   spacing: 4,
@@ -204,6 +220,17 @@ export const theme = createTheme({
         disableRipple: true,
         disableTouchRipple: true,
       },
+      styleOverrides: {
+        text: {
+          textTransform: "none",
+          letterSpacing: "6px",
+          fontFamily: "Montserrat, Arial, sans-serif",
+          fontSize: 16,
+          lineHeight: "24px",
+          letterSpacing: "normal",
+          fontWeight: 700,
+        },
+      },
     },
     MuiButton: {
       defaultProps: {
@@ -218,6 +245,13 @@ export const theme = createTheme({
           },
         },
         text: {
+          textTransform: "none",
+          letterSpacing: "6px",
+          fontFamily: "Montserrat, Arial, sans-serif",
+          fontSize: 16,
+          lineHeight: "24px",
+          letterSpacing: "normal",
+          fontWeight: 800,
           padding: "10px 0px",
           "&:hover": {
             background: "none",
@@ -304,7 +338,7 @@ export const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          fontFamily: "FordF1Regular, Arial, sans-serif",
+          fontFamily: "Montserrat, Arial, sans-serif",
           fontSize: 16,
           fontWeight: "400",
           lineHeight: "20px",
