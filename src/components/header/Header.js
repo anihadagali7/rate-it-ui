@@ -13,7 +13,7 @@ import { Alert, Collapse } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import BigScreenHeader from "./BigScreenHeader";
-import DisplaySmallScreenHeader from "./SmallScreenHeader";
+import SmallScreenHeader from "./SmallScreenHeader";
 
 const useStyles = makeStyles({
   title: {
@@ -54,20 +54,35 @@ const Header = () => {
       <AppBar position="static" className={classes.appBar}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <BigScreenHeader
-              user={user}
-              localUserLoggedIn={localUserLoggedIn}
-              setUserLoggedIn={setUserLoggedIn}
-              setLocalUserLoggedIn={setLocalUserLoggedIn}
-              logoutUser={logoutUser}
-            />
-            <DisplaySmallScreenHeader
-              user={user}
-              localUserLoggedIn={localUserLoggedIn}
-              setUserLoggedIn={setUserLoggedIn}
-              setLocalUserLoggedIn={setLocalUserLoggedIn}
-              logoutUser={logoutUser}
-            />
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", md: "flex" },
+                padding: "0 15px",
+              }}
+            >
+              <BigScreenHeader
+                user={user}
+                localUserLoggedIn={localUserLoggedIn}
+                setUserLoggedIn={setUserLoggedIn}
+                setLocalUserLoggedIn={setLocalUserLoggedIn}
+                logoutUser={logoutUser}
+              />
+            </Box>
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+              }}
+            >
+              <SmallScreenHeader
+                user={user}
+                localUserLoggedIn={localUserLoggedIn}
+                setUserLoggedIn={setUserLoggedIn}
+                setLocalUserLoggedIn={setLocalUserLoggedIn}
+                logoutUser={logoutUser}
+              />
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
