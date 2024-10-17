@@ -52,7 +52,7 @@ const Header = () => {
                 padding: "0 15px",
               }}
             >
-              <BigScreenHeader logoutUser={logoutUser} />
+              <BigScreenHeader logoutUser={() => logoutUser()} />
             </Box>
             <Box
               sx={{
@@ -60,7 +60,7 @@ const Header = () => {
                 display: { xs: "flex", md: "none" },
               }}
             >
-              <SmallScreenHeader logoutUser={logoutUser} />
+              <SmallScreenHeader logoutUser={() => logoutUser()} />
             </Box>
           </Toolbar>
         </Container>

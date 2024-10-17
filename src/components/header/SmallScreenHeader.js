@@ -196,7 +196,7 @@ const SmallScreenHeader = ({ logoutUser }) => {
           user={currentUser}
           theme={theme}
           setDrawer={setDrawer}
-          logoutUser={logoutUser()}
+          logoutUser={() => logoutUser()}
         />
       </Grid>
       <Grid item xs={2} container alignContent="center">

@@ -89,7 +89,7 @@ const BigScreenHeader = ({ logoutUser }) => {
                 onClose={handleCloseUserMenu}
               >
                 <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={logoutUser()}>
+                  <Typography textAlign="center" onClick={() => logoutUser()}>
                     Logout
                   </Typography>
                 </MenuItem>

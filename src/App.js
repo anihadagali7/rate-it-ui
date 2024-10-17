@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -14,21 +14,24 @@ import Protected from "./shared/Protected";
 import EditProfile from "./pages/EditProfile";
 import UserContext from "../src/shared/context/userContext";
 
-const App = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+const App = React.memo(() => {
+  const storedUser = localStorage.getItem("user");
+  const [currentUser, setCurrentUser] = useState(
+    storedUser ? JSON.parse(storedUser) : null
+  );
+  const value = useMemo(() => ({ currentUser, setCurrentUser }), [currentUser]);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setCurrentUser(user);
-  }, []);
+    if (currentUser) {
+      localStorage.setItem("user", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("user"); // Cleanup when user logs out
+      localStorage.removeItem("accessToken"); // Cleanup when user logs out
+    }
+  }, [currentUser]);
 
   return (
-    <UserContext.Provider
-      value={{
-        currentUser,
-        setCurrentUser,
-      }}
-    >
+    <UserContext.Provider value={value}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
@@ -73,6 +76,6 @@ const App = () => {
       </StyledEngineProvider>
     </UserContext.Provider>
   );
-};
+});
 
 export default App;
