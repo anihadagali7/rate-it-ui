@@ -44,11 +44,7 @@ const App = React.memo(() => {
               <Route
                 exact
                 path="/:mediaType/:id"
-                element={
-                  <Protected>
-                    <MediaInfo />
-                  </Protected>
-                }
+                element={<MediaInfo />}
               ></Route>
               <Route
                 exact

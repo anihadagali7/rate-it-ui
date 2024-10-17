@@ -28,8 +28,6 @@ const Header = () => {
   const [openLoginAlert, setOpenLoginAlert] = useState(true);
   const { currentUser, setCurrentUser } = useContext(UserContext);
 
-  console.log("header - current user ", currentUser);
-
   useEffect(() => {
     if (!currentUser) {
       setOpenLoginAlert(true);

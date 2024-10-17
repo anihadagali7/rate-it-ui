@@ -70,7 +70,6 @@ const Login = () => {
       );
 
       setCurrentUser(result.user);
-      console.log("after login - current user ", currentUser);
       navigate("/");
     }
   };
