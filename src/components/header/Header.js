@@ -1,19 +1,18 @@
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useAtom } from "jotai";
-import { currentUser, currentlyLoggedIn } from "../../state/user";
 import { Link } from "react-router-dom";
 import { Alert, Collapse } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import BigScreenHeader from "./BigScreenHeader";
 import SmallScreenHeader from "./SmallScreenHeader";
+import UserContext from "../../shared/context/userContext";
 
 const useStyles = makeStyles({
   title: {
@@ -27,26 +26,18 @@ const useStyles = makeStyles({
 const Header = () => {
   const classes = useStyles();
   const [openLoginAlert, setOpenLoginAlert] = useState(true);
-  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [localUserLoggedIn, setLocalUserLoggedIn] = useState(false);
-  const [user, setUser] = useAtom(currentUser);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+
+  console.log("header - current user ", currentUser);
 
   useEffect(() => {
-    let user = localStorage.getItem("user");
-    if (user) {
-      const localStorageUser = JSON.parse(user);
-      setUser(localStorageUser);
-      setLocalUserLoggedIn(true);
-    } else {
-      setLocalUserLoggedIn(false);
+    if (!currentUser) {
       setOpenLoginAlert(true);
     }
-  }, [userLoggedIn]);
+  }, [currentUser]);
 
   const logoutUser = () => {
-    localStorage.clear();
-    setUserLoggedIn(false);
-    setLocalUserLoggedIn(false);
+    setCurrentUser(null);
   };
 
   return (
@@ -61,13 +52,7 @@ const Header = () => {
                 padding: "0 15px",
               }}
             >
-              <BigScreenHeader
-                user={user}
-                localUserLoggedIn={localUserLoggedIn}
-                setUserLoggedIn={setUserLoggedIn}
-                setLocalUserLoggedIn={setLocalUserLoggedIn}
-                logoutUser={logoutUser}
-              />
+              <BigScreenHeader logoutUser={logoutUser} />
             </Box>
             <Box
               sx={{
@@ -75,18 +60,12 @@ const Header = () => {
                 display: { xs: "flex", md: "none" },
               }}
             >
-              <SmallScreenHeader
-                user={user}
-                localUserLoggedIn={localUserLoggedIn}
-                setUserLoggedIn={setUserLoggedIn}
-                setLocalUserLoggedIn={setLocalUserLoggedIn}
-                logoutUser={logoutUser}
-              />
+              <SmallScreenHeader logoutUser={logoutUser} />
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      {!localUserLoggedIn && (
+      {!currentUser && (
         <Box sx={{ width: "100%" }}>
           <Collapse in={openLoginAlert}>
             <Alert
@@ -109,15 +88,12 @@ const Header = () => {
               <Typography sx={{ fontSize: "13px" }}>
                 Please login to get the full experience!
                 <PrimaryButton
-                  testId="loginErrorModal"
                   buttonElement={Link}
                   variant="text"
                   link="/login"
                   onClick={() => setOpenLoginAlert(false)}
                 >
-                  <Typography sx={{ color: "#fff", fontSize: "13px" }}>
-                    Login
-                  </Typography>
+                  Login
                 </PrimaryButton>
               </Typography>
             </Alert>

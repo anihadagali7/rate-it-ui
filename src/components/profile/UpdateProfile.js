@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
 import { Container, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { Provider, useAtom } from "jotai";
-import { currentlyLoggedIn, currentUser } from "../../state/user";
 import AuthClient from "../../client/AuthClient";
 import Divider from "@mui/material/Divider";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import ResetPassword from "./ResetPassword";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import UserContext from "../../shared/context/userContext";
 
 const initialErrorState = {
   firstName: { value: false, message: "" },
@@ -22,39 +21,38 @@ const initialErrorState = {
   password: { value: false, message: "" },
 };
 
-const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
+const UpdateProfile = ({ createProfile, updateProfile }) => {
   let navigate = useNavigate();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const [payload, setPayload] = useState({
     firstName:
-      updateProfile && currentProfile && currentProfile.firstName
-        ? currentProfile.firstName
+      updateProfile && currentUser && currentUser.firstName
+        ? currentUser.firstName
         : "",
     lastName:
-      updateProfile && currentProfile && currentProfile.lastName
-        ? currentProfile.lastName
+      updateProfile && currentUser && currentUser.lastName
+        ? currentUser.lastName
         : "",
     userName:
-      updateProfile && currentProfile && currentProfile.userName
-        ? currentProfile.userName
+      updateProfile && currentUser && currentUser.userName
+        ? currentUser.userName
         : "",
     email:
-      updateProfile && currentProfile && currentProfile.email
-        ? currentProfile.email
+      updateProfile && currentUser && currentUser.email
+        ? currentUser.email
         : "",
     password:
-      updateProfile && currentProfile && currentProfile.password
-        ? currentProfile.password
+      updateProfile && currentUser && currentUser.password
+        ? currentUser.password
         : "",
     phoneNumber:
-      updateProfile && currentProfile && currentProfile.phoneNumber
-        ? currentProfile.phoneNumber
+      updateProfile && currentUser && currentUser.phoneNumber
+        ? currentUser.phoneNumber
         : "",
   });
 
   const [prevProfileValues] = useState(payload);
-  const [user, setUser] = useAtom(currentUser);
-  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
   const [errorValue, setErrorValue] = useState(initialErrorState);
 
@@ -170,205 +168,201 @@ const UpdateProfile = ({ createProfile, updateProfile, currentProfile }) => {
 
     if (createProfile && (await validateInput())) {
       const result = await AuthClient.signup(newUser, errorHandler);
-      setUserLoggedIn(true);
-      setUser(result.user);
+      setCurrentUser(result.user);
       navigate("/");
     }
     if (updateProfile && (await validateInput())) {
       const result = await AuthClient.editProfile(newUser, errorHandler);
-      setUserLoggedIn(true);
-      setUser(result.user);
+      setCurrentUser(result.user);
       navigate(`/profile/${result.user.userName}`);
     }
   };
 
   return (
-    <Provider>
-      <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-        <Paper
-          elevation={6}
-          sx={{
-            backgroundColor: "#FFFFFF",
-            height: isMobile ? "685px" : "100%",
-            borderRadius: "17px",
-          }}
-        >
-          <Box sx={{ padding: "0 35px", minHeight: "385px" }}>
-            {displayResetPassword ? (
-              <ResetPassword currentProfile={currentProfile} />
-            ) : (
-              <Box>
-                <Grid
-                  container
-                  spacing={{ xs: 2, md: 2, xl: 2 }}
-                  columns={{ xs: 12 }}
-                >
-                  <Grid item xs={12} sx={{ paddingBottom: "20px" }}>
-                    <Typography variant="h3">
-                      {createProfile ? "Create an Account" : "Edit profile"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <PrimaryInputField
-                      label="First Name"
-                      value={payload.firstName}
-                      name="firstName"
-                      required
-                      onChange={(e) => handleChange(e)}
-                      error={errorValue["firstName"]["value"]}
-                      helperText={
-                        (errorValue["firstName"]["value"] &&
-                          errorValue["firstName"]["message"]) ||
-                        " "
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <PrimaryInputField
-                      label="Last Name"
-                      value={payload.lastName}
-                      name="lastName"
-                      required
-                      onChange={(e) => handleChange(e)}
-                      error={errorValue["lastName"]["value"]}
-                      helperText={
-                        (errorValue["lastName"]["value"] &&
-                          errorValue["lastName"]["message"]) ||
-                        " "
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <PrimaryInputField
-                      label="Username"
-                      value={payload.userName}
-                      name="userName"
-                      required
-                      disabled={updateProfile}
-                      onChange={(e) => handleChange(e)}
-                      error={errorValue["userName"]["value"]}
-                      helperText={
-                        (errorValue["userName"]["value"] &&
-                          errorValue["userName"]["message"]) ||
-                        " "
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <PrimaryInputField
-                      label="Phone Number"
-                      value={payload.phoneNumber}
-                      name="phoneNumber"
-                      required
-                      onChange={(e) => handleChange(e)}
-                      error={errorValue["phoneNumber"]["value"]}
-                      helperText={
-                        (errorValue["phoneNumber"]["value"] &&
-                          errorValue["phoneNumber"]["message"]) ||
-                        " "
-                      }
-                      placeholder={"1234567890"}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <PrimaryInputField
-                      label="Email"
-                      value={payload.email}
-                      name="email"
-                      required
-                      disabled={updateProfile}
-                      onChange={(e) => handleChange(e)}
-                      error={errorValue["email"]["value"]}
-                      helperText={
-                        (errorValue["email"]["value"] &&
-                          errorValue["email"]["message"]) ||
-                        " "
-                      }
-                    />
-                  </Grid>
-                  {createProfile && (
-                    <Grid item xs={12}>
-                      <PrimaryInputField
-                        label="Password"
-                        value={payload.password}
-                        name="password"
-                        type={"password"}
-                        required
-                        onChange={(e) => handleChange(e)}
-                        error={errorValue["password"]["value"]}
-                        helperText={
-                          errorValue["password"]["value"] && (
-                            <>
-                              <span>Password should contain at least</span>
-                              <ul>
-                                <li>one upper case letter</li>
-                                <li>one lower case letter</li>
-                                <li>one special character</li>
-                                <li>one digit</li>
-                              </ul>
-                            </>
-                          )
-                        }
-                      />
-                    </Grid>
-                  )}
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    justifyContent="end"
-                    sx={{ marginTop: "10px" }}
-                  >
-                    <PrimaryButton
-                      onClick={handleSubmit}
-                      disabled={checkToDisable()}
-                      variant="contained"
-                    >
-                      {createProfile ? "Sign Up" : "Save"}
-                    </PrimaryButton>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider
-                      variant="middle"
-                      sx={{
-                        marginTop: "25px",
-                      }}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    justifyContent="center"
-                    sx={{ marginBottom: "15px" }}
-                  >
-                    {updateProfile && (
-                      <PrimaryButton
-                        testId="loginInstead"
-                        variant="text"
-                        onClick={() => setDisplayResetPassword(true)}
-                      >
-                        Reset password
-                      </PrimaryButton>
-                    )}
-                    {createProfile && (
-                      <PrimaryButton
-                        testId="loginInstead"
-                        buttonElement={Link}
-                        variant="text"
-                        link="/login"
-                      >
-                        Sign in instead
-                      </PrimaryButton>
-                    )}
-                  </Grid>
+    <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
+      <Paper
+        elevation={6}
+        sx={{
+          backgroundColor: "#FFFFFF",
+          height: isMobile ? "685px" : "100%",
+          borderRadius: "17px",
+        }}
+      >
+        <Box sx={{ padding: "0 35px", minHeight: "385px" }}>
+          {displayResetPassword ? (
+            <ResetPassword currentProfile={currentUser} />
+          ) : (
+            <Box>
+              <Grid
+                container
+                spacing={{ xs: 2, md: 2, xl: 2 }}
+                columns={{ xs: 12 }}
+              >
+                <Grid item xs={12} sx={{ paddingBottom: "20px" }}>
+                  <Typography variant="h3">
+                    {createProfile ? "Create an Account" : "Edit profile"}
+                  </Typography>
                 </Grid>
-              </Box>
-            )}
-          </Box>
-        </Paper>
-      </Container>
-    </Provider>
+                <Grid item xs={6}>
+                  <PrimaryInputField
+                    label="First Name"
+                    value={payload.firstName}
+                    name="firstName"
+                    required
+                    onChange={(e) => handleChange(e)}
+                    error={errorValue["firstName"]["value"]}
+                    helperText={
+                      (errorValue["firstName"]["value"] &&
+                        errorValue["firstName"]["message"]) ||
+                      " "
+                    }
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <PrimaryInputField
+                    label="Last Name"
+                    value={payload.lastName}
+                    name="lastName"
+                    required
+                    onChange={(e) => handleChange(e)}
+                    error={errorValue["lastName"]["value"]}
+                    helperText={
+                      (errorValue["lastName"]["value"] &&
+                        errorValue["lastName"]["message"]) ||
+                      " "
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <PrimaryInputField
+                    label="Username"
+                    value={payload.userName}
+                    name="userName"
+                    required
+                    disabled={updateProfile}
+                    onChange={(e) => handleChange(e)}
+                    error={errorValue["userName"]["value"]}
+                    helperText={
+                      (errorValue["userName"]["value"] &&
+                        errorValue["userName"]["message"]) ||
+                      " "
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <PrimaryInputField
+                    label="Phone Number"
+                    value={payload.phoneNumber}
+                    name="phoneNumber"
+                    required
+                    onChange={(e) => handleChange(e)}
+                    error={errorValue["phoneNumber"]["value"]}
+                    helperText={
+                      (errorValue["phoneNumber"]["value"] &&
+                        errorValue["phoneNumber"]["message"]) ||
+                      " "
+                    }
+                    placeholder={"1234567890"}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <PrimaryInputField
+                    label="Email"
+                    value={payload.email}
+                    name="email"
+                    required
+                    disabled={updateProfile}
+                    onChange={(e) => handleChange(e)}
+                    error={errorValue["email"]["value"]}
+                    helperText={
+                      (errorValue["email"]["value"] &&
+                        errorValue["email"]["message"]) ||
+                      " "
+                    }
+                  />
+                </Grid>
+                {createProfile && (
+                  <Grid item xs={12}>
+                    <PrimaryInputField
+                      label="Password"
+                      value={payload.password}
+                      name="password"
+                      type={"password"}
+                      required
+                      onChange={(e) => handleChange(e)}
+                      error={errorValue["password"]["value"]}
+                      helperText={
+                        errorValue["password"]["value"] && (
+                          <>
+                            <span>Password should contain at least</span>
+                            <ul>
+                              <li>one upper case letter</li>
+                              <li>one lower case letter</li>
+                              <li>one special character</li>
+                              <li>one digit</li>
+                            </ul>
+                          </>
+                        )
+                      }
+                    />
+                  </Grid>
+                )}
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  justifyContent="end"
+                  sx={{ marginTop: "10px" }}
+                >
+                  <PrimaryButton
+                    onClick={handleSubmit}
+                    disabled={checkToDisable()}
+                    variant="contained"
+                  >
+                    {createProfile ? "Sign Up" : "Save"}
+                  </PrimaryButton>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider
+                    variant="middle"
+                    sx={{
+                      marginTop: "25px",
+                    }}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  justifyContent="center"
+                  sx={{ marginBottom: "15px" }}
+                >
+                  {updateProfile && (
+                    <PrimaryButton
+                      testId="loginInstead"
+                      variant="text"
+                      onClick={() => setDisplayResetPassword(true)}
+                    >
+                      Reset password
+                    </PrimaryButton>
+                  )}
+                  {createProfile && (
+                    <PrimaryButton
+                      testId="loginInstead"
+                      buttonElement={Link}
+                      variant="text"
+                      link="/login"
+                    >
+                      Sign in instead
+                    </PrimaryButton>
+                  )}
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

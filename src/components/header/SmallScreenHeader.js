@@ -1,5 +1,5 @@
 import { styled, useTheme } from "@mui/material/styles";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -22,6 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Box, Grid } from "@mui/material";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import UserContext from "../../shared/context/userContext";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -36,7 +37,6 @@ const drawerWidth = 240;
 const MenuDrawer = ({
   drawer,
   toggleDrawer,
-  localUserLoggedIn,
   user,
   theme,
   logoutUser,
@@ -61,23 +61,23 @@ const MenuDrawer = ({
         spacing={2}
         sx={{ marginRight: "15px", marginTop: "10px" }}
       >
-        {localUserLoggedIn && user && (
+        {user && (
           <>
             <Avatar
               sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
               component={Link}
-              to={`/profile/${user.userName}`}
+              to={`/profile/${user?.userName}`}
               onClick={toggleDrawer(false)}
             >
-              {user.firstName[0]}
-              {user.lastName[0]}
+              {user?.firstName[0]}
+              {user?.lastName[0]}
             </Avatar>
             <div>
               <Stack direction="column">
                 <Typography>
-                  {user.firstName} {user.lastName}
+                  {user?.firstName} {user?.lastName}
                 </Typography>
-                <Typography>@{user.userName}</Typography>
+                <Typography>@{user?.userName}</Typography>
               </Stack>
             </div>
           </>
@@ -104,7 +104,7 @@ const MenuDrawer = ({
       <ListItem
         key={"profile"}
         component={Link}
-        to={`/profile/${user.userName}`}
+        to={`/profile/${user?.userName}`}
       >
         <ListItemIcon>
           <AccountCircleIcon sx={{ color: "#232b2b" }} />
@@ -116,7 +116,7 @@ const MenuDrawer = ({
     </List>
     <Divider />
     <List>
-      {localUserLoggedIn ? (
+      {user ? (
         <ListItem
           key={"logout"}
           component={Link}
@@ -152,11 +152,12 @@ const MenuDrawer = ({
   </Drawer>
 );
 
-const SmallScreenHeader = ({ user, localUserLoggedIn, logoutUser }) => {
+const SmallScreenHeader = ({ logoutUser }) => {
   const theme = useTheme();
   const [drawer, setDrawer] = useState(false);
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -192,8 +193,7 @@ const SmallScreenHeader = ({ user, localUserLoggedIn, logoutUser }) => {
         <MenuDrawer
           drawer={drawer}
           toggleDrawer={toggleDrawer}
-          localUserLoggedIn={localUserLoggedIn}
-          user={user}
+          user={currentUser}
           theme={theme}
           setDrawer={setDrawer}
           logoutUser={logoutUser()}
@@ -228,7 +228,7 @@ const SmallScreenHeader = ({ user, localUserLoggedIn, logoutUser }) => {
               leftIcon={<SearchIcon />}
             ></PrimaryButton>
           )}
-          {!localUserLoggedIn && (
+          {!currentUser && (
             <PrimaryButton
               variant="text"
               buttonElement={Link}
