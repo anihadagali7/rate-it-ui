@@ -11,7 +11,7 @@ const BigScreenHeader = ({ logoutUser }) => {
   const [userMenu, setUserMenu] = useState(null);
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
 
   const handleOpenUserMenu = (event) => {
     setUserMenu(event.currentTarget);
@@ -54,7 +54,7 @@ const BigScreenHeader = ({ logoutUser }) => {
                 buttonElement={Link}
                 link={searchKeyword.length > 0 && `/search/${searchKeyword}`}
                 variant="text"
-                onClick={() => !searchKeyword && handleOpenSearchBar(false)}
+                onClick={() => handleOpenSearchBar(false)}
                 leftIcon={<SearchIcon />}
               ></PrimaryButton>
             </Stack>
@@ -89,6 +89,16 @@ const BigScreenHeader = ({ logoutUser }) => {
                 onClose={handleCloseUserMenu}
               >
                 <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
+                  <Typography
+                    textAlign="center"
+                    component={Link}
+                    to={`/profile/${currentUser?.userName}`}
+                    sx={{ textDecoration: "none" }}
+                  >
+                    Profile
+                  </Typography>
+                </MenuItem>
+                <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center" onClick={() => logoutUser()}>
                     Logout
                   </Typography>

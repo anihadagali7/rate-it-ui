@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import UserContext from "./context/userContext";
 
 const Protected = ({ children }) => {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
 
   if (!currentUser) {
     return <Navigate to="/" replace />;

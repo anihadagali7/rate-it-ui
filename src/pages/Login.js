@@ -18,7 +18,7 @@ const Login = () => {
     password: "",
   });
 
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { setCurrentUser } = useContext(UserContext);
   const [errorValue, setErrorValue] = useState({
     email: { value: false, message: "" },
     password: { value: false, message: "" },

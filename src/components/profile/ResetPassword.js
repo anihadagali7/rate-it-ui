@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useAtom } from "jotai";
 import AuthClient from "../../client/AuthClient";
-import { currentlyLoggedIn, currentUser } from "../../state/user";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import UserContext from "../../shared/context/userContext";
 
 const initialErrorState = {
   currentPassword: { value: false, message: "" },
@@ -16,9 +15,7 @@ const initialErrorState = {
 
 const ResetPassword = ({ currentProfile }) => {
   let navigate = useNavigate();
-
-  const [user, setUser] = useAtom(currentUser);
-  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
+  const { setCurrentUser } = useContext(UserContext);
 
   const [errorValue, setErrorValue] = useState(initialErrorState);
   const [payload, setPayload] = useState({
@@ -85,8 +82,7 @@ const ResetPassword = ({ currentProfile }) => {
         passwordRequest,
         errorHandler
       );
-      setUserLoggedIn(true);
-      setUser(result.user);
+      setCurrentUser(result.user);
       navigate(`/profile/${result.user.userName}`);
     }
   };
