@@ -1,13 +1,5 @@
-import {
-  Container,
-  Grid,
-  Paper,
-  StyledEngineProvider,
-  ThemeProvider,
-} from "@mui/material";
-import { Provider, useAtom } from "jotai";
-import React, { useState } from "react";
-import { theme } from "../../styles/Theme";
+import { Container, Grid, Paper } from "@mui/material";
+import React, { useContext, useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -19,12 +11,12 @@ import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import UserClient from "../../client/UserClient";
-import { currentUser } from "../../state/user";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import UserContext from "../../shared/context/userContext";
 
 const SearchResults = ({ results, resultType }) => {
   const [updateList, setUpdateList] = useState(false);
-  const [user, setUser] = useAtom(currentUser);
+  const { currentUser } = useContext(UserContext);
 
   const listItem = (row) => (
     <ListItem
@@ -275,17 +267,17 @@ const SearchResults = ({ results, resultType }) => {
   };
 
   const determineActionButton = (profile) => {
-    if (profile.userName === user.userName) {
+    if (profile.userName === currentUser.userName) {
       return <></>;
     } else if (
       profile &&
       profile.followers &&
-      profile.followers.includes(user && user.userName)
+      profile.followers.includes(currentUser && currentUser.userName)
     ) {
       return (
         <PrimaryButton
-          variant="contained"
-          onClick={() => unFollowUser(user.userName, profile.userName)}
+          variant="outlined"
+          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
         >
           Following
         </PrimaryButton>
@@ -294,7 +286,7 @@ const SearchResults = ({ results, resultType }) => {
       return (
         <PrimaryButton
           variant="contained"
-          onClick={() => followUser(user.userName, profile.userName)}
+          onClick={() => followUser(currentUser.userName, profile.userName)}
         >
           Follow
         </PrimaryButton>
@@ -304,20 +296,20 @@ const SearchResults = ({ results, resultType }) => {
 
   const unFollowUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
+    result === 200 && setUpdateList(!updateList);
   };
 
   const followUser = async (currentUser, userToUnfollow) => {
     let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setUpdateList(!updateList);
+    result === 200 && setUpdateList(!updateList);
   };
 
   const listItemUser = (profile) => {
     return (
       <>
         <ListItem>
-          <Stack direction="row" spacing={2}>
-            <>
+          <Grid container>
+            <Grid item xs={2}>
               <Avatar
                 sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
                 component={Link}
@@ -326,25 +318,19 @@ const SearchResults = ({ results, resultType }) => {
                 {profile.firstName[0]}
                 {profile.lastName[0]}
               </Avatar>
-              <div>
-                <Stack direction="column">
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    {profile.firstName} {profile.lastName}
-                  </Typography>
-                  <Typography>@{profile.userName}</Typography>
-                </Stack>
-              </div>
-              <div
-                style={{
-                  position: "absolute",
-                  right: "10px",
-                  margin: "0 0 50px 0",
-                }}
-              >
-                {/* {determineActionButton(profile)} */}
-              </div>
-            </>
-          </Stack>
+            </Grid>
+            <Grid item xs={6}>
+              <Stack direction="column">
+                <Typography sx={{ fontWeight: "bold" }}>
+                  {profile.firstName} {profile.lastName}
+                </Typography>
+                <Typography>@{profile.userName}</Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={4} container justifyContent="end">
+              {determineActionButton(profile)}
+            </Grid>
+          </Grid>
         </ListItem>
         <Divider />
       </>
@@ -352,27 +338,18 @@ const SearchResults = ({ results, resultType }) => {
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}></ThemeProvider>
-        <Divider sx={{ marginTop: "30px" }} />
-        <Container
-          maxWidth={"sm"}
-          sx={{ "&.MuiContainer-root": { marginLeft: "-37px !important" } }}
-        >
-          <List sx={{ width: "100%", maxWidth: 360 }}>
-            {resultType === "music" &&
-              results.map((row, index) => listItemMusic(row))}
-            {resultType === "book" &&
-              results.map((row, index) => listItemBook(row))}
-            {(resultType === "movie" || resultType === "tv") &&
-              results.map((row, index) => listItem(row))}
-            {resultType === "user" &&
-              results.map((row, index) => listItemUser(row))}
-          </List>
-        </Container>
-      </StyledEngineProvider>
-    </Provider>
+    <Container>
+      <List>
+        {resultType === "music" &&
+          results.map((row, index) => listItemMusic(row))}
+        {resultType === "book" &&
+          results.map((row, index) => listItemBook(row))}
+        {(resultType === "movie" || resultType === "tv") &&
+          results.map((row, index) => listItem(row))}
+        {resultType === "user" &&
+          results.map((row, index) => listItemUser(row))}
+      </List>
+    </Container>
   );
 };
 

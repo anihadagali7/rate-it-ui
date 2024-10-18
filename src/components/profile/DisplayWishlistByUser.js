@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { theme } from "../../styles/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { Provider } from "jotai";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
@@ -17,18 +10,22 @@ import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
+import UserContext from "../../shared/context/userContext";
 
-const DisplayWishlistByUser = ({ user }) => {
+const DisplayWishlistByUser = () => {
   const [wishlistList, setWishlistList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     getWishlistForUser();
-  }, [user]);
+  }, [currentUser]);
 
   const getWishlistForUser = async () => {
     setLoading(true);
-    const result = await WishlistClient.getAllWishlistForUser(user.userName);
+    const result = await WishlistClient.getAllWishlistForUser(
+      currentUser.userName
+    );
     setWishlistList(result.data.wishlistList.reverse());
     setLoading(false);
   };
@@ -105,22 +102,16 @@ const DisplayWishlistByUser = ({ user }) => {
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <List component="nav">
-              {loading ? <ProfileWishlistLoading /> : displayWishlist()}
-            </List>
-          </Box>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <List component="nav">
+        {loading ? <ProfileWishlistLoading /> : displayWishlist()}
+      </List>
+    </Box>
   );
 };
 

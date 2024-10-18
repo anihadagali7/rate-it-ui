@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { theme } from "../../styles/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { Provider } from "jotai";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
@@ -17,22 +10,26 @@ import DisplayOnePlaylist from "./DisplayOnePlaylist";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddPlaylistModal from "../modals/AddPlaylistModal";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import UserContext from "../../shared/context/userContext";
 
-const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
+const DisplayPlaylistByUser = ({ userViewingOwnProfile }) => {
   const [playlistList, setPlaylistList] = useState([]);
   const [displayOnePlaylist, setDisplayOnePlaylist] = useState(false);
   const [playListId, setPlaylistId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
   const [playlistAdded, setPlaylistAdded] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     getPlaylistForUser();
-  }, [playlistAdded, user]);
+  }, [playlistAdded, currentUser]);
 
   const getPlaylistForUser = async () => {
     setLoading(true);
-    const result = await PlaylistClient.getAllPlaylistForUser(user.userName);
+    const result = await PlaylistClient.getAllPlaylistForUser(
+      currentUser.userName
+    );
     setPlaylistList(result.data.playlistList.reverse());
     setLoading(false);
   };
@@ -100,41 +97,29 @@ const DisplayPlaylistByUser = ({ user, userViewingOwnProfile }) => {
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <List component="nav">
-              {loading ? (
-                <ProfileWishlistLoading />
-              ) : displayOnePlaylist ? (
-                <DisplayOnePlaylist
-                  user={user}
-                  playListId={playListId}
-                  viewAllPlaylists={viewAllPlaylists}
-                />
-              ) : (
-                displayPlaylist()
-              )}
-            </List>
-          </Box>
-          {openNewPlaylistModal && (
-            <AddPlaylistModal
-              open={openNewPlaylistModal}
-              onClose={handleNewPlaylistModalClose}
-              user={user}
-              playlistAdded={playlistAdded}
-              setPlaylistAdded={setPlaylistAdded}
-            />
-          )}
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <Box>
+      <List component="nav">
+        {loading ? (
+          <ProfileWishlistLoading />
+        ) : displayOnePlaylist ? (
+          <DisplayOnePlaylist
+            playListId={playListId}
+            viewAllPlaylists={viewAllPlaylists}
+          />
+        ) : (
+          displayPlaylist()
+        )}
+      </List>
+
+      {openNewPlaylistModal && (
+        <AddPlaylistModal
+          open={openNewPlaylistModal}
+          onClose={handleNewPlaylistModalClose}
+          playlistAdded={playlistAdded}
+          setPlaylistAdded={setPlaylistAdded}
+        />
+      )}
+    </Box>
   );
 };
 

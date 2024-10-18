@@ -1,18 +1,17 @@
 import { Box, Grid, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import PersonIcon from "@mui/icons-material/Person";
+import UserContext from "../../shared/context/userContext";
 
-const BigScreenHeader = ({
-  localUserLoggedIn,
-  logoutUser,
-}) => {
+const BigScreenHeader = ({ logoutUser }) => {
   const [userMenu, setUserMenu] = useState(null);
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const { currentUser } = useContext(UserContext);
 
   const handleOpenUserMenu = (event) => {
     setUserMenu(event.currentTarget);
@@ -55,7 +54,7 @@ const BigScreenHeader = ({
                 buttonElement={Link}
                 link={searchKeyword.length > 0 && `/search/${searchKeyword}`}
                 variant="text"
-                onClick={() => !searchKeyword && handleOpenSearchBar(false)}
+                onClick={() => handleOpenSearchBar(false)}
                 leftIcon={<SearchIcon />}
               ></PrimaryButton>
             </Stack>
@@ -66,7 +65,7 @@ const BigScreenHeader = ({
               leftIcon={<SearchIcon />}
             ></PrimaryButton>
           )}
-          {localUserLoggedIn ? (
+          {currentUser ? (
             <Box>
               <PrimaryButton
                 variant="text"
@@ -90,7 +89,17 @@ const BigScreenHeader = ({
                 onClose={handleCloseUserMenu}
               >
                 <MenuItem key={"setting"} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={logoutUser()}>
+                  <Typography
+                    textAlign="center"
+                    component={Link}
+                    to={`/profile/${currentUser?.userName}`}
+                    sx={{ textDecoration: "none" }}
+                  >
+                    Profile
+                  </Typography>
+                </MenuItem>
+                <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={() => logoutUser()}>
                     Logout
                   </Typography>
                 </MenuItem>

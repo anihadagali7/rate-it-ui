@@ -2,13 +2,14 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
+const ACCESS_TOKEN = localStorage.getItem("accessToken");
+
 const createPlaylist = (playlist) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(API_URL + `/api/playlist/create`, playlist, {
       headers: {
-        Authorization: ACCESS_TOKEN
-      }
+        Authorization: ACCESS_TOKEN,
+      },
     })
     .then((response) => {
       return response.data;
@@ -16,12 +17,11 @@ const createPlaylist = (playlist) => {
 };
 
 const addMediaToPlaylist = (playlistMedia) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(API_URL + `/api/playlist/addMedia`, playlistMedia, {
       headers: {
-        Authorization: ACCESS_TOKEN
-      }
+        Authorization: ACCESS_TOKEN,
+      },
     })
     .then((response) => {
       return response.data;
@@ -29,12 +29,11 @@ const addMediaToPlaylist = (playlistMedia) => {
 };
 
 const getAllPlaylistForUser = (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/playlist/user/${userName}`, {
       headers: {
-        Authorization: ACCESS_TOKEN
-      }
+        Authorization: ACCESS_TOKEN,
+      },
     })
     .then((response) => {
       return response.data;
@@ -42,16 +41,20 @@ const getAllPlaylistForUser = (userName) => {
 };
 
 const getAllMediaForPlaylist = (playlistId) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/playlist/${playlistId}`, {
       headers: {
-        Authorization: ACCESS_TOKEN
-      }
+        Authorization: ACCESS_TOKEN,
+      },
     })
     .then((response) => {
       return response.data;
     });
 };
 
-export default { createPlaylist, addMediaToPlaylist, getAllPlaylistForUser, getAllMediaForPlaylist };
+export default {
+  createPlaylist,
+  addMediaToPlaylist,
+  getAllPlaylistForUser,
+  getAllMediaForPlaylist,
+};

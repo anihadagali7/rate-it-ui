@@ -1,12 +1,5 @@
-import {
-  Container,
-  Grid,
-  StyledEngineProvider,
-  ThemeProvider,
-} from "@mui/material";
-import { Provider, useAtom } from "jotai";
-import React, { useState } from "react";
-import { theme } from "../../styles/Theme";
+import { Container, Grid } from "@mui/material";
+import React, { useContext, useState } from "react";
 import Divider from "@mui/material/Divider";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
@@ -17,12 +10,12 @@ import UserClient from "../../client/UserClient";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
-import { currentUser } from "../../state/user";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import UserContext from "../../shared/context/userContext";
 
 const SearchResultsMobile = ({ results, resultType }) => {
   const [updateList, setUpdateList] = useState(false);
-  const [user, setUser] = useAtom(currentUser);
+  const { currentUser } = useContext(UserContext);
 
   const listItem = (row, index) => (
     <Grid
@@ -149,17 +142,17 @@ const SearchResultsMobile = ({ results, resultType }) => {
   );
 
   const determineActionButton = (profile) => {
-    if (profile.userName === user.userName) {
+    if (profile.userName === currentUser.userName) {
       return <></>;
     } else if (
       profile &&
       profile.followers &&
-      profile.followers.includes(user && user.userName)
+      profile.followers.includes(currentUser && currentUser.userName)
     ) {
       return (
         <PrimaryButton
           variant="contained"
-          onClick={() => unFollowUser(user.userName, profile.userName)}
+          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
         >
           Following
         </PrimaryButton>
@@ -168,7 +161,7 @@ const SearchResultsMobile = ({ results, resultType }) => {
       return (
         <PrimaryButton
           variant="contained"
-          onClick={() => followUser(user.userName, profile.userName)}
+          onClick={() => followUser(currentUser.userName, profile.userName)}
         >
           Follow
         </PrimaryButton>
@@ -226,33 +219,29 @@ const SearchResultsMobile = ({ results, resultType }) => {
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Divider sx={{ marginTop: "30px" }} />
-          <Container
-            maxWidth={"sm"}
-            sx={{
-              "&.MuiContainer-root": {
-                marginLeft: "-23px !important",
-                paddingRight: "0px !important",
-              },
-            }}
-          >
-            <Grid container>
-              {resultType === "music" &&
-                results.map((row, index) => listItemMusic(row, index))}
-              {(resultType === "movie" || resultType === "tv") &&
-                results.map((row, index) => listItem(row, index))}
-              {resultType === "user" &&
-                results.map((row, index) => listItemUser(row))}
-              {resultType === "book" &&
-                results.map((row, index) => listItemBook(row))}
-            </Grid>
-          </Container>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <Box>
+      <Divider sx={{ marginTop: "30px" }} />
+      <Container
+        maxWidth={"sm"}
+        sx={{
+          "&.MuiContainer-root": {
+            marginLeft: "-23px !important",
+            paddingRight: "0px !important",
+          },
+        }}
+      >
+        <Grid container>
+          {resultType === "music" &&
+            results.map((row, index) => listItemMusic(row, index))}
+          {(resultType === "movie" || resultType === "tv") &&
+            results.map((row, index) => listItem(row, index))}
+          {resultType === "user" &&
+            results.map((row, index) => listItemUser(row))}
+          {resultType === "book" &&
+            results.map((row, index) => listItemBook(row))}
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

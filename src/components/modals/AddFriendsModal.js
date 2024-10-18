@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
-import { Provider } from "jotai";
 import UserClient from "../../client/UserClient";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -11,11 +10,11 @@ import Divider from "@mui/material/Divider";
 import SearchClient from "../../client/SearchClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import UserContext from "../../shared/context/userContext";
 
 const AddFriendsModal = ({
   open,
   onClose,
-  currentUser,
   friendsAdded,
   setFriendsAdded,
 }) => {
@@ -23,6 +22,7 @@ const AddFriendsModal = ({
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
   const resetSearch = () => {
     setSearchKeyword("");
@@ -105,113 +105,111 @@ const AddFriendsModal = ({
   };
 
   return (
-    <Provider>
-      <Dialog
-        open={open}
-        onClose={onClose}
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "100%",
+          height: 400,
+          maxWidth: 500,
+          overflowY: "hidden",
+        },
+      }}
+    >
+      <DialogTitle
         sx={{
-          "& .MuiDialog-paper": {
-            width: "100%",
-            height: 400,
-            maxWidth: 500,
-            overflowY: "hidden",
-          },
+          fontSize: "13px",
+          fontWeight: "bold",
+          height: "0px",
+          textAlign: "center",
         }}
       >
-        <DialogTitle
+        Add Friends
+      </DialogTitle>
+      <Box sx={{ margin: "20px 10px" }}>
+        <Grid
+          container
+          spacing={{ xs: 2, md: 2, xl: 2 }}
+          columns={{ xs: 12 }}
           sx={{
-            fontSize: "13px",
-            fontWeight: "bold",
-            height: "0px",
-            textAlign: "center",
+            justifyContent: "space-around",
+            alignItems: "center",
           }}
         >
-          Add Friends
-        </DialogTitle>
-        <Box sx={{ margin: "20px 10px" }}>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 2, xl: 2 }}
-            columns={{ xs: 12 }}
-            sx={{
-              justifyContent: "space-around",
-              alignItems: "center",
-            }}
-          >
-            <Grid item xs={9}>
-              <PrimaryInputField
-                value={searchKeyword}
-                name="search"
-                onChange={onChangeSearch}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <PrimaryButton
-                variant="contained"
-                onClick={submitSearch}
-                disabled={checkToDisable()}
-              >
-                Search
-              </PrimaryButton>
-            </Grid>
+          <Grid item xs={9}>
+            <PrimaryInputField
+              value={searchKeyword}
+              name="search"
+              onChange={onChangeSearch}
+            />
           </Grid>
-          {hasSearched && (
-            <List component="nav" sx={{ margin: "0 10px" }}>
-              {searchResults && searchResults.length > 0 ? (
-                searchResults.map((profile) => (
-                  <>
-                    <ListItem>
-                      <Stack direction="row" spacing={2}>
-                        <>
-                          <Avatar
-                            onClick={onClose}
-                            sx={{
-                              bgcolor: "#00a8ff",
-                              textDecoration: "none",
-                            }}
+          <Grid item xs={3}>
+            <PrimaryButton
+              variant="contained"
+              onClick={submitSearch}
+              disabled={checkToDisable()}
+            >
+              Search
+            </PrimaryButton>
+          </Grid>
+        </Grid>
+        {hasSearched && (
+          <List component="nav" sx={{ margin: "0 10px" }}>
+            {searchResults && searchResults.length > 0 ? (
+              searchResults.map((profile) => (
+                <>
+                  <ListItem>
+                    <Stack direction="row" spacing={2}>
+                      <>
+                        <Avatar
+                          onClick={onClose}
+                          sx={{
+                            bgcolor: "#00a8ff",
+                            textDecoration: "none",
+                          }}
+                          component={Link}
+                          to={`/profile/${profile.userName}`}
+                        >
+                          {profile.firstName[0]}
+                          {profile.lastName[0]}
+                        </Avatar>
+                        <div>
+                          <Stack
+                            direction="column"
+                            sx={{ textDecoration: "none" }}
                             component={Link}
+                            onClick={onClose}
                             to={`/profile/${profile.userName}`}
                           >
-                            {profile.firstName[0]}
-                            {profile.lastName[0]}
-                          </Avatar>
-                          <div>
-                            <Stack
-                              direction="column"
-                              sx={{ textDecoration: "none" }}
-                              component={Link}
-                              onClick={onClose}
-                              to={`/profile/${profile.userName}`}
-                            >
-                              <Typography sx={{ fontWeight: "bold" }}>
-                                {profile.firstName} {profile.lastName}
-                              </Typography>
-                              <Typography>@{profile.userName}</Typography>
-                            </Stack>
-                          </div>
-                          <div
-                            style={{
-                              position: "absolute",
-                              right: "10px",
-                              margin: "0 0 50px 0",
-                            }}
-                          >
-                            {determineActionButton(profile)}
-                          </div>
-                        </>
-                      </Stack>
-                    </ListItem>
-                    <Divider />
-                  </>
-                ))
-              ) : (
-                <div>No users match this search.</div>
-              )}
-            </List>
-          )}
-        </Box>
-      </Dialog>
-    </Provider>
+                            <Typography sx={{ fontWeight: "bold" }}>
+                              {profile.firstName} {profile.lastName}
+                            </Typography>
+                            <Typography>@{profile.userName}</Typography>
+                          </Stack>
+                        </div>
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            margin: "0 0 50px 0",
+                          }}
+                        >
+                          {determineActionButton(profile)}
+                        </div>
+                      </>
+                    </Stack>
+                  </ListItem>
+                  <Divider />
+                </>
+              ))
+            ) : (
+              <div>No users match this search.</div>
+            )}
+          </List>
+        )}
+      </Box>
+    </Dialog>
   );
 };
 

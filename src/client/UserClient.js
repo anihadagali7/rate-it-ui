@@ -2,8 +2,9 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
+const ACCESS_TOKEN = localStorage.getItem("accessToken");
+
 const getUserInfo = (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(
       API_URL + `/api/account/${userName}`,
@@ -19,7 +20,6 @@ const getUserInfo = (userName) => {
 };
 
 const getAllUsers = () => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(
       API_URL + `/api/allUsers`,
@@ -35,7 +35,6 @@ const getAllUsers = () => {
 };
 
 const getFollowing = (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(
       API_URL + `/api/${userName}/following`,
@@ -52,7 +51,6 @@ const getFollowing = (userName) => {
 
 
 const getFollowers = (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(
       API_URL + `/api/${userName}/followers`,
@@ -68,7 +66,6 @@ const getFollowers = (userName) => {
 };
 
 const unFollowUser = (currentUser, userToUnfollow) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(
       API_URL + `/api/friends/unfollow`,
@@ -87,7 +84,6 @@ const unFollowUser = (currentUser, userToUnfollow) => {
 }
 
 const followUser = (currentUser, userToFollow) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(
       API_URL + `/api/friends/follow`,

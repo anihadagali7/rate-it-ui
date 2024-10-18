@@ -1,11 +1,11 @@
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { useAtom } from "jotai";
-import { currentlyLoggedIn, currentUser } from "../state/user";
+import UserContext from "./context/userContext";
 
 const Protected = ({ children }) => {
-  const [userLoggedIn, setUserLoggedIn] = useAtom(currentlyLoggedIn);
-  const [user, setUser] = useAtom(currentUser);
-  if (!userLoggedIn && Object.keys(user).length === 0) {
+  const { currentUser } = useContext(UserContext);
+
+  if (!currentUser) {
     return <Navigate to="/" replace />;
   }
   return children;

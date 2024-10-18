@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
-import { Provider, useAtom } from "jotai";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link, useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
 import FriendsModal from "../components/modals/FriendsModal";
-import { currentUser } from "../state/user";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
@@ -14,6 +12,7 @@ import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
 import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
+import UserContext from "../shared/context/userContext";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -23,28 +22,27 @@ const Profile = () => {
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
-  const [user, setUser] = useAtom(currentUser);
+  const { currentUser } = useContext(UserContext);
   const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
 
   const followProfile = async () => {
-    await UserClient.followUser(user.userName, profile.userName);
+    await UserClient.followUser(currentUser.userName, profile.userName);
     getProfileDetails();
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(user.userName, profile.userName);
+    await UserClient.unFollowUser(currentUser.userName, profile.userName);
     getProfileDetails();
   };
 
   const getProfileDetails = async () => {
-    const userAndProfile = user.userName === userName;
-    const currentUser = await UserClient.getUserInfo(user.userName);
-    setUser(currentUser.data.user);
+    const userAndProfile = currentUser.userName === userName;
+
     if (!userAndProfile) {
       const result = await UserClient.getUserInfo(userName);
       setProfile(result.data.user);
     } else {
-      setProfile(currentUser.data.user);
+      setProfile(currentUser);
     }
     setUserViewingOwnProfile(userAndProfile);
     setOpenFriendsModal(false);
@@ -93,7 +91,7 @@ const Profile = () => {
     } else if (
       profile &&
       profile.followers &&
-      profile.followers.includes(user && user.userName)
+      profile.followers.includes(currentUser && currentUser.userName)
     ) {
       return (
         <PrimaryButton variant="outlined" onClick={unFollowProfile}>
@@ -133,7 +131,7 @@ const Profile = () => {
   ];
 
   return (
-    <Provider>
+    <Box>
       <Container
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
@@ -214,7 +212,7 @@ const Profile = () => {
                 <span style={{ fontWeight: "normal" }}> followers</span>
               </span>
             </Grid>
-            {user.userName === userName && (
+            {currentUser.userName === userName && (
               <Grid item xs={12}>
                 <PrimaryButton
                   variant="text"
@@ -245,7 +243,6 @@ const Profile = () => {
           userName={profile.userName}
           friendsAdded={friendsAdded}
           setFriendsAdded={setFriendsAdded}
-          currentUser={user}
           openingTab={friendsTab}
         />
       )}
@@ -253,12 +250,11 @@ const Profile = () => {
         <AddFriendsModal
           open={openAddFriendsModal}
           onClose={handleAddFriendsModalClose}
-          currentUser={user}
           friendsAdded={friendsAdded}
           setFriendsAdded={setFriendsAdded}
         />
       )}
-    </Provider>
+    </Box>
   );
 };
 

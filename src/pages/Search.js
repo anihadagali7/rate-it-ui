@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Provider } from "jotai";
 import { Container } from "@mui/material";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
@@ -166,7 +165,7 @@ const Search = () => {
   };
 
   return (
-    <Provider>
+    <Box>
       <Container
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "20px" }}
@@ -236,7 +235,7 @@ const Search = () => {
           }}
         />
       )}
-    </Provider>
+    </Box>
   );
 };
 

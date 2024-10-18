@@ -1,17 +1,7 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Dialog,
-  DialogTitle,
-  Popover,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Dialog, DialogTitle, Popover, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { theme } from "../../styles/Theme";
-import { Provider } from "jotai";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
@@ -21,6 +11,7 @@ import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import UserContext from "../../shared/context/userContext";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -33,7 +24,6 @@ const FriendsModal = ({
   onClose,
   userName,
   openingTab,
-  currentUser,
   friendsAdded,
   setFriendsAdded,
 }) => {
@@ -41,6 +31,7 @@ const FriendsModal = ({
   const [followingList, setFollowingList] = useState({});
   const [followersList, setFollowersList] = useState({});
   const [unfollowPopover, setUnfollowPopover] = useState(false);
+  const { currentUser } = useContext(UserContext);
   const openPopover = Boolean(unfollowPopover);
 
   const getFollowers = async () => {
@@ -171,175 +162,161 @@ const FriendsModal = ({
   };
 
   return (
-    <>
-      <Provider>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={theme}>
-            <Dialog
-              open={open}
-              onClose={onClose}
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "100%",
+          height: 300,
+          maxWidth: 500,
+          overflowY: "hidden",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          fontSize: "13px",
+          fontWeight: "bold",
+          height: "0px",
+          textAlign: "center",
+        }}
+      >
+        {userName}
+      </DialogTitle>
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={tabValue}
+            variant="fullWidth"
+            onChange={handleTabChange}
+            sx={{ color: "#00a8ff" }}
+            TabIndicatorProps={{ style: { background: "#00a8ff" } }}
+          >
+            <Tab
               sx={{
-                "& .MuiDialog-paper": {
-                  width: "100%",
-                  height: 300,
-                  maxWidth: 500,
-                  overflowY: "hidden",
+                fontSize: "13px",
+                "&.Mui-selected": {
+                  color: "#40a9ff",
+                  fontSize: "13px",
+                },
+                "&.Mui-focusVisible": {
+                  backgroundColor: "#40a9ff",
                 },
               }}
-            >
-              <DialogTitle
-                sx={{
+              label="Following"
+            />
+            <Tab
+              sx={{
+                fontSize: "13px",
+                "&.Mui-selected": {
+                  color: "#40a9ff",
                   fontSize: "13px",
-                  fontWeight: "bold",
-                  height: "0px",
-                  textAlign: "center",
-                }}
-              >
-                {userName}
-              </DialogTitle>
-              <Box sx={{ width: "100%" }}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={tabValue}
-                    variant="fullWidth"
-                    onChange={handleTabChange}
-                    sx={{ color: "#00a8ff" }}
-                    TabIndicatorProps={{ style: { background: "#00a8ff" } }}
-                  >
-                    <Tab
-                      sx={{
-                        fontSize: "13px",
-                        "&.Mui-selected": {
-                          color: "#40a9ff",
-                          fontSize: "13px",
-                        },
-                        "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff",
-                        },
-                      }}
-                      label="Following"
-                    />
-                    <Tab
-                      sx={{
-                        fontSize: "13px",
-                        "&.Mui-selected": {
-                          color: "#40a9ff",
-                          fontSize: "13px",
-                        },
-                        "&.Mui-focusVisible": {
-                          backgroundColor: "#40a9ff",
-                        },
-                      }}
-                      label="Followers"
-                    />
-                  </Tabs>
-                </Box>
-                <TabPanel value={tabValue} index={0}>
-                  <List
-                    component="nav"
-                    style={{ maxHeight: 200, overflow: "auto" }}
-                  >
-                    {followingList && followingList.length > 0 ? (
-                      followingList.map((profile) => (
-                        <>
-                          <ListItem>
-                            <Stack direction="row" spacing={2}>
-                              <>
-                                <Avatar
-                                  sx={{
-                                    bgcolor: "#00a8ff",
-                                    textDecoration: "none",
-                                  }}
-                                  component={Link}
-                                  to={`/profile/${profile.userName}`}
-                                >
-                                  {profile.firstName[0]}
-                                  {profile.lastName[0]}
-                                </Avatar>
-                                <div>
-                                  <Stack direction="column">
-                                    <Typography sx={{ fontWeight: "bold" }}>
-                                      {profile.firstName} {profile.lastName}
-                                    </Typography>
-                                    <Typography>@{profile.userName}</Typography>
-                                  </Stack>
-                                </div>
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    right: "10px",
-                                    margin: "0 0 50px 0",
-                                  }}
-                                >
-                                  {determineActionButtonFollowingList(profile)}
-                                </div>
-                              </>
-                            </Stack>
-                          </ListItem>
-                          <Divider />
-                        </>
-                      ))
-                    ) : (
-                      <div>No following</div>
-                    )}
-                  </List>
-                </TabPanel>
-                <TabPanel value={tabValue} index={1}>
-                  <List
-                    component="nav"
-                    style={{ maxHeight: 200, overflow: "auto" }}
-                  >
-                    {followersList && followersList.length > 0 ? (
-                      followersList.map((profile) => (
-                        <>
-                          <ListItem>
-                            <Stack direction="row" spacing={2}>
-                              <>
-                                <Avatar
-                                  sx={{
-                                    bgcolor: "#00a8ff",
-                                    textDecoration: "none",
-                                  }}
-                                  component={Link}
-                                  to={`/profile/${profile.userName}`}
-                                >
-                                  {profile.firstName[0]}
-                                  {profile.lastName[0]}
-                                </Avatar>
-                                <div>
-                                  <Stack direction="column">
-                                    <Typography sx={{ fontWeight: "bold" }}>
-                                      {profile.firstName} {profile.lastName}
-                                    </Typography>
-                                    <Typography>@{profile.userName}</Typography>
-                                  </Stack>
-                                </div>
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    right: "10px",
-                                    margin: "0 0 50px 0",
-                                  }}
-                                >
-                                  {determineActionButtonFollowersList(profile)}
-                                </div>
-                              </>
-                            </Stack>
-                          </ListItem>
-                          <Divider />
-                        </>
-                      ))
-                    ) : (
-                      <div>No followers</div>
-                    )}
-                  </List>
-                </TabPanel>
-              </Box>
-            </Dialog>
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
-    </>
+                },
+                "&.Mui-focusVisible": {
+                  backgroundColor: "#40a9ff",
+                },
+              }}
+              label="Followers"
+            />
+          </Tabs>
+        </Box>
+        <TabPanel value={tabValue} index={0}>
+          <List component="nav" style={{ maxHeight: 200, overflow: "auto" }}>
+            {followingList && followingList.length > 0 ? (
+              followingList.map((profile) => (
+                <>
+                  <ListItem>
+                    <Stack direction="row" spacing={2}>
+                      <>
+                        <Avatar
+                          sx={{
+                            bgcolor: "#00a8ff",
+                            textDecoration: "none",
+                          }}
+                          component={Link}
+                          to={`/profile/${profile.userName}`}
+                        >
+                          {profile.firstName[0]}
+                          {profile.lastName[0]}
+                        </Avatar>
+                        <div>
+                          <Stack direction="column">
+                            <Typography sx={{ fontWeight: "bold" }}>
+                              {profile.firstName} {profile.lastName}
+                            </Typography>
+                            <Typography>@{profile.userName}</Typography>
+                          </Stack>
+                        </div>
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            margin: "0 0 50px 0",
+                          }}
+                        >
+                          {determineActionButtonFollowingList(profile)}
+                        </div>
+                      </>
+                    </Stack>
+                  </ListItem>
+                  <Divider />
+                </>
+              ))
+            ) : (
+              <div>No following</div>
+            )}
+          </List>
+        </TabPanel>
+        <TabPanel value={tabValue} index={1}>
+          <List component="nav" style={{ maxHeight: 200, overflow: "auto" }}>
+            {followersList && followersList.length > 0 ? (
+              followersList.map((profile) => (
+                <>
+                  <ListItem>
+                    <Stack direction="row" spacing={2}>
+                      <>
+                        <Avatar
+                          sx={{
+                            bgcolor: "#00a8ff",
+                            textDecoration: "none",
+                          }}
+                          component={Link}
+                          to={`/profile/${profile.userName}`}
+                        >
+                          {profile.firstName[0]}
+                          {profile.lastName[0]}
+                        </Avatar>
+                        <div>
+                          <Stack direction="column">
+                            <Typography sx={{ fontWeight: "bold" }}>
+                              {profile.firstName} {profile.lastName}
+                            </Typography>
+                            <Typography>@{profile.userName}</Typography>
+                          </Stack>
+                        </div>
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            margin: "0 0 50px 0",
+                          }}
+                        >
+                          {determineActionButtonFollowersList(profile)}
+                        </div>
+                      </>
+                    </Stack>
+                  </ListItem>
+                  <Divider />
+                </>
+              ))
+            ) : (
+              <div>No followers</div>
+            )}
+          </List>
+        </TabPanel>
+      </Box>
+    </Dialog>
   );
 };
 

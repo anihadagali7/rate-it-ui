@@ -2,8 +2,9 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
+const ACCESS_TOKEN = localStorage.getItem("accessToken");
+
 const submitRating = (rating) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .post(API_URL + `/api/rating`, rating, {
       headers: {
@@ -16,7 +17,6 @@ const submitRating = (rating) => {
 };
 
 const getAllRatingsForUser = (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/ratings/user/${userName}`, {
       headers: {
@@ -29,7 +29,6 @@ const getAllRatingsForUser = (userName) => {
 };
 
 const getAllRatingsForMedia = (mediaId) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/ratings/media/${mediaId}`, {
       headers: {
@@ -42,7 +41,6 @@ const getAllRatingsForMedia = (mediaId) => {
 };
 
 const getAllExploreRatings= () => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/ratings/explore`, {})
     .then((response) => {
@@ -51,7 +49,6 @@ const getAllExploreRatings= () => {
 };
 
 const getFeedRatings= (userName) => {
-  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   return axios
     .get(API_URL + `/api/ratings/following/${userName}`, {
       headers: {
