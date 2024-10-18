@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Provider, useAtom } from "jotai";
-import { theme } from "../styles/Theme";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
-import {
-  Container,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -21,7 +14,6 @@ import Stack from "@mui/material/Stack";
 import StarIcon from "@mui/icons-material/Star";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddRatingModal from "../components/modals/AddRatingModal";
-import { currentUser } from "../state/user";
 import RatingClient from "../client/RatingClient";
 import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
@@ -30,13 +22,14 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import UserContext from "../shared/context/userContext";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [media, setMedia] = useState({});
   const [ratingsList, setRatingsList] = useState([]);
   const [openRatingModal, setOpenRatingModal] = useState(false);
-  const [user, setUser] = useAtom(currentUser);
+  const { currentUser } = useContext(UserContext);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const [ratingAdded, setRatingAdded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,7 +79,7 @@ const MediaInfo = () => {
   const handleAddToWishlist = async () => {
     let requestBody = {};
     requestBody.mediaId = media.mediaId;
-    requestBody.userName = user.userName;
+    requestBody.userName = currentUser.userName;
     await WishlistClient.addToWishlist(requestBody);
   };
 
@@ -264,7 +257,7 @@ const MediaInfo = () => {
             Add Rating
           </PrimaryButton>
           <PrimaryButton
-            variant="contained"
+            variant="text"
             leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
             onClick={handleAddToWishlist}
           >
@@ -303,7 +296,7 @@ const MediaInfo = () => {
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <PrimaryButton
-          variant="contained"
+          variant="text"
           leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
           onClick={handleAddToWishlist}
         >
@@ -324,7 +317,7 @@ const MediaInfo = () => {
   };
 
   return (
-    <Provider>
+    <Box>
       <Container
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
@@ -475,7 +468,6 @@ const MediaInfo = () => {
           open={openRatingModal}
           onClose={handleAddRatingModalClose}
           mediaDetails={media}
-          user={user}
           ratingAdded={ratingAdded}
           setRatingAdded={setRatingAdded}
         />
@@ -488,7 +480,7 @@ const MediaInfo = () => {
           }}
         />
       )}
-    </Provider>
+    </Box>
   );
 };
 

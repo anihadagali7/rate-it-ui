@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { theme } from "../../styles/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { Provider } from "jotai";
+import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import { Link } from "react-router-dom";
@@ -19,7 +12,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
-const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
+const DisplayOnePlaylist = ({ playListId, viewAllPlaylists }) => {
   const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] =
@@ -84,57 +77,45 @@ const DisplayOnePlaylist = ({ playListId, user, viewAllPlaylists }) => {
   };
 
   return (
-    <Provider>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            <PrimaryButton
-              variant="outlined"
-              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              onClick={() => viewAllPlaylists()}
-            >
-              Return
-            </PrimaryButton>
-            <PrimaryButton
-              variant="outlined"
-              leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-              onClick={handleAddMediaToPlaylistModalOpen}
-            >
-              Add Media to Playlist
-            </PrimaryButton>
-            <>
-              <Typography
-                sx={{
-                  marginLeft: "22px",
-                  marginTop: "10px",
-                  fontWeight: "bold",
-                }}
-              >
-                {mediaByPlaylist?.playlist?.name}
-              </Typography>
-              <List component="nav">
-                {loading ? <ProfileWishlistLoading /> : displayMediaList()}
-              </List>
-            </>
-          </Box>
-          {openAddMediaToPlaylistModal && (
-            <AddMediaToPlaylistModal
-              open={openAddMediaToPlaylistModal}
-              onClose={handleAddMediaToPlaylistModalClose}
-              user={user}
-              mediaByPlaylist={mediaByPlaylist}
-              setMediaAdded={setMediaAdded}
-              mediaAdded={mediaAdded}
-            />
-          )}
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Provider>
+    <Box>
+      <PrimaryButton
+        variant="text"
+        leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+        onClick={() => viewAllPlaylists()}
+      >
+        Return
+      </PrimaryButton>
+
+      <Typography
+        sx={{
+          marginLeft: "22px",
+          marginTop: "10px",
+          fontWeight: "bold",
+        }}
+      >
+        {mediaByPlaylist?.playlist?.name}
+      </Typography>
+      <PrimaryButton
+        variant="text"
+        onClick={handleAddMediaToPlaylistModalOpen}
+        leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+      >
+        Add to this playlist
+      </PrimaryButton>
+      <List component="nav">
+        {loading ? <ProfileWishlistLoading /> : displayMediaList()}
+      </List>
+
+      {openAddMediaToPlaylistModal && (
+        <AddMediaToPlaylistModal
+          open={openAddMediaToPlaylistModal}
+          onClose={handleAddMediaToPlaylistModalClose}
+          mediaByPlaylist={mediaByPlaylist}
+          setMediaAdded={setMediaAdded}
+          mediaAdded={mediaAdded}
+        />
+      )}
+    </Box>
   );
 };
 

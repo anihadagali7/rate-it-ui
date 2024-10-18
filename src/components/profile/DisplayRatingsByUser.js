@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import RatingClient from "../../client/RatingClient";
-import { theme } from "../../styles/Theme";
-import {
-  Box,
-  StyledEngineProvider,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { Provider } from "jotai";
+import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
@@ -17,18 +10,22 @@ import List from "@mui/material/List";
 import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
+import UserContext from "../../shared/context/userContext";
 
-const DisplayRatingsByUser = ({ user }) => {
+const DisplayRatingsByUser = () => {
   const [ratingsList, setRatingsList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     getRatingsForUser();
-  }, [user]);
+  }, [currentUser]);
 
   const getRatingsForUser = async () => {
     setLoading(true);
-    const result = await RatingClient.getAllRatingsForUser(user.userName);
+    const result = await RatingClient.getAllRatingsForUser(
+      currentUser.userName
+    );
     setRatingsList(result.data.ratingsList.reverse());
     setLoading(false);
   };
@@ -105,13 +102,11 @@ const DisplayRatingsByUser = ({ user }) => {
   };
 
   return (
-    <Provider>
-      <Box>
-        <List component="nav">
-          {loading ? <ProfileRatingsLoading /> : displayRatings()}
-        </List>
-      </Box>
-    </Provider>
+    <Box>
+      <List component="nav">
+        {loading ? <ProfileRatingsLoading /> : displayRatings()}
+      </List>
+    </Box>
   );
 };
 

@@ -243,7 +243,6 @@ const Profile = () => {
           userName={profile.userName}
           friendsAdded={friendsAdded}
           setFriendsAdded={setFriendsAdded}
-          currentUser={currentUser}
           openingTab={friendsTab}
         />
       )}
@@ -251,7 +250,6 @@ const Profile = () => {
         <AddFriendsModal
           open={openAddFriendsModal}
           onClose={handleAddFriendsModalClose}
-          currentUser={currentUser}
           friendsAdded={friendsAdded}
           setFriendsAdded={setFriendsAdded}
         />
