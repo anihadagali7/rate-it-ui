@@ -199,10 +199,10 @@ const SmallScreenHeader = ({ logoutUser }) => {
           logoutUser={() => logoutUser()}
         />
       </Grid>
-      <Grid item xs={2} container alignContent="center">
+      <Grid item xs={3} container alignContent="center" justifyContent="end">
         <Typography variant="logo">RATE IT</Typography>
       </Grid>
-      <Grid item xs={9} container justifyContent="end">
+      <Grid item xs={8} container justifyContent="end">
         <Stack direction="row" spacing={1}>
           {openSearchBar ? (
             <Stack direction="row" spacing={1}>

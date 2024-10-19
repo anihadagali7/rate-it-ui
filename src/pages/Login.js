@@ -85,120 +85,113 @@ const Login = () => {
 
   return (
     <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-      <Box
+      <Paper
+        elevation={6}
         sx={{
-          width: "100%",
-          height: 500,
-          margin: "auto",
+          backgroundColor: "#FFFFFF",
+          borderRadius: "17px",
         }}
       >
-        <Paper
-          elevation={6}
-          sx={{
-            width: "100%",
-            maxHeight: "480px",
-            backgroundColor: "#FFFFFF",
-            margin: "auto",
-            borderRadius: "17px",
-          }}
-        >
-          <Box sx={{ padding: "10px 35px", minHeight: "385px" }} mb={2}>
+        <Box sx={{ padding: "10px 35px" }} mb={2}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 2, xl: 5 }}
+            columns={{ md: 12 }}
+          >
+            <Grid item xs={8}>
+              <Typography variant="h3">Sign In</Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  marginTop: "7px",
+                }}
+              >
+                Stay updated on your media
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sx={{ width: "100%" }}>
+              <PrimaryInputField
+                label="Email"
+                value={payload.email}
+                name="email"
+                required
+                onChange={(e) => handleChange(e)}
+                error={errorValue["email"]["value"]}
+                helperText={
+                  (errorValue["email"]["value"] &&
+                    errorValue["email"]["message"]) ||
+                  " "
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ width: "100%" }}>
+              <PrimaryInputField
+                label="Password"
+                value={payload.password}
+                name="password"
+                required
+                type="password"
+                onChange={(e) => handleChange(e)}
+              />
+            </Grid>
             <Grid
+              item
+              xs={6}
               container
-              spacing={{ xs: 2, md: 2, xl: 5 }}
-              columns={{ md: 12 }}
+              alignContent="center"
+              sx={{ marginTop: "15px" }}
             >
-              <Grid item xs={8}>
-                <Typography variant="h3">Sign In</Typography>
-                <Typography
-                  sx={{
-                    fontSize: "14px",
-                    marginTop: "7px",
-                  }}
-                >
-                  Stay updated on your media
+              <PrimaryButton
+                testId="forgotPassword"
+                buttonElement={Link}
+                variant="text"
+                link="/signup"
+                disabled
+              >
+                Forgot password
+              </PrimaryButton>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              container
+              justifyContent="flex-end"
+              sx={{ marginTop: "15px" }}
+            >
+              <PrimaryButton
+                variant="contained"
+                disabled={checkToDisable()}
+                onClick={handleLogin}
+              >
+                Sign In
+              </PrimaryButton>
+            </Grid>
+          </Grid>
+          <Divider
+            variant="middle"
+            sx={{
+              marginTop: "25px",
+            }}
+          />
+          <Grid container sx={{ paddingTop: "20px" }}>
+            <Grid item xs={12} container justifyContent="center">
+              <Stack direction="row" spacing={4}>
+                <Typography sx={{ fontWeight: 550, alignContent: "center" }}>
+                  New to Rate It?
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sx={{ width: "100%" }}>
-                <Box mb={2}>
-                  <PrimaryInputField
-                    label="Email"
-                    value={payload.email}
-                    name="email"
-                    required
-                    onChange={(e) => handleChange(e)}
-                    error={errorValue["email"]["value"]}
-                    helperText={
-                      (errorValue["email"]["value"] &&
-                        errorValue["email"]["message"]) ||
-                      " "
-                    }
-                  />
-                </Box>
-                <Box mb={2}>
-                  <PrimaryInputField
-                    label="Password"
-                    value={payload.password}
-                    name="password"
-                    required
-                    type="password"
-                    onChange={(e) => handleChange(e)}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={8} container alignContent="center">
                 <PrimaryButton
-                  testId="forgotPassword"
+                  testId="signUpLink"
                   buttonElement={Link}
                   variant="text"
                   link="/signup"
-                  disabled
                 >
-                  Forgot password
+                  Join Now
                 </PrimaryButton>
-              </Grid>
-              <Grid item xs={4} container justifyContent="flex-end">
-                <div style={{}}>
-                  <PrimaryButton
-                    variant="contained"
-                    disabled={checkToDisable()}
-                    onClick={handleLogin}
-                  >
-                    Sign In
-                  </PrimaryButton>
-                </div>
-              </Grid>
+              </Stack>
             </Grid>
-            <Divider
-              variant="middle"
-              sx={{
-                marginTop: "25px",
-              }}
-            />
-            <Box mb={6} paddingTop={"20px"}>
-              <Grid container>
-                <Grid item xs={12} container justifyContent="center">
-                  <Stack direction="row" spacing={4}>
-                    <Typography
-                      sx={{ fontWeight: 550, alignContent: "center" }}
-                    >
-                      New to Rate It?
-                    </Typography>
-                    <PrimaryButton
-                      testId="signUpLink"
-                      buttonElement={Link}
-                      variant="text"
-                      link="/signup"
-                    >
-                      Join Now
-                    </PrimaryButton>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
+          </Grid>
+        </Box>
+      </Paper>
     </Container>
   );
 };
