@@ -216,7 +216,6 @@ const Search = () => {
                 <Box sx={{ marginTop: "10px" }}>
                   <PrimaryTabs
                     tabItems={tabItems}
-                    handleChange={setSearchTabType}
                     activeTab={searchTabType}
                     onTabChange={setSearchTabType}
                   />

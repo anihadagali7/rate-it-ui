@@ -2,6 +2,7 @@ import axios from "axios";
 import { getHeaders } from "../utils/AuthorizationUtils";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
+const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export default class AuthClient {
   static login(email, password) {
@@ -15,6 +16,11 @@ export default class AuthClient {
   static signUp(newAccount) {
     const url = `${API_URL}/api/create-user`;
     return axios.post(url, newAccount);
+  }
+
+  static editProfile(editAccount) {
+    const url = `${API_URL}/api/account/update`;
+    return axios.put(url, editAccount, getHeaders());
   }
 }
 

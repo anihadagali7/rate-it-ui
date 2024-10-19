@@ -53,7 +53,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
         : "",
   });
 
-  const [prevProfileValues] = useState(payload);
+  const [prevProfileValues, setPrevProfileValues] = useState(payload);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
   const [errorValue, setErrorValue] = useState(initialErrorState);
 
@@ -61,7 +61,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
     mutationFn: (newUser) => {
       return AuthClient.signUp(newUser);
     },
-    onSuccess: ({data}) => {
+    onSuccess: ({ data }) => {
       localStorage.setItem("accessToken", data.accessToken);
       setCurrentUser(data.data.user);
       navigate("/");
@@ -74,6 +74,18 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       if (errors.msg.includes("username")) {
         errorHandler("userName", true, errors.msg);
       }
+    },
+  });
+
+  const editProfile = useMutation({
+    mutationFn: (editAccount) => {
+      return AuthClient.editProfile(editAccount);
+    },
+    onSuccess: ({ data }) => {
+      const newUserValues = data.data.user;
+      setPrevProfileValues(newUserValues);
+      setCurrentUser(newUserValues);
+      navigate(`/profile/${currentUser.userName}`);
     },
   });
 
@@ -167,18 +179,24 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
     const hasRequiredFields =
       firstName && lastName && userName && phoneNumber && email && password;
 
+    // making sure new values in input field are different than what is saved
     const isSameProfile =
       prevProfileValues.firstName === firstName &&
       prevProfileValues.lastName === lastName &&
       prevProfileValues.phoneNumber === phoneNumber;
 
-    return isSameProfile || !hasRequiredFields || signUp.isLoading;
+    return (
+      isSameProfile ||
+      !hasRequiredFields ||
+      signUp.isLoading ||
+      editProfile.isLoading
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await setErrorValue(initialErrorState);
-    const newUser = {
+    const profileDetails = {
       firstName: payload.firstName,
       lastName: payload.lastName,
       email: payload.email,
@@ -188,12 +206,11 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
     };
 
     if (createProfile && (await validateInput())) {
-      signUp.mutate(newUser);
+      signUp.mutate(profileDetails);
     }
     if (updateProfile && (await validateInput())) {
-      const result = await AuthClient.editProfile(newUser, errorHandler);
-      setCurrentUser(result.user);
-      navigate(`/profile/${result.user.userName}`);
+      console.log("eiditn profiel click");
+      editProfile.mutate(profileDetails);
     }
   };
 

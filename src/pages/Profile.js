@@ -227,9 +227,6 @@ const Profile = () => {
           <Box sx={{ padding: "0 35px" }}>
             <PrimaryTabs
               tabItems={tabItems}
-              navigation
-              user={profile}
-              handleChange={setTabValue}
               activeTab={tabValue}
               onTabChange={setTabValue}
             />
