@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Container, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -29,9 +29,14 @@ const Login = () => {
     mutationFn: () => {
       return AuthClient.login(payload.email, payload.password, errorHandler);
     },
-    onSuccess: (data) => {
-      setCurrentUser(data.user);
+    onSuccess: ({ data }) => {
+      localStorage.setItem("accessToken", data.accessToken);
+      setCurrentUser(data.data.user);
       navigate("/");
+    },
+    onError: (error) => {
+      let errors = error.response.data.errors;
+      errorHandler("email", true, errors.msg);
     },
   });
 
@@ -173,8 +178,12 @@ const Login = () => {
             <Box mb={6} paddingTop={"20px"}>
               <Grid container>
                 <Grid item xs={12} container justifyContent="center">
-                  <Typography sx={{ fontWeight: 550 }}>
-                    New to Rate It?
+                  <Stack direction="row" spacing={4}>
+                    <Typography
+                      sx={{ fontWeight: 550, alignContent: "center" }}
+                    >
+                      New to Rate It?
+                    </Typography>
                     <PrimaryButton
                       testId="signUpLink"
                       buttonElement={Link}
@@ -183,7 +192,7 @@ const Login = () => {
                     >
                       Join Now
                     </PrimaryButton>
-                  </Typography>
+                  </Stack>
                 </Grid>
               </Grid>
             </Box>
