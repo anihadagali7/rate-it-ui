@@ -1,8 +1,8 @@
 import React from "react";
-import UpdateProfile from "../components/profile/UpdateProfile";
+import ProfileDetails from "../components/profile/ProfileDetails";
 
 const Signup = () => {
-  return <UpdateProfile createProfile={true} updateProfile={false} />;
+  return <ProfileDetails createProfile={true} updateProfile={false} />;
 };
 
 export default Signup;

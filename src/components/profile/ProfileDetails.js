@@ -11,6 +11,7 @@ import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import ResetPassword from "./ResetPassword";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import UserContext from "../../shared/context/userContext";
+import { useMutation } from "@tanstack/react-query";
 
 const initialErrorState = {
   firstName: { value: false, message: "" },
@@ -21,7 +22,7 @@ const initialErrorState = {
   password: { value: false, message: "" },
 };
 
-const UpdateProfile = ({ createProfile, updateProfile }) => {
+const ProfileDetails = ({ createProfile, updateProfile }) => {
   let navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
 
@@ -55,6 +56,26 @@ const UpdateProfile = ({ createProfile, updateProfile }) => {
   const [prevProfileValues] = useState(payload);
   const [displayResetPassword, setDisplayResetPassword] = useState(false);
   const [errorValue, setErrorValue] = useState(initialErrorState);
+
+  const signUp = useMutation({
+    mutationFn: (newUser) => {
+      return AuthClient.signUp(newUser);
+    },
+    onSuccess: ({data}) => {
+      localStorage.setItem("accessToken", data.accessToken);
+      setCurrentUser(data.data.user);
+      navigate("/");
+    },
+    onError: (error) => {
+      let errors = error.response.data.errors;
+      if (errors.msg.includes("email")) {
+        errorHandler("email", true, errors.msg);
+      }
+      if (errors.msg.includes("username")) {
+        errorHandler("userName", true, errors.msg);
+      }
+    },
+  });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -151,7 +172,7 @@ const UpdateProfile = ({ createProfile, updateProfile }) => {
       prevProfileValues.lastName === lastName &&
       prevProfileValues.phoneNumber === phoneNumber;
 
-    return isSameProfile || !hasRequiredFields;
+    return isSameProfile || !hasRequiredFields || signUp.isLoading;
   };
 
   const handleSubmit = async (e) => {
@@ -167,9 +188,7 @@ const UpdateProfile = ({ createProfile, updateProfile }) => {
     };
 
     if (createProfile && (await validateInput())) {
-      const result = await AuthClient.signup(newUser, errorHandler);
-      setCurrentUser(result.user);
-      navigate("/");
+      signUp.mutate(newUser);
     }
     if (updateProfile && (await validateInput())) {
       const result = await AuthClient.editProfile(newUser, errorHandler);
@@ -366,4 +385,4 @@ const UpdateProfile = ({ createProfile, updateProfile }) => {
   );
 };
 
-export default UpdateProfile;
+export default ProfileDetails;

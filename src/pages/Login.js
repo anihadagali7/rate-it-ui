@@ -27,7 +27,7 @@ const Login = () => {
 
   const login = useMutation({
     mutationFn: () => {
-      return AuthClient.login(payload.email, payload.password, errorHandler);
+      return AuthClient.login(payload.email, payload.password);
     },
     onSuccess: ({ data }) => {
       localStorage.setItem("accessToken", data.accessToken);
