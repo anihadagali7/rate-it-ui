@@ -5,17 +5,13 @@ const API_URL = process.env.REACT_APP_BASE_URL;
 const login = (email, password, onError) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { data, status } = await axios.post(
-        API_URL + "/api/login",
-        {
-          email,
-          password,
-        }
-      );
+      const { data, status } = await axios.post(API_URL + "/api/login", {
+        email,
+        password,
+      });
 
       if (status === 200) {
         if (data.accessToken) {
-          localStorage.setItem("user", JSON.stringify(data.data.user));
           localStorage.setItem("accessToken", data.accessToken);
         }
 
@@ -45,10 +41,10 @@ const signup = (newAccount, onError) => {
       }
     } catch (error) {
       let errors = error.response.data.errors;
-      if(errors.msg.includes("email")){
+      if (errors.msg.includes("email")) {
         onError("email", true, errors.msg);
       }
-      if(errors.msg.includes("username")){
+      if (errors.msg.includes("username")) {
         onError("userName", true, errors.msg);
       }
     }
@@ -61,7 +57,8 @@ const editProfile = (newAccount, onError) => {
     try {
       const { data, status } = await axios.put(
         API_URL + "/api/account/update",
-        newAccount, {
+        newAccount,
+        {
           headers: {
             Authorization: ACCESS_TOKEN,
           },
@@ -72,10 +69,10 @@ const editProfile = (newAccount, onError) => {
       }
     } catch (error) {
       let errors = error.response.data.errors;
-      if(errors.msg.includes("email")){
+      if (errors.msg.includes("email")) {
         onError("email", true, errors.msg);
       }
-      if(errors.msg.includes("username")){
+      if (errors.msg.includes("username")) {
         onError("userName", true, errors.msg);
       }
     }
@@ -88,7 +85,8 @@ const resetPassword = (newPasswordRequest, onError) => {
     try {
       const { data, status } = await axios.post(
         API_URL + "/api/account/resetPassword",
-        newPasswordRequest, {
+        newPasswordRequest,
+        {
           headers: {
             Authorization: ACCESS_TOKEN,
           },
@@ -99,7 +97,7 @@ const resetPassword = (newPasswordRequest, onError) => {
       }
     } catch (error) {
       let errors = error.response.data.errors;
-      if(errors.msg.includes("Current password is not valid")){
+      if (errors.msg.includes("Current password is not valid")) {
         onError("currentPassword", true, errors.msg);
       }
     }

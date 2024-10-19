@@ -36,6 +36,8 @@ const Header = () => {
 
   const logoutUser = () => {
     setCurrentUser(null);
+    localStorage.removeItem("userName"); // Cleanup when user logs out
+    localStorage.removeItem("accessToken");
   };
 
   return (

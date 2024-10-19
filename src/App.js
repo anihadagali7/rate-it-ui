@@ -13,20 +13,28 @@ import Search from "./pages/Search";
 import Protected from "./shared/Protected";
 import EditProfile from "./pages/EditProfile";
 import UserContext from "../src/shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
+import UserClient from "./client/UserClient";
 
 const App = React.memo(() => {
-  const storedUser = localStorage.getItem("user");
-  const [currentUser, setCurrentUser] = useState(
-    storedUser ? JSON.parse(storedUser) : null
-  );
+  const storedUser = localStorage.getItem("userName");
+  const [currentUser, setCurrentUser] = useState(null);
   const value = useMemo(() => ({ currentUser, setCurrentUser }), [currentUser]);
+
+  const isEnabled = () => !!(storedUser && !currentUser);
+
+  const userInfo = useQuery({
+    queryKey: ["userInfo", { storedUser }],
+    queryFn: async () => {
+      const result = await UserClient.getUserInfo(storedUser);
+      setCurrentUser(result?.data?.user);
+    },
+    enabled: isEnabled(),
+  });
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem("user", JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem("user"); // Cleanup when user logs out
-      localStorage.removeItem("accessToken"); // Cleanup when user logs out
+      localStorage.setItem("userName", currentUser.userName);
     }
   }, [currentUser]);
 

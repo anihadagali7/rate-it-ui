@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import UserContext from "../shared/context/userContext";
+import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -24,6 +25,23 @@ const Login = () => {
     password: { value: false, message: "" },
   });
 
+  const login = useMutation({
+    mutationFn: () => {
+      return AuthClient.login(payload.email, payload.password, errorHandler);
+    },
+    onSuccess: (data) => {
+      setCurrentUser(data.user);
+      navigate("/");
+    },
+  });
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (validateInput()) {
+      login.mutate();
+    }
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setPayload((prevValues) => ({
@@ -37,7 +55,7 @@ const Login = () => {
 
     const hasAllRequiredFields = email && password;
 
-    return !hasAllRequiredFields;
+    return login.isLoading || !hasAllRequiredFields;
   };
 
   const errorHandler = async (id, value, message) => {
@@ -58,20 +76,6 @@ const Login = () => {
     }
 
     return emailValidity;
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if (validateInput()) {
-      const result = await AuthClient.login(
-        payload.email,
-        payload.password,
-        errorHandler
-      );
-
-      setCurrentUser(result.user);
-      navigate("/");
-    }
   };
 
   return (

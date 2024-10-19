@@ -37,7 +37,7 @@ const drawerWidth = 240;
 const MenuDrawer = ({
   drawer,
   toggleDrawer,
-  user,
+  currentUser,
   theme,
   logoutUser,
   setDrawer,
@@ -61,23 +61,23 @@ const MenuDrawer = ({
         spacing={2}
         sx={{ marginRight: "15px", marginTop: "10px" }}
       >
-        {user && (
+        {currentUser && (
           <>
             <Avatar
               sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
               component={Link}
-              to={`/profile/${user?.userName}`}
+              to={`/profile/${currentUser?.userName}`}
               onClick={toggleDrawer(false)}
             >
-              {user?.firstName[0]}
-              {user?.lastName[0]}
+              {currentUser?.firstName[0]}
+              {currentUser?.lastName[0]}
             </Avatar>
             <div>
               <Stack direction="column">
                 <Typography>
-                  {user?.firstName} {user?.lastName}
+                  {currentUser?.firstName} {currentUser?.lastName}
                 </Typography>
-                <Typography>@{user?.userName}</Typography>
+                <Typography>@{currentUser?.userName}</Typography>
               </Stack>
             </div>
           </>
@@ -104,7 +104,7 @@ const MenuDrawer = ({
       <ListItem
         key={"profile"}
         component={Link}
-        to={`/profile/${user?.userName}`}
+        to={`/profile/${currentUser?.userName}`}
       >
         <ListItemIcon>
           <AccountCircleIcon sx={{ color: "#232b2b" }} />
@@ -116,7 +116,7 @@ const MenuDrawer = ({
     </List>
     <Divider />
     <List>
-      {user ? (
+      {currentUser ? (
         <ListItem
           key={"logout"}
           component={Link}
@@ -157,7 +157,7 @@ const SmallScreenHeader = ({ logoutUser }) => {
   const [drawer, setDrawer] = useState(false);
   const [openSearchBar, setOpenSearchBar] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -193,7 +193,7 @@ const SmallScreenHeader = ({ logoutUser }) => {
         <MenuDrawer
           drawer={drawer}
           toggleDrawer={toggleDrawer}
-          user={currentUser}
+          currentUser={currentUser}
           theme={theme}
           setDrawer={setDrawer}
           logoutUser={() => logoutUser()}
