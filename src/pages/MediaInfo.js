@@ -19,11 +19,82 @@ import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
 import { useQuery } from "@tanstack/react-query";
+
+const mediaTypeConfig = {
+  movie: [
+    { label: "Name", dataKey: "name" },
+    { label: "Description", dataKey: "description" },
+    { label: "Director", dataKey: "director" },
+    { label: "Producer", dataKey: "producer" },
+    { label: "Cast", dataKey: "cast" },
+  ],
+  tv: [
+    { label: "Name", dataKey: "name" },
+    { label: "Description", dataKey: "description" },
+    { label: "Director", dataKey: "director" },
+    { label: "Producer", dataKey: "producer" },
+    { label: "Cast", dataKey: "cast" },
+  ],
+  music: [
+    { label: "Name", dataKey: "name" },
+    { label: "Album", dataKey: "album" },
+    { label: "Artist", dataKey: "artist" },
+  ],
+  book: [
+    { label: "Name", dataKey: "name" },
+    { label: "Description", dataKey: "description" },
+    { label: "Author", dataKey: "author" },
+    { label: "Genre", dataKey: "genre" },
+  ],
+};
+
+const MediaInfoDisplay = ({ mediaType, mediaInfo }) => {
+  const config = mediaTypeConfig[mediaType.toLowerCase()];
+
+  if (!config) return null;
+
+  return (
+    <div>
+      {config.map(({ label, dataKey }) => (
+        <DisplayLabelData key={label} data={mediaInfo[dataKey]} label={label} />
+      ))}
+    </div>
+  );
+};
+
+const DisplayLabelData = ({ data, label }) => {
+  const listToString = (list) => {
+    let newString = "";
+
+    if (typeof list === "string") {
+      return list;
+    }
+
+    list &&
+      list.length > 0 &&
+      list.forEach((name) => {
+        newString += name + ", ";
+      });
+
+    return newString.substring(0, newString.length - 2);
+  };
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <>
+      <Typography>
+        <span>{label}: </span>
+        {listToString(data)}
+      </Typography>
+      <Divider />
+    </>
+  );
+};
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
@@ -71,156 +142,6 @@ const MediaInfo = () => {
     await WishlistClient.addToWishlist(requestBody);
   };
 
-  const displayMovieTvShow = (mediaInfo) => (
-    <>
-      <Grid item xs={12}>
-        <Typography
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {mediaInfo.name}
-        </Typography>
-        <div>
-          <Typography>{mediaInfo.description}</Typography>
-        </div>
-      </Grid>
-      <Grid item xs={12}>
-        <List component="nav">
-          <Divider />
-          {mediaInfo.director && mediaInfo.director.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography>
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Directors:{" "}
-                </span>
-                {listToString(mediaInfo.director)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {mediaInfo.producer && mediaInfo.producer.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography>
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Producers:{" "}
-                </span>
-                {listToString(mediaInfo.producer)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {mediaInfo.cast && mediaInfo.cast.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography>
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Cast:{" "}
-                </span>
-                {listToString(mediaInfo.cast)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
-  const displayBook = (mediaInfo) => (
-    <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography
-          component="div"
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {mediaInfo.name}
-        </Typography>
-        <div>
-          <Typography component="div">{mediaInfo.description}</Typography>
-        </div>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav">
-          <Divider />
-          {mediaInfo.author && mediaInfo.author.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Authors:{" "}
-                </span>
-                {listToString(mediaInfo.author)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {mediaInfo.genre && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Genre:{" "}
-                </span>
-                <span style={{ fontWeight: "400", fontSize: "16px" }}>
-                  {mediaInfo.genre}
-                </span>
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
-  const displayMusic = (mediaInfo) => (
-    <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography
-          component="div"
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {mediaInfo.name}
-        </Typography>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav">
-          <Divider />
-          {mediaInfo.album && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Album:{" "}
-                </span>
-                {mediaInfo.album}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {mediaInfo.artist && mediaInfo.artist.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Artists:{" "}
-                </span>
-                {listToString(mediaInfo.artist)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
@@ -253,12 +174,7 @@ const MediaInfo = () => {
               <MediaInfoMobileLoading />
             ) : (
               mediaInfo && (
-                <Grid
-                  container
-                  spacing={{ xs: 2, md: 2, xl: 5 }}
-                  columns={{ md: 12 }}
-                  sx={{ paddingTop: "20px" }}
-                >
+                <Grid container spacing={5} sx={{ paddingTop: "20px" }}>
                   <Grid item xs={12} container justifyContent="center">
                     <img
                       width="80%"
@@ -290,99 +206,99 @@ const MediaInfo = () => {
                       Add to Wishlist
                     </PrimaryButton>
                   </Grid>
-                  {(mediaInfo.mediaType === "MOVIE" ||
-                    mediaInfo.mediaType === "TV") &&
-                    displayMovieTvShow(mediaInfo)}
-                  {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
-                  {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
+                  <Grid item xs={12} sx={{ marginTop: "15px" }}>
+                    <MediaInfoDisplay
+                      mediaType={mediaInfo.mediaType}
+                      mediaInfo={mediaInfo}
+                    />
+                  </Grid>
                 </Grid>
               )
             )}
           </Paper>
         </Box>
         {ratingsList && ratingsList.length > 0 && (
-          <Box sx={{ marginTop: "15px" }}>
-            <Paper
-              elevation={6}
+          <Paper
+            elevation={6}
+            sx={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: "17px",
+              margin: "15px 0 150px 0",
+            }}
+          >
+            <Typography
               sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "17px",
+                fontWeight: "bold",
+                fontSize: "22px",
+                paddingTop: "15px",
+                paddingLeft: "25px",
               }}
             >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "22px",
-                  paddingTop: "15px",
-                  paddingLeft: "25px",
-                }}
-              >
-                User reviews
-              </Typography>
-              <List
-                component="nav"
-                sx={{ marginLeft: "15px", marginRight: "15px" }}
-              >
-                {ratingsList &&
-                  ratingsList.length > 0 &&
-                  ratingsList.map((rating) => (
-                    <>
-                      <ListItem>
-                        <Stack direction="row" spacing={2}>
-                          <>
-                            <Avatar
-                              sx={{
-                                bgcolor: "#00a8ff",
-                                textDecoration: "none",
-                              }}
-                              component={Link}
-                              to={`/profile/${rating.ratedBy.userName}`}
-                            >
-                              {rating.ratedBy.firstName[0]}
-                              {rating.ratedBy.lastName[0]}
-                            </Avatar>
-                            <div>
-                              <Stack direction="column">
-                                <span style={{ fontWeight: "bold" }}>
-                                  {rating.ratedBy.firstName}{" "}
-                                  {rating.ratedBy.lastName}
-                                  <span style={{ fontWeight: "normal" }}>
-                                    {" "}
-                                    @{rating.ratedBy.userName}
-                                  </span>
-                                  <span style={{ fontWeight: "normal" }}>
-                                    {" "}
-                                    &#8226; {getTimeAgo(rating.dateCreated)}
-                                  </span>
+              User reviews
+            </Typography>
+            <List
+              component="nav"
+              sx={{ marginLeft: "15px", marginRight: "15px" }}
+            >
+              {ratingsList &&
+                ratingsList.length > 0 &&
+                ratingsList.map((rating) => (
+                  <>
+                    <ListItem>
+                      <Stack direction="row" spacing={2}>
+                        <>
+                          <Avatar
+                            sx={{
+                              bgcolor: "#00a8ff",
+                              textDecoration: "none",
+                            }}
+                            component={Link}
+                            to={`/profile/${rating.ratedBy.userName}`}
+                          >
+                            {rating.ratedBy.firstName[0]}
+                            {rating.ratedBy.lastName[0]}
+                          </Avatar>
+                          <div>
+                            <Stack direction="column">
+                              <span style={{ fontWeight: "bold" }}>
+                                {rating.ratedBy.firstName}{" "}
+                                {rating.ratedBy.lastName}
+                                <span style={{ fontWeight: "normal" }}>
+                                  {" "}
+                                  @{rating.ratedBy.userName}
                                 </span>
-                                <span>
-                                  <Typography
-                                    component={Link}
-                                    sx={{ textDecoration: "none" }}
-                                    to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                                  >
-                                    -{rating.media.name}
-                                  </Typography>
+                                <span style={{ fontWeight: "normal" }}>
+                                  {" "}
+                                  &#8226; {getTimeAgo(rating.dateCreated)}
                                 </span>
-                                <Typography>Rating: {rating.rating}</Typography>
-                                <Typography>
-                                  Comments: {rating.comments}
+                              </span>
+                              <span>
+                                <Typography
+                                  component={Link}
+                                  sx={{ textDecoration: "none" }}
+                                  to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
+                                >
+                                  -{rating.media.name}
                                 </Typography>
-                              </Stack>
-                            </div>
-                          </>
-                        </Stack>
-                      </ListItem>
-                      <Divider
-                        sx={{
-                          margin: "0 10px",
-                        }}
-                      />
-                    </>
-                  ))}
-              </List>
-            </Paper>
-          </Box>
+                              </span>
+                              <Typography>Rating: {rating.rating}</Typography>
+                              <Typography>
+                                Comments: {rating.comments}
+                              </Typography>
+                            </Stack>
+                          </div>
+                        </>
+                      </Stack>
+                    </ListItem>
+                    <Divider
+                      sx={{
+                        margin: "0 10px",
+                      }}
+                    />
+                  </>
+                ))}
+            </List>
+          </Paper>
         )}
       </Container>
       {openRatingModal && (
