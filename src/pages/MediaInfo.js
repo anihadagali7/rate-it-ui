@@ -73,9 +73,8 @@ const MediaInfo = () => {
 
   const displayMovieTvShow = (mediaInfo) => (
     <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
+      <Grid item xs={12}>
         <Typography
-          component="div"
           sx={{
             marginTop: "10px",
             fontSize: "18px",
@@ -85,15 +84,15 @@ const MediaInfo = () => {
           {mediaInfo.name}
         </Typography>
         <div>
-          <Typography component="div">{mediaInfo.description}</Typography>
+          <Typography>{mediaInfo.description}</Typography>
         </div>
       </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
+      <Grid item xs={12}>
         <List component="nav">
           <Divider />
           {mediaInfo.director && mediaInfo.director.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
+              <Typography>
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Directors:{" "}
                 </span>
@@ -104,7 +103,7 @@ const MediaInfo = () => {
           <Divider />
           {mediaInfo.producer && mediaInfo.producer.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
+              <Typography>
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Producers:{" "}
                 </span>
@@ -115,7 +114,7 @@ const MediaInfo = () => {
           <Divider />
           {mediaInfo.cast && mediaInfo.cast.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
+              <Typography>
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Cast:{" "}
                 </span>
@@ -222,82 +221,6 @@ const MediaInfo = () => {
     </>
   );
 
-  const desktopView = (mediaInfo) => (
-    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
-      <Grid item xs={6}>
-        <Typography>
-          <img
-            width={200}
-            height={250}
-            style={{ margin: "10px 0" }}
-            alt="poster"
-            src={mediaInfo.picture ? mediaInfo.picture : NotFoundImage}
-          />
-        </Typography>
-      </Grid>
-      <Grid item xs={6} align="center" justify="center" direction="column">
-        <Stack spacing={4} sx={{ marginTop: "80px" }}>
-          <PrimaryButton
-            variant="contained"
-            leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-            onClick={handleAddRatingModalOpen}
-          >
-            Add Rating
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-            onClick={handleAddToWishlist}
-          >
-            Add to Wishlist
-          </PrimaryButton>
-        </Stack>
-      </Grid>
-      {(mediaInfo.mediaType === "MOVIE" || mediaInfo.mediaType === "TV") &&
-        displayMovieTvShow(mediaInfo)}
-      {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
-      {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
-    </Grid>
-  );
-
-  const mobileView = (mediaInfo) => (
-    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
-      <Grid item xs={12} sx={{ margin: "auto" }}>
-        <Typography>
-          <img
-            width={200}
-            height={250}
-            style={{ margin: "10px 0" }}
-            alt="poster"
-            src={mediaInfo.picture ? mediaInfo.picture : NotFoundImage}
-          />
-        </Typography>
-      </Grid>
-      <Grid item xs={12} container justifyContent="center">
-        <PrimaryButton
-          variant="contained"
-          leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-          onClick={handleAddRatingModalOpen}
-        >
-          Add Rating
-        </PrimaryButton>
-      </Grid>
-      <Grid item xs={12} container justifyContent="center">
-        <PrimaryButton
-          variant="text"
-          leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-          onClick={handleAddToWishlist}
-        >
-          Add to Wishlist
-        </PrimaryButton>
-      </Grid>
-      {(mediaInfo.mediaType === "MOVIE" || mediaInfo.mediaType === "TV") &&
-        displayMovieTvShow(mediaInfo)}
-      {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
-      {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
-    </Grid>
-  );
-
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
@@ -310,64 +233,79 @@ const MediaInfo = () => {
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
       >
-        <PrimaryButton
-          variant="text"
-          leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-          onClick={() => navigate(-1)}
-        >
-          Return
-        </PrimaryButton>
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            margin: "auto",
-          }}
-        >
+        <Box>
           <Paper
             elevation={6}
             sx={{
-              width: "100%",
-              height: "100%",
               backgroundColor: "#FFFFFF",
-              margin: "auto",
               borderRadius: "17px",
+              padding: "35px",
             }}
           >
-            <div style={{ padding: "0 35px", minHeight: "385px" }}>
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                {isLoading ? (
-                  <MediaInfoMobileLoading />
-                ) : (
-                  mediaInfo && mobileView(mediaInfo)
-                )}
-              </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {isLoading ? (
-                  <MediaInfoDesktopLoading />
-                ) : (
-                  mediaInfo && desktopView(mediaInfo)
-                )}
-              </Box>
-            </div>
+            <PrimaryButton
+              variant="text"
+              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+              onClick={() => navigate(-1)}
+            >
+              Return
+            </PrimaryButton>
+            {isLoading ? (
+              <MediaInfoMobileLoading />
+            ) : (
+              mediaInfo && (
+                <Grid
+                  container
+                  spacing={{ xs: 2, md: 2, xl: 5 }}
+                  columns={{ md: 12 }}
+                  sx={{ paddingTop: "20px" }}
+                >
+                  <Grid item xs={12} container justifyContent="center">
+                    <img
+                      width="80%"
+                      height="100%"
+                      alt="poster"
+                      style={{ margin: "auto", borderRadius: 7 }}
+                      src={
+                        mediaInfo.picture ? mediaInfo.picture : NotFoundImage
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="contained"
+                      leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+                      onClick={handleAddRatingModalOpen}
+                    >
+                      Add Rating
+                    </PrimaryButton>
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="text"
+                      leftIcon={
+                        <PlaylistAddIcon style={{ color: "#00a8ff" }} />
+                      }
+                      onClick={handleAddToWishlist}
+                    >
+                      Add to Wishlist
+                    </PrimaryButton>
+                  </Grid>
+                  {(mediaInfo.mediaType === "MOVIE" ||
+                    mediaInfo.mediaType === "TV") &&
+                    displayMovieTvShow(mediaInfo)}
+                  {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
+                  {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
+                </Grid>
+              )
+            )}
           </Paper>
         </Box>
         {ratingsList && ratingsList.length > 0 && (
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              margin: "auto",
-              marginTop: "15px",
-            }}
-          >
+          <Box sx={{ marginTop: "15px" }}>
             <Paper
               elevation={6}
               sx={{
-                width: "100%",
-                height: "100%",
                 backgroundColor: "#FFFFFF",
-                margin: "auto",
                 borderRadius: "17px",
               }}
             >
@@ -396,8 +334,6 @@ const MediaInfo = () => {
                               sx={{
                                 bgcolor: "#00a8ff",
                                 textDecoration: "none",
-                                marginTop: "auto",
-                                marginBottom: "auto",
                               }}
                               component={Link}
                               to={`/profile/${rating.ratedBy.userName}`}
@@ -439,9 +375,7 @@ const MediaInfo = () => {
                       </ListItem>
                       <Divider
                         sx={{
-                          width: "95%",
-                          marginLeft: "auto",
-                          marginRight: "auto",
+                          margin: "0 10px",
                         }}
                       />
                     </>
