@@ -26,29 +26,25 @@ import { useQuery } from "@tanstack/react-query";
 
 const mediaTypeConfig = {
   movie: [
-    { label: "Name", dataKey: "name" },
-    { label: "Description", dataKey: "description" },
-    { label: "Director", dataKey: "director" },
-    { label: "Producer", dataKey: "producer" },
-    { label: "Cast", dataKey: "cast" },
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Director", dataKey: "director", displayLabel: true },
+    { label: "Producer", dataKey: "producer", displayLabel: true },
+    { label: "Cast", dataKey: "cast", displayLabel: true },
   ],
   tv: [
-    { label: "Name", dataKey: "name" },
-    { label: "Description", dataKey: "description" },
-    { label: "Director", dataKey: "director" },
-    { label: "Producer", dataKey: "producer" },
-    { label: "Cast", dataKey: "cast" },
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Director", dataKey: "director", displayLabel: true },
+    { label: "Producer", dataKey: "producer", displayLabel: true },
+    { label: "Cast", dataKey: "cast", displayLabel: true },
   ],
   music: [
-    { label: "Name", dataKey: "name" },
     { label: "Album", dataKey: "album" },
     { label: "Artist", dataKey: "artist" },
   ],
   book: [
-    { label: "Name", dataKey: "name" },
-    { label: "Description", dataKey: "description" },
-    { label: "Author", dataKey: "author" },
-    { label: "Genre", dataKey: "genre" },
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Author", dataKey: "author", displayLabel: true },
+    { label: "Genre", dataKey: "genre", displayLabel: true },
   ],
 };
 
@@ -59,14 +55,19 @@ const MediaInfoDisplay = ({ mediaType, mediaInfo }) => {
 
   return (
     <div>
-      {config.map(({ label, dataKey }) => (
-        <DisplayLabelData key={label} data={mediaInfo[dataKey]} label={label} />
+      {config.map(({ label, dataKey, displayLabel }) => (
+        <DisplayLabelData
+          key={label}
+          data={mediaInfo[dataKey]}
+          label={label}
+          displayLabel={displayLabel}
+        />
       ))}
     </div>
   );
 };
 
-const DisplayLabelData = ({ data, label }) => {
+const DisplayLabelData = ({ data, label, displayLabel }) => {
   const listToString = (list) => {
     let newString = "";
 
@@ -86,13 +87,10 @@ const DisplayLabelData = ({ data, label }) => {
   if (!data || data.length === 0) return null;
 
   return (
-    <>
-      <Typography>
-        <span>{label}: </span>
-        {listToString(data)}
-      </Typography>
-      <Divider />
-    </>
+    <Typography mb={3}>
+      {displayLabel && <span>{label}: </span>}
+      {listToString(data)}
+    </Typography>
   );
 };
 
@@ -116,16 +114,6 @@ const MediaInfo = () => {
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
   });
-
-  const listToString = (list) => {
-    let newString = "";
-
-    list.forEach((name) => {
-      newString += name + ", ";
-    });
-
-    return newString.substring(0, newString.length - 2);
-  };
 
   const handleAddRatingModalOpen = () => {
     setOpenRatingModal(true);
@@ -175,6 +163,9 @@ const MediaInfo = () => {
             ) : (
               mediaInfo && (
                 <Grid container spacing={5} sx={{ paddingTop: "20px" }}>
+                  <Grid item xs={12}>
+                    <Typography variant="h3">{mediaInfo.name}</Typography>
+                  </Grid>
                   <Grid item xs={12} container justifyContent="center">
                     <img
                       width="80%"
@@ -207,10 +198,12 @@ const MediaInfo = () => {
                     </PrimaryButton>
                   </Grid>
                   <Grid item xs={12} sx={{ marginTop: "15px" }}>
-                    <MediaInfoDisplay
-                      mediaType={mediaInfo.mediaType}
-                      mediaInfo={mediaInfo}
-                    />
+                    <Stack spacing={6} direction="column">
+                      <MediaInfoDisplay
+                        mediaType={mediaInfo.mediaType}
+                        mediaInfo={mediaInfo}
+                      />
+                    </Stack>
                   </Grid>
                 </Grid>
               )

@@ -111,7 +111,7 @@ const Profile = () => {
     {
       title: "Ratings",
       value: 0,
-      content: <DisplayRatingsByUser user={profile} />,
+      content: <DisplayRatingsByUser userName={profile && profile.userName} />,
     },
     {
       value: 1,

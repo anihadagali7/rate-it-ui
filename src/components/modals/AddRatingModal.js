@@ -11,7 +11,7 @@ import RatingClient from "../../client/RatingClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import TextAreaField from "../../shared/inputfield/TextAreaField";
 import UserContext from "../../shared/context/userContext";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddRatingModal = ({ open, onClose, mediaDetails }) => {
   const [payload, setPayload] = useState({
@@ -20,6 +20,24 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
   });
   const { currentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
+
+  const submitRating = useMutation({
+    mutationFn: (requestBody) => {
+      return RatingClient.submitRating(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "ratingsForMedia",
+          {
+            mediaType: mediaDetails.mediaType,
+            id: mediaDetails.mediaId,
+          },
+        ],
+      });
+      onClose();
+    },
+  });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -36,18 +54,8 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
     requestBody.userName = currentUser.userName;
     requestBody.comments = payload.comments;
     requestBody.rating = payload.rating;
-    await RatingClient.submitRating(requestBody);
 
-    queryClient.invalidateQueries({
-      queryKey: [
-        "ratingsForMedia",
-        {
-          mediaType: mediaDetails.mediaType,
-          id: mediaDetails.mediaId,
-        },
-      ],
-    });
-    onClose();
+    submitRating.mutate(requestBody);
   };
 
   const checkToDisable = () => {
@@ -55,7 +63,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
 
     const hasAllRequiredFields = rating && comments;
 
-    return !hasAllRequiredFields;
+    return !hasAllRequiredFields || submitRating.isLoading;
   };
 
   return (

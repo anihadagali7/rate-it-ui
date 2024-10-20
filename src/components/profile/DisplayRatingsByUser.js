@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import RatingClient from "../../client/RatingClient";
 import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
@@ -10,25 +10,16 @@ import List from "@mui/material/List";
 import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
-import UserContext from "../../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
-const DisplayRatingsByUser = () => {
-  const [ratingsList, setRatingsList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { currentUser } = useContext(UserContext);
-
-  useEffect(() => {
-    getRatingsForUser();
-  }, [currentUser]);
-
-  const getRatingsForUser = async () => {
-    setLoading(true);
-    const result = await RatingClient.getAllRatingsForUser(
-      currentUser.userName
-    );
-    setRatingsList(result.data.ratingsList.reverse());
-    setLoading(false);
-  };
+const DisplayRatingsByUser = ({ userName }) => {
+  const { data: ratingsList, isLoading } = useQuery({
+    queryKey: ["ratingsForUser", { userName }],
+    queryFn: async () => await RatingClient.getAllRatingsForUser(userName),
+    staleTime: 60000,
+    enabled: !!userName,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
@@ -44,10 +35,13 @@ const DisplayRatingsByUser = () => {
     }
   };
 
-  const displayRatings = () => {
-    return (
-      <>
-        {ratingsList &&
+  return (
+    <Box>
+      <List>
+        {isLoading ? (
+          <ProfileRatingsLoading />
+        ) : (
+          ratingsList &&
           ratingsList.length > 0 &&
           ratingsList.map((rating) => (
             <>
@@ -96,15 +90,8 @@ const DisplayRatingsByUser = () => {
               </ListItem>
               <Divider />
             </>
-          ))}
-      </>
-    );
-  };
-
-  return (
-    <Box>
-      <List component="nav">
-        {loading ? <ProfileRatingsLoading /> : displayRatings()}
+          ))
+        )}
       </List>
     </Box>
   );
