@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Container, Paper, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
 import Stack from "@mui/material/Stack";
@@ -9,24 +9,25 @@ import Divider from "@mui/material/Divider";
 import moment from "moment/moment";
 import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
-  const [exploreRatingsList, setExploreRatingsList] = useState([]);
-  const [feedRatingsList, setFeedRatingsList] = useState([]);
   const { currentUser } = useContext(UserContext);
-  const [exploreLoading, setExploreLoading] = useState(false);
 
-  const getAllExploreRatings = async () => {
-    setExploreLoading(true);
-    const result = await RatingClient.getAllExploreRatings();
-    setExploreRatingsList(result.data.ratingsList.reverse());
-    setExploreLoading(false);
-  };
+  const { data: exploreRatingsList, isLoading } = useQuery({
+    queryKey: ["allExploreRatings"],
+    queryFn: async () => await RatingClient.getAllExploreRatings(),
+    staleTime: 60000,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
-  const getFeedRatings = async () => {
-    const result = await RatingClient.getFeedRatings(currentUser.userName);
-    setFeedRatingsList(result.data.ratingsList.reverse());
-  };
+  const { data: feedRatingsList, isLoading: isFeedRatingsLoading } = useQuery({
+    queryKey: ["feedRatings"],
+    queryFn: async () =>
+      await RatingClient.getFeedRatings(currentUser.userName),
+    staleTime: 60000,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
@@ -41,11 +42,6 @@ const Home = () => {
       return moment(date).format("M-D-YY");
     }
   };
-
-  useEffect(() => {
-    // currentUser && getFeedRatings(); TODO
-    getAllExploreRatings();
-  }, [currentUser]);
 
   const displayExploreRatings = () => {
     return (
@@ -167,7 +163,7 @@ const Home = () => {
               paddingLeft: "25px",
             }}
           >
-            Feed
+            For you
           </Typography>
           {feedRatingsList.map((rating) => (
             <>
@@ -256,7 +252,7 @@ const Home = () => {
           ))}
         </Container>
       )}
-      {exploreLoading ? <RatingsLoading /> : displayExploreRatings()}
+      {isLoading ? <RatingsLoading /> : displayExploreRatings()}
     </Box>
   );
 };
