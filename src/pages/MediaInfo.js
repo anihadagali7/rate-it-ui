@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
@@ -23,40 +23,28 @@ import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
-  const [media, setMedia] = useState({});
-  const [ratingsList, setRatingsList] = useState([]);
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const { currentUser } = useContext(UserContext);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
-  const [ratingAdded, setRatingAdded] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getMediaInfoDetails(mediaType, id);
-  }, [id, mediaType]);
+  const { isLoading, data: mediaInfo } = useQuery({
+    queryKey: ["mediaInfoDetails", { mediaType, id }],
+    queryFn: async () => await MediaClient.getMediaInfoDetails(mediaType, id),
+    staleTime: 60000,
+    select: ({ data }) => data.data.media,
+  });
 
-  useEffect(() => {
-    getRatingsForMedia(id);
-  }, [ratingAdded]);
-
-  const getRatingsForMedia = async (id) => {
-    const result = await RatingClient.getAllRatingsForMedia(
-      id,
-      setDisplayTokenModal
-    );
-    setRatingsList(result.data.ratingsList);
-  };
-
-  const getMediaInfoDetails = async (mediaType, id) => {
-    setLoading(true);
-    const result = await MediaClient.getMediaInfoDetails(mediaType, id);
-    setMedia(result.data.media);
-    setLoading(false);
-  };
+  const { data: ratingsList } = useQuery({
+    queryKey: ["ratingsForMedia", { mediaType: mediaType, id: id }],
+    queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
+    staleTime: 60000,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
   const listToString = (list) => {
     let newString = "";
@@ -78,12 +66,12 @@ const MediaInfo = () => {
 
   const handleAddToWishlist = async () => {
     let requestBody = {};
-    requestBody.mediaId = media.mediaId;
+    requestBody.mediaId = mediaInfo.mediaId;
     requestBody.userName = currentUser.userName;
     await WishlistClient.addToWishlist(requestBody);
   };
 
-  const displayMovieTvShow = (media) => (
+  const displayMovieTvShow = (mediaInfo) => (
     <>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Typography
@@ -94,44 +82,44 @@ const MediaInfo = () => {
             fontWeight: "bold",
           }}
         >
-          {media.name}
+          {mediaInfo.name}
         </Typography>
         <div>
-          <Typography component="div">{media.description}</Typography>
+          <Typography component="div">{mediaInfo.description}</Typography>
         </div>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <List component="nav">
           <Divider />
-          {media.director && media.director.length > 0 && (
+          {mediaInfo.director && mediaInfo.director.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Directors:{" "}
                 </span>
-                {listToString(media.director)}
+                {listToString(mediaInfo.director)}
               </Typography>
             </ListItem>
           )}
           <Divider />
-          {media.producer && media.producer.length > 0 && (
+          {mediaInfo.producer && mediaInfo.producer.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Producers:{" "}
                 </span>
-                {listToString(media.producer)}
+                {listToString(mediaInfo.producer)}
               </Typography>
             </ListItem>
           )}
           <Divider />
-          {media.cast && media.cast.length > 0 && (
+          {mediaInfo.cast && mediaInfo.cast.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Cast:{" "}
                 </span>
-                {listToString(media.cast)}
+                {listToString(mediaInfo.cast)}
               </Typography>
             </ListItem>
           )}
@@ -141,7 +129,7 @@ const MediaInfo = () => {
     </>
   );
 
-  const displayBook = (media) => (
+  const displayBook = (mediaInfo) => (
     <>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Typography
@@ -152,34 +140,34 @@ const MediaInfo = () => {
             fontWeight: "bold",
           }}
         >
-          {media.name}
+          {mediaInfo.name}
         </Typography>
         <div>
-          <Typography component="div">{media.description}</Typography>
+          <Typography component="div">{mediaInfo.description}</Typography>
         </div>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <List component="nav">
           <Divider />
-          {media.author && media.author.length > 0 && (
+          {mediaInfo.author && mediaInfo.author.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Authors:{" "}
                 </span>
-                {listToString(media.author)}
+                {listToString(mediaInfo.author)}
               </Typography>
             </ListItem>
           )}
           <Divider />
-          {media.genre && (
+          {mediaInfo.genre && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Genre:{" "}
                 </span>
                 <span style={{ fontWeight: "400", fontSize: "16px" }}>
-                  {media.genre}
+                  {mediaInfo.genre}
                 </span>
               </Typography>
             </ListItem>
@@ -190,7 +178,7 @@ const MediaInfo = () => {
     </>
   );
 
-  const displayMusic = (media) => (
+  const displayMusic = (mediaInfo) => (
     <>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Typography
@@ -201,30 +189,30 @@ const MediaInfo = () => {
             fontWeight: "bold",
           }}
         >
-          {media.name}
+          {mediaInfo.name}
         </Typography>
       </Grid>
       <Grid item xs={12} sx={{ width: "100%" }}>
         <List component="nav">
           <Divider />
-          {media.album && (
+          {mediaInfo.album && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Album:{" "}
                 </span>
-                {media.album}
+                {mediaInfo.album}
               </Typography>
             </ListItem>
           )}
           <Divider />
-          {media.artist && media.artist.length > 0 && (
+          {mediaInfo.artist && mediaInfo.artist.length > 0 && (
             <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
               <Typography component="div">
                 <span style={{ fontWeight: "550", fontSize: "17px" }}>
                   Artists:{" "}
                 </span>
-                {listToString(media.artist)}
+                {listToString(mediaInfo.artist)}
               </Typography>
             </ListItem>
           )}
@@ -234,7 +222,7 @@ const MediaInfo = () => {
     </>
   );
 
-  const desktopView = (media) => (
+  const desktopView = (mediaInfo) => (
     <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
       <Grid item xs={6}>
         <Typography>
@@ -243,7 +231,7 @@ const MediaInfo = () => {
             height={250}
             style={{ margin: "10px 0" }}
             alt="poster"
-            src={media.picture ? media.picture : NotFoundImage}
+            src={mediaInfo.picture ? mediaInfo.picture : NotFoundImage}
           />
         </Typography>
       </Grid>
@@ -265,14 +253,14 @@ const MediaInfo = () => {
           </PrimaryButton>
         </Stack>
       </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
-        displayMovieTvShow(media)}
-      {media.mediaType === "MUSIC" && displayMusic(media)}
-      {media.mediaType === "BOOK" && displayBook(media)}
+      {(mediaInfo.mediaType === "MOVIE" || mediaInfo.mediaType === "TV") &&
+        displayMovieTvShow(mediaInfo)}
+      {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
+      {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
     </Grid>
   );
 
-  const mobileView = (media) => (
+  const mobileView = (mediaInfo) => (
     <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
       <Grid item xs={12} sx={{ margin: "auto" }}>
         <Typography>
@@ -281,11 +269,11 @@ const MediaInfo = () => {
             height={250}
             style={{ margin: "10px 0" }}
             alt="poster"
-            src={media.picture ? media.picture : NotFoundImage}
+            src={mediaInfo.picture ? mediaInfo.picture : NotFoundImage}
           />
         </Typography>
       </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
+      <Grid item xs={12} container justifyContent="center">
         <PrimaryButton
           variant="contained"
           leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
@@ -294,7 +282,7 @@ const MediaInfo = () => {
           Add Rating
         </PrimaryButton>
       </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
+      <Grid item xs={12} container justifyContent="center">
         <PrimaryButton
           variant="text"
           leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
@@ -303,10 +291,10 @@ const MediaInfo = () => {
           Add to Wishlist
         </PrimaryButton>
       </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
-        displayMovieTvShow(media)}
-      {media.mediaType === "MUSIC" && displayMusic(media)}
-      {media.mediaType === "BOOK" && displayBook(media)}
+      {(mediaInfo.mediaType === "MOVIE" || mediaInfo.mediaType === "TV") &&
+        displayMovieTvShow(mediaInfo)}
+      {mediaInfo.mediaType === "MUSIC" && displayMusic(mediaInfo)}
+      {mediaInfo.mediaType === "BOOK" && displayBook(mediaInfo)}
     </Grid>
   );
 
@@ -348,17 +336,17 @@ const MediaInfo = () => {
           >
             <div style={{ padding: "0 35px", minHeight: "385px" }}>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                {loading ? (
+                {isLoading ? (
                   <MediaInfoMobileLoading />
                 ) : (
-                  media && mobileView(media)
+                  mediaInfo && mobileView(mediaInfo)
                 )}
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {loading ? (
+                {isLoading ? (
                   <MediaInfoDesktopLoading />
                 ) : (
-                  media && desktopView(media)
+                  mediaInfo && desktopView(mediaInfo)
                 )}
               </Box>
             </div>
@@ -467,9 +455,7 @@ const MediaInfo = () => {
         <AddRatingModal
           open={openRatingModal}
           onClose={handleAddRatingModalClose}
-          mediaDetails={media}
-          ratingAdded={ratingAdded}
-          setRatingAdded={setRatingAdded}
+          mediaDetails={mediaInfo}
         />
       )}
       {displayTokenModal && (

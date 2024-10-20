@@ -11,19 +11,15 @@ import RatingClient from "../../client/RatingClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import TextAreaField from "../../shared/inputfield/TextAreaField";
 import UserContext from "../../shared/context/userContext";
+import { useQueryClient } from "@tanstack/react-query";
 
-const AddRatingModal = ({
-  open,
-  onClose,
-  mediaDetails,
-  ratingAdded,
-  setRatingAdded,
-}) => {
+const AddRatingModal = ({ open, onClose, mediaDetails }) => {
   const [payload, setPayload] = useState({
     comments: "",
     rating: 5,
   });
   const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -41,7 +37,16 @@ const AddRatingModal = ({
     requestBody.comments = payload.comments;
     requestBody.rating = payload.rating;
     await RatingClient.submitRating(requestBody);
-    setRatingAdded(!ratingAdded);
+
+    queryClient.invalidateQueries({
+      queryKey: [
+        "ratingsForMedia",
+        {
+          mediaType: mediaDetails.mediaType,
+          id: mediaDetails.mediaId,
+        },
+      ],
+    });
     onClose();
   };
 
