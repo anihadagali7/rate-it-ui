@@ -12,6 +12,10 @@ import Stack from "@mui/material/Stack";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+// TODO add a useEffect condition? with some dependency on change
+// get followers only when that tab is loaded?
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -22,32 +26,33 @@ const TabPanel = (props) => {
 const FriendsModal = ({
   open,
   onClose,
-  userName,
   openingTab,
-  friendsAdded,
-  setFriendsAdded,
+  displayedProfileUserName,
 }) => {
   const [tabValue, setTabValue] = useState(openingTab);
-  const [followingList, setFollowingList] = useState({});
-  const [followersList, setFollowersList] = useState({});
   const [unfollowPopover, setUnfollowPopover] = useState(false);
+  const [followersList, setFollowersList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
   const { currentUser } = useContext(UserContext);
   const openPopover = Boolean(unfollowPopover);
+  const queryClient = useQueryClient();
 
-  const getFollowers = async () => {
-    const result = await UserClient.getFollowers(userName);
-    setFollowersList(result.data);
-  };
-
-  const getFollowing = async () => {
-    const result = await UserClient.getFollowing(userName);
-    setFollowingList(result.data);
-  };
+  const { data: fullFriendsList } = useQuery({
+    queryKey: ["fullFriendsList", { userName: displayedProfileUserName }],
+    queryFn: async () => {
+      const response = await UserClient.getFriendsList(
+        displayedProfileUserName
+      );
+      return response;
+    },
+    staleTime: 60000,
+    select: ({ data }) => data.data,
+  });
 
   useEffect(() => {
-    getFollowers();
-    getFollowing();
-  }, [friendsAdded]);
+    setFollowersList(fullFriendsList?.followersList);
+    setFollowingList(fullFriendsList?.followingList);
+  }, [fullFriendsList]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -69,7 +74,7 @@ const FriendsModal = ({
       <>
         <PrimaryButton
           variant={buttonType}
-          // onClick={currentlyFollows ? unFollowUser(currentUser.userName, profile) : followUser(currentUser.userName, profile)}
+          // onClick={currentlyFollows ? unFollowUser.mutate(currentUser.userName, profile) : followUser.mutate(currentUser.userName, profile)}
           onClick={handleUnFollowPopoverOpen}
         >
           {text}
@@ -95,18 +100,16 @@ const FriendsModal = ({
     );
   };
 
-  const determineActionButtonFollowingList = (profile) => {
+  const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
       return <></>;
-    } else if (
-      profile &&
-      profile.followers &&
-      profile.followers.includes(currentUser && currentUser.userName)
-    ) {
+    } else if (currentUser?.following?.includes(profile?.userName)) {
       return (
         <PrimaryButton
           variant="outlined"
-          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
+          onClick={() =>
+            unFollowUser.mutate({ userToUnfollow: profile.userName })
+          }
         >
           Following
         </PrimaryButton>
@@ -115,7 +118,7 @@ const FriendsModal = ({
       return (
         <PrimaryButton
           variant="contained"
-          onClick={() => followUser(currentUser.userName, profile.userName)}
+          onClick={() => followUser.mutate({ userToFollow: profile.userName })}
         >
           Follow
         </PrimaryButton>
@@ -123,43 +126,56 @@ const FriendsModal = ({
     }
   };
 
-  const determineActionButtonFollowersList = (profile) => {
-    if (profile.userName === currentUser.userName) {
-      return <></>;
-    } else if (
-      profile &&
-      profile.followers &&
-      profile.followers.includes(currentUser && currentUser.userName)
-    ) {
-      return (
-        <PrimaryButton
-          variant="outlined"
-          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
-        >
-          Following
-        </PrimaryButton>
+  const unFollowUser = useMutation({
+    mutationFn: (request) => {
+      return UserClient.unFollowUser(
+        currentUser.userName,
+        request.userToUnfollow
       );
-    } else {
-      return (
-        <PrimaryButton
-          variant="contained"
-          onClick={() => followUser(currentUser.userName, profile.userName)}
-        >
-          Follow
-        </PrimaryButton>
-      );
-    }
-  };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "fullFriendsList",
+          {
+            userName: currentUser.userName,
+          },
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "profileInfo",
+          {
+            userName: currentUser.userName,
+          },
+        ],
+      });
+    },
+  });
 
-  const unFollowUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result === 200 && setFriendsAdded(friendsAdded + 1);
-  };
-
-  const followUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result == 200 && setFriendsAdded(friendsAdded + 1);
-  };
+  const followUser = useMutation({
+    mutationFn: (request) => {
+      return UserClient.followUser(currentUser.userName, request.userToFollow);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "fullFriendsList",
+          {
+            userName: currentUser.userName,
+          },
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "profileInfo",
+          {
+            userName: currentUser.userName,
+          },
+        ],
+      });
+    },
+  });
 
   return (
     <Dialog
@@ -182,7 +198,7 @@ const FriendsModal = ({
           textAlign: "center",
         }}
       >
-        {userName}
+        {displayedProfileUserName}
       </DialogTitle>
       <Box sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -196,6 +212,7 @@ const FriendsModal = ({
             <Tab
               sx={{
                 fontSize: "13px",
+                paddingLeft: "15px",
                 "&.Mui-selected": {
                   color: "#40a9ff",
                   fontSize: "13px",
@@ -209,6 +226,7 @@ const FriendsModal = ({
             <Tab
               sx={{
                 fontSize: "13px",
+                paddingLeft: "15px",
                 "&.Mui-selected": {
                   color: "#40a9ff",
                   fontSize: "13px",
@@ -255,7 +273,7 @@ const FriendsModal = ({
                             margin: "0 0 50px 0",
                           }}
                         >
-                          {determineActionButtonFollowingList(profile)}
+                          {determineActionButton(profile)}
                         </div>
                       </>
                     </Stack>
@@ -302,7 +320,7 @@ const FriendsModal = ({
                             margin: "0 0 50px 0",
                           }}
                         >
-                          {determineActionButtonFollowersList(profile)}
+                          {determineActionButton(profile)}
                         </div>
                       </>
                     </Stack>

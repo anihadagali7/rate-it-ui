@@ -13,44 +13,47 @@ import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UserContext from "../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
 const Profile = () => {
   const { userName } = useParams();
   const [tabValue, setTabValue] = useState(0);
-  const [profile, setProfile] = useState(null);
   const [openFriendsModal, setOpenFriendsModal] = useState(false);
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
   const { currentUser } = useContext(UserContext);
   const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
+  const currentUserAndCurrentProfile = currentUser?.userName == userName;
+
+  const { data: profileInfo, isLoading } = useQuery({
+    queryKey: ["profileInfo", { userName }],
+    queryFn: async () => {
+      const response = await UserClient.getUserInfo(userName);
+      return response;
+    },
+    staleTime: 60000,
+    select: ({ data }) => data.data.user,
+  });
+
+  useEffect(() => {
+    setUserViewingOwnProfile(currentUserAndCurrentProfile);
+    setOpenFriendsModal(false);
+  }, [userName]);
 
   const followProfile = async () => {
-    await UserClient.followUser(currentUser.userName, profile.userName);
+    await UserClient.followUser(currentUser.userName, profileInfo.userName);
     getProfileDetails();
   };
 
   const unFollowProfile = async () => {
-    await UserClient.unFollowUser(currentUser.userName, profile.userName);
+    await UserClient.unFollowUser(currentUser.userName, profileInfo.userName);
     getProfileDetails();
   };
 
   const getProfileDetails = async () => {
-    const userAndProfile = currentUser.userName === userName;
-
-    if (!userAndProfile) {
-      const result = await UserClient.getUserInfo(userName);
-      setProfile(result.data.user);
-    } else {
-      setProfile(currentUser);
-    }
-    setUserViewingOwnProfile(userAndProfile);
-    setOpenFriendsModal(false);
+    // TODO invalide queries of user profile details
   };
-
-  useEffect(() => {
-    getProfileDetails();
-  }, [userName]);
 
   const handleFriendsModalClose = () => {
     setOpenFriendsModal(false);
@@ -89,9 +92,7 @@ const Profile = () => {
         </PrimaryButton>
       );
     } else if (
-      profile &&
-      profile.followers &&
-      profile.followers.includes(currentUser && currentUser.userName)
+      profileInfo?.followers?.includes(currentUser?.userName)
     ) {
       return (
         <PrimaryButton variant="outlined" onClick={unFollowProfile}>
@@ -111,19 +112,21 @@ const Profile = () => {
     {
       title: "Ratings",
       value: 0,
-      content: <DisplayRatingsByUser userName={profile && profile.userName} />,
+      content: <DisplayRatingsByUser profileUserName={profileInfo?.userName} />,
     },
     {
       value: 1,
       title: "Wishlist",
-      content: <DisplayWishlistByUser user={profile} />,
+      content: (
+        <DisplayWishlistByUser profileUserName={profileInfo?.userName} />
+      ),
     },
     {
       value: 2,
       title: "Playlist",
       content: (
         <DisplayPlaylistByUser
-          user={profile}
+          user={profileInfo}
           userViewingOwnProfile={userViewingOwnProfile}
         />
       ),
@@ -174,7 +177,7 @@ const Profile = () => {
                   fontWeight: "bold",
                 }}
               >
-                {profile?.firstName}
+                {profileInfo?.firstName}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -183,7 +186,7 @@ const Profile = () => {
                   fontSize: "13px",
                 }}
               >
-                @{profile?.userName}
+                @{profileInfo?.userName}
               </Typography>
             </Grid>
             <Grid item xs={2}>
@@ -195,7 +198,7 @@ const Profile = () => {
                 }}
                 onClick={() => handleFriendsModalOpen(0)}
               >
-                {profile && profile.following && profile.following.length}
+                {profileInfo?.following?.length}
                 <span style={{ fontWeight: "normal" }}> following</span>
               </span>
             </Grid>
@@ -208,7 +211,7 @@ const Profile = () => {
                 }}
                 onClick={() => handleFriendsModalOpen(1)}
               >
-                {profile && profile.followers && profile.followers.length}
+                {profileInfo?.followers?.length}
                 <span style={{ fontWeight: "normal" }}> followers</span>
               </span>
             </Grid>
@@ -237,9 +240,7 @@ const Profile = () => {
         <FriendsModal
           open={openFriendsModal}
           onClose={handleFriendsModalClose}
-          userName={profile.userName}
-          friendsAdded={friendsAdded}
-          setFriendsAdded={setFriendsAdded}
+          displayedProfileUserName={profileInfo.userName}
           openingTab={friendsTab}
         />
       )}

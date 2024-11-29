@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -10,21 +10,19 @@ import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
-import UserContext from "../../shared/context/userContext";
 
-const DisplayWishlistByUser = () => {
+const DisplayWishlistByUser = ({ profileUserName }) => {
   const [wishlistList, setWishlistList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     getWishlistForUser();
-  }, [currentUser]);
+  }, [profileUserName]);
 
   const getWishlistForUser = async () => {
     setLoading(true);
     const result = await WishlistClient.getAllWishlistForUser(
-      currentUser.userName
+      profileUserName
     );
     setWishlistList(result.data.wishlistList.reverse());
     setLoading(false);

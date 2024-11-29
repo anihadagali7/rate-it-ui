@@ -6,12 +6,12 @@ import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
 import { useQuery } from "@tanstack/react-query";
 import RatingCard from "../ratingcard/RatingCard";
 
-const DisplayRatingsByUser = ({ userName }) => {
+const DisplayRatingsByUser = ({ profileUserName }) => {
   const { data: ratingsList, isLoading } = useQuery({
-    queryKey: ["ratingsForUser", { userName }],
-    queryFn: async () => await RatingClient.getAllRatingsForUser(userName),
+    queryKey: ["ratingsForUser", { profileUserName }],
+    queryFn: async () => await RatingClient.getAllRatingsForUser(profileUserName),
     staleTime: 60000,
-    enabled: !!userName,
+    enabled: !!profileUserName,
     select: ({ data }) => data.data.ratingsList,
   });
 

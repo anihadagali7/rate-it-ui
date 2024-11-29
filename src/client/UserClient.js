@@ -1,104 +1,51 @@
 import axios from "axios";
+import { getHeaders } from "../utils/AuthorizationUtils";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
+export default class UserClient {
+  static getUserInfo(userName) {
+    const url = `${API_URL}/api/account/${userName}`;
+    return axios.get(url, getHeaders());
+  }
 
-const getUserInfo = (userName) => {
-  return axios
-    .get(
-      API_URL + `/api/account/${userName}`,
+  static getAllUsers() {
+    const url = `${API_URL}/api/allUsers`;
+    return axios.get(url, getHeaders());
+  }
+
+  static getFollowing(userName) {
+    const url = `${API_URL}/api/${userName}/following`;
+    return axios.get(url, getHeaders());
+  }
+
+  static getFollowers(userName) {
+    const url = `${API_URL}/api/${userName}/followers`;
+    return axios.get(url, getHeaders());
+  }
+
+  static  getFriendsList(userName) {
+    const url = `${API_URL}/api/${userName}/friendsList`;
+    return axios.get(url, getHeaders());
+  }
+
+  static unFollowUser(currentUser, userToUnfollow) {
+    const url = `${API_URL}/api/friends/unfollow`;
+    return axios.post(url, {
+        currentUser,
+        userToUnfollow,
+      }, getHeaders());
+  }
+
+  static followUser(currentUser, userToFollow) {
+    const url = `${API_URL}/api/friends/follow`;
+    return axios.post(
+      url,
       {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.data;
-    });
-};
-
-const getAllUsers = () => {
-  return axios
-    .get(
-      API_URL + `/api/allUsers`,
-      {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.data;
-    });
-};
-
-const getFollowing = (userName) => {
-  return axios
-    .get(
-      API_URL + `/api/${userName}/following`,
-      {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.data;
-    });
-};
-
-
-const getFollowers = (userName) => {
-  return axios
-    .get(
-      API_URL + `/api/${userName}/followers`,
-      {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.data;
-    });
-};
-
-const unFollowUser = (currentUser, userToUnfollow) => {
-  return axios
-    .post(
-      API_URL + `/api/friends/unfollow`,
-      {
-        currentUser, userToUnfollow
+        currentUser,
+        userToFollow,
       },
-      {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.status;
-    });
+      getHeaders()
+    );
+  }
 }
-
-const followUser = (currentUser, userToFollow) => {
-  return axios
-    .post(
-      API_URL + `/api/friends/follow`,
-      {
-        currentUser, userToFollow
-      },
-      {
-        headers: {
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    )
-    .then((response) => {
-      return response.status;
-    });
-}
-
-export default {getUserInfo, getFollowing, getFollowers, unFollowUser, followUser, getAllUsers}
