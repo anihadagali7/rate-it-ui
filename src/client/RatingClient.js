@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_BASE_URL;
 
 export default class RatingClient {
   static submitRating(rating) {
-    const url = `${API_URL}/api/rating`;
+    const url = `${API_URL}/api/ratings`;
     return axios.post(url, rating, getHeaders());
   }
 

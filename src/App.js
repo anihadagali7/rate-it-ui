@@ -21,60 +21,69 @@ const App = React.memo(() => {
   const [currentUser, setCurrentUser] = useState(null);
   const value = useMemo(() => ({ currentUser, setCurrentUser }), [currentUser]);
 
-  const isEnabled = () => !!(storedUser && !currentUser);
-
-  const userInfo = useQuery({
-    queryKey: ["userInfo", { storedUser }],
+  const { data: userInfo, isLoading } = useQuery({
+    queryKey: ["appLogin", { userName: storedUser }],
     queryFn: async () => {
-      const result = await UserClient.getUserInfo(storedUser);
-      setCurrentUser(result?.data?.user);
+      const response = await UserClient.getUserInfo(storedUser);
+      return response;
     },
-    enabled: isEnabled(),
+    staleTime: 60000,
+    select: ({ data }) => data.data.user,
   });
 
   useEffect(() => {
+    setCurrentUser(userInfo && userInfo);
+
     if (currentUser) {
       localStorage.setItem("userName", currentUser.userName);
     }
-  }, [currentUser]);
+  }, [userInfo]);
 
   return (
     <UserContext.Provider value={value}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
-            <Header displayMenu={true} />
-            <Routes>
-              <Route exact path="/" element={<Home />}></Route>
-              <Route exact path="/search/:keyword" element={<Search />}></Route>
-              <Route exact path="/login" element={<Login />}></Route>
-              <Route exact path="/signup" element={<Signup />}></Route>
-              <Route
-                exact
-                path="/:mediaType/:id"
-                element={<MediaInfo />}
-              ></Route>
-              <Route
-                exact
-                path="/profile/:userName"
-                element={
-                  <Protected>
-                    <Profile />
-                  </Protected>
-                }
-              ></Route>
-              <Route
-                exact
-                path="/profile/edit"
-                element={
-                  <Protected>
-                    <EditProfile />
-                  </Protected>
-                }
-              ></Route>
-              {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
-              {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
-            </Routes>
+            {!isLoading && (
+              <>
+                <Header displayMenu={true} />
+                <Routes>
+                  <Route exact path="/" element={<Home />}></Route>
+                  <Route
+                    exact
+                    path="/search/:keyword"
+                    element={<Search />}
+                  ></Route>
+                  <Route exact path="/login" element={<Login />}></Route>
+                  <Route exact path="/signup" element={<Signup />}></Route>
+                  <Route
+                    exact
+                    path="/:mediaType/:id"
+                    element={<MediaInfo />}
+                  ></Route>
+                  <Route
+                    exact
+                    path="/profile/:userName"
+                    element={
+                      <Protected>
+                        <Profile />
+                      </Protected>
+                    }
+                  ></Route>
+                  <Route
+                    exact
+                    path="/profile/edit"
+                    element={
+                      <Protected>
+                        <EditProfile />
+                      </Protected>
+                    }
+                  ></Route>
+                  {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
+                  {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
+                </Routes>
+              </>
+            )}
           </BrowserRouter>
         </ThemeProvider>
       </StyledEngineProvider>

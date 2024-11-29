@@ -25,62 +25,66 @@ const Home = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
-  if (isLoading || isFeedRatingsLoading) {
+  if (isLoading || (currentUser && isFeedRatingsLoading)) {
     return <RatingsLoading />;
   }
 
   return (
     <Container maxWidth={"sm"} sx={{ marginTop: "10px", marginBottom: "25px" }}>
-      <Typography
-        sx={{
-          fontWeight: "bold",
-          fontSize: "22px",
-          paddingTop: "15px",
-          paddingLeft: "25px",
-        }}
-      >
-        For you
-      </Typography>
-      {feedRatingsList &&
-        feedRatingsList.length > 0 &&
-        feedRatingsList.map((rating) => (
-          <Paper
-            elevation={6}
+      {currentUser && feedRatingsList && feedRatingsList.length > 0 && (
+        <>
+          <Typography
             sx={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "17px",
-              marginTop: "15px",
-              padding: "25px",
+              fontWeight: "bold",
+              fontSize: "22px",
+              paddingTop: "15px",
+              paddingLeft: "25px",
             }}
           >
-            <RatingCard rating={rating} key={rating.id} />
-          </Paper>
-        ))}
-      <Typography
-        sx={{
-          fontWeight: "bold",
-          fontSize: "22px",
-          paddingTop: "15px",
-          paddingLeft: "25px",
-        }}
-      >
-        Explore
-      </Typography>
-      {exploreRatingsList &&
-        exploreRatingsList.length > 0 &&
-        exploreRatingsList.map((rating) => (
-          <Paper
-            elevation={6}
+            For you
+          </Typography>
+          {feedRatingsList.map((rating) => (
+            <Paper
+              elevation={6}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "17px",
+                marginTop: "15px",
+                padding: "25px",
+              }}
+            >
+              <RatingCard rating={rating} key={rating.id} />
+            </Paper>
+          ))}
+        </>
+      )}
+      {exploreRatingsList && exploreRatingsList.length > 0 && (
+        <>
+          <Typography
             sx={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "17px",
-              marginTop: "15px",
-              padding: "25px",
+              fontWeight: "bold",
+              fontSize: "22px",
+              paddingTop: "15px",
+              paddingLeft: "25px",
             }}
           >
-            <RatingCard rating={rating} key={rating.id} />
-          </Paper>
-        ))}
+            Explore
+          </Typography>
+          {exploreRatingsList.map((rating) => (
+            <Paper
+              elevation={6}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "17px",
+                marginTop: "15px",
+                padding: "25px",
+              }}
+            >
+              <RatingCard rating={rating} key={rating.id} />
+            </Paper>
+          ))}
+        </>
+      )}
     </Container>
   );
 };

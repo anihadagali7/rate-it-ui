@@ -2,7 +2,6 @@ import React from "react";
 import RatingClient from "../../client/RatingClient";
 import { Box } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import moment from "moment";
 import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
 import { useQuery } from "@tanstack/react-query";
 import RatingCard from "../ratingcard/RatingCard";
