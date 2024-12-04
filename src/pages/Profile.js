@@ -13,7 +13,7 @@ import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UserContext from "../shared/context/userContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -25,6 +25,7 @@ const Profile = () => {
   const { currentUser } = useContext(UserContext);
   const [userViewingOwnProfile, setUserViewingOwnProfile] = useState(false);
   const currentUserAndCurrentProfile = currentUser?.userName == userName;
+  const queryClient = useQueryClient();
 
   const { data: profileInfo, isLoading } = useQuery({
     queryKey: ["profileInfo", { userName }],
@@ -36,20 +37,41 @@ const Profile = () => {
     select: ({ data }) => data.data.user,
   });
 
+  const unFollowProfile = useMutation({
+    mutationFn: () => {
+      return UserClient.unFollowUser(
+        currentUser.userName,
+        profileInfo.userName
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: userName }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: currentUser?.userName }],
+      });
+    },
+  });
+
+  const followProfile = useMutation({
+    mutationFn: () => {
+      return UserClient.followUser(currentUser.userName, profileInfo.userName);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: userName }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: currentUser?.userName }],
+      });
+    },
+  });
+
   useEffect(() => {
     setUserViewingOwnProfile(currentUserAndCurrentProfile);
     setOpenFriendsModal(false);
   }, [userName]);
-
-  const followProfile = async () => {
-    await UserClient.followUser(currentUser.userName, profileInfo.userName);
-    getProfileDetails();
-  };
-
-  const unFollowProfile = async () => {
-    await UserClient.unFollowUser(currentUser.userName, profileInfo.userName);
-    getProfileDetails();
-  };
 
   const getProfileDetails = async () => {
     // TODO invalide queries of user profile details
@@ -91,17 +113,21 @@ const Profile = () => {
           Edit profile
         </PrimaryButton>
       );
-    } else if (
-      profileInfo?.followers?.includes(currentUser?.userName)
-    ) {
+    } else if (profileInfo?.followers?.includes(currentUser?.userName)) {
       return (
-        <PrimaryButton variant="outlined" onClick={unFollowProfile}>
+        <PrimaryButton
+          variant="outlined"
+          onClick={() => unFollowProfile.mutate()}
+        >
           Following
         </PrimaryButton>
       );
     } else {
       return (
-        <PrimaryButton variant="contained" onClick={followProfile}>
+        <PrimaryButton
+          variant="contained"
+          onClick={() => followProfile.mutate()}
+        >
           Follow
         </PrimaryButton>
       );
