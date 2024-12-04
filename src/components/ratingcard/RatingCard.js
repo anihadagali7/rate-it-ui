@@ -30,14 +30,14 @@ const RatingCard = ({ rating }) => {
         }}
         component={Link}
         src={AccountCircleIcon}
-        to={`/profile/${rating.ratedBy.userName}`}
+        to={`/profile/${rating?.ratedBy?.userName}`}
       />
       <Stack direction="column">
         <span style={{ fontWeight: "bold" }}>
-          {rating.ratedBy.firstName} {rating.ratedBy.lastName}
+          {rating?.ratedBy?.firstName} {rating?.ratedBy?.lastName}
           <span style={{ fontWeight: "normal" }}>
             {" "}
-            @{rating.ratedBy.userName}
+            @{rating?.ratedBy?.userName}
           </span>
           <span style={{ fontWeight: "normal" }}>
             {" "}

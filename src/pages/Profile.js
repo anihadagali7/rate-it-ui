@@ -30,8 +30,7 @@ const Profile = () => {
   const { data: profileInfo, isLoading } = useQuery({
     queryKey: ["profileInfo", { userName }],
     queryFn: async () => {
-      const response = await UserClient.getUserInfo(userName);
-      return response;
+      return await UserClient.getUserInfo(userName);
     },
     staleTime: 60000,
     select: ({ data }) => data.data.user,

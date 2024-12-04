@@ -253,17 +253,17 @@ const FriendsModal = ({
                             textDecoration: "none",
                           }}
                           component={Link}
-                          to={`/profile/${profile.userName}`}
+                          to={`/profile/${profile?.userName}`}
                         >
-                          {profile.firstName[0]}
-                          {profile.lastName[0]}
+                          {profile?.firstName[0]}
+                          {profile?.lastName[0]}
                         </Avatar>
                         <div>
                           <Stack direction="column">
                             <Typography sx={{ fontWeight: "bold" }}>
-                              {profile.firstName} {profile.lastName}
+                              {profile?.firstName} {profile?.lastName}
                             </Typography>
-                            <Typography>@{profile.userName}</Typography>
+                            <Typography>@{profile?.userName}</Typography>
                           </Stack>
                         </div>
                         <div
@@ -273,7 +273,7 @@ const FriendsModal = ({
                             margin: "0 0 50px 0",
                           }}
                         >
-                          {determineActionButton(profile)}
+                          {determineActionButton(profile && profile)}
                         </div>
                       </>
                     </Stack>
@@ -302,15 +302,15 @@ const FriendsModal = ({
                           component={Link}
                           to={`/profile/${profile.userName}`}
                         >
-                          {profile.firstName[0]}
-                          {profile.lastName[0]}
+                          {profile?.firstName[0]}
+                          {profile?.lastName[0]}
                         </Avatar>
                         <div>
                           <Stack direction="column">
                             <Typography sx={{ fontWeight: "bold" }}>
-                              {profile.firstName} {profile.lastName}
+                              {profile?.firstName} {profile?.lastName}
                             </Typography>
-                            <Typography>@{profile.userName}</Typography>
+                            <Typography>@{profile?.userName}</Typography>
                           </Stack>
                         </div>
                         <div

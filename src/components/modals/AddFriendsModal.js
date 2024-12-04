@@ -11,18 +11,15 @@ import SearchClient from "../../client/SearchClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import UserContext from "../../shared/context/userContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const AddFriendsModal = ({
-  open,
-  onClose,
-  friendsAdded,
-  setFriendsAdded,
-}) => {
+const AddFriendsModal = ({ open, onClose, friendsAdded, setFriendsAdded }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const resetSearch = () => {
     setSearchKeyword("");
@@ -60,17 +57,37 @@ const AddFriendsModal = ({
     handleSearch();
   };
 
-  const unFollowUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    handleSearch();
-    result === 200 && setFriendsAdded(friendsAdded + 1);
-  };
+  const unFollowUser = useMutation({
+    mutationFn: (userToUnfollow) => {
+      return UserClient.unFollowUser(currentUser?.userName, userToUnfollow);
+    },
+    onSuccess: (userToUnfollow) => {
+      // TODO: making the search again makes the animation smooth. need an alternative
+      // handleSearch();
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: userToUnfollow }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: currentUser?.userName }],
+      });
+    },
+  });
 
-  const followUser = async (currentUser, userToFollow) => {
-    let result = await UserClient.followUser(currentUser, userToFollow);
-    handleSearch();
-    result === 200 && setFriendsAdded(friendsAdded + 1);
-  };
+  const followUser = useMutation({
+    mutationFn: (userToFollow) => {
+      return UserClient.followUser(currentUser?.userName, userToFollow);
+    },
+    onSuccess: (userToFollow) => {
+      // TODO: making the search again makes the animation smooth. need an alternative
+      // handleSearch();
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: userToFollow }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profileInfo", { userName: currentUser?.userName }],
+      });
+    },
+  });
 
   const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
@@ -83,7 +100,7 @@ const AddFriendsModal = ({
       return (
         <PrimaryButton
           variant="outlined"
-          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
+          onClick={() => unFollowUser.mutate(profile.userName)}
         >
           Following
         </PrimaryButton>
@@ -92,7 +109,7 @@ const AddFriendsModal = ({
       return (
         <PrimaryButton
           variant="contained"
-          onClick={() => followUser(currentUser.userName, profile.userName)}
+          onClick={() => followUser.mutate(profile.userName)}
         >
           Follow
         </PrimaryButton>
