@@ -11,65 +11,40 @@ import SearchClient from "../../client/SearchClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import UserContext from "../../shared/context/userContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const AddFriendsModal = ({ open, onClose, friendsAdded, setFriendsAdded }) => {
-  const [searchResults, setSearchResults] = useState([]);
+const AddFriendsModal = ({ open, onClose }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [hasSearched, setHasSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { currentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
 
-  const resetSearch = () => {
-    setSearchKeyword("");
-    setSearchResults([]);
-    setHasSearched(false);
-    setLoading(false);
-  };
-
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
-    if (event.target.value === "") {
-      setSearchResults([]);
-      setHasSearched(false);
-    }
   };
 
-  const handleSearch = async () => {
-    if (searchKeyword.length > 0) {
-      setLoading(true);
-      setHasSearched(true);
-
-      const result = await SearchClient.searchMedia(
+  const {
+    isLoading,
+    mutate: submitSearch,
+    isSuccess,
+    data: searchResults,
+  } = useMutation({
+    mutationFn: async () => {
+      const { data } = await SearchClient.searchMedia(
         "user",
         searchKeyword,
         null
       );
-      const finalList = result.data.mediaList;
-      setSearchResults(finalList);
-    }
-    setLoading(false);
-  };
-
-  const submitSearch = (e) => {
-    e.preventDefault();
-    handleSearch();
-  };
+      return data.mediaList;
+    },
+    onSuccess: () => {},
+  });
 
   const unFollowUser = useMutation({
     mutationFn: (userToUnfollow) => {
       return UserClient.unFollowUser(currentUser?.userName, userToUnfollow);
     },
     onSuccess: (userToUnfollow) => {
-      // TODO: making the search again makes the animation smooth. need an alternative
-      // handleSearch();
-      queryClient.invalidateQueries({
-        queryKey: ["profileInfo", { userName: userToUnfollow }],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["profileInfo", { userName: currentUser?.userName }],
-      });
+      resetQueries(userToUnfollow);
     },
   });
 
@@ -78,16 +53,19 @@ const AddFriendsModal = ({ open, onClose, friendsAdded, setFriendsAdded }) => {
       return UserClient.followUser(currentUser?.userName, userToFollow);
     },
     onSuccess: (userToFollow) => {
-      // TODO: making the search again makes the animation smooth. need an alternative
-      // handleSearch();
-      queryClient.invalidateQueries({
-        queryKey: ["profileInfo", { userName: userToFollow }],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["profileInfo", { userName: currentUser?.userName }],
-      });
+      resetQueries(userToFollow);
     },
   });
+
+  const resetQueries = (person) => {
+    submitSearch();
+    queryClient.invalidateQueries({
+      queryKey: ["profileInfo", { userName: person }],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["profileInfo", { userName: currentUser?.userName }],
+    });
+  };
 
   const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
@@ -118,7 +96,7 @@ const AddFriendsModal = ({ open, onClose, friendsAdded, setFriendsAdded }) => {
   };
 
   const checkToDisable = () => {
-    return !searchKeyword;
+    return searchKeyword === "";
   };
 
   return (
@@ -164,14 +142,14 @@ const AddFriendsModal = ({ open, onClose, friendsAdded, setFriendsAdded }) => {
           <Grid item xs={3}>
             <PrimaryButton
               variant="contained"
-              onClick={submitSearch}
+              onClick={() => submitSearch()}
               disabled={checkToDisable()}
             >
               Search
             </PrimaryButton>
           </Grid>
         </Grid>
-        {hasSearched && (
+        {isSuccess && (
           <List component="nav" sx={{ margin: "0 10px" }}>
             {searchResults && searchResults.length > 0 ? (
               searchResults.map((profile) => (
