@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Dialog, DialogTitle, Popover, Typography } from "@mui/material";
+import { Box, Dialog, DialogTitle, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Divider from "@mui/material/Divider";
@@ -9,13 +9,9 @@ import UserClient from "../../client/UserClient";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-// TODO add a useEffect condition? with some dependency on change
-// get followers only when that tab is loaded?
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -30,11 +26,9 @@ const FriendsModal = ({
   displayedProfileUserName,
 }) => {
   const [tabValue, setTabValue] = useState(openingTab);
-  const [unfollowPopover, setUnfollowPopover] = useState(false);
   const [followersList, setFollowersList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const { currentUser } = useContext(UserContext);
-  const openPopover = Boolean(unfollowPopover);
   const queryClient = useQueryClient();
 
   const { data: fullFriendsList } = useQuery({
@@ -58,58 +52,17 @@ const FriendsModal = ({
     setTabValue(newValue);
   };
 
-  const handleUnFollowPopoverClose = () => {
-    setUnfollowPopover(null);
-  };
-
-  const handleUnFollowPopoverOpen = (event) => {
-    setUnfollowPopover(event.currentTarget);
-  };
-
-  const displayFollowingButton = (profile) => {
-    let currentlyFollows = currentUser.following.includes(profile);
-    let text = currentlyFollows ? "Following" : "Follow";
-    let buttonType = currentlyFollows ? "outlined" : "contained";
-    return (
-      <>
-        <PrimaryButton
-          variant={buttonType}
-          // onClick={currentlyFollows ? unFollowUser.mutate(currentUser.userName, profile) : followUser.mutate(currentUser.userName, profile)}
-          onClick={handleUnFollowPopoverOpen}
-        >
-          {text}
-        </PrimaryButton>
-        <Popover
-          open={openPopover}
-          anchorEl={unfollowPopover}
-          onClose={handleUnFollowPopoverClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <PrimaryButton variant="outlined" rightIcon={<PersonRemoveIcon />}>
-            Unfollow @{profile}
-          </PrimaryButton>
-        </Popover>
-      </>
-    );
-  };
-
   const determineActionButton = (profile) => {
     if (profile.userName === currentUser.userName) {
       return <></>;
-    } else if (currentUser?.following?.includes(profile?.userName)) {
+    } else if (profile?.followers?.includes(currentUser?.userName)) {
       return (
         <PrimaryButton
           variant="outlined"
           onClick={() =>
             unFollowUser.mutate({ userToUnfollow: profile.userName })
           }
+          width={120}
         >
           Following
         </PrimaryButton>
@@ -119,6 +72,7 @@ const FriendsModal = ({
         <PrimaryButton
           variant="contained"
           onClick={() => followUser.mutate({ userToFollow: profile.userName })}
+          width={120}
         >
           Follow
         </PrimaryButton>
@@ -138,7 +92,7 @@ const FriendsModal = ({
         queryKey: [
           "fullFriendsList",
           {
-            userName: currentUser.userName,
+            userName: displayedProfileUserName,
           },
         ],
       });
@@ -162,7 +116,7 @@ const FriendsModal = ({
         queryKey: [
           "fullFriendsList",
           {
-            userName: currentUser.userName,
+            userName: displayedProfileUserName,
           },
         ],
       });

@@ -79,6 +79,7 @@ const AddFriendsModal = ({ open, onClose }) => {
         <PrimaryButton
           variant="outlined"
           onClick={() => unFollowUser.mutate(profile.userName)}
+          width={120}
         >
           Following
         </PrimaryButton>
@@ -88,6 +89,7 @@ const AddFriendsModal = ({ open, onClose }) => {
         <PrimaryButton
           variant="contained"
           onClick={() => followUser.mutate(profile.userName)}
+          width={120}
         >
           Follow
         </PrimaryButton>
