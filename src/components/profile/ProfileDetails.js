@@ -63,6 +63,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
     },
     onSuccess: ({ data }) => {
       localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userName", data.data.user.userName);
       setCurrentUser(data.data.user);
       navigate("/");
     },

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -10,29 +10,21 @@ import DisplayOnePlaylist from "./DisplayOnePlaylist";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddPlaylistModal from "../modals/AddPlaylistModal";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import UserContext from "../../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
-const DisplayPlaylistByUser = ({ userViewingOwnProfile }) => {
-  const [playlistList, setPlaylistList] = useState([]);
+const DisplayPlaylistByUser = ({ profileUserName, userViewingOwnProfile }) => {
   const [displayOnePlaylist, setDisplayOnePlaylist] = useState(false);
   const [playListId, setPlaylistId] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
-  const [playlistAdded, setPlaylistAdded] = useState(false);
-  const { currentUser } = useContext(UserContext);
 
-  useEffect(() => {
-    getPlaylistForUser();
-  }, [playlistAdded, currentUser]);
-
-  const getPlaylistForUser = async () => {
-    setLoading(true);
-    const result = await PlaylistClient.getAllPlaylistForUser(
-      currentUser.userName
-    );
-    setPlaylistList(result.data.playlistList.reverse());
-    setLoading(false);
-  };
+  const { data: playlistList, isLoading } = useQuery({
+    queryKey: ["getAllPlaylistForUser", { profileUserName }],
+    queryFn: async () => {
+      return await PlaylistClient.getAllPlaylistForUser(profileUserName);
+    },
+    staleTime: 60000,
+    select: ({ data }) => data.data.playlistList.reverse(),
+  });
 
   const viewOnePlaylist = (playlist) => {
     setDisplayOnePlaylist(true);
@@ -99,12 +91,13 @@ const DisplayPlaylistByUser = ({ userViewingOwnProfile }) => {
   return (
     <Box>
       <List component="nav">
-        {loading ? (
+        {isLoading ? (
           <ProfileWishlistLoading />
         ) : displayOnePlaylist ? (
           <DisplayOnePlaylist
             playListId={playListId}
             viewAllPlaylists={viewAllPlaylists}
+            userViewingOwnProfile={userViewingOwnProfile}
           />
         ) : (
           displayPlaylist()
@@ -115,8 +108,7 @@ const DisplayPlaylistByUser = ({ userViewingOwnProfile }) => {
         <AddPlaylistModal
           open={openNewPlaylistModal}
           onClose={handleNewPlaylistModalClose}
-          playlistAdded={playlistAdded}
-          setPlaylistAdded={setPlaylistAdded}
+          profileUserName={profileUserName}
         />
       )}
     </Box>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -11,24 +11,26 @@ import List from "@mui/material/List";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const DisplayOnePlaylist = ({ playListId, viewAllPlaylists }) => {
-  const [mediaByPlaylist, setMediaByPlaylist] = useState(null);
-  const [loading, setLoading] = useState(false);
+const DisplayOnePlaylist = ({
+  playListId,
+  viewAllPlaylists,
+  userViewingOwnProfile,
+}) => {
   const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] =
     useState(false);
   const [mediaAdded, setMediaAdded] = useState(0);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getAllMediaForPlaylist();
-  }, [playListId]);
-
-  const getAllMediaForPlaylist = async () => {
-    setLoading(true);
-    const result = await PlaylistClient.getAllMediaForPlaylist(playListId);
-    setMediaByPlaylist(result.data.mediaByPlaylist);
-    setLoading(false);
-  };
+  const { data: playlistDetails, isLoading } = useQuery({
+    queryKey: ["getAllMediaForPlaylist", { playListId }],
+    queryFn: async () => {
+      return await PlaylistClient.getAllMediaForPlaylist(playListId);
+    },
+    staleTime: 60000,
+    select: ({ data }) => data.data.mediaByPlaylist,
+  });
 
   const handleAddMediaToPlaylistModalOpen = () => {
     setAddMediaToPlaylistModal(true);
@@ -37,13 +39,15 @@ const DisplayOnePlaylist = ({ playListId, viewAllPlaylists }) => {
   const handleAddMediaToPlaylistModalClose = () => {
     setAddMediaToPlaylistModal(false);
     if (mediaAdded > 0) {
-      getAllMediaForPlaylist();
+      queryClient.invalidateQueries({
+        queryKey: ["getAllMediaForPlaylist", { playListId }],
+      });
     }
     setMediaAdded(0);
   };
 
   const displayMediaList = () => {
-    const mediaList = mediaByPlaylist?.mediaList;
+    const mediaList = playlistDetails?.mediaList;
     return (
       <>
         {mediaList &&
@@ -93,24 +97,26 @@ const DisplayOnePlaylist = ({ playListId, viewAllPlaylists }) => {
           fontWeight: "bold",
         }}
       >
-        {mediaByPlaylist?.playlist?.name}
+        {playlistDetails?.playlist?.name}
       </Typography>
-      <PrimaryButton
-        variant="text"
-        onClick={handleAddMediaToPlaylistModalOpen}
-        leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-      >
-        Add to this playlist
-      </PrimaryButton>
+      {userViewingOwnProfile && (
+        <PrimaryButton
+          variant="text"
+          onClick={handleAddMediaToPlaylistModalOpen}
+          leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+        >
+          Add to this playlist
+        </PrimaryButton>
+      )}
       <List component="nav">
-        {loading ? <ProfileWishlistLoading /> : displayMediaList()}
+        {isLoading ? <ProfileWishlistLoading /> : displayMediaList()}
       </List>
 
       {openAddMediaToPlaylistModal && (
         <AddMediaToPlaylistModal
           open={openAddMediaToPlaylistModal}
           onClose={handleAddMediaToPlaylistModalClose}
-          mediaByPlaylist={mediaByPlaylist}
+          mediaByPlaylist={playlistDetails}
           setMediaAdded={setMediaAdded}
           mediaAdded={mediaAdded}
         />

@@ -151,7 +151,7 @@ const Profile = () => {
       title: "Playlist",
       content: (
         <DisplayPlaylistByUser
-          user={profileInfo}
+          profileUserName={profileInfo?.userName}
           userViewingOwnProfile={userViewingOwnProfile}
         />
       ),
