@@ -24,39 +24,3 @@ export default class PlaylistClient {
     return axios.get(url, getHeaders());
   }
 }
-
-// const createPlaylist = (playlist) => {
-//   return axios
-//     .post(API_URL + `/api/playlist/create`, playlist, {
-//       headers: {
-//         Authorization: ACCESS_TOKEN,
-//       },
-//     })
-//     .then((response) => {
-//       return response.data;
-//     });
-// };
-
-// const addMediaToPlaylist = (playlistMedia) => {
-//   return axios
-//     .post(API_URL + `/api/playlist/addMedia`, playlistMedia, {
-//       headers: {
-//         Authorization: ACCESS_TOKEN,
-//       },
-//     })
-//     .then((response) => {
-//       return response.data;
-//     });
-// };
-
-// const getAllMediaForPlaylist = (playlistId) => {
-//   return axios
-//     .get(API_URL + `/api/playlist/${playlistId}`, {
-//       headers: {
-//         Authorization: ACCESS_TOKEN,
-//       },
-//     })
-//     .then((response) => {
-//       return response.data;
-//     });
-// };

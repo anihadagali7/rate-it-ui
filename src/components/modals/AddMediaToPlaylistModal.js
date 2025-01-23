@@ -21,18 +21,14 @@ import MediaClient from "../../client/MediaClient";
 import AddIcon from "@mui/icons-material/Add";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const AddMediaToPlaylistModal = ({
-  open,
-  onClose,
-  mediaByPlaylist,
-  setMediaAdded,
-  mediaAdded,
-}) => {
+const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
@@ -66,16 +62,44 @@ const AddMediaToPlaylistModal = ({
     setLoading(false);
   };
 
-  const addMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
-    let mediaDetails = null;
+  const {
+    isLoading,
+    data: mediaInfo,
+    mutate: getMediaInfoDetails,
+  } = useMutation({
+    mutationFn: async ({ mediaType, mediaId }) => {
+      const { data } = await MediaClient.getMediaInfoDetails(
+        mediaType,
+        mediaId
+      );
+      return data.data.media;
+    },
+  });
+
+  const {mutate: addMediaToPlaylist } = useMutation({
+    mutationFn: async (requestBody) => {
+      const { data } = await PlaylistClient.addMediaToPlaylist(requestBody);
+      return data.data.media;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getAllMediaForPlaylist",
+          { playListId: mediaByPlaylist?.playlist?._id },
+        ],
+      });
+      onClose();
+    },
+  });
+
+  const handleAddMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
     if (mediaType && mediaId) {
-      mediaDetails = await MediaClient.getMediaInfoDetails(mediaType, mediaId);
+      await getMediaInfoDetails({ mediaType, mediaId });
+      let requestBody = {};
+      requestBody.playlistId = playlistId;
+      requestBody.mediaId = mediaInfo?._id;
+      addMediaToPlaylist(requestBody);
     }
-    let requestBody = {};
-    requestBody.playlistId = playlistId;
-    requestBody.mediaId = mediaDetails?.data?.media?._id;
-    let result = await PlaylistClient.addMediaToPlaylist(requestBody);
-    result?.status === "success" && setMediaAdded(mediaAdded + 1);
   };
 
   const submitSearch = (e) => {
@@ -200,10 +224,10 @@ const AddMediaToPlaylistModal = ({
                                 <AddIcon style={{ color: "#00a8ff" }} />
                               }
                               onClick={() => {
-                                addMediaToPlaylist(
-                                  mediaByPlaylist.playlist._id,
-                                  media.mediaId,
-                                  media.mediaType
+                                handleAddMediaToPlaylist(
+                                  mediaByPlaylist?.playlist?._id,
+                                  media?.mediaId,
+                                  media?.mediaType
                                 );
                               }}
                             >

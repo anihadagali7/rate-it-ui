@@ -21,7 +21,6 @@ const DisplayOnePlaylist = ({
   const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] =
     useState(false);
   const [mediaAdded, setMediaAdded] = useState(0);
-  const queryClient = useQueryClient();
 
   const { data: playlistDetails, isLoading } = useQuery({
     queryKey: ["getAllMediaForPlaylist", { playListId }],
@@ -38,12 +37,6 @@ const DisplayOnePlaylist = ({
 
   const handleAddMediaToPlaylistModalClose = () => {
     setAddMediaToPlaylistModal(false);
-    if (mediaAdded > 0) {
-      queryClient.invalidateQueries({
-        queryKey: ["getAllMediaForPlaylist", { playListId }],
-      });
-    }
-    setMediaAdded(0);
   };
 
   const displayMediaList = () => {
@@ -117,8 +110,6 @@ const DisplayOnePlaylist = ({
           open={openAddMediaToPlaylistModal}
           onClose={handleAddMediaToPlaylistModalClose}
           mediaByPlaylist={playlistDetails}
-          setMediaAdded={setMediaAdded}
-          mediaAdded={mediaAdded}
         />
       )}
     </Box>
