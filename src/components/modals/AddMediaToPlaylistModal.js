@@ -24,46 +24,38 @@ import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
-  const [searchResults, setSearchResults] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
-
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
-
-  const resetSearch = () => {
-    setSearchKeyword("");
-    setSearchResults([]);
-    setHasSearched(false);
-    setLoading(false);
-  };
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
     if (event.target.value === "") {
-      setSearchResults([]);
       setHasSearched(false);
     }
   };
 
   const handleSearch = async (e) => {
     if (searchKeyword.length > 0) {
-      setLoading(true);
       setHasSearched(true);
-
-      const result = await SearchClient.searchAllMedia(
-        searchKeyword,
-        setDisplayTokenModal
-      );
-      const finalList = result.data.fullSearchList;
-      setSearchResults(finalList);
+      searchAllMedia();
     }
-    setLoading(false);
   };
 
   const {
-    isLoading,
+    isLoading: isSearchMediaLoading,
+    mutate: searchAllMedia,
+    isSuccess,
+    data: searchResults,
+  } = useMutation({
+    mutationFn: async () => {
+      const { data } = await SearchClient.searchAllMedia(searchKeyword);
+      return data.data.fullSearchList;
+    },
+    onSuccess: () => {},
+  });
+
+  const {
     data: mediaInfo,
     mutate: getMediaInfoDetails,
   } = useMutation({
@@ -76,7 +68,7 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
     },
   });
 
-  const {mutate: addMediaToPlaylist } = useMutation({
+  const { mutate: addMediaToPlaylist } = useMutation({
     mutationFn: async (requestBody) => {
       const { data } = await PlaylistClient.addMediaToPlaylist(requestBody);
       return data.data.media;
@@ -172,9 +164,9 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
               }}
             >
               <List component="nav" sx={{ margin: "0 10px" }}>
-                {loading ? (
+                {isSearchMediaLoading ? (
                   <ProfileWishlistLoading />
-                ) : hasSearched && searchResults && searchResults.length > 0 ? (
+                ) : hasSearched && isSuccess && searchResults.length > 0 ? (
                   searchResults.map((media) => (
                     <>
                       <ListItem>
@@ -240,7 +232,10 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
                     </>
                   ))
                 ) : (
-                  <div>No media match this search.</div>
+                  isSuccess &&
+                  searchResults.length == 0 && (
+                    <div>No media match this search.</div>
+                  )
                 )}
               </List>
             </div>
