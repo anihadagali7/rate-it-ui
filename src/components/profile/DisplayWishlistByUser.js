@@ -10,23 +10,16 @@ import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
+import { useQuery } from "@tanstack/react-query";
 
 const DisplayWishlistByUser = ({ profileUserName }) => {
-  const [wishlistList, setWishlistList] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    getWishlistForUser();
-  }, [profileUserName]);
-
-  const getWishlistForUser = async () => {
-    setLoading(true);
-    const result = await WishlistClient.getAllWishlistForUser(
-      profileUserName
-    );
-    setWishlistList(result.data.wishlistList.reverse());
-    setLoading(false);
-  };
+  const { data: wishlistList, isLoading } = useQuery({
+    queryKey: ["getAllWishlistForUser", profileUserName],
+    queryFn: async () =>
+      await WishlistClient.getAllWishlistForUser(profileUserName),
+    staleTime: 60000,
+    select: ({ data }) => data.data.wishlistList,
+  });
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
@@ -107,7 +100,7 @@ const DisplayWishlistByUser = ({ profileUserName }) => {
       }}
     >
       <List component="nav">
-        {loading ? <ProfileWishlistLoading /> : displayWishlist()}
+        {isLoading ? <ProfileWishlistLoading /> : displayWishlist()}
       </List>
     </Box>
   );

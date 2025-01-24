@@ -1,31 +1,17 @@
 import axios from "axios";
 
+import { getHeaders } from "../utils/AuthorizationUtils";
+
 const API_URL = process.env.REACT_APP_BASE_URL;
 
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
+export default class WishlistClient {
+  static addToWishlist(wishlist) {
+    const url = `${API_URL}/api/wishlist`;
+    return axios.post(url, wishlist, getHeaders());
+  }
 
-const addToWishlist = (wishlist) => {
-  return axios
-    .post(API_URL + `/api/wishlist`, wishlist, {
-      headers: {
-        Authorization: ACCESS_TOKEN,
-      },
-    })
-    .then((response) => {
-      return response.data;
-    });
-};
-
-const getAllWishlistForUser = (userName) => {
-  return axios
-    .get(API_URL + `/api/wishlist/user/${userName}`, {
-      headers: {
-        Authorization: ACCESS_TOKEN,
-      },
-    })
-    .then((response) => {
-      return response.data;
-    });
-};
-
-export default { addToWishlist, getAllWishlistForUser };
+  static getAllWishlistForUser(userName) {
+    const url = `${API_URL}/api/wishlist/user/${userName}`;
+    return axios.get(url, getHeaders());
+  }
+}

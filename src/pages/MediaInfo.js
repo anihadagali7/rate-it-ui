@@ -22,7 +22,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 const mediaTypeConfig = {
   movie: [
@@ -115,6 +115,13 @@ const MediaInfo = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
+  const { mutate: addToWishlist } = useMutation({
+    mutationFn: async (requestBody) => {
+      await WishlistClient.addToWishlist(requestBody);
+    },
+    onSuccess: () => {},
+  });
+
   const handleAddRatingModalOpen = () => {
     setOpenRatingModal(true);
   };
@@ -127,7 +134,7 @@ const MediaInfo = () => {
     let requestBody = {};
     requestBody.mediaId = mediaInfo.mediaId;
     requestBody.userName = currentUser.userName;
-    await WishlistClient.addToWishlist(requestBody);
+    addToWishlist(requestBody);
   };
 
   const getTimeAgo = (date) => {
