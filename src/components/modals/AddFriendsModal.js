@@ -29,12 +29,8 @@ const AddFriendsModal = ({ open, onClose }) => {
     data: searchResults,
   } = useMutation({
     mutationFn: async () => {
-      const { data } = await SearchClient.searchMedia(
-        "user",
-        searchKeyword,
-        null
-      );
-      return data.mediaList;
+      const { data } = await SearchClient.searchMedia("user", searchKeyword);
+      return data.data.mediaList;
     },
     onSuccess: () => {},
   });

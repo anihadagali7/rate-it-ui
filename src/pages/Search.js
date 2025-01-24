@@ -13,6 +13,7 @@ import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import { useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
   return (
@@ -43,14 +44,45 @@ const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
 };
 
 const Search = () => {
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const { keyword } = useParams();
+  const [searchKeyword, setSearchKeyword] = useState(keyword || "");
   const [searchTabType, setSearchTabType] = useState(0);
   const [resultType, setResultType] = useState("");
-  const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
-  const { keyword } = useParams();
+
+  const {
+    isLoading,
+    mutate: submitSearch,
+    isSuccess,
+    data: searchResults,
+  } = useMutation({
+    mutationFn: async ({ searchType }) => {
+      const response = await SearchClient.searchMedia(
+        searchType,
+        searchKeyword
+      );
+      setResultType(response.data.mediaType);
+      return response.data.data.mediaList;
+    },
+    onSuccess: () => {},
+  });
+
+  const handleSearch = async () => {
+    if (searchKeyword.length > 0) {
+      setHasSearched(true);
+      const searchMapping = {
+        0: "movie",
+        1: "tv",
+        2: "book",
+        3: "music",
+        4: "user",
+      };
+      let searchType = searchMapping[searchTabType];
+
+      submitSearch({ searchType });
+    }
+  };
 
   const tabItems = [
     {
@@ -59,7 +91,7 @@ const Search = () => {
       content: (
         <DisplayMediaSearchResults
           searchResults={searchResults}
-          loading={loading}
+          loading={isLoading}
           resultType={resultType}
         />
       ),
@@ -70,7 +102,7 @@ const Search = () => {
       content: (
         <DisplayMediaSearchResults
           searchResults={searchResults}
-          loading={loading}
+          loading={isLoading}
           resultType={resultType}
         />
       ),
@@ -81,7 +113,7 @@ const Search = () => {
       content: (
         <DisplayMediaSearchResults
           searchResults={searchResults}
-          loading={loading}
+          loading={isLoading}
           resultType={resultType}
         />
       ),
@@ -92,7 +124,7 @@ const Search = () => {
       content: (
         <DisplayMediaSearchResults
           searchResults={searchResults}
-          loading={loading}
+          loading={isLoading}
           resultType={resultType}
         />
       ),
@@ -103,7 +135,7 @@ const Search = () => {
       content: (
         <DisplayMediaSearchResults
           searchResults={searchResults}
-          loading={loading}
+          loading={isLoading}
           resultType={resultType}
         />
       ),
@@ -111,18 +143,12 @@ const Search = () => {
   ];
 
   useEffect(() => {
-    setSearchKeyword(keyword);
-    handleSearch(keyword);
-  }, [keyword]);
-
-  useEffect(() => {
-    handleSearch(searchKeyword);
+    handleSearch();
   }, [searchTabType]);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
     if (event.target.value === "") {
-      setSearchResults([]);
       setResultType("");
       setHasSearched(false);
     }
@@ -130,34 +156,8 @@ const Search = () => {
 
   const resetSearch = () => {
     setSearchKeyword("");
-    setSearchResults([]);
     setResultType("");
     setHasSearched(false);
-    setLoading(false);
-  };
-
-  const handleSearch = async (searchKey) => {
-    if (searchKey.length > 0) {
-      setLoading(true);
-      setHasSearched(true);
-      const searchMapping = {
-        0: "movie",
-        1: "tv",
-        2: "book",
-        3: "music",
-        4: "user",
-      };
-      let searchType = searchMapping[searchTabType];
-      const result = await SearchClient.searchMedia(
-        searchType,
-        searchKey,
-        setDisplayTokenModal
-      );
-      const finalList = result.data.mediaList;
-      setResultType(result.mediaType);
-      setSearchResults(finalList);
-    }
-    setLoading(false);
   };
 
   const checkToDisable = () => {
@@ -173,7 +173,7 @@ const Search = () => {
         <Box
           sx={{
             width: "100%",
-            height: hasSearched || loading ? "100%" : 85,
+            height: hasSearched || isLoading ? "100%" : 85,
             margin: "auto",
           }}
         >
@@ -181,7 +181,7 @@ const Search = () => {
             elevation={6}
             sx={{
               width: "100%",
-              height: hasSearched || loading ? "100%" : 85,
+              height: hasSearched || isLoading ? "100%" : 85,
               backgroundColor: "#FFFFFF",
               margin: "auto",
               borderRadius: "17px",

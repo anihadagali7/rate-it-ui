@@ -4,7 +4,7 @@ import { getHeaders } from "../utils/AuthorizationUtils";
 
 const API_URL = process.env.REACT_APP_BASE_URL;
 
-export default class PlaylistClient {
+export default class SearchClient {
   static searchMedia(mediaType, keyWord) {
     const url = `${API_URL}/api/search/${mediaType}`;
     return axios.post(url, { keyWord: keyWord }, getHeaders());
