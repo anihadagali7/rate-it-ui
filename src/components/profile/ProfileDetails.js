@@ -210,7 +210,6 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       signUp.mutate(profileDetails);
     }
     if (updateProfile && (await validateInput())) {
-      console.log("eiditn profiel click");
       editProfile.mutate(profileDetails);
     }
   };

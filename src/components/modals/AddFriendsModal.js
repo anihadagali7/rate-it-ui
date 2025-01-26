@@ -61,6 +61,14 @@ const AddFriendsModal = ({ open, onClose }) => {
     queryClient.invalidateQueries({
       queryKey: ["profileInfo", { userName: currentUser?.userName }],
     });
+    queryClient.invalidateQueries({
+      queryKey: [
+        "fullFriendsList",
+        {
+          userName: currentUser?.userName,
+        },
+      ],
+    });
   };
 
   const determineActionButton = (profile) => {

@@ -88,22 +88,7 @@ const FriendsModal = ({
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "fullFriendsList",
-          {
-            userName: displayedProfileUserName,
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "profileInfo",
-          {
-            userName: currentUser.userName,
-          },
-        ],
-      });
+      resetQueries();
     },
   });
 
@@ -112,24 +97,28 @@ const FriendsModal = ({
       return UserClient.followUser(currentUser.userName, request.userToFollow);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "fullFriendsList",
-          {
-            userName: displayedProfileUserName,
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "profileInfo",
-          {
-            userName: currentUser.userName,
-          },
-        ],
-      });
+      resetQueries();
     },
   });
+
+  const resetQueries = () => {
+    queryClient.invalidateQueries({
+      queryKey: [
+        "fullFriendsList",
+        {
+          userName: displayedProfileUserName,
+        },
+      ],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [
+        "profileInfo",
+        {
+          userName: currentUser.userName,
+        },
+      ],
+    });
+  };
 
   return (
     <Dialog
