@@ -55,10 +55,7 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
     onSuccess: () => {},
   });
 
-  const {
-    data: mediaInfo,
-    mutate: getMediaInfoDetails,
-  } = useMutation({
+  const { mutateAsync: getMediaInfoDetails } = useMutation({
     mutationFn: async ({ mediaType, mediaId }) => {
       const { data } = await MediaClient.getMediaInfoDetails(
         mediaType,
@@ -86,12 +83,24 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
 
   const handleAddMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
     if (mediaType && mediaId) {
-      await getMediaInfoDetails({ mediaType, mediaId });
-      let requestBody = {};
-      requestBody.playlistId = playlistId;
-      requestBody.mediaId = mediaInfo?._id;
-      addMediaToPlaylist(requestBody);
-    }
+      try {
+        const mediaInfo = await getMediaInfoDetails({ mediaType, mediaId });
+
+        if (mediaInfo && mediaInfo._id) {
+          const requestBody = {
+            playlistId,
+            mediaId: mediaInfo._id,
+          };
+
+          addMediaToPlaylist(requestBody);
+        } 
+      } catch (error) {
+        console.error(
+          "Error fetching media info or adding to playlist:",
+          error
+        );
+      }
+    } 
   };
 
   const submitSearch = (e) => {
