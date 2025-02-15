@@ -15,7 +15,12 @@ import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import { useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
+const DisplayMediaSearchResults = ({
+  searchResults,
+  resultType,
+  loading,
+  handleSearch,
+}) => {
   return (
     <>
       <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -26,6 +31,7 @@ const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
             <SearchResultsMobile
               results={searchResults}
               resultType={resultType}
+              handleSearch={handleSearch}
             />
           )
         )}
@@ -35,7 +41,11 @@ const DisplayMediaSearchResults = ({ searchResults, resultType, loading }) => {
           <SearchResultsDesktopLoading />
         ) : (
           searchResults.length > 0 && (
-            <SearchResults results={searchResults} resultType={resultType} />
+            <SearchResults
+              results={searchResults}
+              resultType={resultType}
+              handleSearch={handleSearch}
+            />
           )
         )}
       </Box>
@@ -137,6 +147,7 @@ const Search = () => {
           searchResults={searchResults}
           loading={isLoading}
           resultType={resultType}
+          handleSearch={handleSearch}
         />
       ),
     },

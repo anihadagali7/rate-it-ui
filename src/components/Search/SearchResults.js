@@ -1,22 +1,15 @@
 import { Container, Grid, Paper } from "@mui/material";
-import React, { useContext, useState } from "react";
+import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
+import React from "react";
 import { Link } from "react-router-dom";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import UserClient from "../../client/UserClient";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import UserContext from "../../shared/context/userContext";
+import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
+import ProfileCard from "../profilecard/ProfileCard";
 
-const SearchResults = ({ results, resultType }) => {
-  const [updateList, setUpdateList] = useState(false);
-  const { currentUser } = useContext(UserContext);
+const SearchResults = ({ results, resultType, handleSearch }) => {
 
   const listItem = (row) => (
     <ListItem
@@ -266,75 +259,8 @@ const SearchResults = ({ results, resultType }) => {
     );
   };
 
-  const determineActionButton = (profile) => {
-    if (profile.userName === currentUser.userName) {
-      return <></>;
-    } else if (
-      profile &&
-      profile.followers &&
-      profile.followers.includes(currentUser && currentUser.userName)
-    ) {
-      return (
-        <PrimaryButton
-          variant="outlined"
-          onClick={() => unFollowUser(currentUser.userName, profile.userName)}
-        >
-          Following
-        </PrimaryButton>
-      );
-    } else {
-      return (
-        <PrimaryButton
-          variant="contained"
-          onClick={() => followUser(currentUser.userName, profile.userName)}
-        >
-          Follow
-        </PrimaryButton>
-      );
-    }
-  };
-
-  const unFollowUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.unFollowUser(currentUser, userToUnfollow);
-    result === 200 && setUpdateList(!updateList);
-  };
-
-  const followUser = async (currentUser, userToUnfollow) => {
-    let result = await UserClient.followUser(currentUser, userToUnfollow);
-    result === 200 && setUpdateList(!updateList);
-  };
-
   const listItemUser = (profile) => {
-    return (
-      <>
-        <ListItem>
-          <Grid container>
-            <Grid item xs={2}>
-              <Avatar
-                sx={{ bgcolor: "#00a8ff", textDecoration: "none" }}
-                component={Link}
-                to={`/profile/${profile.userName}`}
-              >
-                {profile.firstName[0]}
-                {profile.lastName[0]}
-              </Avatar>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack direction="column">
-                <Typography sx={{ fontWeight: "bold" }}>
-                  {profile.firstName} {profile.lastName}
-                </Typography>
-                <Typography>@{profile.userName}</Typography>
-              </Stack>
-            </Grid>
-            <Grid item xs={4} container justifyContent="end">
-              {determineActionButton(profile)}
-            </Grid>
-          </Grid>
-        </ListItem>
-        <Divider />
-      </>
-    );
+    return <ProfileCard profile={profile} reSearch={() => handleSearch()} />;
   };
 
   return (
