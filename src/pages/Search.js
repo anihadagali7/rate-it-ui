@@ -12,7 +12,7 @@ import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 const DisplayMediaSearchResults = ({
@@ -215,6 +215,10 @@ const Search = () => {
                   <Grid item xs={3} container justifyContent="center">
                     <PrimaryButton
                       variant="contained"
+                      buttonElement={Link}
+                      link={
+                        searchKeyword.length > 0 && `/search/${searchKeyword}`
+                      }
                       onClick={() => handleSearch(searchKeyword)}
                       disabled={checkToDisable()}
                     >
