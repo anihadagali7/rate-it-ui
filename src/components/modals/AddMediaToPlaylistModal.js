@@ -21,61 +21,86 @@ import MediaClient from "../../client/MediaClient";
 import AddIcon from "@mui/icons-material/Add";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const AddMediaToPlaylistModal = ({
-  open,
-  onClose,
-  mediaByPlaylist,
-  setMediaAdded,
-  mediaAdded,
-}) => {
-  const [searchResults, setSearchResults] = useState([]);
+const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
-
-  const resetSearch = () => {
-    setSearchKeyword("");
-    setSearchResults([]);
-    setHasSearched(false);
-    setLoading(false);
-  };
+  const queryClient = useQueryClient();
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
     if (event.target.value === "") {
-      setSearchResults([]);
       setHasSearched(false);
     }
   };
 
   const handleSearch = async (e) => {
     if (searchKeyword.length > 0) {
-      setLoading(true);
       setHasSearched(true);
-
-      const result = await SearchClient.searchAllMedia(
-        searchKeyword,
-        setDisplayTokenModal
-      );
-      const finalList = result.data.fullSearchList;
-      setSearchResults(finalList);
+      searchAllMedia();
     }
-    setLoading(false);
   };
 
-  const addMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
-    let mediaDetails = null;
+  const {
+    isLoading: isSearchMediaLoading,
+    mutate: searchAllMedia,
+    isSuccess,
+    data: searchResults,
+  } = useMutation({
+    mutationFn: async () => {
+      const { data } = await SearchClient.searchAllMedia(searchKeyword);
+      return data.data.fullSearchList;
+    },
+    onSuccess: () => {},
+  });
+
+  const { mutateAsync: getMediaInfoDetails } = useMutation({
+    mutationFn: async ({ mediaType, mediaId }) => {
+      const { data } = await MediaClient.getMediaInfoDetails(
+        mediaType,
+        mediaId
+      );
+      return data.data.media;
+    },
+  });
+
+  const { mutate: addMediaToPlaylist } = useMutation({
+    mutationFn: async (requestBody) => {
+      const { data } = await PlaylistClient.addMediaToPlaylist(requestBody);
+      return data.data.media;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getAllMediaForPlaylist",
+          { playListId: mediaByPlaylist?.playlist?._id },
+        ],
+      });
+      onClose();
+    },
+  });
+
+  const handleAddMediaToPlaylist = async (playlistId, mediaId, mediaType) => {
     if (mediaType && mediaId) {
-      mediaDetails = await MediaClient.getMediaInfoDetails(mediaType, mediaId);
-    }
-    let requestBody = {};
-    requestBody.playlistId = playlistId;
-    requestBody.mediaId = mediaDetails?.data?.media?._id;
-    let result = await PlaylistClient.addMediaToPlaylist(requestBody);
-    result?.status === "success" && setMediaAdded(mediaAdded + 1);
+      try {
+        const mediaInfo = await getMediaInfoDetails({ mediaType, mediaId });
+
+        if (mediaInfo && mediaInfo._id) {
+          const requestBody = {
+            playlistId,
+            mediaId: mediaInfo._id,
+          };
+
+          addMediaToPlaylist(requestBody);
+        } 
+      } catch (error) {
+        console.error(
+          "Error fetching media info or adding to playlist:",
+          error
+        );
+      }
+    } 
   };
 
   const submitSearch = (e) => {
@@ -148,9 +173,9 @@ const AddMediaToPlaylistModal = ({
               }}
             >
               <List component="nav" sx={{ margin: "0 10px" }}>
-                {loading ? (
+                {isSearchMediaLoading ? (
                   <ProfileWishlistLoading />
-                ) : hasSearched && searchResults && searchResults.length > 0 ? (
+                ) : hasSearched && isSuccess && searchResults.length > 0 ? (
                   searchResults.map((media) => (
                     <>
                       <ListItem>
@@ -200,10 +225,10 @@ const AddMediaToPlaylistModal = ({
                                 <AddIcon style={{ color: "#00a8ff" }} />
                               }
                               onClick={() => {
-                                addMediaToPlaylist(
-                                  mediaByPlaylist.playlist._id,
-                                  media.mediaId,
-                                  media.mediaType
+                                handleAddMediaToPlaylist(
+                                  mediaByPlaylist?.playlist?._id,
+                                  media?.mediaId,
+                                  media?.mediaType
                                 );
                               }}
                             >
@@ -216,7 +241,10 @@ const AddMediaToPlaylistModal = ({
                     </>
                   ))
                 ) : (
-                  <div>No media match this search.</div>
+                  isSuccess &&
+                  searchResults.length == 0 && (
+                    <div>No media match this search.</div>
+                  )
                 )}
               </List>
             </div>

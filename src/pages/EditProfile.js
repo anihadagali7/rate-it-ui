@@ -1,8 +1,8 @@
 import React from "react";
-import UpdateProfile from "../components/profile/UpdateProfile";
+import ProfileDetails from "../components/profile/ProfileDetails";
 
 const EditProfile = () => {
-  return <UpdateProfile createProfile={false} updateProfile={true} />;
+  return <ProfileDetails createProfile={false} updateProfile={true} />;
 };
 
 export default EditProfile;

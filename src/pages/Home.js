@@ -1,60 +1,65 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Box, Container, Paper, Typography } from "@mui/material";
+import React, { useContext } from "react";
+import { Container, Paper, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
-import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
-import { Link } from "react-router-dom";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Divider from "@mui/material/Divider";
-import moment from "moment/moment";
 import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
+import RatingCard from "../components/ratingcard/RatingCard";
 
 const Home = () => {
-  const [exploreRatingsList, setExploreRatingsList] = useState([]);
-  const [feedRatingsList, setFeedRatingsList] = useState([]);
   const { currentUser } = useContext(UserContext);
-  const [exploreLoading, setExploreLoading] = useState(false);
 
-  const getAllExploreRatings = async () => {
-    setExploreLoading(true);
-    const result = await RatingClient.getAllExploreRatings();
-    setExploreRatingsList(result.data.ratingsList.reverse());
-    setExploreLoading(false);
-  };
+  const { data: exploreRatingsList, isLoading } = useQuery({
+    queryKey: ["allExploreRatings"],
+    queryFn: async () => await RatingClient.getAllExploreRatings(),
+    staleTime: 60000,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
-  const getFeedRatings = async () => {
-    const result = await RatingClient.getFeedRatings(currentUser.userName);
-    setFeedRatingsList(result.data.ratingsList.reverse());
-  };
+  const { data: feedRatingsList, isLoading: isFeedRatingsLoading } = useQuery({
+    queryKey: ["feedRatings"],
+    queryFn: async () =>
+      await RatingClient.getFeedRatings(currentUser.userName),
+    staleTime: 60000,
+    enabled: !!currentUser,
+    select: ({ data }) => data.data.ratingsList,
+  });
 
-  const getTimeAgo = (date) => {
-    const timeAgo = moment(date).fromNow(true);
-    const units = timeAgo.split(" ")[1];
-    if (
-      units.includes("second") ||
-      units.includes("minute") ||
-      units.includes("day")
-    ) {
-      return "" + timeAgo.split(" ")[0] + units[0];
-    } else {
-      return moment(date).format("M-D-YY");
-    }
-  };
+  if (isLoading || (currentUser && isFeedRatingsLoading)) {
+    return <RatingsLoading />;
+  }
 
-  useEffect(() => {
-    // currentUser && getFeedRatings(); TODO
-    getAllExploreRatings();
-  }, [currentUser]);
-
-  const displayExploreRatings = () => {
-    return (
-      exploreRatingsList &&
-      exploreRatingsList.length > 0 && (
-        <Container
-          maxWidth={"sm"}
-          sx={{ marginTop: "10px", marginBottom: "15px" }}
-        >
+  return (
+    <Container maxWidth={"sm"} sx={{ marginTop: "10px", marginBottom: "25px" }}>
+      {currentUser && feedRatingsList && feedRatingsList.length > 0 && (
+        <>
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              fontSize: "22px",
+              paddingTop: "15px",
+              paddingLeft: "25px",
+            }}
+          >
+            For you
+          </Typography>
+          {feedRatingsList.map((rating) => (
+            <Paper
+              elevation={6}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "17px",
+                marginTop: "15px",
+                padding: "25px",
+              }}
+            >
+              <RatingCard rating={rating} key={rating.id} />
+            </Paper>
+          ))}
+        </>
+      )}
+      {exploreRatingsList && exploreRatingsList.length > 0 && (
+        <>
           <Typography
             sx={{
               fontWeight: "bold",
@@ -66,198 +71,21 @@ const Home = () => {
             Explore
           </Typography>
           {exploreRatingsList.map((rating) => (
-            <>
-              <Container maxWidth={"sm"} sx={{ marginTop: "10px" }}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    margin: "auto",
-                  }}
-                >
-                  <Paper
-                    elevation={6}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "#FFFFFF",
-                      margin: "auto",
-                      borderRadius: "17px",
-                    }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      sx={{ margin: "15px 0 15px 15px", paddingTop: "25px" }}
-                    >
-                      <>
-                        <Avatar
-                          sx={{
-                            bgcolor: "#00a8ff",
-                            textDecoration: "none",
-                            marginTop: "auto",
-                            marginBottom: "auto",
-                          }}
-                          component={Link}
-                          src={AccountCircleIcon}
-                          to={`/profile/${rating.ratedBy.userName}`}
-                        />
-                        <div>
-                          <Stack direction="column">
-                            <span style={{ fontWeight: "bold" }}>
-                              {rating.ratedBy.firstName}{" "}
-                              {rating.ratedBy.lastName}
-                              <span style={{ fontWeight: "normal" }}>
-                                {" "}
-                                @{rating.ratedBy.userName}
-                              </span>
-                              <span style={{ fontWeight: "normal" }}>
-                                {" "}
-                                &#8226; {getTimeAgo(rating.dateCreated)}
-                              </span>
-                            </span>
-                            <span>
-                              <Typography
-                                component={Link}
-                                sx={{
-                                  textDecoration: "none",
-                                  color: "gray",
-                                  fontStyle: "italic",
-                                }}
-                                to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                              >
-                                -{rating.media.name}
-                              </Typography>
-                            </span>
-                            <Typography>Rating: {rating.rating}</Typography>
-                            <Typography>Comments: {rating.comments}</Typography>
-                          </Stack>
-                        </div>
-                      </>
-                    </Stack>
-                    <Divider
-                      sx={{
-                        width: "95%",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                    />
-                  </Paper>
-                </Box>
-              </Container>
-            </>
+            <Paper
+              elevation={6}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "17px",
+                marginTop: "15px",
+                padding: "25px",
+              }}
+            >
+              <RatingCard rating={rating} key={rating.id} />
+            </Paper>
           ))}
-        </Container>
-      )
-    );
-  };
-
-  return (
-    <Box>
-      {feedRatingsList && feedRatingsList.length > 0 && (
-        <Container
-          maxWidth={"sm"}
-          sx={{ marginTop: "10px", marginBottom: "25px" }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "22px",
-              paddingTop: "15px",
-              paddingLeft: "25px",
-            }}
-          >
-            Feed
-          </Typography>
-          {feedRatingsList.map((rating) => (
-            <>
-              <Container maxWidth={"sm"} sx={{ marginTop: "10px" }}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    margin: "auto",
-                  }}
-                >
-                  <Paper
-                    elevation={6}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "#FFFFFF",
-                      margin: "auto",
-                      borderRadius: "17px",
-                    }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      sx={{
-                        margin: "15px 0 15px 15px",
-                        paddingTop: "25px",
-                      }}
-                    >
-                      <>
-                        <Avatar
-                          sx={{
-                            bgcolor: "#00a8ff",
-                            textDecoration: "none",
-                            marginTop: "auto",
-                            marginBottom: "auto",
-                          }}
-                          component={Link}
-                          src={AccountCircleIcon}
-                          to={`/profile/${rating.ratedBy.userName}`}
-                        />
-                        <div>
-                          <Stack direction="column">
-                            <span style={{ fontWeight: "bold" }}>
-                              {rating.ratedBy.firstName}{" "}
-                              {rating.ratedBy.lastName}
-                              <span style={{ fontWeight: "normal" }}>
-                                {" "}
-                                @{rating.ratedBy.userName}
-                              </span>
-                              <span style={{ fontWeight: "normal" }}>
-                                {" "}
-                                &#8226; {getTimeAgo(rating.dateCreated)}
-                              </span>
-                            </span>
-                            <span>
-                              <Typography
-                                component={Link}
-                                sx={{
-                                  textDecoration: "none",
-                                  color: "gray",
-                                  fontStyle: "italic",
-                                }}
-                                to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                              >
-                                -{rating.media.name}
-                              </Typography>
-                            </span>
-                            <Typography>Rating: {rating.rating}</Typography>
-                            <Typography>Comments: {rating.comments}</Typography>
-                          </Stack>
-                        </div>
-                      </>
-                    </Stack>
-                    <Divider
-                      sx={{
-                        width: "95%",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                    />
-                  </Paper>
-                </Box>
-              </Container>
-            </>
-          ))}
-        </Container>
+        </>
       )}
-      {exploreLoading ? <RatingsLoading /> : displayExploreRatings()}
-    </Box>
+    </Container>
   );
 };
 

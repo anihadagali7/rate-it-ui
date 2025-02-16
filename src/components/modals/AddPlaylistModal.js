@@ -4,31 +4,34 @@ import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import TextAreaField from "../../shared/inputfield/TextAreaField";
 import UserContext from "../../shared/context/userContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const AddPlaylistModal = ({
-  open,
-  onClose,
-  playlistAdded,
-  setPlaylistAdded,
-}) => {
+const AddPlaylistModal = ({ open, onClose, profileUserName }) => {
   const [name, setName] = useState("");
   const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const onChangeName = (event) => {
     setName(event.target.value);
   };
 
-  const resetName = () => {
-    setName("");
-  };
+  const createPlaylist = useMutation({
+    mutationFn: (requestBody) => {
+      PlaylistClient.createPlaylist(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["getAllPlaylistForUser", { profileUserName }],
+      });
+      onClose();
+    },
+  });
 
   const handleSubmitPlaylist = async () => {
     let requestBody = {};
     requestBody.userName = currentUser.userName;
     requestBody.playlistName = name;
-    await PlaylistClient.createPlaylist(requestBody);
-    setPlaylistAdded(!playlistAdded);
-    onClose();
+    createPlaylist.mutate(requestBody);
   };
 
   const checkToDisable = () => {

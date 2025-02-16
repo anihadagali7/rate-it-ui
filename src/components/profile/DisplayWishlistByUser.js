@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
@@ -10,25 +10,16 @@ import moment from "moment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
-import UserContext from "../../shared/context/userContext";
+import { useQuery } from "@tanstack/react-query";
 
-const DisplayWishlistByUser = () => {
-  const [wishlistList, setWishlistList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { currentUser } = useContext(UserContext);
-
-  useEffect(() => {
-    getWishlistForUser();
-  }, [currentUser]);
-
-  const getWishlistForUser = async () => {
-    setLoading(true);
-    const result = await WishlistClient.getAllWishlistForUser(
-      currentUser.userName
-    );
-    setWishlistList(result.data.wishlistList.reverse());
-    setLoading(false);
-  };
+const DisplayWishlistByUser = ({ profileUserName }) => {
+  const { data: wishlistList, isLoading } = useQuery({
+    queryKey: ["getAllWishlistForUser", profileUserName],
+    queryFn: async () =>
+      await WishlistClient.getAllWishlistForUser(profileUserName),
+    staleTime: 60000,
+    select: ({ data }) => data.data.wishlistList,
+  });
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
@@ -109,7 +100,7 @@ const DisplayWishlistByUser = () => {
       }}
     >
       <List component="nav">
-        {loading ? <ProfileWishlistLoading /> : displayWishlist()}
+        {isLoading ? <ProfileWishlistLoading /> : displayWishlist()}
       </List>
     </Box>
   );

@@ -54,7 +54,7 @@ const PrimaryTabs = ({ tabItems, activeTab, onTabChange }) => {
             disableRipple
             label={item.title}
             key={item.title}
-            component={Link}
+            component={item.to ? Link : null}
             to={item.to}
           />
         ))}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MediaClient from "../client/MediaClient";
 import WishlistClient from "../client/WishlistClient";
@@ -19,54 +19,108 @@ import Avatar from "@mui/material/Avatar";
 import moment from "moment/moment";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import MediaInfoDesktopLoading from "../shared/loading/MediaInfoDesktopLoading";
 import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
-const MediaInfo = () => {
-  const { id, mediaType } = useParams();
-  const [media, setMedia] = useState({});
-  const [ratingsList, setRatingsList] = useState([]);
-  const [openRatingModal, setOpenRatingModal] = useState(false);
-  const { currentUser } = useContext(UserContext);
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
-  const [ratingAdded, setRatingAdded] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const mediaTypeConfig = {
+  movie: [
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Director", dataKey: "director", displayLabel: true },
+    { label: "Producer", dataKey: "producer", displayLabel: true },
+    { label: "Cast", dataKey: "cast", displayLabel: true },
+  ],
+  tv: [
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Director", dataKey: "director", displayLabel: true },
+    { label: "Producer", dataKey: "producer", displayLabel: true },
+    { label: "Cast", dataKey: "cast", displayLabel: true },
+  ],
+  music: [
+    { label: "Album", dataKey: "album" },
+    { label: "Artist", dataKey: "artist" },
+  ],
+  book: [
+    { label: "Description", dataKey: "description", displayLabel: false },
+    { label: "Author", dataKey: "author", displayLabel: true },
+    { label: "Genre", dataKey: "genre", displayLabel: true },
+  ],
+};
 
-  useEffect(() => {
-    getMediaInfoDetails(mediaType, id);
-  }, [id, mediaType]);
+const MediaInfoDisplay = ({ mediaType, mediaInfo }) => {
+  const config = mediaTypeConfig[mediaType.toLowerCase()];
 
-  useEffect(() => {
-    getRatingsForMedia(id);
-  }, [ratingAdded]);
+  if (!config) return null;
 
-  const getRatingsForMedia = async (id) => {
-    const result = await RatingClient.getAllRatingsForMedia(
-      id,
-      setDisplayTokenModal
-    );
-    setRatingsList(result.data.ratingsList);
-  };
+  return (
+    <div>
+      {config.map(({ label, dataKey, displayLabel }) => (
+        <DisplayLabelData
+          key={label}
+          data={mediaInfo[dataKey]}
+          label={label}
+          displayLabel={displayLabel}
+        />
+      ))}
+    </div>
+  );
+};
 
-  const getMediaInfoDetails = async (mediaType, id) => {
-    setLoading(true);
-    const result = await MediaClient.getMediaInfoDetails(mediaType, id);
-    setMedia(result.data.media);
-    setLoading(false);
-  };
-
+const DisplayLabelData = ({ data, label, displayLabel }) => {
   const listToString = (list) => {
     let newString = "";
 
-    list.forEach((name) => {
-      newString += name + ", ";
-    });
+    if (typeof list === "string") {
+      return list;
+    }
+
+    list &&
+      list.length > 0 &&
+      list.forEach((name) => {
+        newString += name + ", ";
+      });
 
     return newString.substring(0, newString.length - 2);
   };
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <Typography mb={3}>
+      {displayLabel && <span>{label}: </span>}
+      {listToString(data)}
+    </Typography>
+  );
+};
+
+const MediaInfo = () => {
+  const { id, mediaType } = useParams();
+  const [openRatingModal, setOpenRatingModal] = useState(false);
+  const { currentUser } = useContext(UserContext);
+  const [displayTokenModal, setDisplayTokenModal] = useState(false);
+  const navigate = useNavigate();
+
+  const { isLoading, data: mediaInfo } = useQuery({
+    queryKey: ["mediaInfoDetails", { mediaType, id }],
+    queryFn: async () => await MediaClient.getMediaInfoDetails(mediaType, id),
+    staleTime: 60000,
+    select: ({ data }) => data.data.media,
+  });
+
+  const { data: ratingsList } = useQuery({
+    queryKey: ["ratingsForMedia", { mediaType: mediaType, id: id }],
+    queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
+    staleTime: 60000,
+    select: ({ data }) => data.data.ratingsList,
+  });
+
+  const { mutate: addToWishlist } = useMutation({
+    mutationFn: async (requestBody) => {
+      await WishlistClient.addToWishlist(requestBody);
+    },
+    onSuccess: () => {},
+  });
 
   const handleAddRatingModalOpen = () => {
     setOpenRatingModal(true);
@@ -78,237 +132,10 @@ const MediaInfo = () => {
 
   const handleAddToWishlist = async () => {
     let requestBody = {};
-    requestBody.mediaId = media.mediaId;
+    requestBody.mediaId = mediaInfo.mediaId;
     requestBody.userName = currentUser.userName;
-    await WishlistClient.addToWishlist(requestBody);
+    addToWishlist(requestBody);
   };
-
-  const displayMovieTvShow = (media) => (
-    <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography
-          component="div"
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {media.name}
-        </Typography>
-        <div>
-          <Typography component="div">{media.description}</Typography>
-        </div>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav">
-          <Divider />
-          {media.director && media.director.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Directors:{" "}
-                </span>
-                {listToString(media.director)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {media.producer && media.producer.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Producers:{" "}
-                </span>
-                {listToString(media.producer)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {media.cast && media.cast.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Cast:{" "}
-                </span>
-                {listToString(media.cast)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
-  const displayBook = (media) => (
-    <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography
-          component="div"
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {media.name}
-        </Typography>
-        <div>
-          <Typography component="div">{media.description}</Typography>
-        </div>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav">
-          <Divider />
-          {media.author && media.author.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Authors:{" "}
-                </span>
-                {listToString(media.author)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {media.genre && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Genre:{" "}
-                </span>
-                <span style={{ fontWeight: "400", fontSize: "16px" }}>
-                  {media.genre}
-                </span>
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
-  const displayMusic = (media) => (
-    <>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography
-          component="div"
-          sx={{
-            marginTop: "10px",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          {media.name}
-        </Typography>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <List component="nav">
-          <Divider />
-          {media.album && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Album:{" "}
-                </span>
-                {media.album}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-          {media.artist && media.artist.length > 0 && (
-            <ListItem sx={{ "&.MuiListItem-root": { marginLeft: "-12px" } }}>
-              <Typography component="div">
-                <span style={{ fontWeight: "550", fontSize: "17px" }}>
-                  Artists:{" "}
-                </span>
-                {listToString(media.artist)}
-              </Typography>
-            </ListItem>
-          )}
-          <Divider />
-        </List>
-      </Grid>
-    </>
-  );
-
-  const desktopView = (media) => (
-    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
-      <Grid item xs={6}>
-        <Typography>
-          <img
-            width={200}
-            height={250}
-            style={{ margin: "10px 0" }}
-            alt="poster"
-            src={media.picture ? media.picture : NotFoundImage}
-          />
-        </Typography>
-      </Grid>
-      <Grid item xs={6} align="center" justify="center" direction="column">
-        <Stack spacing={4} sx={{ marginTop: "80px" }}>
-          <PrimaryButton
-            variant="contained"
-            leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-            onClick={handleAddRatingModalOpen}
-          >
-            Add Rating
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-            onClick={handleAddToWishlist}
-          >
-            Add to Wishlist
-          </PrimaryButton>
-        </Stack>
-      </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
-        displayMovieTvShow(media)}
-      {media.mediaType === "MUSIC" && displayMusic(media)}
-      {media.mediaType === "BOOK" && displayBook(media)}
-    </Grid>
-  );
-
-  const mobileView = (media) => (
-    <Grid container spacing={{ xs: 2, md: 2, xl: 5 }} columns={{ md: 12 }}>
-      <Grid item xs={12} sx={{ margin: "auto" }}>
-        <Typography>
-          <img
-            width={200}
-            height={250}
-            style={{ margin: "10px 0" }}
-            alt="poster"
-            src={media.picture ? media.picture : NotFoundImage}
-          />
-        </Typography>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <PrimaryButton
-          variant="contained"
-          leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-          onClick={handleAddRatingModalOpen}
-        >
-          Add Rating
-        </PrimaryButton>
-      </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <PrimaryButton
-          variant="text"
-          leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
-          onClick={handleAddToWishlist}
-        >
-          Add to Wishlist
-        </PrimaryButton>
-      </Grid>
-      {(media.mediaType === "MOVIE" || media.mediaType === "TV") &&
-        displayMovieTvShow(media)}
-      {media.mediaType === "MUSIC" && displayMusic(media)}
-      {media.mediaType === "BOOK" && displayBook(media)}
-    </Grid>
-  );
 
   const getTimeAgo = (date) => {
     const timeAgo = moment(date).fromNow(true);
@@ -322,154 +149,163 @@ const MediaInfo = () => {
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
       >
-        <PrimaryButton
-          variant="text"
-          leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-          onClick={() => navigate(-1)}
-        >
-          Return
-        </PrimaryButton>
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            margin: "auto",
-          }}
-        >
+        <Box>
           <Paper
             elevation={6}
             sx={{
-              width: "100%",
-              height: "100%",
               backgroundColor: "#FFFFFF",
-              margin: "auto",
               borderRadius: "17px",
+              padding: "35px",
             }}
           >
-            <div style={{ padding: "0 35px", minHeight: "385px" }}>
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                {loading ? (
-                  <MediaInfoMobileLoading />
-                ) : (
-                  media && mobileView(media)
-                )}
-              </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                {loading ? (
-                  <MediaInfoDesktopLoading />
-                ) : (
-                  media && desktopView(media)
-                )}
-              </Box>
-            </div>
+            <PrimaryButton
+              variant="text"
+              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+              onClick={() => navigate(-1)}
+            >
+              Return
+            </PrimaryButton>
+            {isLoading ? (
+              <MediaInfoMobileLoading />
+            ) : (
+              mediaInfo && (
+                <Grid container spacing={5} sx={{ paddingTop: "20px" }}>
+                  <Grid item xs={12}>
+                    <Typography variant="h3">{mediaInfo.name}</Typography>
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <img
+                      width="80%"
+                      height="100%"
+                      alt="poster"
+                      style={{ margin: "auto", borderRadius: 7 }}
+                      src={
+                        mediaInfo.picture ? mediaInfo.picture : NotFoundImage
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="contained"
+                      leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
+                      onClick={handleAddRatingModalOpen}
+                    >
+                      Add Rating
+                    </PrimaryButton>
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="text"
+                      leftIcon={
+                        <PlaylistAddIcon style={{ color: "#00a8ff" }} />
+                      }
+                      onClick={handleAddToWishlist}
+                    >
+                      Add to Wishlist
+                    </PrimaryButton>
+                  </Grid>
+                  <Grid item xs={12} sx={{ marginTop: "15px" }}>
+                    <Stack spacing={6} direction="column">
+                      <MediaInfoDisplay
+                        mediaType={mediaInfo.mediaType}
+                        mediaInfo={mediaInfo}
+                      />
+                    </Stack>
+                  </Grid>
+                </Grid>
+              )
+            )}
           </Paper>
         </Box>
         {ratingsList && ratingsList.length > 0 && (
-          <Box
+          <Paper
+            elevation={6}
             sx={{
-              width: "100%",
-              height: "100%",
-              margin: "auto",
-              marginTop: "15px",
+              backgroundColor: "#FFFFFF",
+              borderRadius: "17px",
+              margin: "15px 0 150px 0",
             }}
           >
-            <Paper
-              elevation={6}
+            <Typography
               sx={{
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#FFFFFF",
-                margin: "auto",
-                borderRadius: "17px",
+                fontWeight: "bold",
+                fontSize: "22px",
+                paddingTop: "15px",
+                paddingLeft: "25px",
               }}
             >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "22px",
-                  paddingTop: "15px",
-                  paddingLeft: "25px",
-                }}
-              >
-                User reviews
-              </Typography>
-              <List
-                component="nav"
-                sx={{ marginLeft: "15px", marginRight: "15px" }}
-              >
-                {ratingsList &&
-                  ratingsList.length > 0 &&
-                  ratingsList.map((rating) => (
-                    <>
-                      <ListItem>
-                        <Stack direction="row" spacing={2}>
-                          <>
-                            <Avatar
-                              sx={{
-                                bgcolor: "#00a8ff",
-                                textDecoration: "none",
-                                marginTop: "auto",
-                                marginBottom: "auto",
-                              }}
-                              component={Link}
-                              to={`/profile/${rating.ratedBy.userName}`}
-                            >
-                              {rating.ratedBy.firstName[0]}
-                              {rating.ratedBy.lastName[0]}
-                            </Avatar>
-                            <div>
-                              <Stack direction="column">
-                                <span style={{ fontWeight: "bold" }}>
-                                  {rating.ratedBy.firstName}{" "}
-                                  {rating.ratedBy.lastName}
-                                  <span style={{ fontWeight: "normal" }}>
-                                    {" "}
-                                    @{rating.ratedBy.userName}
-                                  </span>
-                                  <span style={{ fontWeight: "normal" }}>
-                                    {" "}
-                                    &#8226; {getTimeAgo(rating.dateCreated)}
-                                  </span>
+              User reviews
+            </Typography>
+            <List
+              component="nav"
+              sx={{ marginLeft: "15px", marginRight: "15px" }}
+            >
+              {ratingsList &&
+                ratingsList.length > 0 &&
+                ratingsList.map((rating) => (
+                  <>
+                    <ListItem>
+                      <Stack direction="row" spacing={2}>
+                        <>
+                          <Avatar
+                            sx={{
+                              bgcolor: "#00a8ff",
+                              textDecoration: "none",
+                            }}
+                            component={Link}
+                            to={`/profile/${rating.ratedBy.userName}`}
+                          >
+                            {rating.ratedBy.firstName[0]}
+                            {rating.ratedBy.lastName[0]}
+                          </Avatar>
+                          <div>
+                            <Stack direction="column">
+                              <span style={{ fontWeight: "bold" }}>
+                                {rating.ratedBy.firstName}{" "}
+                                {rating.ratedBy.lastName}
+                                <span style={{ fontWeight: "normal" }}>
+                                  {" "}
+                                  @{rating.ratedBy.userName}
                                 </span>
-                                <span>
-                                  <Typography
-                                    component={Link}
-                                    sx={{ textDecoration: "none" }}
-                                    to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                                  >
-                                    -{rating.media.name}
-                                  </Typography>
+                                <span style={{ fontWeight: "normal" }}>
+                                  {" "}
+                                  &#8226; {getTimeAgo(rating.dateCreated)}
                                 </span>
-                                <Typography>Rating: {rating.rating}</Typography>
-                                <Typography>
-                                  Comments: {rating.comments}
+                              </span>
+                              <span>
+                                <Typography
+                                  component={Link}
+                                  sx={{ textDecoration: "none" }}
+                                  to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
+                                >
+                                  -{rating.media.name}
                                 </Typography>
-                              </Stack>
-                            </div>
-                          </>
-                        </Stack>
-                      </ListItem>
-                      <Divider
-                        sx={{
-                          width: "95%",
-                          marginLeft: "auto",
-                          marginRight: "auto",
-                        }}
-                      />
-                    </>
-                  ))}
-              </List>
-            </Paper>
-          </Box>
+                              </span>
+                              <Typography>Rating: {rating.rating}</Typography>
+                              <Typography>
+                                Comments: {rating.comments}
+                              </Typography>
+                            </Stack>
+                          </div>
+                        </>
+                      </Stack>
+                    </ListItem>
+                    <Divider
+                      sx={{
+                        margin: "0 10px",
+                      }}
+                    />
+                  </>
+                ))}
+            </List>
+          </Paper>
         )}
       </Container>
       {openRatingModal && (
         <AddRatingModal
           open={openRatingModal}
           onClose={handleAddRatingModalClose}
-          mediaDetails={media}
-          ratingAdded={ratingAdded}
-          setRatingAdded={setRatingAdded}
+          mediaDetails={mediaInfo}
         />
       )}
       {displayTokenModal && (

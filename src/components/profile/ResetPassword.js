@@ -6,6 +6,7 @@ import AuthClient from "../../client/AuthClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import UserContext from "../../shared/context/userContext";
+import { useMutation } from "@tanstack/react-query";
 
 const initialErrorState = {
   currentPassword: { value: false, message: "" },
@@ -15,13 +16,29 @@ const initialErrorState = {
 
 const ResetPassword = ({ currentProfile }) => {
   let navigate = useNavigate();
-  const { setCurrentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
 
   const [errorValue, setErrorValue] = useState(initialErrorState);
   const [payload, setPayload] = useState({
     currentPassword: "",
     newPassword: "",
     confirmNewPassword: "",
+  });
+
+  const resetPassword = useMutation({
+    mutationFn: (passwordRequest) => {
+      return AuthClient.resetPassword(passwordRequest);
+    },
+    onSuccess: () => {
+      navigate(`/profile/${currentUser.userName}`);
+    },
+    onError: (error) => {
+      // TODO handle 404 not found error
+      let errors = error.response.data.errors;
+      if (errors.msg.includes("Current password is not valid")) {
+        errorHandler("currentPassword", true, errors.msg);
+      }
+    },
   });
 
   const handleChange = (event) => {
@@ -78,12 +95,7 @@ const ResetPassword = ({ currentProfile }) => {
     };
 
     if (await validatePasswordReset()) {
-      const result = await AuthClient.resetPassword(
-        passwordRequest,
-        errorHandler
-      );
-      setCurrentUser(result.user);
-      navigate(`/profile/${result.user.userName}`);
+      resetPassword.mutate(passwordRequest);
     }
   };
 
@@ -99,7 +111,7 @@ const ResetPassword = ({ currentProfile }) => {
     const hasAllRequiredPasswords =
       currentPassword && newPassword && confirmNewPassword;
 
-    return !hasAllRequiredPasswords;
+    return !hasAllRequiredPasswords || resetPassword.isLoading;
   };
 
   return (
