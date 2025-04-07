@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18.17.0",
-    "npm": "9.6.7"
+    "node": "^20.18.3",
+    "npm": "^11.1.0"
   },
   "main": "index.js",
   "dependencies": {
@@ -29,7 +29,7 @@
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "lint-staged": {
@@ -68,6 +68,8 @@
     }
   },
   "devDependencies": {
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
     "sass": "^1.79.4"
   }
 }
