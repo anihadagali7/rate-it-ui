@@ -45,3 +45,7 @@ code {
     url(./fonts/nostalgia/Nostalgia.ttf)
       format("truetype");
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
