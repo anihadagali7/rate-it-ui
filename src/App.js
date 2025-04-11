@@ -15,6 +15,7 @@ import EditProfile from "./pages/EditProfile";
 import UserContext from "../src/shared/context/userContext";
 import { useQuery } from "@tanstack/react-query";
 import UserClient from "./client/UserClient";
+import Navbar from "./components/header/Navbar";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -46,7 +47,6 @@ const App = React.memo(() => {
           <BrowserRouter>
             {!isLoading && (
               <>
-                <Header displayMenu={true} />
                 <Routes>
                   <Route exact path="/" element={<Home />}></Route>
                   <Route
