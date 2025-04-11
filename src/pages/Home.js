@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
 import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
@@ -111,16 +111,30 @@ const Home = () => {
           px: 2,
         }}
       >
-        <Box display="flex" width="100%">
-          <Sidebar />
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+          }}
+        >
+          <Box
+            sx={{
+              position: "sticky",
+              top: 0,
+              height: "100vh",
+            }}
+          >
+            <Sidebar />
+          </Box>
           <Box
             sx={{
               flexGrow: 1,
               ml: 2,
               display: "flex",
               flexDirection: "column",
+              alignItems: "stretch",
               maxWidth: "66%",
-              padding: "20px 0"
+              padding: "20px 0",
             }}
           >
             <Feed

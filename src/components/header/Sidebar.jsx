@@ -12,7 +12,6 @@ const Sidebar = () => {
       <Box
         sx={{
           position: "sticky",
-          top: "24px",
           height: "calc(100vh - 48px)",
           zIndex: 1,
           flexShrink: 0,
@@ -20,7 +19,13 @@ const Sidebar = () => {
           display: { xs: "none", md: "block" },
         }}
       >
-        <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto">
+        <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+          <PrimaryButton
+            disabled
+            sx={{ display: { xs: "none", md: "flex", color: "#00a8ff" } }}
+          >
+            <Typography variant="logo">RATE IT</Typography>
+          </PrimaryButton>
           <div className="flex flex-col justify-between flex-1 mt-6">
             <nav>
               <a
@@ -37,6 +42,26 @@ const Sidebar = () => {
                   <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
                 </svg>
                 <span className="mx-4 font-medium">Home</span>
+              </a>
+
+              <a
+                className="flex items-center px-4 py-2 mt-5 text-black font-bold transition-colors duration-300 transform rounded-lg dark:text-black dark:font-bold hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white hover:text-gray-900"
+                href="/"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                <span className="mx-4 font-medium">Search</span>
               </a>
 
               <a
@@ -100,6 +125,25 @@ const Sidebar = () => {
                   </svg>
                 </svg>
                 <span className="mx-4 font-medium">Notifications</span>
+              </a>
+
+              <a
+                className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                href="#"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="mx-4 font-medium">Profile</span>
               </a>
             </nav>
           </div>
