@@ -27,6 +27,9 @@ export const theme = createTheme({
     },
   },
   typography: {
+    allVariants: {
+      color: "black",
+    },
     h1: {
       fontFamily: "FordF1Regular, Arial, sans-serif",
       fontSize: 36,

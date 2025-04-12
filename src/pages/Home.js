@@ -30,7 +30,7 @@ const Home = () => {
   }
 
   return (
-    <Container maxWidth={"sm"} sx={{ marginTop: "10px", marginBottom: "25px" }}>
+    <Container maxWidth={"sm"} sx={{ marginBottom: "25px" }}>
       {currentUser && feedRatingsList && feedRatingsList.length > 0 && (
         <>
           <Typography
