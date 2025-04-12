@@ -7,6 +7,8 @@ import UserContext from "../../shared/context/userContext";
 const Sidebar = () => {
   const { currentUser } = useContext(UserContext);
 
+  console.log("current user ", currentUser);
+
   return (
     <>
       <Box
@@ -29,7 +31,7 @@ const Sidebar = () => {
           <div className="flex flex-col justify-between flex-1 mt-6">
             <nav>
               <a
-                className="flex items-center px-4 py-2 mt-5 text-black font-bold transition-colors duration-300 transform rounded-lg dark:text-black dark:font-bold hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white hover:text-gray-900"
+                className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                 href="/"
               >
                 <svg
@@ -44,10 +46,7 @@ const Sidebar = () => {
                 <span className="mx-4 font-medium">Home</span>
               </a>
 
-              <a
-                className="flex items-center px-4 py-2 mt-5 text-black font-bold transition-colors duration-300 transform rounded-lg dark:text-black dark:font-bold hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white hover:text-gray-900"
-                href="/"
-              >
+              <a className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -127,24 +126,26 @@ const Sidebar = () => {
                 <span className="mx-4 font-medium">Notifications</span>
               </a>
 
-              <a
-                className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
-                href="#"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="size-6"
+              {currentUser && (
+                <a
+                  className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                  href={`/profile/${currentUser?.userName}`}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="mx-4 font-medium">Profile</span>
-              </a>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="mx-4 font-medium">Profile</span>
+                </a>
+              )}
             </nav>
           </div>
         </aside>

@@ -240,7 +240,7 @@ const Profile = () => {
                 <span style={{ fontWeight: "normal" }}> followers</span>
               </span>
             </Grid>
-            {currentUser.userName === userName && (
+            {currentUser?.userName === userName && (
               <Grid item xs={12}>
                 <PrimaryButton
                   variant="text"

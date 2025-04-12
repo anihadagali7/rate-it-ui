@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Container, Paper, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
 import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
@@ -133,15 +133,16 @@ const Home = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "stretch",
-              maxWidth: "66%",
               padding: "20px 0",
             }}
           >
-            <Feed
-              currentUser={currentUser}
-              feedRatingsList={feedRatingsList}
-              exploreRatingsList={exploreRatingsList}
-            />
+            <Container>
+              <Feed
+                currentUser={currentUser}
+                feedRatingsList={feedRatingsList}
+                exploreRatingsList={exploreRatingsList}
+              />
+            </Container>
           </Box>
         </Box>
       </Box>
