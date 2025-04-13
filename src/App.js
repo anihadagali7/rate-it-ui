@@ -53,6 +53,11 @@ const App = React.memo(() => {
                     <Route exact path="/" element={<Home />}></Route>
                     <Route
                       exact
+                      path="/search"
+                      element={<Search />}
+                    ></Route>
+                    <Route
+                      exact
                       path="/search/:keyword"
                       element={<Search />}
                     ></Route>

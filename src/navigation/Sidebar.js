@@ -1,4 +1,4 @@
-// components/Sidebar.js
+import React, { useContext, useState } from "react";
 import {
   Home as HomeIcon,
   Search as SearchIcon,
@@ -19,10 +19,12 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import UserContext from "../shared/context/userContext";
 
 const drawerWidth = 240;
 
 const Sidebar = () => {
+  const { currentUser } = useContext(UserContext);
   return (
     <Drawer
       variant="permanent"
@@ -45,14 +47,27 @@ const Sidebar = () => {
         </PrimaryButton>
       </Toolbar>
       <Box sx={{ overflow: "auto" }}>
+        <ListItem key={"home"} component={Link} to={"/"}>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography>Home</Typography>
+          </ListItemText>
+        </ListItem>
+        <ListItem key={"search"} component={Link} to={"/search"}>
+          <ListItemIcon>
+            <SearchIcon />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography>Search</Typography>
+          </ListItemText>
+        </ListItem>
         <List>
           {[
-            { text: "Home", icon: <HomeIcon /> },
-            { text: "Search", icon: <SearchIcon /> },
             { text: "Playlists", icon: <PlaylistIcon /> },
             { text: "Wishlist", icon: <WishlistIcon /> },
             { text: "Notifications", icon: <NotificationsIcon /> },
-            { text: "Profile", icon: <ProfileIcon /> },
           ].map(({ text, icon }) => (
             <ListItem button key={text}>
               <ListItemIcon>{icon}</ListItemIcon>
@@ -60,6 +75,18 @@ const Sidebar = () => {
             </ListItem>
           ))}
         </List>
+        <ListItem
+          key={"profile"}
+          component={Link}
+          to={`/profile/${currentUser?.userName}`}
+        >
+          <ListItemIcon>
+            <ProfileIcon />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography>Profile</Typography>
+          </ListItemText>
+        </ListItem>
       </Box>
     </Drawer>
   );

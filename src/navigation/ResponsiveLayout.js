@@ -1,16 +1,19 @@
-import React from "react";
 import {
-  Box,
-  CssBaseline,
-  Toolbar,
-  Drawer,
-  BottomNavigation,
-  BottomNavigationAction,
-  useMediaQuery,
+    AccountCircle, Home, Notifications as NotificationsIcon, PlaylistPlay as PlaylistIcon,
+    FavoriteBorder as WishlistIcon
+} from "@mui/icons-material";
+import {
+    BottomNavigation, BottomNavigationAction,
+    Box,
+    CssBaseline,
+    Drawer,
+    Toolbar,
+    useMediaQuery,
 } from "@mui/material";
-import { Home, Search, AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import UserContext from "../shared/context/userContext";
 import Sidebar from "./Sidebar";
 import TopAppBar from "./TopAppBar";
 
@@ -21,11 +24,18 @@ const ResponsiveLayout = ({ children }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
   const navigate = useNavigate();
+  const { currentUser } = useContext(UserContext);
 
   const bottomNavItems = [
     { label: "Home", icon: <Home />, path: "/" },
-    { label: "Explore", icon: <Search />, path: "/explore" },
-    { label: "Profile", icon: <AccountCircle />, path: "/profile" },
+    { label: "Playlists", icon: <PlaylistIcon />, path: "/" },
+    { label: "Wishlist", icon: <WishlistIcon />, path: "/" },
+    { label: "Notifications", icon: <NotificationsIcon />, path: "/" },
+    {
+      label: "Profile",
+      icon: <AccountCircle />,
+      path: `/profile/${currentUser?.userName}`,
+    },
   ];
 
   const handleNavChange = (event, newValue) => {
