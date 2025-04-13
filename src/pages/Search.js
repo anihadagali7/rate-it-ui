@@ -176,7 +176,13 @@ const Search = () => {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        padding: 2,
+        boxSizing: "border-box",
+      }}
+    >
       <Container
         maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "20px" }}
