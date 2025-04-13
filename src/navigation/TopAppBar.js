@@ -3,15 +3,15 @@ import LoginIcon from "@mui/icons-material/Login";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-    AppBar,
-    Box,
-    IconButton,
-    InputBase,
-    ListItemIcon,
-    Menu,
-    MenuItem,
-    Toolbar,
-    Typography
+  AppBar,
+  Box,
+  IconButton,
+  InputBase,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
@@ -180,7 +180,7 @@ const TopAppBar = () => {
                 buttonElement={Link}
                 link="/login"
                 rightIcon={<LoginIcon />}
-                width={"120px"}
+                width={"130px"}
                 height={"40px"}
               >
                 Log in

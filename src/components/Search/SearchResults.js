@@ -1,4 +1,11 @@
-import { Container, Grid, Paper } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Container,
+  Grid,
+  Paper,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,17 +17,52 @@ import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import ProfileCard from "../profilecard/ProfileCard";
 
 const SearchResults = ({ results, resultType, handleSearch }) => {
-
   const listItem = (row) => (
-    <ListItem
-      component={Link}
-      to={`/${resultType}/${row.mediaId}`}
-      sx={{
-        width: 525,
-        "&.MuiListItem-root": { marginLeft: "-12px" },
-      }}
-    >
-      <Box
+    <ListItem component={Link} to={`/${resultType}/${row.mediaId}`}>
+      {/* <Card sx={{ display: "flex", width: "100%" }}>
+        <CardMedia
+          component="img"
+          sx={{ width: 151 }}
+          image={row.poster ? row.poster : NotFoundImage}
+          alt="Live from space album cover"
+        />
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <CardContent sx={{ flex: "1 0 auto" }}>
+            <Typography component="div" variant="h5">
+              {row.name.length > 25
+                ? `${row.name.substring(0, 25)}...`
+                : row.name}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              color="text.secondary"
+              component="div"
+            >
+              {row.description.length > 100
+                ? `${row.description.substring(0, 100)}...`
+                : row.description}
+            </Typography>
+          </CardContent>
+        </Box>
+      </Card> */}
+      <div className="card bg-gray-100 shadow-sm">
+        <figure>
+          <img src={row.poster ? row.poster : NotFoundImage} alt="poster" />
+        </figure>
+        <div className="card-body">
+          <h2 className="card-title">
+            {row.name.length > 25
+              ? `${row.name.substring(0, 25)}...`
+              : row.name}
+          </h2>
+          <p>
+            {row.description.length > 100
+              ? `${row.description.substring(0, 100)}...`
+              : row.description}
+          </p>
+        </div>
+      </div>
+      {/* <Box
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -88,7 +130,7 @@ const SearchResults = ({ results, resultType, handleSearch }) => {
             </Grid>
           </Grid>
         </Paper>
-      </Box>
+      </Box> */}
     </ListItem>
   );
 

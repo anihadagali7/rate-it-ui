@@ -187,8 +187,8 @@ const Search = () => {
       }}
     >
       <Container
-        maxWidth={"sm"}
-        sx={{ marginTop: "50px", marginBottom: "20px" }}
+        maxWidth={"md"}
+        sx={{ marginTop: "20px", marginBottom: "20px" }}
       >
         <Box
           sx={{

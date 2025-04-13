@@ -161,7 +161,7 @@ const Profile = () => {
   return (
     <Box>
       <Container
-        maxWidth={"sm"}
+        maxWidth={"md"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
       >
         <Paper
