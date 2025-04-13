@@ -31,6 +31,7 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
     startAdornment,
     label,
     required,
+    onKeyDown,
   } = props;
 
   return (
@@ -68,6 +69,7 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
         multiline={multiline}
         helperText={helperText}
         variant="standard"
+        onKeyDown={onKeyDown}
       ></TextField>
     </>
   );

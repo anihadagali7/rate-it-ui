@@ -1,9 +1,13 @@
 import {
-    AccountCircle, Home, Notifications as NotificationsIcon, PlaylistPlay as PlaylistIcon,
-    FavoriteBorder as WishlistIcon
+    AccountCircle,
+    Home,
+    Notifications as NotificationsIcon,
+    PlaylistPlay as PlaylistIcon,
+    FavoriteBorder as WishlistIcon,
 } from "@mui/icons-material";
 import {
-    BottomNavigation, BottomNavigationAction,
+    BottomNavigation,
+    BottomNavigationAction,
     Box,
     CssBaseline,
     Drawer,
@@ -49,6 +53,8 @@ const ResponsiveLayout = ({ children }) => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+
+      {/* Top AppBar for mobile */}
       {isMobile && <TopAppBar />}
 
       {/* Sidebar for desktop */}
@@ -58,7 +64,7 @@ const ResponsiveLayout = ({ children }) => {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            "& .MuiDrawer-paper": {
+            [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: "border-box",
             },
@@ -76,41 +82,40 @@ const ResponsiveLayout = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          pb: isMobile ? "56px" : 0,
-          marginTop: isMobile ? "40px" : "-75px",
+          width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
+          p: 2,
+          pt: isMobile ? 8 : 3, // Add spacing under top app bar
+          pb: isMobile ? "70px" : 3, // Add padding above bottom nav
+          overflowX: "hidden",
+          minHeight: "100vh",
         }}
       >
-        <Toolbar />
         {children}
       </Box>
 
-      {/* Bottom nav for mobile */}
+      {/* Bottom Navigation for mobile */}
       {isMobile && (
-        <>
-          <BottomNavigation
-            showLabels
-            value={currentNavIndex}
-            onChange={handleNavChange}
-            sx={{
-              position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              borderTop: "1px solid #e0e0e0",
-              zIndex: 1300,
-            }}
-          >
-            {bottomNavItems.map((item) => (
-              <BottomNavigationAction
-                key={item.label}
-                label={item.label}
-                icon={item.icon}
-              />
-            ))}
-          </BottomNavigation>
-        </>
+        <BottomNavigation
+          showLabels
+          value={currentNavIndex}
+          onChange={handleNavChange}
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderTop: "1px solid #e0e0e0",
+            zIndex: 1300,
+          }}
+        >
+          {bottomNavItems.map((item) => (
+            <BottomNavigationAction
+              key={item.label}
+              label={item.label}
+              icon={item.icon}
+            />
+          ))}
+        </BottomNavigation>
       )}
     </Box>
   );
