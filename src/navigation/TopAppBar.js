@@ -1,18 +1,23 @@
-import SearchIcon from "@mui/icons-material/Search";
+import { AccountCircle, Logout } from "@mui/icons-material";
+import LoginIcon from "@mui/icons-material/Login";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
 import {
-  AppBar,
-  Box,
-  IconButton,
-  InputBase,
-  Toolbar,
-  Typography,
+    AppBar,
+    Box,
+    IconButton,
+    InputBase,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Typography
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
-import { useNavigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,8 +59,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const TopAppBar = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const [userMenu, setUserMenu] = useState(null);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
@@ -65,6 +71,20 @@ const TopAppBar = () => {
     if (event.key === "Enter" && searchKeyword.trim()) {
       navigate(`/search/${searchKeyword.trim()}`);
     }
+  };
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("userName"); // Cleanup when user logs out
+    localStorage.removeItem("accessToken");
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setUserMenu(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setUserMenu(false);
   };
 
   return (
@@ -77,30 +97,96 @@ const TopAppBar = () => {
           >
             <Typography variant="logo">RATE IT</Typography>
           </PrimaryButton>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              justifyContent: "flex-end",
-            }}
-          >
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-                value={searchKeyword}
-                onChange={onChangeSearch}
-                onKeyDown={handleSearch}
-              />
-            </Search>
-            <IconButton>
-              <NotificationsIcon />
-            </IconButton>
-          </Box>
+          {currentUser ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                justifyContent: "flex-end",
+              }}
+            >
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                  value={searchKeyword}
+                  onChange={onChangeSearch}
+                  onKeyDown={handleSearch}
+                />
+              </Search>
+              <IconButton>
+                <NotificationsIcon />
+              </IconButton>
+              <Box>
+                <PrimaryButton
+                  variant="text"
+                  onClick={handleOpenUserMenu}
+                  leftIcon={<AccountCircle />}
+                ></PrimaryButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={userMenu}
+                  keepMounted
+                  transformOrigin={{ horizontal: "right", vertical: "top" }}
+                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  open={userMenu}
+                  onClose={handleCloseUserMenu}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                      "& .MuiAvatar-root": {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      "&::before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    <Typography textAlign="center" onClick={() => logoutUser()}>
+                      Logout
+                    </Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </Box>
+          ) : (
+            <Box>
+              <PrimaryButton
+                variant="contained"
+                buttonElement={Link}
+                link="/login"
+                rightIcon={<LoginIcon />}
+                width={"120px"}
+                height={"40px"}
+              >
+                Log in
+              </PrimaryButton>
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
       {/* Add spacing below the AppBar so content doesn’t get hidden underneath */}

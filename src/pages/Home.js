@@ -30,15 +30,13 @@ const Home = () => {
   }
 
   return (
-    <Container maxWidth={"sm"} sx={{ marginBottom: "25px" }}>
+    <Container maxWidth={"sm"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
       {currentUser && feedRatingsList && feedRatingsList.length > 0 && (
         <>
           <Typography
             sx={{
               fontWeight: "bold",
               fontSize: "22px",
-              paddingTop: "15px",
-              paddingLeft: "25px",
             }}
           >
             For you
@@ -65,7 +63,6 @@ const Home = () => {
               fontWeight: "bold",
               fontSize: "22px",
               paddingTop: "15px",
-              paddingLeft: "25px",
             }}
           >
             Explore
