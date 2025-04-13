@@ -20,11 +20,20 @@ import {
 import { Link } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
 
 const Sidebar = () => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("userName"); // Cleanup when user logs out
+    localStorage.removeItem("accessToken");
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -87,6 +96,37 @@ const Sidebar = () => {
             <Typography>Profile</Typography>
           </ListItemText>
         </ListItem>
+      </Box>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          zIndex: 1300,
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "0 0 20px 20px",
+        }}
+      >
+        {currentUser ? (
+          <PrimaryButton
+            variant="contained"
+            buttonElement={Link}
+            onClick={() => logoutUser()}
+            link="/"
+            rightIcon={<LogoutIcon />}
+          >
+            Log out
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton
+            variant="contained"
+            buttonElement={Link}
+            link="/login"
+            rightIcon={<LoginIcon />}
+          >
+            Log in
+          </PrimaryButton>
+        )}
       </Box>
     </Drawer>
   );
