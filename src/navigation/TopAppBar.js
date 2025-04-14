@@ -18,6 +18,7 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -118,14 +119,17 @@ const TopAppBar = () => {
                   onKeyDown={handleSearch}
                 />
               </Search>
-              <IconButton>
-                <NotificationsIcon />
-              </IconButton>
+              <PrimaryButton
+                buttonElement={Link}
+                variant="text"
+                link="/notifications"
+                leftIcon={<NotificationsIcon />}
+              ></PrimaryButton>
               <Box>
                 <PrimaryButton
                   variant="text"
                   onClick={handleOpenUserMenu}
-                  leftIcon={<AccountCircle />}
+                  leftIcon={<SettingsIcon />}
                 ></PrimaryButton>
                 <Menu
                   id="menu-appbar"

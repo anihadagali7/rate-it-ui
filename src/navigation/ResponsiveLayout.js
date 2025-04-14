@@ -1,18 +1,18 @@
 import {
-    AccountCircle,
-    Home,
-    Notifications as NotificationsIcon,
-    PlaylistPlay as PlaylistIcon,
-    FavoriteBorder as WishlistIcon,
+  AccountCircle,
+  Home,
+  Notifications as NotificationsIcon,
+  PlaylistPlay as PlaylistIcon,
+  FavoriteBorder as WishlistIcon,
 } from "@mui/icons-material";
 import {
-    BottomNavigation,
-    BottomNavigationAction,
-    Box,
-    CssBaseline,
-    Drawer,
-    Toolbar,
-    useMediaQuery,
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  CssBaseline,
+  Drawer,
+  Toolbar,
+  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useContext } from "react";
@@ -34,7 +34,6 @@ const ResponsiveLayout = ({ children }) => {
     { label: "Home", icon: <Home />, path: "/" },
     { label: "Playlists", icon: <PlaylistIcon />, path: "/" },
     { label: "Wishlist", icon: <WishlistIcon />, path: "/" },
-    { label: "Notifications", icon: <NotificationsIcon />, path: "/" },
     {
       label: "Profile",
       icon: <AccountCircle />,

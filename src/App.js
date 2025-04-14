@@ -16,6 +16,7 @@ import UserContext from "../src/shared/context/userContext";
 import { useQuery } from "@tanstack/react-query";
 import UserClient from "./client/UserClient";
 import ResponsiveLayout from "./navigation/ResponsiveLayout";
+import Notifications from "./pages/Notifications";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -51,11 +52,7 @@ const App = React.memo(() => {
                 <ResponsiveLayout>
                   <Routes>
                     <Route exact path="/" element={<Home />}></Route>
-                    <Route
-                      exact
-                      path="/search"
-                      element={<Search />}
-                    ></Route>
+                    <Route exact path="/search" element={<Search />}></Route>
                     <Route
                       exact
                       path="/search/:keyword"
@@ -83,6 +80,15 @@ const App = React.memo(() => {
                       element={
                         <Protected>
                           <EditProfile />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/notifications"
+                      element={
+                        <Protected>
+                          <Notifications />
                         </Protected>
                       }
                     ></Route>

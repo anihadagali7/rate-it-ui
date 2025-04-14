@@ -56,46 +56,32 @@ const Sidebar = () => {
         </PrimaryButton>
       </Toolbar>
       <Box sx={{ overflow: "auto" }}>
-        <ListItem key={"home"} component={Link} to={"/"}>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography>Home</Typography>
-          </ListItemText>
-        </ListItem>
-        <ListItem key={"search"} component={Link} to={"/search"}>
-          <ListItemIcon>
-            <SearchIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography>Search</Typography>
-          </ListItemText>
-        </ListItem>
         <List>
           {[
+            { text: "Home", link: "/", icon: <HomeIcon /> },
+            { text: "Search", link: "/search", icon: <SearchIcon /> },
             { text: "Playlists", icon: <PlaylistIcon /> },
-            { text: "Wishlist", icon: <WishlistIcon /> },
-            { text: "Notifications", icon: <NotificationsIcon /> },
-          ].map(({ text, icon }) => (
-            <ListItem button key={text}>
+            {
+              text: "Wishlist",
+              icon: <ProfileIcon />,
+            },
+            {
+              text: "Notifications",
+              link: "/notifications",
+              icon: <NotificationsIcon />,
+            },
+            {
+              text: "Profile",
+              link: `/profile/${currentUser?.userName}`,
+              icon: <ProfileIcon />,
+            },
+          ].map(({ text, icon, link }) => (
+            <ListItem button key={text} component={Link} to={link}>
               <ListItemIcon>{icon}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
-        <ListItem
-          key={"profile"}
-          component={Link}
-          to={`/profile/${currentUser?.userName}`}
-        >
-          <ListItemIcon>
-            <ProfileIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography>Profile</Typography>
-          </ListItemText>
-        </ListItem>
       </Box>
       <Box
         sx={{
