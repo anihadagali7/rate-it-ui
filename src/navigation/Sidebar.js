@@ -63,7 +63,8 @@ const Sidebar = () => {
             { text: "Playlists", icon: <PlaylistIcon /> },
             {
               text: "Wishlist",
-              icon: <ProfileIcon />,
+              link: "/wishlist",
+              icon: <WishlistIcon />,
             },
             {
               text: "Notifications",

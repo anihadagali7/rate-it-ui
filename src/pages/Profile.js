@@ -8,7 +8,7 @@ import FriendsModal from "../components/modals/FriendsModal";
 import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
-import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
+import Wishlist from "./Wishlist";
 import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
@@ -141,13 +141,6 @@ const Profile = () => {
     },
     {
       value: 1,
-      title: "Wishlist",
-      content: (
-        <DisplayWishlistByUser profileUserName={profileInfo?.userName} />
-      ),
-    },
-    {
-      value: 2,
       title: "Playlist",
       content: (
         <DisplayPlaylistByUser

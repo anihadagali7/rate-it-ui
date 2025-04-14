@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import UserClient from "./client/UserClient";
 import ResponsiveLayout from "./navigation/ResponsiveLayout";
 import Notifications from "./pages/Notifications";
+import Wishlist from "./pages/Wishlist";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -93,7 +94,15 @@ const App = React.memo(() => {
                       }
                     ></Route>
                     {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
-                    {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
+                    <Route
+                      exact
+                      path="/wishlist"
+                      element={
+                        <Protected>
+                          <Wishlist />
+                        </Protected>
+                      }
+                    ></Route>
                   </Routes>
                 </ResponsiveLayout>
               </>
