@@ -9,7 +9,7 @@ import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
 import Wishlist from "./Wishlist";
-import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
+import Playlist from "./Playlist";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UserContext from "../shared/context/userContext";
@@ -143,7 +143,7 @@ const Profile = () => {
       value: 1,
       title: "Playlist",
       content: (
-        <DisplayPlaylistByUser
+        <Playlist
           profileUserName={profileInfo?.userName}
           userViewingOwnProfile={userViewingOwnProfile}
         />
@@ -154,7 +154,7 @@ const Profile = () => {
   return (
     <Box>
       <Container
-        maxWidth={"md"}
+        maxWidth={"sm"}
         sx={{ marginTop: "50px", marginBottom: "25px" }}
       >
         <Paper

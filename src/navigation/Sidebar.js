@@ -60,10 +60,14 @@ const Sidebar = () => {
           {[
             { text: "Home", link: "/", icon: <HomeIcon /> },
             { text: "Search", link: "/search", icon: <SearchIcon /> },
-            { text: "Playlists", icon: <PlaylistIcon /> },
+            {
+              text: "Playlists",
+              icon: <PlaylistIcon />,
+              link: `/playlist/${currentUser?.userName}`,
+            },
             {
               text: "Wishlist",
-              link: "/wishlist",
+              link: `/wishlist/${currentUser?.userName}`,
               icon: <WishlistIcon />,
             },
             {

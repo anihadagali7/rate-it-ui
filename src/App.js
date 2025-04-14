@@ -18,6 +18,7 @@ import UserClient from "./client/UserClient";
 import ResponsiveLayout from "./navigation/ResponsiveLayout";
 import Notifications from "./pages/Notifications";
 import Wishlist from "./pages/Wishlist";
+import Playlist from "./pages/Playlist";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -93,10 +94,18 @@ const App = React.memo(() => {
                         </Protected>
                       }
                     ></Route>
-                    {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
                     <Route
                       exact
-                      path="/wishlist"
+                      path="/playlist/:userName"
+                      element={
+                        <Protected>
+                          <Playlist />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/wishlist/:userName"
                       element={
                         <Protected>
                           <Wishlist />

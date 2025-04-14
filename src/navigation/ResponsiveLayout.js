@@ -32,8 +32,16 @@ const ResponsiveLayout = ({ children }) => {
 
   const bottomNavItems = [
     { label: "Home", icon: <Home />, path: "/" },
-    { label: "Playlists", icon: <PlaylistIcon />, path: "/" },
-    { label: "Wishlist", icon: <WishlistIcon />, path: "/wishlist" },
+    {
+      label: "Playlists",
+      icon: <PlaylistIcon />,
+      path: `/playlist/${currentUser?.userName}`,
+    },
+    {
+      label: "Wishlist",
+      icon: <WishlistIcon />,
+      path: `/wishlist/${currentUser?.userName}`,
+    },
     {
       label: "Profile",
       icon: <AccountCircle />,

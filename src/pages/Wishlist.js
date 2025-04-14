@@ -8,18 +8,20 @@ import Stack from "@mui/material/Stack";
 import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import WishlistClient from "../client/WishlistClient";
 import UserContext from "../shared/context/userContext";
 import ProfileWishlistLoading from "../shared/loading/ProfileWishlistLoading";
 
 const Wishlist = () => {
+  const { userName } = useParams();
   const { currentUser } = useContext(UserContext);
+  const profileUserName = currentUser?.profileUserName;
+  const userViewingOwnProfile = userName === profileUserName;
 
   const { data: wishlistList, isLoading } = useQuery({
-    queryKey: ["getAllWishlistForUser", currentUser?.userName],
-    queryFn: async () =>
-      await WishlistClient.getAllWishlistForUser(currentUser?.userName),
+    queryKey: ["getAllWishlistForUser", userName],
+    queryFn: async () => await WishlistClient.getAllWishlistForUser(userName),
     staleTime: 60000,
     select: ({ data }) => data.data.wishlistList,
   });
