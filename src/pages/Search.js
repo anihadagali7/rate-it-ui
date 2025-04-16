@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
-import SearchResultsMobile from "../components/Search/SearchResultsMobile";
-import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
-import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
-import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
+import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
-import { Link, useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 
 const DisplayMediaSearchResults = ({
   searchResults,
@@ -51,7 +49,6 @@ const Search = () => {
   const {
     isLoading,
     mutate: submitSearch,
-    isSuccess,
     data: searchResults,
   } = useMutation({
     mutationFn: async ({ searchType }) => {

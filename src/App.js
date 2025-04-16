@@ -1,24 +1,23 @@
-import "./App.css";
-import React, { useEffect, useMemo, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material";
-import { theme } from "./styles/Theme";
-import Header from "./components/header/Header";
-import Signup from "./pages/Signup";
-import MediaInfo from "./pages/MediaInfo";
-import Search from "./pages/Search";
-import Protected from "./shared/Protected";
-import EditProfile from "./pages/EditProfile";
-import UserContext from "../src/shared/context/userContext";
 import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserContext from "../src/shared/context/userContext";
+import "./App.css";
 import UserClient from "./client/UserClient";
 import ResponsiveLayout from "./navigation/ResponsiveLayout";
+import EditProfile from "./pages/EditProfile";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import MediaInfo from "./pages/MediaInfo";
 import Notifications from "./pages/Notifications";
-import Wishlist from "./pages/Wishlist";
 import Playlist from "./pages/Playlist";
+import Profile from "./pages/Profile";
+import Search from "./pages/Search";
+import Signup from "./pages/Signup";
+import Wishlist from "./pages/Wishlist";
+import Protected from "./shared/Protected";
+import { theme } from "./styles/Theme";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");

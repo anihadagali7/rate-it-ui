@@ -1,19 +1,18 @@
-import React, { useState, useContext } from "react";
-import { Box, Paper, Typography, Container } from "@mui/material";
-import ListItem from "@mui/material/ListItem";
-import Stack from "@mui/material/Stack";
+import AddIcon from "@mui/icons-material/Add";
+import { Box, Container, Paper, Typography } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
-import ProfileWishlistLoading from "../shared/loading/ProfileWishlistLoading";
-import PlaylistClient from "../client/PlaylistClient";
-import DisplayOnePlaylist from "../components/playlist/DisplayOnePlaylist";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import AddPlaylistModal from "../components/modals/AddPlaylistModal";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
+import ListItem from "@mui/material/ListItem";
+import Stack from "@mui/material/Stack";
 import { useQuery } from "@tanstack/react-query";
+import React, { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import PlaylistClient from "../client/PlaylistClient";
+import AddPlaylistModal from "../components/modals/AddPlaylistModal";
+import DisplayOnePlaylist from "../components/playlist/DisplayOnePlaylist";
+import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
-import { Link, useParams } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
+import ProfileWishlistLoading from "../shared/loading/ProfileWishlistLoading";
 
 const Playlist = () => {
   const { userName } = useParams();

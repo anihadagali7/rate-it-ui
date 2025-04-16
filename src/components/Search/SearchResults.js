@@ -1,10 +1,7 @@
 import {
-  Card,
-  CardContent,
-  CardMedia,
   Container,
   Grid,
-  Paper,
+  Paper
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
