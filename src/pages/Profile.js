@@ -15,6 +15,7 @@ import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UserContext from "../shared/context/userContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DisplayWishlistByUser from "../components/wishlist/DisplayWishlistByUser";
+import DisplayPlaylistByUser from "../components/playlist/DisplayPlaylistByUser";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -153,9 +154,9 @@ const Profile = () => {
       value: 1,
       title: "Playlist",
       content: (
-        <Playlist
-          profileUserName={profileInfo?.userName}
-          userViewingOwnProfile={userViewingOwnProfile}
+        <DisplayPlaylistByUser
+          userName={profileInfo?.userName}
+          profileView={true}
         />
       ),
     },
