@@ -12,18 +12,19 @@ import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
 const DisplayPlaylistByUser = ({ userName, profileView }) => {
   const { data: playlistList, isLoading } = useQuery({
-    queryKey: ["getAllPlaylistForUser", { userName }],
+    queryKey: ["getAllPlaylistForUser", userName],
     queryFn: async () => {
       return await PlaylistClient.getAllPlaylistForUser(userName);
     },
     staleTime: 60000,
+    enabled: !!userName,
     select: ({ data }) => data.data.playlistList.reverse(),
   });
 
   let newList = [];
   if (playlistList) {
     if (profileView) {
-      newList = playlistList.splice(0, 3);
+      newList = playlistList.slice(0, 3);
     } else {
       newList = playlistList;
     }
@@ -39,12 +40,7 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
           newList.length > 0 &&
           newList.map((playlist) => (
             <>
-              <ListItem
-                key={playlist._id}
-                sx={{ cursor: "pointer" }}
-                component={Link}
-                to={`/playlist/${userName}`}
-              >
+              <ListItem key={playlist._id} sx={{ cursor: "pointer" }}>
                 <Stack direction="row" spacing={2}>
                   <>
                     <div>

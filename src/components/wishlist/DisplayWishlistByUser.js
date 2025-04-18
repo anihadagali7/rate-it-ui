@@ -18,6 +18,7 @@ const DisplayWishlistByUser = ({ userName, profileView }) => {
     queryKey: ["getAllWishlistForUser", userName],
     queryFn: async () => await WishlistClient.getAllWishlistForUser(userName),
     staleTime: 60000,
+    enabled: !!userName,
     select: ({ data }) => data.data.wishlistList,
   });
 
@@ -38,7 +39,7 @@ const DisplayWishlistByUser = ({ userName, profileView }) => {
   let newList = [];
   if (wishlistList) {
     if (profileView) {
-      newList = wishlistList.splice(0, 3);
+      newList = wishlistList.slice(0, 3);
     } else {
       newList = wishlistList;
     }
