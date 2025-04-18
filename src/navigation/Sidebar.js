@@ -16,6 +16,7 @@ import {
   Toolbar,
   Typography,
   Box,
+  Divider,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
@@ -55,69 +56,82 @@ const Sidebar = () => {
           <Typography variant="logo">RATE IT</Typography>
         </PrimaryButton>
       </Toolbar>
-      <Box sx={{ overflow: "auto" }}>
-        <List>
-          {[
-            { text: "Home", link: "/", icon: <HomeIcon /> },
-            { text: "Search", link: "/search", icon: <SearchIcon /> },
-            {
-              text: "Playlists",
-              icon: <PlaylistIcon />,
-              link: `/playlist/${currentUser?.userName}`,
-            },
-            {
-              text: "Wishlist",
-              link: `/wishlist/${currentUser?.userName}`,
-              icon: <WishlistIcon />,
-            },
-            {
-              text: "Notifications",
-              link: "/notifications",
-              icon: <NotificationsIcon />,
-            },
-            {
-              text: "Profile",
-              link: `/profile/${currentUser?.userName}`,
-              icon: <ProfileIcon />,
-            },
-          ].map(({ text, icon, link }) => (
-            <ListItem button key={text} component={Link} to={link}>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
       <Box
         sx={{
-          position: "fixed",
-          bottom: 0,
-          zIndex: 1300,
-          alignItems: "center",
-          justifyContent: "center",
-          margin: "0 0 20px 20px",
+          minHeight: "calc(100vh - 64px)",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        {currentUser ? (
-          <PrimaryButton
-            variant="contained"
-            buttonElement={Link}
-            onClick={() => logoutUser()}
-            link="/"
-            rightIcon={<LogoutIcon />}
+        <Box sx={{ overflow: "auto" }}>
+          <List>
+            {[
+              { text: "Home", link: "/", icon: <HomeIcon /> },
+              { text: "Search", link: "/search", icon: <SearchIcon /> },
+              {
+                text: "Playlists",
+                icon: <PlaylistIcon />,
+                link: `/playlist/${currentUser?.userName}`,
+              },
+              {
+                text: "Wishlist",
+                link: `/wishlist/${currentUser?.userName}`,
+                icon: <WishlistIcon />,
+              },
+              {
+                text: "Notifications",
+                link: "/notifications",
+                icon: <NotificationsIcon />,
+              },
+              {
+                text: "Profile",
+                link: `/profile/${currentUser?.userName}`,
+                icon: <ProfileIcon />,
+              },
+            ].map(({ text, icon, link }) => (
+              <ListItem button key={text} component={Link} to={link}>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+
+        <Box
+          sx={{
+            marginTop: "auto",
+          }}
+        >
+          <Divider />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            Log out
-          </PrimaryButton>
-        ) : (
-          <PrimaryButton
-            variant="contained"
-            buttonElement={Link}
-            link="/login"
-            rightIcon={<LoginIcon />}
-          >
-            Log in
-          </PrimaryButton>
-        )}
+            {currentUser ? (
+              <PrimaryButton
+                variant="text"
+                buttonElement={Link}
+                onClick={() => logoutUser()}
+                link="/"
+                rightIcon={<LogoutIcon />}
+              >
+                Log out
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton
+                variant="contained"
+                buttonElement={Link}
+                link="/login"
+                rightIcon={<LoginIcon />}
+              >
+                Log in
+              </PrimaryButton>
+            )}
+          </Box>
+        </Box>
       </Box>
     </Drawer>
   );
