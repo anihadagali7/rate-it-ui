@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   Home as HomeIcon,
   Search as SearchIcon,
@@ -23,15 +23,18 @@ import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
 const Sidebar = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
+  const location = useLocation();
 
   const logoutUser = () => {
+    // Cleanup when user logs out
     setCurrentUser(null);
-    localStorage.removeItem("userName"); // Cleanup when user logs out
+    localStorage.removeItem("userName");
     localStorage.removeItem("accessToken");
   };
 
@@ -88,12 +91,36 @@ const Sidebar = () => {
                 link: `/profile/${currentUser?.userName}`,
                 icon: <ProfileIcon />,
               },
-            ].map(({ text, icon, link }) => (
-              <ListItem button key={text} component={Link} to={link}>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
+            ].map(({ text, icon, link }) => {
+              const isActive = location.pathname === link;
+              return (
+                <ListItem
+                  button
+                  key={text}
+                  component={Link}
+                  to={link}
+                  sx={{
+                    fontWeight: isActive ? "bold" : "normal",
+                    backgroundColor: isActive
+                      ? "rgba(0, 0, 0, 0.08)"
+                      : "transparent",
+                    borderRadius: 1,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{ color: isActive ? "primary.main" : "inherit" }}
+                  >
+                    {icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={text}
+                    primaryTypographyProps={{
+                      fontWeight: isActive ? "bold" : "normal",
+                    }}
+                  />
+                </ListItem>
+              );
+            })}
           </List>
         </Box>
 
