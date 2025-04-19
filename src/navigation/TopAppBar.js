@@ -108,6 +108,8 @@ const TopAppBar = () => {
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
+                alignItems: "center",
+                gap: 1,
               }}
             >
               <Search>
@@ -195,7 +197,6 @@ const TopAppBar = () => {
           )}
         </Toolbar>
       </AppBar>
-      <Toolbar />
     </Box>
   );
 };
