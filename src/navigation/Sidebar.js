@@ -3,10 +3,14 @@ import {
   Home as HomeIcon,
   Search as SearchIcon,
   PlaylistPlay as PlaylistIcon,
-  FavoriteBorder as WishlistIcon,
   Notifications as NotificationsIcon,
-  Person as ProfileIcon,
 } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import {
   Drawer,
   List,
@@ -69,29 +73,43 @@ const Sidebar = () => {
         <Box sx={{ overflow: "auto" }}>
           <List>
             {[
-              { text: "Home", link: "/", icon: <HomeIcon /> },
-              { text: "Search", link: "/search", icon: <SearchIcon /> },
+              {
+                text: "Home",
+                link: "/",
+                icon: <HomeOutlinedIcon />,
+                alternateIcon: <HomeIcon />,
+              },
+              {
+                text: "Search",
+                link: "/search",
+                icon: <SearchIcon />,
+                alternateIcon: <SearchIcon />,
+              },
               {
                 text: "Playlists",
                 icon: <PlaylistIcon />,
+                alternateIcon: <PlaylistIcon />,
                 link: `/playlist/${currentUser?.userName}`,
               },
               {
                 text: "Wishlist",
                 link: `/wishlist/${currentUser?.userName}`,
-                icon: <WishlistIcon />,
+                alternateIcon: <FavoriteIcon />,
+                icon: <FavoriteBorderOutlinedIcon />,
               },
               {
                 text: "Notifications",
                 link: "/notifications",
-                icon: <NotificationsIcon />,
+                alternateIcon: <NotificationsIcon />,
+                icon: <NotificationsNoneOutlinedIcon />,
               },
               {
                 text: "Profile",
                 link: `/profile/${currentUser?.userName}`,
-                icon: <ProfileIcon />,
+                icon: <AccountCircleOutlinedIcon />,
+                alternateIcon: <AccountCircleIcon />,
               },
-            ].map(({ text, icon, link }) => {
+            ].map(({ text, icon, link, alternateIcon }) => {
               const isActive = location.pathname === link;
               return (
                 <ListItem
@@ -110,7 +128,7 @@ const Sidebar = () => {
                   <ListItemIcon
                     sx={{ color: isActive ? "primary.main" : "inherit" }}
                   >
-                    {icon}
+                    {isActive ? alternateIcon : icon}
                   </ListItemIcon>
                   <ListItemText
                     primary={text}
