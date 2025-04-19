@@ -1,18 +1,20 @@
 import {
-  AccountCircle,
-  Home,
-  Notifications as NotificationsIcon,
-  PlaylistPlay as PlaylistIcon,
-  FavoriteBorder as WishlistIcon,
+    AccountCircle,
+    Home,
+    PlaylistPlay as PlaylistIcon
 } from "@mui/icons-material";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  CssBaseline,
-  Drawer,
-  Toolbar,
-  useMediaQuery,
+    BottomNavigation,
+    BottomNavigationAction,
+    Box,
+    CssBaseline,
+    Drawer,
+    Toolbar,
+    useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useContext } from "react";
@@ -31,20 +33,28 @@ const ResponsiveLayout = ({ children }) => {
   const { currentUser } = useContext(UserContext);
 
   const bottomNavItems = [
-    { label: "Home", icon: <Home />, path: "/" },
+    {
+      label: "Home",
+      alternateIcon: <Home />,
+      icon: <HomeOutlinedIcon />,
+      path: "/",
+    },
     {
       label: "Playlists",
       icon: <PlaylistIcon />,
+      alternateIcon: <PlaylistIcon />,
       path: `/playlist/${currentUser?.userName}`,
     },
     {
       label: "Wishlist",
-      icon: <WishlistIcon />,
+      icon: <FavoriteBorderOutlinedIcon />,
+      alternateIcon: <FavoriteIcon />,
       path: `/wishlist/${currentUser?.userName}`,
     },
     {
       label: "Profile",
-      icon: <AccountCircle />,
+      icon: <AccountCircleOutlinedIcon />,
+      alternateIcon: <AccountCircle />,
       path: `/profile/${currentUser?.userName}`,
     },
   ];
@@ -115,13 +125,16 @@ const ResponsiveLayout = ({ children }) => {
             zIndex: 1300,
           }}
         >
-          {bottomNavItems.map((item) => (
-            <BottomNavigationAction
-              key={item.label}
-              label={item.label}
-              icon={item.icon}
-            />
-          ))}
+          {bottomNavItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <BottomNavigationAction
+                key={item.label}
+                label={item.label}
+                icon={isActive ? item.alternateIcon : item.icon}
+              />
+            );
+          })}
         </BottomNavigation>
       )}
     </Box>

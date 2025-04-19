@@ -1,33 +1,32 @@
-import React, { useContext } from "react";
 import {
-  Home as HomeIcon,
-  Search as SearchIcon,
-  PlaylistPlay as PlaylistIcon,
-  Notifications as NotificationsIcon,
+    Home as HomeIcon,
+    Notifications as NotificationsIcon,
+    PlaylistPlay as PlaylistIcon,
+    Search as SearchIcon,
 } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-  Box,
-  Divider,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
-import UserContext from "../shared/context/userContext";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useLocation } from "react-router-dom";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import {
+    Box,
+    Divider,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Toolbar,
+    Typography,
+} from "@mui/material";
+import React, { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import PrimaryButton from "../shared/buttons/PrimaryButton";
+import UserContext from "../shared/context/userContext";
 
 const drawerWidth = 240;
 

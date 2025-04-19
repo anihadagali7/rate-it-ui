@@ -1,24 +1,24 @@
-import { AccountCircle, Logout } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import LoginIcon from "@mui/icons-material/Login";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
-  AppBar,
-  Box,
-  IconButton,
-  InputBase,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
+    AppBar,
+    Box,
+    InputBase,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,6 +63,7 @@ const TopAppBar = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [userMenu, setUserMenu] = useState(null);
+  const location = useLocation();
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
@@ -123,7 +124,13 @@ const TopAppBar = () => {
                 buttonElement={Link}
                 variant="text"
                 link="/notifications"
-                leftIcon={<NotificationsIcon />}
+                leftIcon={
+                  location.pathname === "/notifications" ? (
+                    <NotificationsIcon />
+                  ) : (
+                    <NotificationsNoneOutlinedIcon />
+                  )
+                }
               ></PrimaryButton>
               <Box>
                 <PrimaryButton
