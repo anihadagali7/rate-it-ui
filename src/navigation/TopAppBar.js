@@ -97,104 +97,113 @@ const TopAppBar = () => {
         sx={{ top: 0, backgroundColor: "#FFFFFF", padding: "5px 0" }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <PrimaryButton
-            disabled
-            sx={{ display: { xs: "none", md: "flex", color: "#00a8ff" } }}
+          <Typography sx={{ width: "30%" }} variant="logo">
+            RATE IT
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
           >
-            <Typography variant="logo">RATE IT</Typography>
-          </PrimaryButton>
-          {currentUser ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                  value={searchKeyword}
-                  onChange={onChangeSearch}
-                  onKeyDown={handleSearch}
-                />
-              </Search>
-              <IconButton component={Link} to="/notifications" color="primary">
-                {location.pathname === "/notifications" ? (
-                  <NotificationsIcon />
-                ) : (
-                  <NotificationsNoneOutlinedIcon />
-                )}
-              </IconButton>
-              <Box>
-                <IconButton onClick={handleOpenUserMenu} color="primary">
-                  <SettingsIcon />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={userMenu}
-                  keepMounted
-                  transformOrigin={{ horizontal: "right", vertical: "top" }}
-                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                  open={userMenu}
-                  onClose={handleCloseUserMenu}
-                  PaperProps={{
-                    elevation: 0,
-                    sx: {
-                      overflow: "visible",
-                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                      mt: 1.5,
-                      "& .MuiAvatar-root": {
-                        width: 32,
-                        height: 32,
-                        ml: -0.5,
-                        mr: 1,
-                      },
-                      "&::before": {
-                        content: '""',
-                        display: "block",
-                        position: "absolute",
-                        top: 0,
-                        right: 4,
-                        width: 10,
-                        height: 10,
-                        bgcolor: "background.paper",
-                        transform: "translateY(-50%) rotate(45deg)",
-                        zIndex: 0,
-                      },
-                    },
-                  }}
+            {currentUser && (
+              <>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ "aria-label": "search" }}
+                    value={searchKeyword}
+                    onChange={onChangeSearch}
+                    onKeyDown={handleSearch}
+                  />
+                </Search>
+                <IconButton
+                  component={Link}
+                  to="/notifications"
+                  color="primary"
                 >
-                  <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
-                    <ListItemIcon>
-                      <Logout fontSize="small" />
-                    </ListItemIcon>
-                    <Typography textAlign="center" onClick={() => logoutUser()}>
-                      Logout
-                    </Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
-            </Box>
-          ) : (
+                  {location.pathname === "/notifications" ? (
+                    <NotificationsIcon />
+                  ) : (
+                    <NotificationsNoneOutlinedIcon />
+                  )}
+                </IconButton>
+              </>
+            )}
             <Box>
-              <PrimaryButton
-                variant="contained"
-                buttonElement={Link}
-                link="/login"
-                rightIcon={<LoginIcon />}
-                width={"130px"}
-                height={"40px"}
+              <IconButton onClick={handleOpenUserMenu} color="primary">
+                <SettingsIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={userMenu}
+                keepMounted
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                open={userMenu}
+                onClose={handleCloseUserMenu}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 4,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
               >
-                Log in
-              </PrimaryButton>
+                <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
+                  {currentUser ? (
+                    <>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => logoutUser()}
+                      >
+                        Logout
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <ListItemIcon>
+                        <LoginIcon fontSize="small" />
+                      </ListItemIcon>
+                      <Typography
+                        textAlign="center"
+                        component={Link}
+                        to={`/login`}
+                      >
+                        Login
+                      </Typography>
+                    </>
+                  )}
+                </MenuItem>
+              </Menu>
             </Box>
-          )}
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>
