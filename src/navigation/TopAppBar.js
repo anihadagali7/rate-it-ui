@@ -7,6 +7,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AppBar,
   Box,
+  IconButton,
   InputBase,
   ListItemIcon,
   Menu,
@@ -106,8 +107,6 @@ const TopAppBar = () => {
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
-                gap: 1,
                 justifyContent: "flex-end",
               }}
             >
@@ -123,24 +122,17 @@ const TopAppBar = () => {
                   onKeyDown={handleSearch}
                 />
               </Search>
-              <PrimaryButton
-                buttonElement={Link}
-                variant="text"
-                link="/notifications"
-                leftIcon={
-                  location.pathname === "/notifications" ? (
-                    <NotificationsIcon />
-                  ) : (
-                    <NotificationsNoneOutlinedIcon />
-                  )
-                }
-              ></PrimaryButton>
+              <IconButton component={Link} to="/notifications" color="primary">
+                {location.pathname === "/notifications" ? (
+                  <NotificationsIcon />
+                ) : (
+                  <NotificationsNoneOutlinedIcon />
+                )}
+              </IconButton>
               <Box>
-                <PrimaryButton
-                  variant="text"
-                  onClick={handleOpenUserMenu}
-                  leftIcon={<SettingsIcon />}
-                ></PrimaryButton>
+                <IconButton onClick={handleOpenUserMenu} color="primary">
+                  <SettingsIcon />
+                </IconButton>
                 <Menu
                   id="menu-appbar"
                   anchorEl={userMenu}
@@ -166,7 +158,7 @@ const TopAppBar = () => {
                         display: "block",
                         position: "absolute",
                         top: 0,
-                        right: 14,
+                        right: 4,
                         width: 10,
                         height: 10,
                         bgcolor: "background.paper",
