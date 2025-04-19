@@ -5,14 +5,14 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
-    AppBar,
-    Box,
-    InputBase,
-    ListItemIcon,
-    Menu,
-    MenuItem,
-    Toolbar,
-    Typography,
+  AppBar,
+  Box,
+  InputBase,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
@@ -91,7 +91,10 @@ const TopAppBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1, display: { xs: "block", md: "none" } }}>
-      <AppBar position="fixed" sx={{ top: 0, backgroundColor: "#FFFFFF" }}>
+      <AppBar
+        position="fixed"
+        sx={{ top: 0, backgroundColor: "#FFFFFF", padding: "5px 0" }}
+      >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <PrimaryButton
             disabled
@@ -200,7 +203,6 @@ const TopAppBar = () => {
           )}
         </Toolbar>
       </AppBar>
-      {/* Add spacing below the AppBar so content doesn’t get hidden underneath */}
       <Toolbar />
     </Box>
   );
