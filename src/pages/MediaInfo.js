@@ -147,7 +147,7 @@ const MediaInfo = () => {
     <Box>
       <Container
         maxWidth={"sm"}
-        sx={{ marginTop: "50px", marginBottom: "25px" }}
+        sx={{ marginTop: "25px", marginBottom: "25px" }}
       >
         <Box>
           <Paper
