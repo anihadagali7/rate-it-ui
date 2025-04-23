@@ -1,15 +1,16 @@
-import React from "react";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import React from "react";
 
 const StyledButton = styled(Button, {
   name: "PrimaryButton",
   slot: "root",
-})(({ theme, width }) => ({
+})(({ theme, width, height }) => ({
   borderRadius: 24,
   fontSize: theme.typography.pxToRem(14),
   transition: "none",
   width: width,
+  height: height,
 }));
 
 const PrimaryButton = React.forwardRef((props, ref) => {
@@ -26,7 +27,8 @@ const PrimaryButton = React.forwardRef((props, ref) => {
     href,
     buttonElement,
     link,
-    width
+    width,
+    height,
   } = props;
 
   let Component = "button";
@@ -51,6 +53,7 @@ const PrimaryButton = React.forwardRef((props, ref) => {
       href={href}
       to={link}
       width={width}
+      height={height}
     >
       {children}
     </StyledButton>

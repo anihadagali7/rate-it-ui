@@ -1,20 +1,23 @@
-import "./App.css";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserContext from "../src/shared/context/userContext";
+import "./App.css";
+import UserClient from "./client/UserClient";
+import ResponsiveLayout from "./navigation/ResponsiveLayout";
+import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import { StyledEngineProvider, ThemeProvider } from "@mui/material";
-import { theme } from "./styles/Theme";
-import Header from "./components/header/Header";
-import Signup from "./pages/Signup";
 import MediaInfo from "./pages/MediaInfo";
+import Notifications from "./pages/Notifications";
+import Playlist from "./pages/Playlist";
+import Profile from "./pages/Profile";
 import Search from "./pages/Search";
+import Signup from "./pages/Signup";
+import Wishlist from "./pages/Wishlist";
 import Protected from "./shared/Protected";
-import EditProfile from "./pages/EditProfile";
-import UserContext from "../src/shared/context/userContext";
-import { useQuery } from "@tanstack/react-query";
-import UserClient from "./client/UserClient";
+import { theme } from "./styles/Theme";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -46,42 +49,70 @@ const App = React.memo(() => {
           <BrowserRouter>
             {!isLoading && (
               <>
-                <Header displayMenu={true} />
-                <Routes>
-                  <Route exact path="/" element={<Home />}></Route>
-                  <Route
-                    exact
-                    path="/search/:keyword"
-                    element={<Search />}
-                  ></Route>
-                  <Route exact path="/login" element={<Login />}></Route>
-                  <Route exact path="/signup" element={<Signup />}></Route>
-                  <Route
-                    exact
-                    path="/:mediaType/:id"
-                    element={<MediaInfo />}
-                  ></Route>
-                  <Route
-                    exact
-                    path="/profile/:userName"
-                    element={
-                      <Protected>
-                        <Profile />
-                      </Protected>
-                    }
-                  ></Route>
-                  <Route
-                    exact
-                    path="/profile/edit"
-                    element={
-                      <Protected>
-                        <EditProfile />
-                      </Protected>
-                    }
-                  ></Route>
-                  {/*<Route exact path="/playlist" element={<Login />}></Route>*/}
-                  {/*<Route exact path="/wishlist" element={<Login />}></Route>*/}
-                </Routes>
+                {/* <Header displayMenu={true} /> */}
+                <ResponsiveLayout>
+                  <Routes>
+                    <Route exact path="/" element={<Home />}></Route>
+                    <Route exact path="/search" element={<Search />}></Route>
+                    <Route
+                      exact
+                      path="/search/:keyword"
+                      element={<Search />}
+                    ></Route>
+                    <Route exact path="/login" element={<Login />}></Route>
+                    <Route exact path="/signup" element={<Signup />}></Route>
+                    <Route
+                      exact
+                      path="/:mediaType/:id"
+                      element={<MediaInfo />}
+                    ></Route>
+                    <Route
+                      exact
+                      path="/profile/:userName"
+                      element={
+                        <Protected>
+                          <Profile />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/profile/edit"
+                      element={
+                        <Protected>
+                          <EditProfile />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/notifications"
+                      element={
+                        <Protected>
+                          <Notifications />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/playlist/:userName"
+                      element={
+                        <Protected>
+                          <Playlist />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/wishlist/:userName"
+                      element={
+                        <Protected>
+                          <Wishlist />
+                        </Protected>
+                      }
+                    ></Route>
+                  </Routes>
+                </ResponsiveLayout>
               </>
             )}
           </BrowserRouter>

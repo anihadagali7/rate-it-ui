@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
-import ListItem from "@mui/material/ListItem";
-import Stack from "@mui/material/Stack";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Box, Container, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Stack from "@mui/material/Stack";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import React from "react";
+import { Link } from "react-router-dom";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
-import { useQuery } from "@tanstack/react-query";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
-const DisplayWishlistByUser = ({ profileUserName }) => {
+const DisplayWishlistByUser = ({ userName, profileView }) => {
   const { data: wishlistList, isLoading } = useQuery({
-    queryKey: ["getAllWishlistForUser", profileUserName],
-    queryFn: async () =>
-      await WishlistClient.getAllWishlistForUser(profileUserName),
+    queryKey: ["getAllWishlistForUser", userName],
+    queryFn: async () => await WishlistClient.getAllWishlistForUser(userName),
     staleTime: 60000,
+    enabled: !!userName,
     select: ({ data }) => data.data.wishlistList,
   });
 
@@ -35,12 +36,24 @@ const DisplayWishlistByUser = ({ profileUserName }) => {
     }
   };
 
-  const displayWishlist = () => {
-    return (
-      <>
-        {wishlistList &&
-          wishlistList.length > 0 &&
-          wishlistList.map((media) => (
+  let newList = [];
+  if (wishlistList) {
+    if (profileView) {
+      newList = wishlistList.slice(0, 3);
+    } else {
+      newList = wishlistList;
+    }
+  }
+
+  return (
+    <Box>
+      <List component="nav">
+        {isLoading ? (
+          <ProfileWishlistLoading />
+        ) : (
+          newList &&
+          newList.length > 0 &&
+          newList.map((media) => (
             <>
               <ListItem key={media._id}>
                 <Stack direction="row" spacing={2}>
@@ -84,24 +97,27 @@ const DisplayWishlistByUser = ({ profileUserName }) => {
                 </Stack>
               </ListItem>
               <Divider
-                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
+                sx={{
+                  width: "95%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
               />
             </>
-          ))}
-      </>
-    );
-  };
-
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <List component="nav">
-        {isLoading ? <ProfileWishlistLoading /> : displayWishlist()}
+          ))
+        )}
       </List>
+      {profileView && (
+        <Box sx={{ margin: "10px", justifyContent: "center", display: "flex" }}>
+          <PrimaryButton
+            variant="outlined"
+            buttonElement={Link}
+            link={`/wishlist/${userName}`}
+          >
+            See all wishlists
+          </PrimaryButton>
+        </Box>
+      )}
     </Box>
   );
 };

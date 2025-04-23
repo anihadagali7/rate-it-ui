@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
 import SearchResults from "../components/Search/SearchResults";
-import SearchResultsMobile from "../components/Search/SearchResultsMobile";
-import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
-import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
-import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
+import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
+import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
-import { Link, useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 
 const DisplayMediaSearchResults = ({
   searchResults,
@@ -23,20 +21,7 @@ const DisplayMediaSearchResults = ({
 }) => {
   return (
     <>
-      <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-        {loading ? (
-          <SearchResultsMobileLoading />
-        ) : (
-          searchResults.length > 0 && (
-            <SearchResultsMobile
-              results={searchResults}
-              resultType={resultType}
-              handleSearch={handleSearch}
-            />
-          )
-        )}
-      </Box>
-      <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+      <Box>
         {loading ? (
           <SearchResultsDesktopLoading />
         ) : (
@@ -64,7 +49,6 @@ const Search = () => {
   const {
     isLoading,
     mutate: submitSearch,
-    isSuccess,
     data: searchResults,
   } = useMutation({
     mutationFn: async ({ searchType }) => {
@@ -80,6 +64,22 @@ const Search = () => {
 
   const handleSearch = async () => {
     if (searchKeyword.length > 0) {
+      setHasSearched(true);
+      const searchMapping = {
+        0: "movie",
+        1: "tv",
+        2: "book",
+        3: "music",
+        4: "user",
+      };
+      let searchType = searchMapping[searchTabType];
+
+      submitSearch({ searchType });
+    }
+  };
+
+  const onKeyDownSearch = (event) => {
+    if (event.key === "Enter" && searchKeyword.trim()) {
       setHasSearched(true);
       const searchMapping = {
         0: "movie",
@@ -176,10 +176,16 @@ const Search = () => {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        padding: 2,
+        boxSizing: "border-box",
+      }}
+    >
       <Container
-        maxWidth={"sm"}
-        sx={{ marginTop: "50px", marginBottom: "20px" }}
+        maxWidth={"md"}
+        sx={{ marginTop: "20px", marginBottom: "20px" }}
       >
         <Box
           sx={{
@@ -210,6 +216,7 @@ const Search = () => {
                       value={searchKeyword}
                       name="search"
                       onChange={onChangeSearch}
+                      onKeyDown={onKeyDownSearch}
                     />
                   </Grid>
                   <Grid item xs={3} container justifyContent="center">

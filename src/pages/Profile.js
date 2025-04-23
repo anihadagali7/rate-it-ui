@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import UserClient from "../client/UserClient";
-import FriendsModal from "../components/modals/FriendsModal";
-import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
+import FriendsModal from "../components/modals/FriendsModal";
+import DisplayPlaylistByUser from "../components/playlist/DisplayPlaylistByUser";
 import DisplayRatingsByUser from "../components/profile/DisplayRatingsByUser";
-import DisplayWishlistByUser from "../components/profile/DisplayWishlistByUser";
-import DisplayPlaylistByUser from "../components/profile/DisplayPlaylistByUser";
+import DisplayWishlistByUser from "../components/wishlist/DisplayWishlistByUser";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
-import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UserContext from "../shared/context/userContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -140,19 +140,21 @@ const Profile = () => {
       content: <DisplayRatingsByUser profileUserName={profileInfo?.userName} />,
     },
     {
-      value: 1,
       title: "Wishlist",
       content: (
-        <DisplayWishlistByUser profileUserName={profileInfo?.userName} />
+        <DisplayWishlistByUser
+          profileView={true}
+          userName={profileInfo?.userName}
+        />
       ),
     },
     {
-      value: 2,
+      value: 1,
       title: "Playlist",
       content: (
         <DisplayPlaylistByUser
-          profileUserName={profileInfo?.userName}
-          userViewingOwnProfile={userViewingOwnProfile}
+          userName={profileInfo?.userName}
+          profileView={true}
         />
       ),
     },
@@ -162,7 +164,7 @@ const Profile = () => {
     <Box>
       <Container
         maxWidth={"sm"}
-        sx={{ marginTop: "50px", marginBottom: "25px" }}
+        sx={{ marginTop: "25px", marginBottom: "25px" }}
       >
         <Paper
           elevation={6}
@@ -214,7 +216,7 @@ const Profile = () => {
                 @{profileInfo?.userName}
               </Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={2} sx={{ marginRight: "12px" }}>
               <span
                 style={{
                   fontSize: "13px",
