@@ -1,33 +1,24 @@
 import {
-  ArrowBack,
-  ArrowForward,
-  Book,
-  History,
-  Movie,
-  MusicNote,
-  TrendingUp,
-  Tv,
+    ArrowBack,
+    ArrowForward,
+    Book,
+    Movie,
+    MusicNote,
+    Tv
 } from "@mui/icons-material";
 import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Chip,
-  CircularProgress,
-  Container,
-  Divider,
-  IconButton,
-  Paper,
-  Rating,
-  Typography,
-  useMediaQuery,
+    Box,
+    CircularProgress,
+    Container,
+    Divider,
+    IconButton,
+    Typography,
+    useMediaQuery
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
+import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 
-// Sample search results for demonstration
 const sampleResults = {
   movies: [
     {
@@ -179,16 +170,11 @@ const sampleResults = {
   ],
 };
 
-const UpdatedSearchResults = ({
-  searchResults,
-  loading,
-  searchQuery,
-}) => {
+const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Carousel scrolling logic
   const scrollCarousel = (categoryId, direction) => {
     const carousel = document.getElementById(categoryId);
     const scrollAmount =
@@ -198,7 +184,6 @@ const UpdatedSearchResults = ({
     carousel.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
-  // Media category definition with their respective icons
   const categories = [
     {
       id: "movies",
@@ -221,71 +206,19 @@ const UpdatedSearchResults = ({
     },
   ];
 
-  console.log("categories ", categories);
-
-  // Find categories with results
   const categoriesWithResults = categories.filter(
     (category) => category?.data?.length > 0
   );
 
   return (
-    <Container maxWidth="xl" className="bg-gray-50 py-4 min-h-screen">
-      {/* Search Header */}
-      <Paper elevation={1} className="p-4 mb-4">
-        {/* Recent & Trending Chips - Optional */}
-        <Box className="flex gap-2 mt-3 overflow-x-auto pb-1">
-          <Chip
-            icon={<History />}
-            label="Recent Searches"
-            onClick={() => {}}
-            color="primary"
-            variant="outlined"
-          />
-          <Chip
-            icon={<TrendingUp />}
-            label="Trending"
-            onClick={() => {}}
-            variant="outlined"
-          />
-          <Chip
-            icon={<Movie />}
-            label="Movies"
-            onClick={() => {}}
-            variant="outlined"
-          />
-          <Chip
-            icon={<Tv />}
-            label="TV Shows"
-            onClick={() => {}}
-            variant="outlined"
-          />
-          <Chip
-            icon={<Book />}
-            label="Books"
-            onClick={() => {}}
-            variant="outlined"
-          />
-          <Chip
-            icon={<MusicNote />}
-            label="Music"
-            onClick={() => {}}
-            variant="outlined"
-          />
-        </Box>
-      </Paper>
-
-      {/* Search Results Count */}
-      <Box className="mb-4 px-2">
-        <Typography variant="h5" className="font-medium">
-          Results for "{searchQuery}"
-        </Typography>
+    <Container maxWidth="xl" className="py-4 min-h-screen">
+      <Box>
         <Typography variant="body2" color="textSecondary">
           Found {categories.reduce((acc, cat) => acc + cat.data.length, 0)}{" "}
           items across {categoriesWithResults.length} categories
         </Typography>
       </Box>
 
-      {/* Results by Category - Carousel Layout */}
       {loading ? (
         <Box className="flex justify-center items-center py-12">
           <CircularProgress />
@@ -294,7 +227,6 @@ const UpdatedSearchResults = ({
         <Box>
           {categoriesWithResults.map((category) => (
             <Box key={category.id} className="mb-8">
-              {/* Category Header */}
               <Box className="flex justify-between items-center mb-2 px-2">
                 <Box className="flex items-center">
                   {category.icon}
@@ -310,7 +242,6 @@ const UpdatedSearchResults = ({
                   </Typography>
                 </Box>
 
-                {/* Carousel Navigation Buttons - Desktop/Tablet only */}
                 {!isMobile && category.data.length > (isTablet ? 3 : 4) && (
                   <Box>
                     <IconButton
@@ -329,7 +260,6 @@ const UpdatedSearchResults = ({
                 )}
               </Box>
 
-              {/* Carousel */}
               <Box
                 id={category.id}
                 className="flex overflow-x-auto pb-4 gap-3 pl-2"
@@ -340,7 +270,7 @@ const UpdatedSearchResults = ({
                 }}
               >
                 {category.data.map((item) => (
-                  <Card
+                  <Box
                     key={item.id}
                     elevation={1}
                     sx={{
@@ -349,44 +279,23 @@ const UpdatedSearchResults = ({
                       scrollSnapAlign: "start",
                     }}
                   >
-                    <CardActionArea>
-                      <CardMedia
-                        component="img"
-                        image={item.image}
-                        alt={item.title}
-                        height={category.id === "music" ? 150 : 225}
-                        sx={{ objectFit: "cover" }}
-                      />
-                      <CardContent className="p-3">
-                        <Typography
-                          variant="subtitle2"
-                          noWrap
-                          className="font-medium"
-                        >
-                          {item.title}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color="textSecondary"
-                          display="block"
-                          noWrap
-                        >
-                          {item.artist || item.author || item.year}
-                        </Typography>
-                        <Box className="flex items-center mt-1">
-                          <Rating
-                            value={(item.rating / 5) * 5}
-                            precision={0.5}
-                            size="small"
-                            readOnly
-                          />
-                          <Typography variant="caption" className="ml-1">
-                            {item.rating}
-                          </Typography>
-                        </Box>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
+                    <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                      <div
+                        class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
+                        style={{
+                          backgroundImage: `url(${
+                            item.poster ? item.poster : NotFoundImage
+                          })`,
+                        }}
+                      ></div>
+
+                      <div class="w-56 max-w-full -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800 h-16 flex items-center justify-center px-2">
+                        <h3 class="text-sm font-bold text-center text-gray-800 uppercase dark:text-white line-clamp-2 leading-tight">
+                          {item.name}
+                        </h3>
+                      </div>
+                    </div>
+                  </Box>
                 ))}
               </Box>
 
@@ -396,7 +305,6 @@ const UpdatedSearchResults = ({
         </Box>
       )}
 
-      {/* No Results */}
       {!loading && categoriesWithResults.length === 0 && (
         <Box className="flex flex-col items-center justify-center py-12">
           <Typography variant="h6">No results found</Typography>
