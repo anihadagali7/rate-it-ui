@@ -1,176 +1,18 @@
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import {
-    ArrowBack,
-    ArrowForward,
-    Book,
-    Movie,
-    MusicNote,
-    Tv
-} from "@mui/icons-material";
-import {
-    Box,
-    CircularProgress,
-    Container,
-    Divider,
-    IconButton,
-    Typography,
-    useMediaQuery
+  Box,
+  CircularProgress,
+  Container,
+  Divider,
+  IconButton,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 
-const sampleResults = {
-  movies: [
-    {
-      id: 1,
-      title: "Inception",
-      year: 2010,
-      rating: 4.5,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 2,
-      title: "The Shawshank Redemption",
-      year: 1994,
-      rating: 4.8,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 3,
-      title: "The Dark Knight",
-      year: 2008,
-      rating: 4.7,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 4,
-      title: "Pulp Fiction",
-      year: 1994,
-      rating: 4.6,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 5,
-      title: "Fight Club",
-      year: 1999,
-      rating: 4.4,
-      image: "/api/placeholder/150/225",
-    },
-  ],
-  tvShows: [
-    {
-      id: 1,
-      title: "Breaking Bad",
-      year: "2008-2013",
-      rating: 4.9,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 2,
-      title: "Game of Thrones",
-      year: "2011-2019",
-      rating: 4.7,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 3,
-      title: "The Wire",
-      year: "2002-2008",
-      rating: 4.8,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 4,
-      title: "Stranger Things",
-      year: "2016-Present",
-      rating: 4.5,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 5,
-      title: "The Office",
-      year: "2005-2013",
-      rating: 4.6,
-      image: "/api/placeholder/150/225",
-    },
-  ],
-  books: [
-    {
-      id: 1,
-      title: "1984",
-      author: "George Orwell",
-      rating: 4.6,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 2,
-      title: "To Kill a Mockingbird",
-      author: "Harper Lee",
-      rating: 4.8,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 3,
-      title: "The Great Gatsby",
-      author: "F. Scott Fitzgerald",
-      rating: 4.3,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 4,
-      title: "Pride and Prejudice",
-      author: "Jane Austen",
-      rating: 4.5,
-      image: "/api/placeholder/150/225",
-    },
-    {
-      id: 5,
-      title: "The Catcher in the Rye",
-      author: "J.D. Salinger",
-      rating: 4.1,
-      image: "/api/placeholder/150/225",
-    },
-  ],
-  music: [
-    {
-      id: 1,
-      title: "Bohemian Rhapsody",
-      artist: "Queen",
-      rating: 4.9,
-      image: "/api/placeholder/150/150",
-    },
-    {
-      id: 2,
-      title: "Thriller",
-      artist: "Michael Jackson",
-      rating: 4.8,
-      image: "/api/placeholder/150/150",
-    },
-    {
-      id: 3,
-      title: "Stairway to Heaven",
-      artist: "Led Zeppelin",
-      rating: 4.7,
-      image: "/api/placeholder/150/150",
-    },
-    {
-      id: 4,
-      title: "Imagine",
-      artist: "John Lennon",
-      rating: 4.6,
-      image: "/api/placeholder/150/150",
-    },
-    {
-      id: 5,
-      title: "Smells Like Teen Spirit",
-      artist: "Nirvana",
-      rating: 4.5,
-      image: "/api/placeholder/150/150",
-    },
-  ],
-};
-
-const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
+const UpdatedSearchResults = ({ searchResults, loading }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
@@ -188,20 +30,17 @@ const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
     {
       id: "movies",
       title: "Movies",
-      icon: <Movie />,
       data: searchResults?.movie,
     },
     {
       id: "tvShows",
       title: "TV Shows",
-      icon: <Tv />,
       data: searchResults?.tv,
     },
-    { id: "books", title: "Books", icon: <Book />, data: searchResults?.book },
+    { id: "books", title: "Books", data: searchResults?.book },
     {
       id: "music",
       title: "Music",
-      icon: <MusicNote />,
       data: searchResults?.music,
     },
   ];
@@ -212,7 +51,7 @@ const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
 
   return (
     <Container maxWidth="xl" className="py-4 min-h-screen">
-      <Box>
+      <Box sx={{ marginBottom: "10px" }}>
         <Typography variant="body2" color="textSecondary">
           Found {categories.reduce((acc, cat) => acc + cat.data.length, 0)}{" "}
           items across {categoriesWithResults.length} categories
@@ -227,10 +66,9 @@ const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
         <Box>
           {categoriesWithResults.map((category) => (
             <Box key={category.id} className="mb-8">
-              <Box className="flex justify-between items-center mb-2 px-2">
+              <Box className="flex justify-between items-center mb-2">
                 <Box className="flex items-center">
-                  {category.icon}
-                  <Typography variant="h6" className="ml-2 font-medium">
+                  <Typography variant="h6" className=" font-medium">
                     {category.title}
                   </Typography>
                   <Typography
@@ -258,6 +96,8 @@ const UpdatedSearchResults = ({ searchResults, loading, searchQuery }) => {
                     </IconButton>
                   </Box>
                 )}
+
+                <Typography>View All</Typography>
               </Box>
 
               <Box

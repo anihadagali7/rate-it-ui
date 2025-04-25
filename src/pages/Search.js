@@ -6,47 +6,14 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
-import SearchResults from "../components/Search/SearchResults";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
-import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
-import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
-import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
-import PrimaryTabs from "../shared/tabs/PrimaryTabs";
 import UpdatedSearchResults from "../components/Search/UpdateSearchResults";
-import loading from "daisyui/components/loading";
-
-const DisplayMediaSearchResults = ({
-  searchResults,
-  resultType,
-  loading,
-  handleSearch,
-}) => {
-  return (
-    <>
-      <Box>
-        {loading ? (
-          <SearchResultsDesktopLoading />
-        ) : (
-          searchResults.length > 0 && (
-            <SearchResults
-              results={searchResults}
-              resultType={resultType}
-              handleSearch={handleSearch}
-            />
-          )
-        )}
-      </Box>
-    </>
-  );
-};
+import PrimaryButton from "../shared/buttons/PrimaryButton";
+import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 
 const Search = () => {
   const { keyword } = useParams();
   const [searchKeyword, setSearchKeyword] = useState(keyword || "");
-  const [searchTabType, setSearchTabType] = useState(0);
-  const [resultType, setResultType] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
   const {
     isLoading,
@@ -54,9 +21,8 @@ const Search = () => {
     mutate: submitSearch,
     data: searchResults,
   } = useMutation({
-    mutationFn: async ({ searchType }) => {
+    mutationFn: async () => {
       const response = await SearchClient.searchAllMedia(searchKeyword);
-      setResultType(response.data.mediaType);
       return response.data.data.fullSearchList;
     },
     onSuccess: () => {},
@@ -65,110 +31,26 @@ const Search = () => {
   const handleSearch = async () => {
     if (searchKeyword.length > 0) {
       setHasSearched(true);
-      const searchMapping = {
-        0: "movie",
-        1: "tv",
-        2: "book",
-        3: "music",
-        4: "user",
-      };
-      let searchType = searchMapping[searchTabType];
-
-      submitSearch({ searchType });
+      submitSearch();
     }
   };
 
   const onKeyDownSearch = (event) => {
     if (event.key === "Enter" && searchKeyword.trim()) {
       setHasSearched(true);
-      const searchMapping = {
-        0: "movie",
-        1: "tv",
-        2: "book",
-        3: "music",
-        4: "user",
-      };
-      let searchType = searchMapping[searchTabType];
-
-      submitSearch({ searchType });
+      submitSearch();
     }
   };
 
-  const tabItems = [
-    {
-      title: "Movies",
-      value: 0,
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 1,
-      title: "TV Shows",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 2,
-      title: "Books",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      title: "Music",
-      value: 3,
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 4,
-      title: "Users",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-          handleSearch={handleSearch}
-        />
-      ),
-    },
-  ];
-
   useEffect(() => {
     handleSearch();
-  }, [searchTabType]);
+  }, []);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
     if (event.target.value === "") {
-      setResultType("");
       setHasSearched(false);
     }
-  };
-
-  const resetSearch = () => {
-    setSearchKeyword("");
-    setResultType("");
-    setHasSearched(false);
   };
 
   const checkToDisable = () => {
@@ -183,7 +65,6 @@ const Search = () => {
         boxSizing: "border-box",
       }}
     >
-      {console.log("search results ", searchResults)}
       <Container
         maxWidth={"md"}
         sx={{ marginTop: "20px", marginBottom: "20px" }}
@@ -192,7 +73,6 @@ const Search = () => {
           sx={{
             width: "100%",
             height: hasSearched || isLoading ? "100%" : 85,
-            margin: "auto",
           }}
         >
           <Paper
@@ -201,11 +81,10 @@ const Search = () => {
               width: "100%",
               height: hasSearched || isLoading ? "100%" : 85,
               backgroundColor: "#FFFFFF",
-              margin: "auto",
               borderRadius: "17px",
             }}
           >
-            <div style={{ padding: "0 35px", minHeight: "385px" }}>
+            <div style={{ padding: "0 15px", minHeight: "385px" }}>
               <Box sx={{ paddingTop: "20px" }}>
                 <Grid
                   container
@@ -246,15 +125,6 @@ const Search = () => {
           </Paper>
         </Box>
       </Container>
-      {displayTokenModal && (
-        <LoginErrorModal
-          open={displayTokenModal}
-          onClose={() => {
-            resetSearch();
-            setDisplayTokenModal(false);
-          }}
-        />
-      )}
     </Box>
   );
 };
