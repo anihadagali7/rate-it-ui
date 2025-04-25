@@ -12,6 +12,8 @@ import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
+import UpdatedSearchResults from "../components/Search/UpdateSearchResults";
+import loading from "daisyui/components/loading";
 
 const DisplayMediaSearchResults = ({
   searchResults,
@@ -48,16 +50,14 @@ const Search = () => {
 
   const {
     isLoading,
+    isSuccess,
     mutate: submitSearch,
     data: searchResults,
   } = useMutation({
     mutationFn: async ({ searchType }) => {
-      const response = await SearchClient.searchMedia(
-        searchType,
-        searchKeyword
-      );
+      const response = await SearchClient.searchAllMedia(searchKeyword);
       setResultType(response.data.mediaType);
-      return response.data.data.mediaList;
+      return response.data.data.fullSearchList;
     },
     onSuccess: () => {},
   });
@@ -183,6 +183,7 @@ const Search = () => {
         boxSizing: "border-box",
       }}
     >
+      {console.log("search results ", searchResults)}
       <Container
         maxWidth={"md"}
         sx={{ marginTop: "20px", marginBottom: "20px" }}
@@ -234,14 +235,12 @@ const Search = () => {
                   </Grid>
                 </Grid>
               </Box>
-              {hasSearched && (
-                <Box sx={{ marginTop: "10px" }}>
-                  <PrimaryTabs
-                    tabItems={tabItems}
-                    activeTab={searchTabType}
-                    onTabChange={setSearchTabType}
-                  />
-                </Box>
+              {isSuccess && (
+                <UpdatedSearchResults
+                  searchResults={searchResults}
+                  loading={isLoading}
+                  searchQuery={searchKeyword}
+                />
               )}
             </div>
           </Paper>
