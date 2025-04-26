@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import SearchClient from "../../client/SearchClient";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import IndividualSearchResultsLoading from "../../shared/loading/IndividualSearchResultsLoading";
 
 const IndividualSearchResults = ({
   searchKeyword,
@@ -31,6 +32,7 @@ const IndividualSearchResults = ({
   });
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     submitSearch();
   }, [searchKeyword]);
 
@@ -79,6 +81,7 @@ const IndividualSearchResults = ({
               </ListItem>
             );
           })}
+        {isLoading && <IndividualSearchResultsLoading />}
       </List>
     </Container>
   );
