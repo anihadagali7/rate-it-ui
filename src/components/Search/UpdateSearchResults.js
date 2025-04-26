@@ -15,7 +15,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import { Link } from "react-router-dom";
 
-const UpdatedSearchResults = ({
+const CarouselSearchResults = ({
   searchResults,
   loading,
   setViewAllMedia,
@@ -178,4 +178,4 @@ const UpdatedSearchResults = ({
   );
 };
 
-export default UpdatedSearchResults;
+export default CarouselSearchResults;

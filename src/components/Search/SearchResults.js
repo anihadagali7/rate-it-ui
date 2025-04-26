@@ -9,7 +9,11 @@ import SearchClient from "../../client/SearchClient";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 
-const SearchResults = ({ searchKeyword, viewAllType, setViewAllMedia }) => {
+const IndividualSearchResults = ({
+  searchKeyword,
+  viewAllType,
+  setViewAllMedia,
+}) => {
   const {
     isLoading,
     isSuccess,
@@ -80,4 +84,4 @@ const SearchResults = ({ searchKeyword, viewAllType, setViewAllMedia }) => {
   );
 };
 
-export default SearchResults;
+export default IndividualSearchResults;
