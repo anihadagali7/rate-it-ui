@@ -1,15 +1,19 @@
-import { Container } from "@mui/material";
+import { Container, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import { useTheme } from "@mui/material/styles";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
 import CarouselSearchResults from "../components/Search/CarouselSearchResults";
+import IndividualSearchResults from "../components/Search/IndividualSearchResults";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
-import IndividualSearchResults from "../components/Search/IndividualSearchResults";
+import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
+import { isDesktop } from "react-device-detect";
+import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
 
 const Search = () => {
   const { keyword } = useParams();
@@ -17,6 +21,10 @@ const Search = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [viewAllMedia, setViewAllMedia] = useState(false);
   const [viewAllType, setViewAllType] = useState({ type: "", title: "" });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"))
+  const isDesktop = useMediaQuery(theme.breakpoints.down("lg"));
 
   const {
     isLoading,
@@ -76,14 +84,14 @@ const Search = () => {
         <Box
           sx={{
             width: "100%",
-            height: hasSearched || isLoading ? "100%" : 85,
+            height: hasSearched ? "100%" : 85,
           }}
         >
           <Paper
             elevation={6}
             sx={{
               width: "100%",
-              height: hasSearched || isLoading ? "100%" : 85,
+              height: hasSearched ? "100%" : 85,
               backgroundColor: "#FFFFFF",
               borderRadius: "17px",
             }}
@@ -120,6 +128,8 @@ const Search = () => {
                   </Grid>
                 </Box>
               )}
+              {true && (isTablet || isDesktop) && <SearchResultsDesktopLoading />}
+              {isLoading && isMobile && <SearchResultsMobileLoading />}
               {isSuccess && !viewAllMedia && (
                 <CarouselSearchResults
                   searchResults={searchResults}

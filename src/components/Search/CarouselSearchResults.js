@@ -1,7 +1,6 @@
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import {
   Box,
-  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -70,107 +69,101 @@ const CarouselSearchResults = ({
         </Typography>
       </Box>
 
-      {loading ? (
-        <Box className="flex justify-center items-center py-12">
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Box>
-          {categoriesWithResults.map((category) => (
-            <Box key={category.id} className="mb-8">
-              <Box className="flex justify-between items-center mb-2">
-                <Box className="flex items-center">
-                  <Typography variant="h6" className=" font-medium">
-                    {category.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    className="ml-2"
-                  >
-                    ({category.data.length})
-                  </Typography>
-                </Box>
-
-                <PrimaryButton
-                  variant="text"
-                  rightIcon={<ArrowForwardIcon style={{ color: "#000" }} />}
-                  onClick={() => {
-                    setViewAllType({
-                      type: category.id,
-                      title: category.title,
-                    });
-                    setViewAllMedia(true);
-                  }}
+      <Box>
+        {categoriesWithResults.map((category) => (
+          <Box key={category.id} className="mb-8">
+            <Box className="flex justify-between items-center mb-2">
+              <Box className="flex items-center">
+                <Typography variant="h6" className=" font-medium">
+                  {category.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  className="ml-2"
                 >
-                  View All
-                </PrimaryButton>
+                  ({category.data.length})
+                </Typography>
               </Box>
 
-              <Box
-                id={category.id}
-                className="flex overflow-x-auto pb-4 gap-3"
-                sx={{
-                  scrollbarWidth: "none",
-                  "&::-webkit-scrollbar": { display: "none" },
-                  scrollSnapType: "x mandatory",
+              <PrimaryButton
+                variant="text"
+                rightIcon={<ArrowForwardIcon style={{ color: "#000" }} />}
+                onClick={() => {
+                  setViewAllType({
+                    type: category.id,
+                    title: category.title,
+                  });
+                  setViewAllMedia(true);
                 }}
               >
-                {category.data.map((item) => (
-                  <Box
-                    component={Link}
-                    to={`/${category.id}/${item.mediaId}`}
-                    key={item.id}
-                    elevation={1}
-                    sx={{
-                      minWidth: isMobile ? 140 : 170,
-                      maxWidth: isMobile ? 140 : 170,
-                    }}
-                  >
-                    <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
-                      <div
-                        class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
-                        style={{
-                          backgroundImage: `url(${
-                            item.poster ? item.poster : NotFoundImage
-                          })`,
-                        }}
-                      ></div>
-
-                      <div class="w-56 max-w-full -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800 h-16 flex items-center justify-center px-2">
-                        <h3 class="text-sm font-bold text-center text-gray-800 uppercase dark:text-white line-clamp-2 leading-tight">
-                          {item.name}
-                        </h3>
-                      </div>
-                    </div>
-                  </Box>
-                ))}
-              </Box>
-
-              {!isMobile && category.data.length > (isTablet ? 3 : 4) && (
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <IconButton
-                    size="small"
-                    onClick={() => scrollCarousel(category.id, "left")}
-                  >
-                    <ArrowBack />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => scrollCarousel(category.id, "right")}
-                  >
-                    <ArrowForward />
-                  </IconButton>
-                </Box>
-              )}
-
-              <Divider className="mt-2" />
+                View All
+              </PrimaryButton>
             </Box>
-          ))}
-        </Box>
-      )}
 
-      {!loading && categoriesWithResults.length === 0 && (
+            <Box
+              id={category.id}
+              className="flex overflow-x-auto pb-4 gap-3"
+              sx={{
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+                scrollSnapType: "x mandatory",
+              }}
+            >
+              {category.data.map((item) => (
+                <Box
+                  component={Link}
+                  to={`/${category.id}/${item.mediaId}`}
+                  key={item.id}
+                  elevation={1}
+                  sx={{
+                    minWidth: isMobile ? 140 : 170,
+                    maxWidth: isMobile ? 140 : 170,
+                  }}
+                >
+                  <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                    <div
+                      class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
+                      style={{
+                        backgroundImage: `url(${
+                          item.poster ? item.poster : NotFoundImage
+                        })`,
+                      }}
+                    ></div>
+
+                    <div class="w-56 max-w-full -mt-10 overflow-hidden rounded-lg shadow-lg md:w-64 bg-gray-800 h-16 flex items-center justify-center px-2">
+                      <h3 class="text-sm font-bold text-center uppercase text-white line-clamp-2 leading-tight">
+                        {item.name}
+                      </h3>
+                    </div>
+                  </div>
+                </Box>
+              ))}
+            </Box>
+
+            {!isMobile && category.data.length > (isTablet ? 3 : 4) && (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <IconButton
+                  size="small"
+                  onClick={() => scrollCarousel(category.id, "left")}
+                >
+                  <ArrowBack />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => scrollCarousel(category.id, "right")}
+                >
+                  <ArrowForward />
+                </IconButton>
+              </Box>
+            )}
+
+            <Divider className="mt-2" />
+          </Box>
+        ))}
+      </Box>
+
+      {categoriesWithResults.length === 0 && (
         <Box className="flex flex-col items-center justify-center py-12">
           <Typography variant="h6">No results found</Typography>
           <Typography variant="body2" color="textSecondary" className="mt-1">
