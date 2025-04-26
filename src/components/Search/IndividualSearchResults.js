@@ -2,8 +2,8 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Container, Typography } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { useMutation } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import SearchClient from "../../client/SearchClient";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
@@ -15,26 +15,69 @@ const IndividualSearchResults = ({
   viewAllType,
   setViewAllMedia,
 }) => {
+  const loadMoreRef = useRef(null);
+
   const {
+    data: searchResults,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
     isSuccess,
-    mutate: submitSearch,
-    data: searchResults,
-  } = useMutation({
-    mutationFn: async () => {
+  } = useInfiniteQuery(
+    ["searchMedia", viewAllType.type, searchKeyword],
+    async ({ pageParam = 1 }) => {
       const response = await SearchClient.searchMedia(
         viewAllType.type,
-        searchKeyword
+        searchKeyword,
+        pageParam
       );
-      return response.data.data.mediaList;
+      console.log("response ", response);
+      return {
+        data: response.data.data.mediaList,
+        currentPage: pageParam,
+        totalPages: response.data.data.totalPages,
+      };
     },
-    staleTime: 60000,
-  });
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage.currentPage < lastPage.totalPages) {
+          return lastPage.currentPage + 1;
+        }
+        return undefined;
+      },
+      staleTime: 60000,
+      enabled: !!searchKeyword,
+    }
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    submitSearch();
-  }, [searchKeyword]);
+  }, []);
+
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      {
+        rootMargin: "500px",
+        threshold: 0,
+      }
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [fetchNextPage, hasNextPage]);
+
+  const allItems = searchResults?.pages.flatMap((page) => page.data) ?? [];
 
   return (
     <Container>
@@ -52,10 +95,11 @@ const IndividualSearchResults = ({
         {viewAllType.title}
       </Typography>
       <List>
+        {console.log("allItems in return  ", allItems)}
         {isSuccess &&
-          searchResults &&
-          searchResults.length > 0 &&
-          searchResults.map((row, index) => {
+          allItems &&
+          allItems.length > 0 &&
+          allItems.map((row, index) => {
             return (
               <ListItem
                 component={Link}
@@ -83,6 +127,13 @@ const IndividualSearchResults = ({
           })}
         {isLoading && <IndividualSearchResultsLoading />}
       </List>
+      <div ref={loadMoreRef} className="h-10" />
+
+      {isFetchingNextPage && (
+        <div className="flex justify-center my-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      )}
     </Container>
   );
 };
