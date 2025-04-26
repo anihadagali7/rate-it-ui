@@ -11,6 +11,9 @@ import {
 import { useTheme } from "@mui/material/styles";
 import React from "react";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import { Link } from "react-router-dom";
 
 const UpdatedSearchResults = ({
   searchResults,
@@ -85,7 +88,9 @@ const UpdatedSearchResults = ({
                   </Typography>
                 </Box>
 
-                <Typography
+                <PrimaryButton
+                  variant="text"
+                  rightIcon={<ArrowForwardIcon style={{ color: "#000" }} />}
                   onClick={() => {
                     setViewAllType({
                       type: category.id,
@@ -95,7 +100,7 @@ const UpdatedSearchResults = ({
                   }}
                 >
                   View All
-                </Typography>
+                </PrimaryButton>
               </Box>
 
               <Box
@@ -109,6 +114,8 @@ const UpdatedSearchResults = ({
               >
                 {category.data.map((item) => (
                   <Box
+                    component={Link}
+                    to={`/${category.id}/${item.mediaId}`}
                     key={item.id}
                     elevation={1}
                     sx={{
