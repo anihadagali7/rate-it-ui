@@ -128,7 +128,9 @@ const Search = () => {
                   </Grid>
                 </Box>
               )}
-              {true && (isTablet || isDesktop) && <SearchResultsDesktopLoading />}
+              {isLoading && (isTablet || isDesktop) && (
+                <SearchResultsDesktopLoading />
+              )}
               {isLoading && isMobile && <SearchResultsMobileLoading />}
               {isSuccess && !viewAllMedia && (
                 <CarouselSearchResults

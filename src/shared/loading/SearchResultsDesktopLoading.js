@@ -4,19 +4,9 @@ import React from "react";
 
 const SearchResultsDesktopLoading = () => {
   return (
-    <Box sx={{ margin: "20px 0" }}>
-      <Grid container sx={{ padding: "17px 0" }}>
-        <Grid item xs={4}>
-          <Skeleton
-            sx={{
-              height: 150,
-              width: 100,
-            }}
-            animation="wave"
-            variant="rectangular"
-          />
-        </Grid>
-        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+    <Box sx={{ margin: "40px 0" }}>
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
           <Skeleton
             sx={{
               height: 150,
@@ -30,7 +20,37 @@ const SearchResultsDesktopLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 60,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
             }}
             animation="wave"
             variant="rectangular"
@@ -38,18 +58,8 @@ const SearchResultsDesktopLoading = () => {
         </Grid>
       </Grid>
       <Divider />
-      <Grid container sx={{ padding: "17px 0" }}>
-        <Grid item xs={4}>
-          <Skeleton
-            sx={{
-              height: 150,
-              width: 100,
-            }}
-            animation="wave"
-            variant="rectangular"
-          />
-        </Grid>
-        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
           <Skeleton
             sx={{
               height: 150,
@@ -63,7 +73,37 @@ const SearchResultsDesktopLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 60,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
             }}
             animation="wave"
             variant="rectangular"
@@ -71,18 +111,8 @@ const SearchResultsDesktopLoading = () => {
         </Grid>
       </Grid>
       <Divider />
-      <Grid container sx={{ padding: "17px 0" }}>
-        <Grid item xs={4}>
-          <Skeleton
-            sx={{
-              height: 150,
-              width: 100,
-            }}
-            animation="wave"
-            variant="rectangular"
-          />
-        </Grid>
-        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
           <Skeleton
             sx={{
               height: 150,
@@ -96,7 +126,37 @@ const SearchResultsDesktopLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 60,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
             }}
             animation="wave"
             variant="rectangular"
@@ -104,18 +164,8 @@ const SearchResultsDesktopLoading = () => {
         </Grid>
       </Grid>
       <Divider />
-      <Grid container sx={{ padding: "17px 0" }}>
-        <Grid item xs={4}>
-          <Skeleton
-            sx={{
-              height: 150,
-              width: 100,
-            }}
-            animation="wave"
-            variant="rectangular"
-          />
-        </Grid>
-        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
           <Skeleton
             sx={{
               height: 150,
@@ -129,7 +179,37 @@ const SearchResultsDesktopLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 60,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
             }}
             animation="wave"
             variant="rectangular"

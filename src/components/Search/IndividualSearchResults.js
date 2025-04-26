@@ -62,7 +62,7 @@ const IndividualSearchResults = ({
               >
                 <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
                   <div
-                    class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
+                    class="w-full h-96 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
                     style={{
                       backgroundImage: `url(${
                         row.poster ? row.poster : NotFoundImage
@@ -70,8 +70,8 @@ const IndividualSearchResults = ({
                     }}
                   ></div>
 
-                  <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
-                    <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white">
+                  <div class="w-full max-w-full -mt-10 overflow-hidden rounded-lg shadow-lg md:w-64 bg-gray-800 h-12 flex items-center justify-center px-2">
+                    <h3 class="text-sm font-bold text-center uppercase text-white line-clamp-2 leading-tight">
                       {row.name}
                     </h3>
                   </div>
