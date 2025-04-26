@@ -12,7 +12,6 @@ import IndividualSearchResults from "../components/Search/IndividualSearchResult
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
-import { isDesktop } from "react-device-detect";
 import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
 
 const Search = () => {
@@ -23,8 +22,7 @@ const Search = () => {
   const [viewAllType, setViewAllType] = useState({ type: "", title: "" });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"))
-  const isDesktop = useMediaQuery(theme.breakpoints.down("lg"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const {
     isLoading,
@@ -128,10 +126,8 @@ const Search = () => {
                   </Grid>
                 </Box>
               )}
-              {isLoading && (isTablet || isDesktop) && (
-                <SearchResultsDesktopLoading />
-              )}
-              {isLoading && isMobile && <SearchResultsMobileLoading />}
+              {isDesktop && isLoading && <SearchResultsDesktopLoading />}
+              {isMobile && isLoading && <SearchResultsMobileLoading />}
               {isSuccess && !viewAllMedia && (
                 <CarouselSearchResults
                   searchResults={searchResults}

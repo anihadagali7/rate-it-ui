@@ -5,12 +5,12 @@ import Divider from "@mui/material/Divider";
 const SearchResultsMobileLoading = () => {
   return (
     <Box sx={{ margin: "20px 0" }}>
-      <Grid container sx={{ padding: "17px 0" }}>
+      <Grid container sx={{ padding: "27px 3px" }}>
         <Grid item xs={4}>
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -20,7 +20,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -43,7 +43,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -53,7 +53,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -76,7 +76,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -86,7 +86,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -109,7 +109,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
@@ -119,7 +119,7 @@ const SearchResultsMobileLoading = () => {
           <Skeleton
             sx={{
               height: 150,
-              width: 100,
+              width: 110,
             }}
             animation="wave"
             variant="rectangular"
