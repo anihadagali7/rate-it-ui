@@ -9,11 +9,14 @@ import SearchClient from "../client/SearchClient";
 import UpdatedSearchResults from "../components/Search/UpdateSearchResults";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
+import SearchResults from "../components/Search/SearchResults";
 
 const Search = () => {
   const { keyword } = useParams();
   const [searchKeyword, setSearchKeyword] = useState(keyword || "");
   const [hasSearched, setHasSearched] = useState(false);
+  const [viewAllMedia, setViewAllMedia] = useState(false);
+  const [viewAllType, setViewAllType] = useState({ type: "", title: "" });
 
   const {
     isLoading,
@@ -43,6 +46,7 @@ const Search = () => {
   };
 
   useEffect(() => {
+    setViewAllMedia(false);
     handleSearch();
   }, []);
 
@@ -85,40 +89,51 @@ const Search = () => {
             }}
           >
             <div style={{ padding: "0 15px", minHeight: "385px" }}>
-              <Box sx={{ paddingTop: "20px" }}>
-                <Grid
-                  container
-                  spacing={{ xs: 2, md: 2, xl: 5 }}
-                  columns={{ xs: 12 }}
-                >
-                  <Grid item xs={9}>
-                    <PrimaryInputField
-                      value={searchKeyword}
-                      name="search"
-                      onChange={onChangeSearch}
-                      onKeyDown={onKeyDownSearch}
-                    />
+              {!viewAllMedia && (
+                <Box sx={{ paddingTop: "20px" }}>
+                  <Grid
+                    container
+                    spacing={{ xs: 2, md: 2, xl: 5 }}
+                    columns={{ xs: 12 }}
+                  >
+                    <Grid item xs={9}>
+                      <PrimaryInputField
+                        value={searchKeyword}
+                        name="search"
+                        onChange={onChangeSearch}
+                        onKeyDown={onKeyDownSearch}
+                      />
+                    </Grid>
+                    <Grid item xs={3} container justifyContent="center">
+                      <PrimaryButton
+                        variant="contained"
+                        buttonElement={Link}
+                        link={
+                          searchKeyword.length > 0 && `/search/${searchKeyword}`
+                        }
+                        onClick={() => handleSearch(searchKeyword)}
+                        disabled={checkToDisable()}
+                      >
+                        Search
+                      </PrimaryButton>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={3} container justifyContent="center">
-                    <PrimaryButton
-                      variant="contained"
-                      buttonElement={Link}
-                      link={
-                        searchKeyword.length > 0 && `/search/${searchKeyword}`
-                      }
-                      onClick={() => handleSearch(searchKeyword)}
-                      disabled={checkToDisable()}
-                    >
-                      Search
-                    </PrimaryButton>
-                  </Grid>
-                </Grid>
-              </Box>
-              {isSuccess && (
+                </Box>
+              )}
+              {isSuccess && !viewAllMedia && (
                 <UpdatedSearchResults
                   searchResults={searchResults}
                   loading={isLoading}
                   searchQuery={searchKeyword}
+                  setViewAllMedia={setViewAllMedia}
+                  setViewAllType={setViewAllType}
+                />
+              )}
+              {viewAllMedia && hasSearched && (
+                <SearchResults
+                  searchKeyword={searchKeyword}
+                  viewAllType={viewAllType}
+                  setViewAllMedia={setViewAllMedia}
                 />
               )}
             </div>

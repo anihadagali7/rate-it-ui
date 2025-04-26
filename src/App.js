@@ -49,7 +49,6 @@ const App = React.memo(() => {
           <BrowserRouter>
             {!isLoading && (
               <>
-                {/* <Header displayMenu={true} /> */}
                 <ResponsiveLayout>
                   <Routes>
                     <Route exact path="/" element={<Home />}></Route>

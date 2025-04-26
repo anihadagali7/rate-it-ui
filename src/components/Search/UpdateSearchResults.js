@@ -12,7 +12,12 @@ import { useTheme } from "@mui/material/styles";
 import React from "react";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 
-const UpdatedSearchResults = ({ searchResults, loading }) => {
+const UpdatedSearchResults = ({
+  searchResults,
+  loading,
+  setViewAllMedia,
+  setViewAllType,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
@@ -28,16 +33,16 @@ const UpdatedSearchResults = ({ searchResults, loading }) => {
 
   const categories = [
     {
-      id: "movies",
+      id: "movie",
       title: "Movies",
       data: searchResults?.movie,
     },
     {
-      id: "tvShows",
+      id: "tv",
       title: "TV Shows",
       data: searchResults?.tv,
     },
-    { id: "books", title: "Books", data: searchResults?.book },
+    { id: "book", title: "Books", data: searchResults?.book },
     {
       id: "music",
       title: "Music",
@@ -80,24 +85,17 @@ const UpdatedSearchResults = ({ searchResults, loading }) => {
                   </Typography>
                 </Box>
 
-                {!isMobile && category.data.length > (isTablet ? 3 : 4) && (
-                  <Box>
-                    <IconButton
-                      size="small"
-                      onClick={() => scrollCarousel(category.id, "left")}
-                    >
-                      <ArrowBack />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => scrollCarousel(category.id, "right")}
-                    >
-                      <ArrowForward />
-                    </IconButton>
-                  </Box>
-                )}
-
-                <Typography>View All</Typography>
+                <Typography
+                  onClick={() => {
+                    setViewAllType({
+                      type: category.id,
+                      title: category.title,
+                    });
+                    setViewAllMedia(true);
+                  }}
+                >
+                  View All
+                </Typography>
               </Box>
 
               <Box
@@ -116,7 +114,6 @@ const UpdatedSearchResults = ({ searchResults, loading }) => {
                     sx={{
                       minWidth: isMobile ? 140 : 170,
                       maxWidth: isMobile ? 140 : 170,
-                      scrollSnapAlign: "start",
                     }}
                   >
                     <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
@@ -138,6 +135,23 @@ const UpdatedSearchResults = ({ searchResults, loading }) => {
                   </Box>
                 ))}
               </Box>
+
+              {!isMobile && category.data.length > (isTablet ? 3 : 4) && (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => scrollCarousel(category.id, "left")}
+                  >
+                    <ArrowBack />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => scrollCarousel(category.id, "right")}
+                  >
+                    <ArrowForward />
+                  </IconButton>
+                </Box>
+              )}
 
               <Divider className="mt-2" />
             </Box>
