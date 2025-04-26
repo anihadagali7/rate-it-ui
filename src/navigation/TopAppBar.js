@@ -2,79 +2,26 @@ import { Logout } from "@mui/icons-material";
 import LoginIcon from "@mui/icons-material/Login";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AppBar,
   Box,
   IconButton,
-  InputBase,
   ListItemIcon,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
+  Typography
 } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
+import { Link, useLocation } from "react-router-dom";
 import UserContext from "../shared/context/userContext";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.grey[200], 1),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.grey[300], 1),
-  },
-  marginLeft: theme.spacing(1),
-  width: "66%",
-  [theme.breakpoints.up("sm")]: {
-    width: "200px", // smaller width
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: theme.palette.grey[700], // icon color
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: theme.palette.grey[800],
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
 
 const TopAppBar = () => {
-  const [searchKeyword, setSearchKeyword] = useState("");
   const { currentUser, setCurrentUser } = useContext(UserContext);
-  const navigate = useNavigate();
   const [userMenu, setUserMenu] = useState(null);
   const location = useLocation();
-
-  const onChangeSearch = (event) => {
-    setSearchKeyword(event.target.value);
-  };
-
-  const handleSearch = (event) => {
-    if (event.key === "Enter" && searchKeyword.trim()) {
-      navigate(`/search/${searchKeyword.trim()}`);
-    }
-  };
 
   const logoutUser = () => {
     setCurrentUser(null);
@@ -108,31 +55,13 @@ const TopAppBar = () => {
             }}
           >
             {currentUser && (
-              <>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ "aria-label": "search" }}
-                    value={searchKeyword}
-                    onChange={onChangeSearch}
-                    onKeyDown={handleSearch}
-                  />
-                </Search>
-                <IconButton
-                  component={Link}
-                  to="/notifications"
-                  color="primary"
-                >
-                  {location.pathname === "/notifications" ? (
-                    <NotificationsIcon />
-                  ) : (
-                    <NotificationsNoneOutlinedIcon />
-                  )}
-                </IconButton>
-              </>
+              <IconButton component={Link} to="/notifications" color="primary">
+                {location.pathname === "/notifications" ? (
+                  <NotificationsIcon />
+                ) : (
+                  <NotificationsNoneOutlinedIcon />
+                )}
+              </IconButton>
             )}
             <Box>
               <IconButton onClick={handleOpenUserMenu} color="primary">

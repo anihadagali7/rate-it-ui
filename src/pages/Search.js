@@ -6,10 +6,10 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
-import CarouselSearchResults from "../components/Search/UpdateSearchResults";
+import CarouselSearchResults from "../components/Search/CarouselSearchResults";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
-import IndividualSearchResults from "../components/Search/SearchResults";
+import IndividualSearchResults from "../components/Search/IndividualSearchResults";
 
 const Search = () => {
   const { keyword } = useParams();

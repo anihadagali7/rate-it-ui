@@ -58,7 +58,11 @@ const CarouselSearchResults = ({
   );
 
   return (
-    <Container maxWidth="xl" className="py-4 min-h-screen">
+    <Container
+      maxWidth="xl"
+      className="py-4 min-h-screen"
+      sx={{ padding: "1rem 0" }}
+    >
       <Box sx={{ marginBottom: "10px" }}>
         <Typography variant="body2" color="textSecondary">
           Found {categories.reduce((acc, cat) => acc + cat.data.length, 0)}{" "}
@@ -105,7 +109,7 @@ const CarouselSearchResults = ({
 
               <Box
                 id={category.id}
-                className="flex overflow-x-auto pb-4 gap-3 pl-2"
+                className="flex overflow-x-auto pb-4 gap-3"
                 sx={{
                   scrollbarWidth: "none",
                   "&::-webkit-scrollbar": { display: "none" },

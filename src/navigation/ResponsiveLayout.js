@@ -1,20 +1,22 @@
 import {
-    AccountCircle,
-    Home,
-    PlaylistPlay as PlaylistIcon
+  AccountCircle,
+  Home,
+  PlaylistPlay as PlaylistIcon,
+  Search,
+  Search as SearchIcon,
 } from "@mui/icons-material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import {
-    BottomNavigation,
-    BottomNavigationAction,
-    Box,
-    CssBaseline,
-    Drawer,
-    Toolbar,
-    useMediaQuery,
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  CssBaseline,
+  Drawer,
+  Toolbar,
+  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useContext } from "react";
@@ -38,6 +40,12 @@ const ResponsiveLayout = ({ children }) => {
       alternateIcon: <Home />,
       icon: <HomeOutlinedIcon />,
       path: "/",
+    },
+    {
+      label: "Search",
+      icon: <SearchIcon />,
+      alternateIcon: <SearchIcon />,
+      path: `/search`,
     },
     {
       label: "Playlists",
