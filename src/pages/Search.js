@@ -1,63 +1,38 @@
-import { Container } from "@mui/material";
+import { Container, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import { useTheme } from "@mui/material/styles";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchClient from "../client/SearchClient";
-import SearchResults from "../components/Search/SearchResults";
+import CarouselSearchResults from "../components/Search/CarouselSearchResults";
+import IndividualSearchResults from "../components/Search/IndividualSearchResults";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
-import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
-import PrimaryTabs from "../shared/tabs/PrimaryTabs";
-
-const DisplayMediaSearchResults = ({
-  searchResults,
-  resultType,
-  loading,
-  handleSearch,
-}) => {
-  return (
-    <>
-      <Box>
-        {loading ? (
-          <SearchResultsDesktopLoading />
-        ) : (
-          searchResults.length > 0 && (
-            <SearchResults
-              results={searchResults}
-              resultType={resultType}
-              handleSearch={handleSearch}
-            />
-          )
-        )}
-      </Box>
-    </>
-  );
-};
+import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
 
 const Search = () => {
   const { keyword } = useParams();
   const [searchKeyword, setSearchKeyword] = useState(keyword || "");
-  const [searchTabType, setSearchTabType] = useState(0);
-  const [resultType, setResultType] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
+  const [viewAllMedia, setViewAllMedia] = useState(false);
+  const [viewAllType, setViewAllType] = useState({ type: "", title: "" });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const {
     isLoading,
+    isSuccess,
     mutate: submitSearch,
     data: searchResults,
   } = useMutation({
-    mutationFn: async ({ searchType }) => {
-      const response = await SearchClient.searchMedia(
-        searchType,
-        searchKeyword
-      );
-      setResultType(response.data.mediaType);
-      return response.data.data.mediaList;
+    mutationFn: async () => {
+      const response = await SearchClient.searchAllMedia(searchKeyword);
+      return response.data.data.fullSearchList;
     },
     onSuccess: () => {},
   });
@@ -65,110 +40,27 @@ const Search = () => {
   const handleSearch = async () => {
     if (searchKeyword.length > 0) {
       setHasSearched(true);
-      const searchMapping = {
-        0: "movie",
-        1: "tv",
-        2: "book",
-        3: "music",
-        4: "user",
-      };
-      let searchType = searchMapping[searchTabType];
-
-      submitSearch({ searchType });
+      submitSearch();
     }
   };
 
   const onKeyDownSearch = (event) => {
     if (event.key === "Enter" && searchKeyword.trim()) {
       setHasSearched(true);
-      const searchMapping = {
-        0: "movie",
-        1: "tv",
-        2: "book",
-        3: "music",
-        4: "user",
-      };
-      let searchType = searchMapping[searchTabType];
-
-      submitSearch({ searchType });
+      submitSearch();
     }
   };
 
-  const tabItems = [
-    {
-      title: "Movies",
-      value: 0,
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 1,
-      title: "TV Shows",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 2,
-      title: "Books",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      title: "Music",
-      value: 3,
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-        />
-      ),
-    },
-    {
-      value: 4,
-      title: "Users",
-      content: (
-        <DisplayMediaSearchResults
-          searchResults={searchResults}
-          loading={isLoading}
-          resultType={resultType}
-          handleSearch={handleSearch}
-        />
-      ),
-    },
-  ];
-
   useEffect(() => {
+    setViewAllMedia(false);
     handleSearch();
-  }, [searchTabType]);
+  }, []);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
     if (event.target.value === "") {
-      setResultType("");
       setHasSearched(false);
     }
-  };
-
-  const resetSearch = () => {
-    setSearchKeyword("");
-    setResultType("");
-    setHasSearched(false);
   };
 
   const checkToDisable = () => {
@@ -190,72 +82,72 @@ const Search = () => {
         <Box
           sx={{
             width: "100%",
-            height: hasSearched || isLoading ? "100%" : 85,
-            margin: "auto",
+            height: hasSearched ? "100%" : 85,
           }}
         >
           <Paper
             elevation={6}
             sx={{
               width: "100%",
-              height: hasSearched || isLoading ? "100%" : 85,
+              height: hasSearched ? "100%" : 85,
               backgroundColor: "#FFFFFF",
-              margin: "auto",
               borderRadius: "17px",
             }}
           >
-            <div style={{ padding: "0 35px", minHeight: "385px" }}>
-              <Box sx={{ paddingTop: "20px" }}>
-                <Grid
-                  container
-                  spacing={{ xs: 2, md: 2, xl: 5 }}
-                  columns={{ xs: 12 }}
-                >
-                  <Grid item xs={9}>
-                    <PrimaryInputField
-                      value={searchKeyword}
-                      name="search"
-                      onChange={onChangeSearch}
-                      onKeyDown={onKeyDownSearch}
-                    />
+            <div style={{ padding: "0 15px", minHeight: "385px" }}>
+              {!viewAllMedia && (
+                <Box sx={{ paddingTop: "20px" }}>
+                  <Grid
+                    container
+                    spacing={{ xs: 2, md: 2, xl: 5 }}
+                    columns={{ xs: 12 }}
+                  >
+                    <Grid item xs={9}>
+                      <PrimaryInputField
+                        value={searchKeyword}
+                        name="search"
+                        onChange={onChangeSearch}
+                        onKeyDown={onKeyDownSearch}
+                      />
+                    </Grid>
+                    <Grid item xs={3} container justifyContent="center">
+                      <PrimaryButton
+                        variant="contained"
+                        buttonElement={Link}
+                        link={
+                          searchKeyword.length > 0 && `/search/${searchKeyword}`
+                        }
+                        onClick={() => handleSearch(searchKeyword)}
+                        disabled={checkToDisable()}
+                      >
+                        Search
+                      </PrimaryButton>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={3} container justifyContent="center">
-                    <PrimaryButton
-                      variant="contained"
-                      buttonElement={Link}
-                      link={
-                        searchKeyword.length > 0 && `/search/${searchKeyword}`
-                      }
-                      onClick={() => handleSearch(searchKeyword)}
-                      disabled={checkToDisable()}
-                    >
-                      Search
-                    </PrimaryButton>
-                  </Grid>
-                </Grid>
-              </Box>
-              {hasSearched && (
-                <Box sx={{ marginTop: "10px" }}>
-                  <PrimaryTabs
-                    tabItems={tabItems}
-                    activeTab={searchTabType}
-                    onTabChange={setSearchTabType}
-                  />
                 </Box>
+              )}
+              {isDesktop && isLoading && <SearchResultsDesktopLoading />}
+              {isMobile && isLoading && <SearchResultsMobileLoading />}
+              {isSuccess && !viewAllMedia && (
+                <CarouselSearchResults
+                  searchResults={searchResults}
+                  loading={isLoading}
+                  searchQuery={searchKeyword}
+                  setViewAllMedia={setViewAllMedia}
+                  setViewAllType={setViewAllType}
+                />
+              )}
+              {viewAllMedia && hasSearched && (
+                <IndividualSearchResults
+                  searchKeyword={searchKeyword}
+                  viewAllType={viewAllType}
+                  setViewAllMedia={setViewAllMedia}
+                />
               )}
             </div>
           </Paper>
         </Box>
       </Container>
-      {displayTokenModal && (
-        <LoginErrorModal
-          open={displayTokenModal}
-          onClose={() => {
-            resetSearch();
-            setDisplayTokenModal(false);
-          }}
-        />
-      )}
     </Box>
   );
 };

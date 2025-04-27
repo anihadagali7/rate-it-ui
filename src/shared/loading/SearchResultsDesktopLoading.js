@@ -1,62 +1,224 @@
-import React from "react";
-import { Card, Grid, Skeleton } from "@mui/material";
+import { Box, Grid, Skeleton } from "@mui/material";
 import Divider from "@mui/material/Divider";
+import React from "react";
 
 const SearchResultsDesktopLoading = () => {
   return (
-      <Card sx={{ "&.MuiCard-root": { width: '100%' }, "&.MuiPaper-root": { width: '100%' }, marginTop: '30px' }}>
-        <Grid container>
-          <Grid item xs={4}>
-            <Skeleton sx={{ height: 150, width: 100, marginLeft: '20px', marginTop: '17px' }} animation="wave" variant="rectangular" />
-          </Grid>
-          <Grid item xs={8}>
-            <Skeleton animation="wave" height={20} width="40%" sx={{marginTop: '13px'}}/>
-            <Skeleton animation="wave" height={160} width="70%"  />
-          </Grid>
+    <Box sx={{ margin: "40px 0" }}>
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
         </Grid>
-        <Divider />
-        <Grid container>
-          <Grid item xs={4}>
-            <Skeleton sx={{ height: 150, width: 100, marginLeft: '20px', marginTop: '17px' }} animation="wave" variant="rectangular" />
-          </Grid>
-          <Grid item xs={8}>
-            <Skeleton animation="wave" height={20} width="40%" sx={{marginTop: '13px'}}/>
-            <Skeleton animation="wave" height={160} width="70%"  />
-          </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
         </Grid>
-        <Divider />
-        <Grid container>
-          <Grid item xs={4}>
-            <Skeleton sx={{ height: 150, width: 100, marginLeft: '20px', marginTop: '17px' }} animation="wave" variant="rectangular" />
-          </Grid>
-          <Grid item xs={8}>
-            <Skeleton animation="wave" height={20} width="40%" sx={{marginTop: '13px'}}/>
-            <Skeleton animation="wave" height={160} width="70%"  />
-          </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
         </Grid>
-        <Divider />
-        <Grid container>
-          <Grid item xs={4}>
-            <Skeleton sx={{ height: 150, width: 100, marginLeft: '20px', marginTop: '17px' }} animation="wave" variant="rectangular" />
-          </Grid>
-          <Grid item xs={8}>
-            <Skeleton animation="wave" height={20} width="40%" sx={{marginTop: '13px'}}/>
-            <Skeleton animation="wave" height={160} width="70%"  />
-          </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
         </Grid>
-        <Divider />
-        <Grid container>
-          <Grid item xs={4}>
-            <Skeleton sx={{ height: 150, width: 100, marginLeft: '20px', marginTop: '17px' }} animation="wave" variant="rectangular" />
-          </Grid>
-          <Grid item xs={8}>
-            <Skeleton animation="wave" height={20} width="40%" sx={{marginTop: '13px'}}/>
-            <Skeleton animation="wave" height={160} width="70%"  />
-          </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
         </Grid>
-        <Divider />
-      </Card>
+      </Grid>
+      <Divider />
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+      <Grid container sx={{ padding: "17px" }}>
+        <Grid item xs={2}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 100,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+    </Box>
   );
-}
+};
 
 export default SearchResultsDesktopLoading;

@@ -1,26 +1,143 @@
 import React from "react";
-import { Grid, Skeleton } from "@mui/material";
+import { Box, Grid, Skeleton } from "@mui/material";
+import Divider from "@mui/material/Divider";
 
 const SearchResultsMobileLoading = () => {
   return (
-    <Grid container>
-      <Grid item xs={6} sx={{marginTop: '20px'}}>
-        <Skeleton sx={{ height: 150, width: 125, marginLeft: "10px", marginTop: "17px" }} animation="wave"
-                  variant="rectangular" />
+    <Box sx={{ margin: "20px 0" }}>
+      <Grid container sx={{ padding: "27px 3px" }}>
+        <Grid item xs={4}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 60,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={6} sx={{marginTop: '20px'}}>
-        <Skeleton sx={{ height: 150, width: 125, marginLeft: "20px", marginTop: "17px" }} animation="wave"
-                  variant="rectangular" />
+      <Divider />
+      <Grid container sx={{ padding: "17px 0" }}>
+        <Grid item xs={4}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 60,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={6} sx={{marginTop: '20px'}}>
-        <Skeleton sx={{ height: 150, width: 125, marginLeft: "10px", marginTop: "17px" }} animation="wave"
-                  variant="rectangular" />
+      <Divider />
+      <Grid container sx={{ padding: "17px 0" }}>
+        <Grid item xs={4}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 60,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={6} sx={{marginTop: '20px'}}>
-        <Skeleton sx={{ height: 150, width: 125, marginLeft: "20px", marginTop: "17px" }} animation="wave"
-                  variant="rectangular" />
+      <Divider />
+      <Grid container sx={{ padding: "17px 0" }}>
+        <Grid item xs={4}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={4} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 110,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
+        <Grid item xs={2} sx={{ marginLeft: "20px" }}>
+          <Skeleton
+            sx={{
+              height: 150,
+              width: 60,
+            }}
+            animation="wave"
+            variant="rectangular"
+          />
+        </Grid>
       </Grid>
-    </Grid>
+      <Divider />
+    </Box>
   );
 };
 
