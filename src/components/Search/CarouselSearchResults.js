@@ -62,13 +62,6 @@ const CarouselSearchResults = ({
       className="py-4 min-h-screen"
       sx={{ padding: "1rem 0" }}
     >
-      <Box sx={{ marginBottom: "10px" }}>
-        <Typography variant="body2" color="textSecondary">
-          Found {categories.reduce((acc, cat) => acc + cat.data.length, 0)}{" "}
-          items across {categoriesWithResults.length} categories
-        </Typography>
-      </Box>
-
       <Box>
         {categoriesWithResults.map((category) => (
           <Box key={category.id} className="mb-8">
@@ -76,13 +69,6 @@ const CarouselSearchResults = ({
               <Box className="flex items-center">
                 <Typography variant="h6" className=" font-medium">
                   {category.title}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  className="ml-2"
-                >
-                  ({category.data.length})
                 </Typography>
               </Box>
 

@@ -109,8 +109,8 @@ const ResponsiveLayout = ({ children }) => {
           flexGrow: 1,
           width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
           p: 2,
-          pt: isMobile ? 12 : 3, // Add spacing under top app bar
-          pb: isMobile ? "70px" : 3, // Add padding above bottom nav
+          pt: isMobile ? 12 : 3,
+          pb: isMobile ? "70px" : 3,
           overflowX: "hidden",
           minHeight: "100vh",
         }}
