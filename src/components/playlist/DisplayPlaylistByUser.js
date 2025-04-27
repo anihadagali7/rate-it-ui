@@ -38,7 +38,7 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
         ) : (
           newList &&
           newList.length > 0 &&
-          newList.map((playlist) => (
+          newList.map((playlist, index) => (
             <>
               <ListItem key={playlist._id} sx={{ cursor: "pointer" }}>
                 <Stack direction="row" spacing={2}>
@@ -56,6 +56,7 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
                 </Stack>
               </ListItem>
               <Divider
+                key={index}
                 sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
               />
             </>

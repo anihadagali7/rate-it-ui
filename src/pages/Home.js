@@ -44,6 +44,7 @@ const Home = () => {
           {feedRatingsList.map((rating) => (
             <Paper
               elevation={6}
+              key={rating._id}
               sx={{
                 backgroundColor: "#FFFFFF",
                 borderRadius: "17px",
@@ -70,6 +71,7 @@ const Home = () => {
           {exploreRatingsList.map((rating) => (
             <Paper
               elevation={6}
+              key={rating._id}
               sx={{
                 backgroundColor: "#FFFFFF",
                 borderRadius: "17px",

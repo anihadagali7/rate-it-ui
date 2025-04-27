@@ -9,7 +9,8 @@ import RatingCard from "../ratingcard/RatingCard";
 const DisplayRatingsByUser = ({ profileUserName }) => {
   const { data: ratingsList, isLoading } = useQuery({
     queryKey: ["ratingsForUser", { profileUserName }],
-    queryFn: async () => await RatingClient.getAllRatingsForUser(profileUserName),
+    queryFn: async () =>
+      await RatingClient.getAllRatingsForUser(profileUserName),
     staleTime: 60000,
     enabled: !!profileUserName,
     select: ({ data }) => data.data.ratingsList,
@@ -23,10 +24,11 @@ const DisplayRatingsByUser = ({ profileUserName }) => {
     <Box>
       {ratingsList &&
         ratingsList.length > 0 &&
-        ratingsList.map((rating) => (
+        ratingsList.map((rating, index) => (
           <>
-            <RatingCard rating={rating}/>
+            <RatingCard key={rating._id} rating={rating} />
             <Divider
+              key={index}
               sx={{
                 margin: "20px 5px",
               }}

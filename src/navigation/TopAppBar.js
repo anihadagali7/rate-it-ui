@@ -11,7 +11,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography
+  Typography,
 } from "@mui/material";
 import Slide from "@mui/material/Slide";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
@@ -31,7 +31,7 @@ function HideOnScroll({ children, window }) {
 
 const TopAppBar = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
-  const [userMenu, setUserMenu] = useState(null);
+  const [userMenu, setUserMenu] = useState(false);
   const location = useLocation();
 
   const logoutUser = () => {

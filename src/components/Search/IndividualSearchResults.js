@@ -32,7 +32,6 @@ const IndividualSearchResults = ({
         searchKeyword,
         pageParam
       );
-      console.log("response ", response);
       return {
         data: response.data.data.mediaList,
         currentPage: pageParam,
@@ -95,7 +94,6 @@ const IndividualSearchResults = ({
         {viewAllType.title}
       </Typography>
       <List>
-        {console.log("allItems in return  ", allItems)}
         {isSuccess &&
           allItems &&
           allItems.length > 0 &&
