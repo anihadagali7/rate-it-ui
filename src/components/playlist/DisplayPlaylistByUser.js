@@ -30,6 +30,10 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
     }
   }
 
+  const getPosters = (playlist) => {
+    return [];
+  }
+
   return (
     <Box>
       <List component="nav">
@@ -40,7 +44,12 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
           newList.length > 0 &&
           newList.map((playlist, index) => (
             <>
-              <ListItem key={playlist._id} sx={{ cursor: "pointer" }}>
+              <ListItem
+                key={playlist._id}
+                sx={{ cursor: "pointer" }}
+                component={Link}
+                to={`/playlist/${userName}/${playlist._id}`}
+              >
                 <Stack direction="row" spacing={2}>
                   <>
                     <div>

@@ -93,23 +93,14 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
           };
 
           addMediaToPlaylist(requestBody);
-        } 
+        }
       } catch (error) {
         console.error(
           "Error fetching media info or adding to playlist:",
           error
         );
       }
-    } 
-  };
-
-  const submitSearch = (e) => {
-    e.preventDefault();
-    handleSearch();
-  };
-
-  const checkToDisable = () => {
-    return !searchKeyword;
+    }
   };
 
   return (
@@ -134,34 +125,16 @@ const AddMediaToPlaylistModal = ({ open, onClose, mediaByPlaylist }) => {
       >
         Add Media to {mediaByPlaylist?.playlist?.name}
       </DialogTitle>
-      <Container maxWidth={"sm"} sx={{ margin: "30px 35px" }}>
-        <Box sx={{ width: "100%" }}>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 2, xl: 2 }}
-            columns={{ xs: 12 }}
-            sx={{
-              justifyContent: "space-around",
-              alignItems: "center",
-            }}
-          >
-            <Grid item xs={9}>
-              <PrimaryInputField
-                value={searchKeyword}
-                name="search"
-                onChange={onChangeSearch}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <PrimaryButton
-                variant="contained"
-                disabled={checkToDisable()}
-                onClick={submitSearch}
-              >
-                Search
-              </PrimaryButton>
-            </Grid>
-          </Grid>
+      <Container>
+        <Box>
+          <Box sx={{ padding: "10px 15px" }}>
+            <PrimaryInputField
+              value={searchKeyword}
+              name="search"
+              onChange={onChangeSearch}
+              onKeyDown={() => handleSearch()}
+            />
+          </Box>
           {hasSearched && (
             <div
               style={{
