@@ -28,11 +28,11 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
 
   return (
     <Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ margin: "10px 0" }}>
         {newList &&
           newList.length > 0 &&
           newList.map((playlist, index) => (
-            <Grid item xs={6} sm={6} md={4} lg={4}>
+            <Grid item xs={5} sm={4} md={4} lg={4} sx={{ margin: "10px" }}>
               <PlaylistCard
                 playlist={playlist}
                 userName={userName}

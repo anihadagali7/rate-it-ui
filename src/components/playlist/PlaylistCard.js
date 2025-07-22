@@ -1,11 +1,11 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const PlaylistCard = ({ playlist, userName }) => {
   const posters = playlist.posters.slice(0, 4);
 
   return (
-    <Card
+    <Box
       sx={{ borderRadius: 4, overflow: "hidden", width: 200 }}
       component={Link}
       to={`/playlist/${userName}/${playlist._id}`}
@@ -36,12 +36,12 @@ const PlaylistCard = ({ playlist, userName }) => {
       </div>
 
       {/* Playlist name and button */}
-      <CardContent className="flex flex-col items-center p-2">
+      <Box className="flex flex-col items-center p-2">
         <Typography variant="subtitle1" className="text-center font-semibold">
           {playlist.name}
         </Typography>
-      </CardContent>
-    </Card>
+      </Box>
+    </Box>
   );
 };
 
