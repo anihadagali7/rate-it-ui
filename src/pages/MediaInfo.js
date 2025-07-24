@@ -23,6 +23,11 @@ import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import AddIcon from "@mui/icons-material/Add";
+import { useMediaQuery, useTheme } from "@mui/material";
+import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
+import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
+import PlaylistClient from "../client/PlaylistClient";
 
 const mediaTypeConfig = {
   movie: [
@@ -97,9 +102,13 @@ const DisplayLabelData = ({ data, label, displayLabel }) => {
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [openPlaylist, setOpenPlaylist] = useState(false);
   const { currentUser } = useContext(UserContext);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const { isLoading, data: mediaInfo } = useQuery({
     queryKey: ["mediaInfoDetails", { mediaType, id }],
@@ -113,6 +122,16 @@ const MediaInfo = () => {
     queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
+  });
+
+  const { data: playlistList } = useQuery({
+    queryKey: ["getAllPlaylistForUser", currentUser.userName],
+    queryFn: async () => {
+      return await PlaylistClient.getAllPlaylistForUser(currentUser.userName);
+    },
+    staleTime: 60000,
+    enabled: !!currentUser.userName,
+    select: ({ data }) => data.data.playlistList.reverse(),
   });
 
   const { mutate: addToWishlist } = useMutation({
@@ -141,6 +160,14 @@ const MediaInfo = () => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
     return "" + timeAgo.split(" ")[0] + units[0];
+  };
+
+  const handlePlaylistOpen = () => {
+    setOpenPlaylist(true);
+  };
+
+  const handlePlaylistClose = () => {
+    setOpenPlaylist(false);
   };
 
   return (
@@ -202,6 +229,15 @@ const MediaInfo = () => {
                       onClick={handleAddToWishlist}
                     >
                       Add to Wishlist
+                    </PrimaryButton>
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="text"
+                      leftIcon={<AddIcon style={{ color: "#00a8ff" }} />}
+                      onClick={handlePlaylistOpen}
+                    >
+                      Add to Playlist
                     </PrimaryButton>
                   </Grid>
                   <Grid item xs={12} sx={{ marginTop: "15px" }}>
@@ -314,6 +350,23 @@ const MediaInfo = () => {
           onClose={() => {
             setDisplayTokenModal(false);
           }}
+        />
+      )}
+      {isMobile ? (
+        <MobilePlaylistDrawer
+          open={openPlaylist}
+          onClose={handlePlaylistClose}
+          playlists={playlistList ? playlistList : []}
+          // onSubmit={handleSubmit}
+          // mediaId={mediaId}
+        />
+      ) : (
+        <DesktopPlaylistDialog
+          open={openPlaylist}
+          onClose={handlePlaylistClose}
+          playlists={playlistList ? playlistList : []}
+          // onSubmit={handleSubmit}
+          // mediaId={mediaId}
         />
       )}
     </Box>
