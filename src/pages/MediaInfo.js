@@ -27,7 +27,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { useMediaQuery, useTheme } from "@mui/material";
 import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
 import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
-import PlaylistClient from "../client/PlaylistClient";
 
 const mediaTypeConfig = {
   movie: [
@@ -122,16 +121,6 @@ const MediaInfo = () => {
     queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
-  });
-
-  const { data: playlistList } = useQuery({
-    queryKey: ["getAllPlaylistForUser", currentUser.userName],
-    queryFn: async () => {
-      return await PlaylistClient.getAllPlaylistForUser(currentUser.userName);
-    },
-    staleTime: 60000,
-    enabled: !!currentUser.userName,
-    select: ({ data }) => data.data.playlistList.reverse(),
   });
 
   const { mutate: addToWishlist } = useMutation({
@@ -356,17 +345,15 @@ const MediaInfo = () => {
         <MobilePlaylistDrawer
           open={openPlaylist}
           onClose={handlePlaylistClose}
-          playlists={playlistList ? playlistList : []}
           // onSubmit={handleSubmit}
-          // mediaId={mediaId}
+          mediaId={mediaInfo != null && mediaInfo._id}
         />
       ) : (
         <DesktopPlaylistDialog
           open={openPlaylist}
           onClose={handlePlaylistClose}
-          playlists={playlistList ? playlistList : []}
           // onSubmit={handleSubmit}
-          // mediaId={mediaId}
+          mediaId={mediaInfo && mediaInfo._id}
         />
       )}
     </Box>

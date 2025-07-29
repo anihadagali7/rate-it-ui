@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Box,
   Checkbox,
@@ -11,16 +11,58 @@ import {
 } from "@mui/material";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import PlaylistClient from "../../client/PlaylistClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import UserContext from "../../shared/context/userContext";
 
 const PlaylistContent = ({
-  playlists,
-  selectedPlaylists,
   onSearchChange,
   onToggleSelect,
   onCreateNew,
+  mediaId,
 }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+  const [playlistsWithThisMedia, setPlaylistsWithThisMedia] = useState([]);
+  const { currentUser } = useContext(UserContext);
+
+  const { data: playlists } = useQuery({
+    queryKey: ["getAllPlaylistForUser", currentUser.userName],
+    queryFn: async () => {
+      return await PlaylistClient.getAllPlaylistForUser(currentUser.userName);
+    },
+    staleTime: 60000,
+    enabled: !!currentUser.userName,
+    select: ({ data }) => data.data.playlistList,
+  });
+
+  const { mutate: getPlaylistsWithThisMedia } = useMutation({
+    mutationFn: async () => {
+      const response = PlaylistClient.getPlaylistsWithThisMedia({
+        mediaId: mediaId,
+        userName: currentUser.userName,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      const result = response.data.data.selectedPlaylists;
+      setPlaylistsWithThisMedia(result);
+
+      let idList = [];
+
+      result.length > 0 &&
+        result.forEach((playlist) => {
+          idList.push(playlist._id);
+        });
+
+      setSelectedPlaylists((prev) => [...prev, ...idList]);
+    },
+  });
+
+  useEffect(() => {
+    getPlaylistsWithThisMedia();
+  }, [mediaId]);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
@@ -54,20 +96,13 @@ const PlaylistContent = ({
         </PrimaryButton>
       </Box>
       <List>
-        {playlists && playlists.map((playlist) => (
-          <ListItem
-            key={playlist.id}
-            button
-            // onClick={() => onToggleSelect(playlist.id)}
-          >
-            <Checkbox
-              //   checked={selectedPlaylists.includes(playlist.id)}
-              tabIndex={-1}
-              disableRipple
-            />
-            <ListItemText primary={playlist.name} />
-          </ListItem>
-        ))}
+        {playlists &&
+          playlists.map((playlist) => (
+            <ListItem key={playlist._id}>
+              <Checkbox checked={selectedPlaylists.includes(playlist._id)} />
+              <ListItemText primary={playlist.name} />
+            </ListItem>
+          ))}
       </List>
     </Box>
   );
