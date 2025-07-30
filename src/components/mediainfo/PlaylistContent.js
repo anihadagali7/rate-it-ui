@@ -1,20 +1,18 @@
 import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect, useMemo, useState } from "react";
 import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 
-const PlaylistContent = ({
-  onCreateNew,
-  mediaId,
-}) => {
+const PlaylistContent = ({ onCreateNew, mediaId }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [initialPlaylists, setInitialPlaylists] = useState([]);
   const [playlistsWithThisMedia, setPlaylistsWithThisMedia] = useState([]);
   const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const { data: playlists } = useQuery({
     queryKey: ["getAllPlaylistForUser", currentUser.userName],
@@ -73,13 +71,12 @@ const PlaylistContent = ({
     );
   }, [playlists, searchKeyword]);
 
-  const { mutate: addMediaToMultiplePlaylists } = useMutation({
-    mutationFn: async (playlistsToAdd, playlistsToRemove) => {
+  const addMediaToMultiplePlaylists = useMutation({
+    mutationFn: async ({ playlistsToAdd, playlistsToRemove }) => {
       const response = PlaylistClient.addMediaToMultiplePlaylists({
-        mediaId: mediaId,
+        mediaId,
         playlistsToAdd,
         playlistsToRemove,
-        playlists: selectedPlaylists,
       });
       return response;
     },
@@ -96,19 +93,23 @@ const PlaylistContent = ({
     );
 
     if (playlistsToAdd.length === 0 && playlistsToRemove.length === 0) {
-      console.log("nothing changed");
       return;
     }
 
-    console.log("playlistsToAdd: ", playlistsToAdd);
-    console.log("playlistsToRemove: ", playlistsToRemove);
+    addMediaToMultiplePlaylists.mutate({
+      playlistsToAdd,
+      playlistsToRemove,
+    });
 
-    // await addMediaToMultiplePlaylists(playlistsToAdd, playlistsToRemove);
-
-    console.log("completed saving");
   };
 
-  console.log("selected playlists ", selectedPlaylists);
+  const arePlaylistsEqual = (a, b) => {
+    const idsA = a.map((p) => p._id).sort();
+    const idsB = b.map((p) => p._id).sort();
+    return JSON.stringify(idsA) === JSON.stringify(idsB);
+  };
+
+  const isSaveDisabled = arePlaylistsEqual(initialPlaylists, selectedPlaylists);
 
   return (
     <Box p={3}>
@@ -152,7 +153,11 @@ const PlaylistContent = ({
         </FormGroup>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "end" }}>
-        <PrimaryButton variant="contained" onClick={handleSave}>
+        <PrimaryButton
+          variant="contained"
+          onClick={handleSave}
+          disabled={isSaveDisabled}
+        >
           Save
         </PrimaryButton>
       </Box>
