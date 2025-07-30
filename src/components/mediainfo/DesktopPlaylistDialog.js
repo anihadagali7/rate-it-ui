@@ -18,26 +18,26 @@ const DesktopPlaylistDialog = ({ open, onClose, mediaId }) => {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
-      fullWidth
-      maxWidth="sm"
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "100%",
+          minHeight: 205,
+          maxWidth: 300,
+          overflowY: "hidden",
+        },
+      }}
     >
-      <DialogTitle sx={{ m: 0, p: 2 }}>
-        Add to Playlist
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 12,
-            top: 12,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+      <DialogTitle
+        sx={{
+          fontSize: "13px",
+          fontWeight: "bold",
+          height: "0px",
+          textAlign: "center",
+        }}
+      >
+        Add to playlist
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent>
         <PlaylistContent mediaId={mediaId} />
       </DialogContent>
     </Dialog>

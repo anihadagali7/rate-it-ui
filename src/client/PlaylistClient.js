@@ -14,6 +14,11 @@ export default class PlaylistClient {
     return axios.get(url, getHeaders());
   }
 
+  static addMediaToMultiplePlaylists(playlistMedia) {
+    const url = `${API_URL}/api/playlist/addMediaToMultiplePlaylists`;
+    return axios.post(url, playlistMedia, getHeaders());
+  }
+
   static addMediaToPlaylist(playlistMedia) {
     const url = `${API_URL}/api/playlist/addMedia`;
     return axios.post(url, playlistMedia, getHeaders());
