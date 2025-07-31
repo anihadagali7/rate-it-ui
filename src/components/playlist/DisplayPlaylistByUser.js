@@ -1,14 +1,10 @@
-import React from "react";
+import { Box, Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import PlaylistClient from "../../client/PlaylistClient";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Stack from "@mui/material/Stack";
-import { Box, Typography } from "@mui/material";
-import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
+import React from "react";
 import { Link } from "react-router-dom";
+import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import PlaylistCard from "./PlaylistCard";
 
 const DisplayPlaylistByUser = ({ userName, profileView }) => {
   const { data: playlistList, isLoading } = useQuery({
@@ -32,37 +28,19 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
 
   return (
     <Box>
-      <List component="nav">
-        {isLoading ? (
-          <ProfileWishlistLoading />
-        ) : (
-          newList &&
+      <Grid container spacing={2} sx={{ margin: "10px 0" }}>
+        {newList &&
           newList.length > 0 &&
           newList.map((playlist, index) => (
-            <>
-              <ListItem key={playlist._id} sx={{ cursor: "pointer" }}>
-                <Stack direction="row" spacing={2}>
-                  <>
-                    <div>
-                      <Stack direction="column">
-                        <span>
-                          <Typography sx={{ textDecoration: "none" }}>
-                            {playlist.name}
-                          </Typography>
-                        </span>
-                      </Stack>
-                    </div>
-                  </>
-                </Stack>
-              </ListItem>
-              <Divider
+            <Grid item xs={5} sm={4} md={4} lg={4} sx={{ margin: "10px" }}>
+              <PlaylistCard
+                playlist={playlist}
+                userName={userName}
                 key={index}
-                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
               />
-            </>
-          ))
-        )}
-      </List>
+            </Grid>
+          ))}
+      </Grid>
       {profileView && (
         <Box sx={{ margin: "10px", justifyContent: "center", display: "flex" }}>
           <PrimaryButton

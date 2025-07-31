@@ -1,43 +1,34 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import Divider from "@mui/material/Divider";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
-import { Link } from "react-router-dom";
-import Divider from "@mui/material/Divider";
+import { useQuery } from "@tanstack/react-query";
+import React, { useContext } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import PlaylistClient from "../../client/PlaylistClient";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
-import List from "@mui/material/List";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import AddMediaToPlaylistModal from "../modals/AddMediaToPlaylistModal";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import UserContext from "../../shared/context/userContext";
+import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
+import PlaylistCard from "./PlaylistCard";
 
-const DisplayOnePlaylist = ({
-  playListId,
-  viewAllPlaylists,
-  userViewingOwnProfile,
-}) => {
-  const [openAddMediaToPlaylistModal, setAddMediaToPlaylistModal] =
-    useState(false);
-  const [mediaAdded, setMediaAdded] = useState(0);
+const DisplayOnePlaylist = () => {
+  const { userName, playlistId } = useParams();
+  const navigate = useNavigate();
+  const { currentUser } = useContext(UserContext);
+  const profileUserName = currentUser?.userName;
+  const userViewingOwnProfile = userName === profileUserName;
 
   const { data: playlistDetails, isLoading } = useQuery({
-    queryKey: ["getAllMediaForPlaylist", { playListId }],
+    queryKey: ["getAllMediaForPlaylist", { playlistId }],
     queryFn: async () => {
-      return await PlaylistClient.getAllMediaForPlaylist(playListId);
+      return await PlaylistClient.getAllMediaForPlaylist(playlistId);
     },
     staleTime: 60000,
     select: ({ data }) => data.data.mediaByPlaylist,
   });
-
-  const handleAddMediaToPlaylistModalOpen = () => {
-    setAddMediaToPlaylistModal(true);
-  };
-
-  const handleAddMediaToPlaylistModalClose = () => {
-    setAddMediaToPlaylistModal(false);
-  };
 
   const displayMediaList = () => {
     const mediaList = playlistDetails?.mediaList;
@@ -75,43 +66,51 @@ const DisplayOnePlaylist = ({
 
   return (
     <Box>
-      <PrimaryButton
-        variant="text"
-        leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-        onClick={() => viewAllPlaylists()}
+      <Container
+        maxWidth={"sm"}
+        sx={{ marginBottom: "25px", marginTop: "25px" }}
       >
-        Return
-      </PrimaryButton>
-
-      <Typography
-        sx={{
-          marginLeft: "22px",
-          marginTop: "10px",
-          fontWeight: "bold",
-        }}
-      >
-        {playlistDetails?.playlist?.name}
-      </Typography>
-      {userViewingOwnProfile && (
-        <PrimaryButton
-          variant="text"
-          onClick={handleAddMediaToPlaylistModalOpen}
-          leftIcon={<PlaylistAddIcon style={{ color: "#00a8ff" }} />}
+        <Paper
+          elevation={6}
+          sx={{
+            width: "100%",
+            minHeight: "300px",
+            height: "100%",
+            backgroundColor: "#FFFFFF",
+            margin: "auto",
+            borderRadius: "17px",
+            padding: "20px",
+          }}
         >
-          Add to this playlist
-        </PrimaryButton>
-      )}
-      <List component="nav">
-        {isLoading ? <ProfileWishlistLoading /> : displayMediaList()}
-      </List>
+          <Box>
+            <PrimaryButton
+              variant="text"
+              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+              onClick={() => navigate(-1)}
+            >
+              Return
+            </PrimaryButton>
 
-      {openAddMediaToPlaylistModal && (
-        <AddMediaToPlaylistModal
-          open={openAddMediaToPlaylistModal}
-          onClose={handleAddMediaToPlaylistModalClose}
-          mediaByPlaylist={playlistDetails}
-        />
-      )}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {playlistDetails && (
+                <PlaylistCard
+                  playlist={playlistDetails?.playlist}
+                  userName={userName}
+                />
+              )}
+            </Box>
+            <List component="nav">
+              {isLoading ? <ProfileWishlistLoading /> : displayMediaList()}
+            </List>
+          </Box>
+        </Paper>
+      </Container>
     </Box>
   );
 };

@@ -18,6 +18,7 @@ import Signup from "./pages/Signup";
 import Wishlist from "./pages/Wishlist";
 import Protected from "./shared/Protected";
 import { theme } from "./styles/Theme";
+import DisplayOnePlaylist from "./components/playlist/DisplayOnePlaylist";
 
 const App = React.memo(() => {
   const storedUser = localStorage.getItem("userName");
@@ -98,6 +99,15 @@ const App = React.memo(() => {
                       element={
                         <Protected>
                           <Playlist />
+                        </Protected>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/playlist/:userName/:playlistId"
+                      element={
+                        <Protected>
+                          <DisplayOnePlaylist />
                         </Protected>
                       }
                     ></Route>

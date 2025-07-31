@@ -23,6 +23,11 @@ import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import AddIcon from "@mui/icons-material/Add";
+import { useMediaQuery, useTheme } from "@mui/material";
+import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
+import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
+import AddPlaylistModal from "../components/modals/AddPlaylistModal";
 
 const mediaTypeConfig = {
   movie: [
@@ -97,9 +102,14 @@ const DisplayLabelData = ({ data, label, displayLabel }) => {
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
   const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [openPlaylist, setOpenPlaylist] = useState(false);
   const { currentUser } = useContext(UserContext);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
+    const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const { isLoading, data: mediaInfo } = useQuery({
     queryKey: ["mediaInfoDetails", { mediaType, id }],
@@ -141,6 +151,22 @@ const MediaInfo = () => {
     const timeAgo = moment(date).fromNow(true);
     const units = timeAgo.split(" ")[1];
     return "" + timeAgo.split(" ")[0] + units[0];
+  };
+
+  const handlePlaylistOpen = () => {
+    setOpenPlaylist(true);
+  };
+
+  const handlePlaylistClose = () => {
+    setOpenPlaylist(false);
+  };
+
+  const handleNewPlaylistModalOpen = () => {
+    setNewPlaylistModal(true);
+  };
+
+  const handleNewPlaylistModalClose = () => {
+    setNewPlaylistModal(false);
   };
 
   return (
@@ -202,6 +228,15 @@ const MediaInfo = () => {
                       onClick={handleAddToWishlist}
                     >
                       Add to Wishlist
+                    </PrimaryButton>
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="center">
+                    <PrimaryButton
+                      variant="text"
+                      leftIcon={<AddIcon style={{ color: "#00a8ff" }} />}
+                      onClick={handlePlaylistOpen}
+                    >
+                      Add to Playlist
                     </PrimaryButton>
                   </Grid>
                   <Grid item xs={12} sx={{ marginTop: "15px" }}>
@@ -308,12 +343,34 @@ const MediaInfo = () => {
           mediaDetails={mediaInfo}
         />
       )}
+      {openNewPlaylistModal && (
+        <AddPlaylistModal
+          open={openNewPlaylistModal}
+          onClose={handleNewPlaylistModalClose}
+          profileUserName={currentUser?.userName}
+        />
+      )}
       {displayTokenModal && (
         <LoginErrorModal
           open={displayTokenModal}
           onClose={() => {
             setDisplayTokenModal(false);
           }}
+        />
+      )}
+      {isMobile ? (
+        <MobilePlaylistDrawer
+          open={openPlaylist}
+          onClose={handlePlaylistClose}
+          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
+          mediaId={mediaInfo != null && mediaInfo._id}
+        />
+      ) : (
+        <DesktopPlaylistDialog
+          open={openPlaylist}
+          onClose={handlePlaylistClose}
+          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
+          mediaId={mediaInfo && mediaInfo._id}
         />
       )}
     </Box>

@@ -101,7 +101,7 @@ const IndividualSearchResults = ({
             return (
               <ListItem
                 component={Link}
-                to={`/${viewAllType}/${row.mediaId}`}
+                to={`/${viewAllType.type}/${row.mediaId}`}
                 key={index}
               >
                 <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
