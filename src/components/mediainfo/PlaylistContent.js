@@ -1,12 +1,12 @@
 import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 
-const PlaylistContent = ({ onCreateNew, mediaId, onClose }) => {
+const PlaylistContent = ({ mediaId, onClose, handleNewPlaylistModalOpen }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [initialPlaylists, setInitialPlaylists] = useState([]);
@@ -117,7 +117,13 @@ const PlaylistContent = ({ onCreateNew, mediaId, onClose }) => {
       <Box
         sx={{ marginTop: "30px", display: "flex", justifyContent: "center" }}
       >
-        <PrimaryButton variant="text" onClick={onCreateNew}>
+        <PrimaryButton
+          variant="text"
+          onClick={() => {
+            onClose();
+            handleNewPlaylistModalOpen();
+          }}
+        >
           + New playlist
         </PrimaryButton>
       </Box>

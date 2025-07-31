@@ -3,7 +3,12 @@ import { Drawer, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PlaylistContent from "./PlaylistContent";
 
-const MobilePlaylistDrawer = ({ open, onClose, mediaId }) => {
+const MobilePlaylistDrawer = ({
+  open,
+  onClose,
+  mediaId,
+  handleNewPlaylistModalOpen,
+}) => {
   return (
     <Drawer
       anchor="bottom"
@@ -25,7 +30,11 @@ const MobilePlaylistDrawer = ({ open, onClose, mediaId }) => {
         <CloseIcon />
       </IconButton>
 
-      <PlaylistContent mediaId={mediaId} onClose={onClose} />
+      <PlaylistContent
+        mediaId={mediaId}
+        onClose={onClose}
+        handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
+      />
     </Drawer>
   );
 };

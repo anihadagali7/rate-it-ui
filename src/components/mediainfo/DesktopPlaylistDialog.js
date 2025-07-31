@@ -10,7 +10,12 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import PlaylistContent from "./PlaylistContent";
 
-const DesktopPlaylistDialog = ({ open, onClose, mediaId }) => {
+const DesktopPlaylistDialog = ({
+  open,
+  onClose,
+  mediaId,
+  handleNewPlaylistModalOpen,
+}) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -38,7 +43,11 @@ const DesktopPlaylistDialog = ({ open, onClose, mediaId }) => {
         Add to playlist
       </DialogTitle>
       <DialogContent>
-        <PlaylistContent mediaId={mediaId} onClose={onClose} />
+        <PlaylistContent
+          mediaId={mediaId}
+          onClose={onClose}
+          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -27,6 +27,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useMediaQuery, useTheme } from "@mui/material";
 import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
 import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
+import AddPlaylistModal from "../components/modals/AddPlaylistModal";
 
 const mediaTypeConfig = {
   movie: [
@@ -104,6 +105,7 @@ const MediaInfo = () => {
   const [openPlaylist, setOpenPlaylist] = useState(false);
   const { currentUser } = useContext(UserContext);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
+    const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -157,6 +159,14 @@ const MediaInfo = () => {
 
   const handlePlaylistClose = () => {
     setOpenPlaylist(false);
+  };
+
+  const handleNewPlaylistModalOpen = () => {
+    setNewPlaylistModal(true);
+  };
+
+  const handleNewPlaylistModalClose = () => {
+    setNewPlaylistModal(false);
   };
 
   return (
@@ -333,6 +343,13 @@ const MediaInfo = () => {
           mediaDetails={mediaInfo}
         />
       )}
+      {openNewPlaylistModal && (
+        <AddPlaylistModal
+          open={openNewPlaylistModal}
+          onClose={handleNewPlaylistModalClose}
+          profileUserName={currentUser?.userName}
+        />
+      )}
       {displayTokenModal && (
         <LoginErrorModal
           open={displayTokenModal}
@@ -345,14 +362,14 @@ const MediaInfo = () => {
         <MobilePlaylistDrawer
           open={openPlaylist}
           onClose={handlePlaylistClose}
-          // onSubmit={handleSubmit}
+          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
           mediaId={mediaInfo != null && mediaInfo._id}
         />
       ) : (
         <DesktopPlaylistDialog
           open={openPlaylist}
           onClose={handlePlaylistClose}
-          // onSubmit={handleSubmit}
+          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
           mediaId={mediaInfo && mediaInfo._id}
         />
       )}
