@@ -29,8 +29,8 @@ export default class PlaylistClient {
     return axios.get(url, getHeaders());
   }
 
-  static getPlaylistsWithThisMedia(body) {
-    const url = `${API_URL}/api/playlist/getPlalistsWithThisMedia`;
-    return axios.post(url, body, getHeaders());
+  static getPlaylistsWithThisMedia(mediaId, userName) {
+    const url = `${API_URL}/api/playlist/getPlaylistsWithThisMedia?userName=${userName}&mediaId=${mediaId}`;
+    return axios.get(url, getHeaders());
   }
 }

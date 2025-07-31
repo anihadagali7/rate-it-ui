@@ -25,7 +25,7 @@ const MobilePlaylistDrawer = ({ open, onClose, mediaId }) => {
         <CloseIcon />
       </IconButton>
 
-      <PlaylistContent mediaId={mediaId} />
+      <PlaylistContent mediaId={mediaId} onClose={onClose} />
     </Drawer>
   );
 };

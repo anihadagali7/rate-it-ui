@@ -38,7 +38,7 @@ const DesktopPlaylistDialog = ({ open, onClose, mediaId }) => {
         Add to playlist
       </DialogTitle>
       <DialogContent>
-        <PlaylistContent mediaId={mediaId} />
+        <PlaylistContent mediaId={mediaId} onClose={onClose} />
       </DialogContent>
     </Dialog>
   );

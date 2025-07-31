@@ -6,11 +6,10 @@ import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 
-const PlaylistContent = ({ onCreateNew, mediaId }) => {
+const PlaylistContent = ({ onCreateNew, mediaId, onClose }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [initialPlaylists, setInitialPlaylists] = useState([]);
-  const [playlistsWithThisMedia, setPlaylistsWithThisMedia] = useState([]);
   const { currentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
 
@@ -24,33 +23,23 @@ const PlaylistContent = ({ onCreateNew, mediaId }) => {
     select: ({ data }) => data.data.playlistList,
   });
 
-  const { mutate: getPlaylistsWithThisMedia } = useMutation({
-    mutationFn: async () => {
-      const response = PlaylistClient.getPlaylistsWithThisMedia({
-        mediaId: mediaId,
-        userName: currentUser.userName,
-      });
-      return response;
+  const { data: playlistsWithThisMedia } = useQuery({
+    queryKey: ["playlistsWithThisMedia", mediaId, currentUser.userName],
+    queryFn: async () => {
+      const response = await PlaylistClient.getPlaylistsWithThisMedia(
+        mediaId,
+        currentUser.userName
+      );
+      return response.data.data.selectedPlaylists;
     },
-    onSuccess: (response) => {
-      const result = response.data.data.selectedPlaylists;
-      setPlaylistsWithThisMedia(result);
-
-      let idList = [];
-
-      result.length > 0 &&
-        result.forEach((playlist) => {
-          idList.push(playlist._id);
-        });
+    enabled: !!mediaId && !!currentUser.userName,
+    onSuccess: (result) => {
+      const idList = result.map((playlist) => playlist._id);
 
       setInitialPlaylists(idList);
-      setSelectedPlaylists((prev) => [...prev, ...idList]);
+      setSelectedPlaylists(idList);
     },
   });
-
-  useEffect(() => {
-    getPlaylistsWithThisMedia();
-  }, [mediaId]);
 
   const onChangeSearch = (event) => {
     setSearchKeyword(event.target.value);
@@ -80,7 +69,12 @@ const PlaylistContent = ({ onCreateNew, mediaId }) => {
       });
       return response;
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      onClose();
+      queryClient.invalidateQueries({
+        queryKey: ["playlistsWithThisMedia", mediaId, currentUser.userName],
+      });
+    },
   });
 
   const handleSave = async () => {
@@ -100,7 +94,6 @@ const PlaylistContent = ({ onCreateNew, mediaId }) => {
       playlistsToAdd,
       playlistsToRemove,
     });
-
   };
 
   const arePlaylistsEqual = (a, b) => {
