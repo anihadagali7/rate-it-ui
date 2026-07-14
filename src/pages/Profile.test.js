@@ -58,6 +58,22 @@ beforeEach(() => {
 });
 
 describe("Profile", () => {
+  it("does not render a Follow/Following action button before the profile has loaded", () => {
+    mockUserNameParam = "anihadagali7";
+    UserClient.getUserInfo.mockReturnValue(new Promise(() => {}));
+
+    renderWithProviders(<Profile />, {
+      userContextValue: { currentUser: { userName: "shree" } },
+    });
+
+    expect(
+      screen.queryByRole("button", { name: /^follow$/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /following/i })
+    ).not.toBeInTheDocument();
+  });
+
   it("renders the logged-in user's own profile with Edit profile and Add friends actions", async () => {
     mockUserNameParam = "shree";
     UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
@@ -107,8 +123,7 @@ describe("Profile", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    await screen.findByText("Anirudha");
-    fireEvent.click(screen.getByRole("button", { name: /^follow$/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /^follow$/i }));
 
     await waitFor(() =>
       expect(UserClient.followUser).toHaveBeenCalledWith("anihadagali7")

@@ -99,7 +99,9 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (userViewingOwnProfile) {
+    if (!profileInfo) {
+      return null;
+    } else if (userViewingOwnProfile) {
       return (
         <PrimaryButton
           variant="contained"
