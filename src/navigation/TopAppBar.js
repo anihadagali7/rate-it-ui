@@ -16,7 +16,7 @@ import {
 import Slide from "@mui/material/Slide";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import React, { useContext, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../shared/context/userContext";
 
 function HideOnScroll({ children, window }) {
@@ -33,12 +33,13 @@ const TopAppBar = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const [userMenu, setUserMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const logoutUser = () => {
-    // Cleanup when user logs out
     setCurrentUser(null);
     localStorage.removeItem("userName");
     localStorage.removeItem("accessToken");
+    navigate("/");
   };
 
   const handleOpenUserMenu = (event) => {

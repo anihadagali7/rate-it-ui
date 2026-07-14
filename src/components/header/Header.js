@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Alert, Collapse } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
@@ -27,6 +27,7 @@ const Header = () => {
   const classes = useStyles();
   const [openLoginAlert, setOpenLoginAlert] = useState(true);
   const { currentUser, setCurrentUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) {
@@ -36,8 +37,9 @@ const Header = () => {
 
   const logoutUser = () => {
     setCurrentUser(null);
-    localStorage.removeItem("userName"); // Cleanup when user logs out
+    localStorage.removeItem("userName");
     localStorage.removeItem("accessToken");
+    navigate("/");
   };
 
   return (

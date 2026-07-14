@@ -32,23 +32,26 @@ const App = React.memo(() => {
       return response;
     },
     staleTime: 60000,
+    enabled: !!storedUser,
     select: ({ data }) => data.data.user,
   });
 
   useEffect(() => {
-    setCurrentUser(userInfo && userInfo);
-
-    if (currentUser) {
-      localStorage.setItem("userName", currentUser.userName);
+    if (userInfo) {
+      setCurrentUser(userInfo);
+      localStorage.setItem("userName", userInfo.userName);
     }
   }, [userInfo]);
+
+  // Skip the loading gate when logged out so Home can render explore immediately
+  const showApp = !storedUser || !isLoading;
 
   return (
     <UserContext.Provider value={value}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
-            {!isLoading && (
+            {showApp && (
               <>
                 <ResponsiveLayout>
                   <Routes>
