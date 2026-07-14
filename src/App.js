@@ -25,7 +25,7 @@ const App = React.memo(() => {
   const [currentUser, setCurrentUser] = useState(null);
   const value = useMemo(() => ({ currentUser, setCurrentUser }), [currentUser]);
 
-  const { data: userInfo, isLoading } = useQuery({
+  const { data: userInfo, isLoading, isError } = useQuery({
     queryKey: ["appLogin", { userName: storedUser }],
     queryFn: async () => {
       const response = await UserClient.getUserInfo(storedUser);
@@ -42,6 +42,14 @@ const App = React.memo(() => {
       localStorage.setItem("userName", userInfo.userName);
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    if (isError) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userName");
+      setCurrentUser(null);
+    }
+  }, [isError]);
 
   // Skip the loading gate when logged out so Home can render explore immediately
   const showApp = !storedUser || !isLoading;

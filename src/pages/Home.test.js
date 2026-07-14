@@ -80,15 +80,14 @@ describe("Home", () => {
     expect(screen.queryByText("For you")).not.toBeInTheDocument();
   });
 
-  it("hides the Explore section when there are no explore ratings", async () => {
-    RatingClient.getAllExploreRatings.mockResolvedValue(mockRatingsList([]));
-    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
+  it("shows an error message when explore ratings fail to load", async () => {
+    RatingClient.getAllExploreRatings.mockRejectedValue(new Error("Network error"));
 
-    renderWithProviders(<Home />, {
-      userContextValue: { currentUser: { userName: "shree" } },
-    });
+    renderWithProviders(<Home />);
 
-    expect(await screen.findByText("For you")).toBeInTheDocument();
-    expect(screen.queryByText("Explore")).not.toBeInTheDocument();
+    expect(
+      await screen.findByText("Unable to load explore ratings.")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
   });
 });

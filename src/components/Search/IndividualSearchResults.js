@@ -9,6 +9,7 @@ import SearchClient from "../../client/SearchClient";
 import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import IndividualSearchResultsLoading from "../../shared/loading/IndividualSearchResultsLoading";
+import QueryErrorState from "../../shared/errors/QueryErrorState";
 
 const IndividualSearchResults = ({
   searchKeyword,
@@ -24,6 +25,8 @@ const IndividualSearchResults = ({
     isFetchingNextPage,
     isLoading,
     isSuccess,
+    isError,
+    refetch,
   } = useInfiniteQuery(
     ["searchMedia", viewAllType.type, searchKeyword],
     async ({ pageParam = 1 }) => {
@@ -93,8 +96,14 @@ const IndividualSearchResults = ({
       <Typography variant="h6" className=" font-medium">
         {viewAllType.title}
       </Typography>
+      {isError && (
+        <QueryErrorState
+          message="Unable to load search results."
+          onRetry={refetch}
+        />
+      )}
       <List>
-        {isSuccess &&
+        {!isError && isSuccess &&
           allItems &&
           allItems.length > 0 &&
           allItems.map((row, index) => {

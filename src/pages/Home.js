@@ -5,18 +5,29 @@ import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
 import { useQuery } from "@tanstack/react-query";
 import RatingCard from "../components/ratingcard/RatingCard";
+import QueryErrorState from "../shared/errors/QueryErrorState";
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
 
-  const { data: exploreRatingsList, isLoading } = useQuery({
+  const {
+    data: exploreRatingsList,
+    isLoading,
+    isError: isExploreError,
+    refetch: refetchExplore,
+  } = useQuery({
     queryKey: ["allExploreRatings"],
     queryFn: async () => await RatingClient.getAllExploreRatings(),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
   });
 
-  const { data: feedRatingsList, isLoading: isFeedRatingsLoading } = useQuery({
+  const {
+    data: feedRatingsList,
+    isLoading: isFeedRatingsLoading,
+    isError: isFeedError,
+    refetch: refetchFeed,
+  } = useQuery({
     queryKey: ["feedRatings"],
     queryFn: async () => await RatingClient.getFeedRatings(),
     staleTime: 60000,
@@ -28,9 +39,26 @@ const Home = () => {
     return <RatingsLoading />;
   }
 
+  if (isExploreError) {
+    return (
+      <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
+        <QueryErrorState
+          message="Unable to load explore ratings."
+          onRetry={refetchExplore}
+        />
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
-      {currentUser && feedRatingsList && feedRatingsList.length > 0 && (
+      {currentUser && isFeedError && (
+        <QueryErrorState
+          message="Unable to load your feed."
+          onRetry={refetchFeed}
+        />
+      )}
+      {currentUser && !isFeedError && feedRatingsList && feedRatingsList.length > 0 && (
         <>
           <Typography
             sx={{

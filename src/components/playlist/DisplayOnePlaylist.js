@@ -13,6 +13,7 @@ import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import UserContext from "../../shared/context/userContext";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import PlaylistCard from "./PlaylistCard";
+import QueryErrorState from "../../shared/errors/QueryErrorState";
 
 const DisplayOnePlaylist = () => {
   const { userName, playlistId } = useParams();
@@ -21,7 +22,12 @@ const DisplayOnePlaylist = () => {
   const profileUserName = currentUser?.userName;
   const userViewingOwnProfile = userName === profileUserName;
 
-  const { data: playlistDetails, isLoading } = useQuery({
+  const {
+    data: playlistDetails,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["getAllMediaForPlaylist", { playlistId }],
     queryFn: async () => {
       return await PlaylistClient.getAllMediaForPlaylist(playlistId);
@@ -106,7 +112,16 @@ const DisplayOnePlaylist = () => {
               )}
             </Box>
             <List component="nav">
-              {isLoading ? <ProfileWishlistLoading /> : displayMediaList()}
+              {isLoading ? (
+                <ProfileWishlistLoading />
+              ) : isError ? (
+                <QueryErrorState
+                  message="Unable to load playlist media."
+                  onRetry={refetch}
+                />
+              ) : (
+                displayMediaList()
+              )}
             </List>
           </Box>
         </Paper>

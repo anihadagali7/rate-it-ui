@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setupAuthInterceptor } from "./utils/authInterceptor";
+import ErrorBoundary from "./shared/errors/ErrorBoundary";
 
 setupAuthInterceptor();
 
@@ -21,7 +22,9 @@ root.render(
       })
     }
   >
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </QueryClientProvider>
 );
 

@@ -5,9 +5,15 @@ import Divider from "@mui/material/Divider";
 import ProfileRatingsLoading from "../../shared/loading/ProfileRatingsLoading";
 import { useQuery } from "@tanstack/react-query";
 import RatingCard from "../ratingcard/RatingCard";
+import QueryErrorState from "../../shared/errors/QueryErrorState";
 
 const DisplayRatingsByUser = ({ profileUserName }) => {
-  const { data: ratingsList, isLoading } = useQuery({
+  const {
+    data: ratingsList,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["ratingsForUser", { profileUserName }],
     queryFn: async () =>
       await RatingClient.getAllRatingsForUser(profileUserName),
@@ -18,6 +24,15 @@ const DisplayRatingsByUser = ({ profileUserName }) => {
 
   if (isLoading) {
     return <ProfileRatingsLoading />;
+  }
+
+  if (isError) {
+    return (
+      <QueryErrorState
+        message="Unable to load ratings."
+        onRetry={refetch}
+      />
+    );
   }
 
   return (

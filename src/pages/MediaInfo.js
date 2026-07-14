@@ -28,6 +28,7 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
 import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
 import AddPlaylistModal from "../components/modals/AddPlaylistModal";
+import QueryErrorState from "../shared/errors/QueryErrorState";
 
 const mediaTypeConfig = {
   movie: [
@@ -111,14 +112,23 @@ const MediaInfo = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const { isLoading, data: mediaInfo } = useQuery({
+  const {
+    isLoading,
+    isError,
+    refetch,
+    data: mediaInfo,
+  } = useQuery({
     queryKey: ["mediaInfoDetails", { mediaType, id }],
     queryFn: async () => await MediaClient.getMediaInfoDetails(mediaType, id),
     staleTime: 60000,
     select: ({ data }) => data.data.media,
   });
 
-  const { data: ratingsList } = useQuery({
+  const {
+    data: ratingsList,
+    isError: isRatingsError,
+    refetch: refetchRatings,
+  } = useQuery({
     queryKey: ["ratingsForMedia", { mediaType: mediaType, id: id }],
     queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
     staleTime: 60000,
@@ -192,6 +202,11 @@ const MediaInfo = () => {
             </PrimaryButton>
             {isLoading ? (
               <MediaInfoMobileLoading />
+            ) : isError ? (
+              <QueryErrorState
+                message="Unable to load media details."
+                onRetry={refetch}
+              />
             ) : (
               mediaInfo && (
                 <Grid container spacing={5} sx={{ paddingTop: "20px" }}>
@@ -251,7 +266,15 @@ const MediaInfo = () => {
             )}
           </Paper>
         </Box>
-        {ratingsList && ratingsList.length > 0 && (
+        {isRatingsError && (
+          <Paper elevation={6} sx={{ backgroundColor: "#FFFFFF", borderRadius: "17px", margin: "15px 0" }}>
+            <QueryErrorState
+              message="Unable to load reviews."
+              onRetry={refetchRatings}
+            />
+          </Paper>
+        )}
+        {!isRatingsError && ratingsList && ratingsList.length > 0 && (
           <Paper
             elevation={6}
             sx={{
