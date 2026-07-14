@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Dialog,
@@ -10,7 +10,6 @@ import {
 import RatingClient from "../../client/RatingClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import TextAreaField from "../../shared/inputfield/TextAreaField";
-import UserContext from "../../shared/context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddRatingModal = ({ open, onClose, mediaDetails }) => {
@@ -18,7 +17,6 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
     comments: "",
     rating: 5,
   });
-  const { currentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
 
   const submitRating = useMutation({
@@ -51,7 +49,6 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
   const handleSubmitRating = async () => {
     let requestBody = {};
     requestBody.mediaId = mediaDetails.mediaId;
-    requestBody.userName = currentUser.userName;
     requestBody.comments = payload.comments;
     requestBody.rating = payload.rating;
 

@@ -38,10 +38,7 @@ const Profile = () => {
 
   const unFollowProfile = useMutation({
     mutationFn: () => {
-      return UserClient.unFollowUser(
-        currentUser.userName,
-        profileInfo.userName
-      );
+      return UserClient.unFollowUser(profileInfo.userName);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -55,7 +52,7 @@ const Profile = () => {
 
   const followProfile = useMutation({
     mutationFn: () => {
-      return UserClient.followUser(currentUser.userName, profileInfo.userName);
+      return UserClient.followUser(profileInfo.userName);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

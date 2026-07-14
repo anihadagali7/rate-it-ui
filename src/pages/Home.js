@@ -18,8 +18,7 @@ const Home = () => {
 
   const { data: feedRatingsList, isLoading: isFeedRatingsLoading } = useQuery({
     queryKey: ["feedRatings"],
-    queryFn: async () =>
-      await RatingClient.getFeedRatings(currentUser.userName),
+    queryFn: async () => await RatingClient.getFeedRatings(),
     staleTime: 60000,
     enabled: !!currentUser,
     select: ({ data }) => data.data.ratingsList,

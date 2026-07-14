@@ -24,8 +24,8 @@ export default class RatingClient {
     return axios.get(url, getHeaders());
   }
 
-  static getFeedRatings(userName) {
-    const url = `${API_URL}/api/ratings/following/${userName}`;
+  static getFeedRatings() {
+    const url = `${API_URL}/api/ratings/following`;
     return axios.get(url, getHeaders());
   }
 }

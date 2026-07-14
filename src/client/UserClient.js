@@ -24,25 +24,27 @@ export default class UserClient {
     return axios.get(url, getHeaders());
   }
 
-  static  getFriendsList(userName) {
+  static getFriendsList(userName) {
     const url = `${API_URL}/api/${userName}/friendsList`;
     return axios.get(url, getHeaders());
   }
 
-  static unFollowUser(currentUser, userToUnfollow) {
+  static unFollowUser(userToUnfollow) {
     const url = `${API_URL}/api/friends/unfollow`;
-    return axios.post(url, {
-        currentUser,
+    return axios.post(
+      url,
+      {
         userToUnfollow,
-      }, getHeaders());
+      },
+      getHeaders()
+    );
   }
 
-  static followUser(currentUser, userToFollow) {
+  static followUser(userToFollow) {
     const url = `${API_URL}/api/friends/follow`;
     return axios.post(
       url,
       {
-        currentUser,
         userToFollow,
       },
       getHeaders()

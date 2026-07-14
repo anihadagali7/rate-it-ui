@@ -26,10 +26,7 @@ const PlaylistContent = ({ mediaId, onClose, handleNewPlaylistModalOpen }) => {
   const { data: playlistsWithThisMedia } = useQuery({
     queryKey: ["playlistsWithThisMedia", mediaId, currentUser.userName],
     queryFn: async () => {
-      const response = await PlaylistClient.getPlaylistsWithThisMedia(
-        mediaId,
-        currentUser.userName
-      );
+      const response = await PlaylistClient.getPlaylistsWithThisMedia(mediaId);
       return response.data.data.selectedPlaylists;
     },
     enabled: !!mediaId && !!currentUser.userName,

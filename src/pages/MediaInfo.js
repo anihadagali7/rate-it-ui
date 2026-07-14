@@ -143,7 +143,6 @@ const MediaInfo = () => {
   const handleAddToWishlist = async () => {
     let requestBody = {};
     requestBody.mediaId = mediaInfo.mediaId;
-    requestBody.userName = currentUser.userName;
     addToWishlist(requestBody);
   };
 
