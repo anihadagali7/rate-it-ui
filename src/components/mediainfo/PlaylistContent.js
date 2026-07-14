@@ -94,8 +94,8 @@ const PlaylistContent = ({ mediaId, onClose, handleNewPlaylistModalOpen }) => {
   };
 
   const arePlaylistsEqual = (a, b) => {
-    const idsA = a.map((p) => p._id).sort();
-    const idsB = b.map((p) => p._id).sort();
+    const idsA = [...a].sort();
+    const idsB = [...b].sort();
     return JSON.stringify(idsA) === JSON.stringify(idsB);
   };
 

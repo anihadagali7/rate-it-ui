@@ -14,7 +14,7 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
     },
     staleTime: 60000,
     enabled: !!userName,
-    select: ({ data }) => data.data.playlistList.reverse(),
+    select: ({ data }) => [...data.data.playlistList].reverse(),
   });
 
   let newList = [];
