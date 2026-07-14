@@ -5,16 +5,22 @@ import { Link } from "react-router-dom";
 import PlaylistClient from "../../client/PlaylistClient";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
 import PlaylistCard from "./PlaylistCard";
+import QueryErrorState from "../../shared/errors/QueryErrorState";
 
 const DisplayPlaylistByUser = ({ userName, profileView }) => {
-  const { data: playlistList, isLoading } = useQuery({
+  const {
+    data: playlistList,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["getAllPlaylistForUser", userName],
     queryFn: async () => {
       return await PlaylistClient.getAllPlaylistForUser(userName);
     },
     staleTime: 60000,
     enabled: !!userName,
-    select: ({ data }) => data.data.playlistList.reverse(),
+    select: ({ data }) => [...data.data.playlistList].reverse(),
   });
 
   let newList = [];
@@ -28,6 +34,12 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
 
   return (
     <Box>
+      {isError ? (
+        <QueryErrorState
+          message="Unable to load playlists."
+          onRetry={refetch}
+        />
+      ) : (
       <Grid container spacing={2} sx={{ margin: "10px 0" }}>
         {newList &&
           newList.length > 0 &&
@@ -41,7 +53,8 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
             </Grid>
           ))}
       </Grid>
-      {profileView && (
+      )}
+      {profileView && !isError && (
         <Box sx={{ margin: "10px", justifyContent: "center", display: "flex" }}>
           <PrimaryButton
             variant="outlined"

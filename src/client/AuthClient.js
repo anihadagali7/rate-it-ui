@@ -22,8 +22,8 @@ export default class AuthClient {
     return axios.put(url, editAccount, getHeaders());
   }
 
-  static resetPassword(newPassword) {
+  static resetPassword(passwordRequest) {
     const url = `${API_URL}/api/account/resetPassword`;
-    return axios.put(url, newPassword, getHeaders());
+    return axios.post(url, passwordRequest, getHeaders());
   }
 }

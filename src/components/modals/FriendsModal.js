@@ -82,10 +82,7 @@ const FriendsModal = ({
 
   const unFollowUser = useMutation({
     mutationFn: (request) => {
-      return UserClient.unFollowUser(
-        currentUser.userName,
-        request.userToUnfollow
-      );
+      return UserClient.unFollowUser(request.userToUnfollow);
     },
     onSuccess: () => {
       resetQueries();
@@ -94,7 +91,7 @@ const FriendsModal = ({
 
   const followUser = useMutation({
     mutationFn: (request) => {
-      return UserClient.followUser(currentUser.userName, request.userToFollow);
+      return UserClient.followUser(request.userToFollow);
     },
     onSuccess: () => {
       resetQueries();

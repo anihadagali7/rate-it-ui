@@ -26,10 +26,7 @@ const PlaylistContent = ({ mediaId, onClose, handleNewPlaylistModalOpen }) => {
   const { data: playlistsWithThisMedia } = useQuery({
     queryKey: ["playlistsWithThisMedia", mediaId, currentUser.userName],
     queryFn: async () => {
-      const response = await PlaylistClient.getPlaylistsWithThisMedia(
-        mediaId,
-        currentUser.userName
-      );
+      const response = await PlaylistClient.getPlaylistsWithThisMedia(mediaId);
       return response.data.data.selectedPlaylists;
     },
     enabled: !!mediaId && !!currentUser.userName,
@@ -97,8 +94,8 @@ const PlaylistContent = ({ mediaId, onClose, handleNewPlaylistModalOpen }) => {
   };
 
   const arePlaylistsEqual = (a, b) => {
-    const idsA = a.map((p) => p._id).sort();
-    const idsB = b.map((p) => p._id).sort();
+    const idsA = [...a].sort();
+    const idsB = [...b].sort();
     return JSON.stringify(idsA) === JSON.stringify(idsB);
   };
 

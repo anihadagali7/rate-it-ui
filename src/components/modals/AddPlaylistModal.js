@@ -29,7 +29,6 @@ const AddPlaylistModal = ({ open, onClose, profileUserName }) => {
 
   const handleSubmitPlaylist = async () => {
     let requestBody = {};
-    requestBody.userName = currentUser.userName;
     requestBody.playlistName = name;
     createPlaylist.mutate(requestBody);
   };

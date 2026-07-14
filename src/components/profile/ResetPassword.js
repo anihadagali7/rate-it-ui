@@ -14,7 +14,7 @@ const initialErrorState = {
   confirmNewPassword: { value: false, message: "" },
 };
 
-const ResetPassword = ({ currentProfile }) => {
+const ResetPassword = () => {
   let navigate = useNavigate();
   const { currentUser } = useContext(UserContext);
 
@@ -89,7 +89,6 @@ const ResetPassword = ({ currentProfile }) => {
     await setErrorValue(errorValueCopy);
 
     const passwordRequest = {
-      userName: currentProfile.userName,
       currentPassword: payload.currentPassword,
       newPassword: payload.newPassword,
     };

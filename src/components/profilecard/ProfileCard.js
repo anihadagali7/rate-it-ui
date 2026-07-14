@@ -16,7 +16,7 @@ const ProfileCard = ({ profile, onClose, reSearch }) => {
 
   const unFollowUser = useMutation({
     mutationFn: (userToUnfollow) => {
-      return UserClient.unFollowUser(currentUser?.userName, userToUnfollow);
+      return UserClient.unFollowUser(userToUnfollow);
     },
     onSuccess: (userToUnfollow) => {
       resetQueries(userToUnfollow);
@@ -25,7 +25,7 @@ const ProfileCard = ({ profile, onClose, reSearch }) => {
 
   const followUser = useMutation({
     mutationFn: (userToFollow) => {
-      return UserClient.followUser(currentUser?.userName, userToFollow);
+      return UserClient.followUser(userToFollow);
     },
     onSuccess: (userToFollow) => {
       resetQueries(userToFollow);

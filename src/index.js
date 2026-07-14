@@ -4,6 +4,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { setupAuthInterceptor } from "./utils/authInterceptor";
+import ErrorBoundary from "./shared/errors/ErrorBoundary";
+
+setupAuthInterceptor();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,7 +22,9 @@ root.render(
       })
     }
   >
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </QueryClientProvider>
 );
 

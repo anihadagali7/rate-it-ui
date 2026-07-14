@@ -13,6 +13,7 @@ import PrimaryButton from "../shared/buttons/PrimaryButton";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import SearchResultsDesktopLoading from "../shared/loading/SearchResultsDesktopLoading";
 import SearchResultsMobileLoading from "../shared/loading/SearchResultsMobileLoading";
+import QueryErrorState from "../shared/errors/QueryErrorState";
 
 const Search = () => {
   const { keyword } = useParams();
@@ -27,6 +28,7 @@ const Search = () => {
   const {
     isLoading,
     isSuccess,
+    isError,
     mutate: submitSearch,
     data: searchResults,
   } = useMutation({
@@ -128,7 +130,13 @@ const Search = () => {
               )}
               {isDesktop && isLoading && <SearchResultsDesktopLoading />}
               {isMobile && isLoading && <SearchResultsMobileLoading />}
-              {isSuccess && !viewAllMedia && (
+              {isError && (
+                <QueryErrorState
+                  message="Unable to load search results."
+                  onRetry={() => submitSearch()}
+                />
+              )}
+              {isSuccess && !isError && !viewAllMedia && (
                 <CarouselSearchResults
                   searchResults={searchResults}
                   loading={isLoading}

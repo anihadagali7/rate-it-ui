@@ -14,6 +14,7 @@ import DisplayWishlistByUser from "../components/wishlist/DisplayWishlistByUser"
 import PrimaryButton from "../shared/buttons/PrimaryButton";
 import UserContext from "../shared/context/userContext";
 import PrimaryTabs from "../shared/tabs/PrimaryTabs";
+import QueryErrorState from "../shared/errors/QueryErrorState";
 
 const Profile = () => {
   const { userName } = useParams();
@@ -27,7 +28,7 @@ const Profile = () => {
   const currentUserAndCurrentProfile = currentUser?.userName == userName;
   const queryClient = useQueryClient();
 
-  const { data: profileInfo, isLoading } = useQuery({
+  const { data: profileInfo, isLoading, isError, refetch } = useQuery({
     queryKey: ["profileInfo", { userName }],
     queryFn: async () => {
       return await UserClient.getUserInfo(userName);
@@ -38,10 +39,7 @@ const Profile = () => {
 
   const unFollowProfile = useMutation({
     mutationFn: () => {
-      return UserClient.unFollowUser(
-        currentUser.userName,
-        profileInfo.userName
-      );
+      return UserClient.unFollowUser(profileInfo.userName);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -55,7 +53,7 @@ const Profile = () => {
 
   const followProfile = useMutation({
     mutationFn: () => {
-      return UserClient.followUser(currentUser.userName, profileInfo.userName);
+      return UserClient.followUser(profileInfo.userName);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -102,7 +100,9 @@ const Profile = () => {
   };
 
   const determineActionButton = () => {
-    if (userViewingOwnProfile) {
+    if (!profileInfo) {
+      return null;
+    } else if (userViewingOwnProfile) {
       return (
         <PrimaryButton
           variant="contained"
@@ -159,6 +159,25 @@ const Profile = () => {
       ),
     },
   ];
+
+  if (isLoading) {
+    return (
+      <Box sx={{ py: 6, textAlign: "center" }}>
+        <Typography>Loading profile...</Typography>
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Container maxWidth={"sm"} sx={{ marginTop: "25px", marginBottom: "25px" }}>
+        <QueryErrorState
+          message="Unable to load this profile."
+          onRetry={refetch}
+        />
+      </Container>
+    );
+  }
 
   return (
     <Box>

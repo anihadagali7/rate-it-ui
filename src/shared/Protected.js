@@ -4,10 +4,13 @@ import UserContext from "./context/userContext";
 
 const Protected = ({ children }) => {
   const { currentUser } = useContext(UserContext);
+  const accessToken = localStorage.getItem("accessToken");
 
-  if (!currentUser) {
-    return <Navigate to="/" replace />;
+  if (!accessToken || !currentUser) {
+    return <Navigate to="/login" replace />;
   }
+
   return children;
 };
+
 export default Protected;

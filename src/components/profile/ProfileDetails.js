@@ -43,10 +43,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       updateProfile && currentUser && currentUser.email
         ? currentUser.email
         : "",
-    password:
-      updateProfile && currentUser && currentUser.password
-        ? currentUser.password
-        : "",
+    password: "",
     phoneNumber:
       updateProfile && currentUser && currentUser.phoneNumber
         ? currentUser.phoneNumber
@@ -121,7 +118,9 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
 
   const validateInput = async () => {
     const emailValidity = isValidEmail(payload.email);
-    const passwordValidity = isValidPassword(payload.password);
+    const passwordValidity = createProfile
+      ? isValidPassword(payload.password)
+      : true;
     const phoneNumberValidity = isValidPhoneNumber(payload.phoneNumber);
     const firstNameValidity = payload.firstName.length > 0;
     const lastNameValidity = payload.lastName.length > 0;
@@ -135,7 +134,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
           message: "Value should be a valid email.",
         })
       : (currentValue["email"] = { value: false, message: "" });
-    !passwordValidity
+    createProfile && !passwordValidity
       ? (currentValue["password"] = {
           value: true,
           message:
@@ -178,10 +177,16 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       payload;
 
     const hasRequiredFields =
-      firstName && lastName && userName && phoneNumber && email && password;
+      firstName &&
+      lastName &&
+      userName &&
+      phoneNumber &&
+      email &&
+      (!createProfile || password);
 
     // making sure new values in input field are different than what is saved
     const isSameProfile =
+      updateProfile &&
       prevProfileValues.firstName === firstName &&
       prevProfileValues.lastName === lastName &&
       prevProfileValues.phoneNumber === phoneNumber;
@@ -200,10 +205,12 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
     const profileDetails = {
       firstName: payload.firstName,
       lastName: payload.lastName,
-      email: payload.email,
-      userName: payload.userName,
-      password: payload.password,
       phoneNumber: payload.phoneNumber,
+      ...(createProfile && {
+        email: payload.email,
+        userName: payload.userName,
+        password: payload.password,
+      }),
     };
 
     if (createProfile && (await validateInput())) {
@@ -226,7 +233,7 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       >
         <Box sx={{ padding: "0 35px", minHeight: "385px" }}>
           {displayResetPassword ? (
-            <ResetPassword currentProfile={currentUser} />
+            <ResetPassword />
           ) : (
             <Box>
               <Grid

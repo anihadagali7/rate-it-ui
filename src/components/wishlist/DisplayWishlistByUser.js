@@ -12,9 +12,15 @@ import { Link } from "react-router-dom";
 import WishlistClient from "../../client/WishlistClient";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
 import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import QueryErrorState from "../../shared/errors/QueryErrorState";
 
 const DisplayWishlistByUser = ({ userName, profileView }) => {
-  const { data: wishlistList, isLoading } = useQuery({
+  const {
+    data: wishlistList,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["getAllWishlistForUser", userName],
     queryFn: async () => await WishlistClient.getAllWishlistForUser(userName),
     staleTime: 60000,
@@ -47,6 +53,12 @@ const DisplayWishlistByUser = ({ userName, profileView }) => {
 
   return (
     <Box>
+      {isError ? (
+        <QueryErrorState
+          message="Unable to load wishlist."
+          onRetry={refetch}
+        />
+      ) : (
       <List component="nav">
         {isLoading ? (
           <ProfileWishlistLoading />
@@ -107,7 +119,8 @@ const DisplayWishlistByUser = ({ userName, profileView }) => {
           ))
         )}
       </List>
-      {profileView && (
+      )}
+      {profileView && !isError && (
         <Box sx={{ margin: "10px", justifyContent: "center", display: "flex" }}>
           <PrimaryButton
             variant="outlined"
