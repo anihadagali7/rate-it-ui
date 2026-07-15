@@ -51,7 +51,7 @@ const ProfileCard = ({ profile, onClose, reSearch }) => {
   };
 
   const determineActionButton = (profile) => {
-    if (profile.userName === currentUser.userName) {
+    if (!currentUser || profile.userName === currentUser.userName) {
       return <></>;
     } else if (
       profile &&

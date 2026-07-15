@@ -1,16 +1,17 @@
 import React, { useContext, useState } from "react";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import { isMobile } from "react-device-detect";
 import Grid from "@mui/material/Grid";
-import { Container, Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import AuthClient from "../../client/AuthClient";
-import Divider from "@mui/material/Divider";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
+import Button from "../../shared/buttons/Button";
 import ResetPassword from "./ResetPassword";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
 import UserContext from "../../shared/context/userContext";
+import AuthLayout from "../../shared/layout/AuthLayout";
+import SurfaceCard from "../../shared/primitives/SurfaceCard";
+import { tokens } from "../../styles/tokens";
 import { useMutation } from "@tanstack/react-query";
 
 const initialErrorState = {
@@ -222,30 +223,27 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
   };
 
   return (
-    <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-      <Paper
-        elevation={6}
-        sx={{
-          backgroundColor: "#FFFFFF",
-          height: isMobile ? "685px" : "100%",
-          borderRadius: "17px",
-        }}
-      >
-        <Box sx={{ padding: "0 35px", minHeight: "385px" }}>
-          {displayResetPassword ? (
-            <ResetPassword />
-          ) : (
-            <Box>
-              <Grid
-                container
-                spacing={{ xs: 2, md: 2, xl: 2 }}
-                columns={{ xs: 12 }}
-              >
-                <Grid item xs={12} sx={{ paddingBottom: "20px" }}>
-                  <Typography variant="h3">
-                    {createProfile ? "Create an Account" : "Edit profile"}
-                  </Typography>
-                </Grid>
+    <AuthLayout>
+      <SurfaceCard padding={3} sx={{ minHeight: isMobile ? 685 : undefined }}>
+        {displayResetPassword ? (
+          <ResetPassword />
+        ) : (
+          <Box>
+            <Typography
+              sx={{
+                fontSize: 28,
+                fontWeight: 700,
+                color: tokens.colors.textPrimary,
+                mb: 3,
+              }}
+            >
+              {createProfile ? "Create an Account" : "Edit profile"}
+            </Typography>
+            <Grid
+              container
+              spacing={2}
+              columns={{ xs: 12 }}
+            >
                 <Grid item xs={6}>
                   <PrimaryInputField
                     label="First Name"
@@ -357,21 +355,16 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
                   justifyContent="end"
                   sx={{ marginTop: "10px" }}
                 >
-                  <PrimaryButton
+                  <Button
                     onClick={handleSubmit}
                     disabled={checkToDisable()}
-                    variant="contained"
+                    variant="primary"
                   >
                     {createProfile ? "Sign Up" : "Save"}
-                  </PrimaryButton>
+                  </Button>
                 </Grid>
                 <Grid item xs={12}>
-                  <Divider
-                    variant="middle"
-                    sx={{
-                      marginTop: "25px",
-                    }}
-                  />
+                  <Divider sx={{ marginTop: "25px" }} />
                 </Grid>
                 <Grid
                   item
@@ -381,31 +374,30 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
                   sx={{ marginBottom: "15px" }}
                 >
                   {updateProfile && (
-                    <PrimaryButton
+                    <Button
                       testId="loginInstead"
-                      variant="text"
+                      variant="ghost"
                       onClick={() => setDisplayResetPassword(true)}
                     >
                       Reset password
-                    </PrimaryButton>
+                    </Button>
                   )}
                   {createProfile && (
-                    <PrimaryButton
+                    <Button
                       testId="loginInstead"
                       buttonElement={Link}
-                      variant="text"
+                      variant="ghost"
                       link="/login"
                     >
                       Sign in instead
-                    </PrimaryButton>
+                    </Button>
                   )}
                 </Grid>
               </Grid>
-            </Box>
-          )}
-        </Box>
-      </Paper>
-    </Container>
+          </Box>
+        )}
+      </SurfaceCard>
+    </AuthLayout>
   );
 };
 

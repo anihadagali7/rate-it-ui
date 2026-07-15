@@ -15,8 +15,13 @@ const mockSearchResponse = (fullSearchList) => ({
   data: { data: { fullSearchList } },
 });
 
+const mockPeopleResponse = (mediaList = []) => ({
+  data: { data: { mediaList } },
+});
+
 beforeEach(() => {
   mockKeyword = undefined;
+  SearchClient.searchMedia.mockResolvedValue(mockPeopleResponse());
   window.matchMedia = jest.fn().mockImplementation((query) => ({
     matches: query.includes("min-width"),
     media: query,
@@ -42,9 +47,9 @@ describe("Search", () => {
 
     renderWithProviders(<Search />);
 
-    expect(await screen.findByText("Movies")).toBeInTheDocument();
-    expect(screen.getByText("Shutter Island")).toBeInTheDocument();
+    expect(await screen.findByText("Shutter Island")).toBeInTheDocument();
     expect(SearchClient.searchAllMedia).toHaveBeenCalledWith("shutter island");
+    expect(SearchClient.searchMedia).toHaveBeenCalledWith("user", "shutter island", 1);
   });
 
   it("does not run a search on mount when there is no keyword in the URL", () => {
@@ -74,7 +79,7 @@ describe("Search", () => {
   it("does not run a search when Search is used with an empty keyword", () => {
     renderWithProviders(<Search />);
 
-    fireEvent.click(screen.getByText("Search"));
+    fireEvent.click(screen.getByRole("button", { name: /^search$/i }));
 
     expect(SearchClient.searchAllMedia).not.toHaveBeenCalled();
   });
@@ -95,5 +100,26 @@ describe("Search", () => {
     renderWithProviders(<Search />);
 
     expect(await screen.findByText("No results found")).toBeInTheDocument();
+  });
+
+  it("shows people results in the all view", async () => {
+    mockKeyword = "jane";
+    SearchClient.searchAllMedia.mockResolvedValue(mockSearchResponse({}));
+    SearchClient.searchMedia.mockResolvedValue(
+      mockPeopleResponse([
+        {
+          userName: "janedoe",
+          firstName: "Jane",
+          lastName: "Doe",
+          followers: [],
+        },
+      ])
+    );
+
+    renderWithProviders(<Search />, {
+      userContextValue: { currentUser: { userName: "viewer" } },
+    });
+
+    expect(await screen.findByText("Jane Doe")).toBeInTheDocument();
   });
 });

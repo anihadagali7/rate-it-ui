@@ -5,12 +5,12 @@ import RatingClient from "../client/RatingClient";
 
 jest.mock("../client/RatingClient");
 
-const exploreRating = {
-  _id: "e1",
+const exploreRating = (id, name, comment) => ({
+  _id: id,
   media: {
-    name: "Better Call Saul",
+    name,
     mediaType: "TV",
-    mediaId: "60059",
+    mediaId: `id-${id}`,
     picture: "https://example.com/poster.jpg",
   },
   ratedBy: {
@@ -19,9 +19,9 @@ const exploreRating = {
     lastName: "Hadagali",
   },
   rating: "10",
-  comments: "slippin jimmy",
+  comments: comment,
   dateCreated: "2022-09-23T09:05:40.853Z",
-};
+});
 
 const feedRating = {
   _id: "f1",
@@ -53,7 +53,7 @@ describe("Home", () => {
 
   it("shows the discover feed for a logged-out user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating])
+      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
     );
 
     renderWithProviders(<Home />);
@@ -66,7 +66,7 @@ describe("Home", () => {
 
   it("shows following feed by default for a logged in user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating])
+      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
     );
     RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
 
@@ -82,7 +82,7 @@ describe("Home", () => {
 
   it("shows an empty state when the following feed has no ratings", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating])
+      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
     );
     RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
 
@@ -92,6 +92,20 @@ describe("Home", () => {
 
     expect(await screen.findByText("Your feed is empty")).toBeInTheDocument();
     expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
+  });
+
+  it("paginates the discover feed and loads more ratings on scroll", async () => {
+    const ratings = Array.from({ length: 12 }, (_, index) =>
+      exploreRating(`e${index}`, `Show ${index}`, `review ${index}`)
+    );
+
+    RatingClient.getAllExploreRatings.mockResolvedValue(mockRatingsList(ratings));
+
+    renderWithProviders(<Home />);
+
+    expect(await screen.findByText("review 0")).toBeInTheDocument();
+    expect(screen.getByText("review 9")).toBeInTheDocument();
+    expect(screen.queryByText("review 10")).not.toBeInTheDocument();
   });
 
   it("shows an error message when explore ratings fail to load", async () => {

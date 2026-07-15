@@ -29,6 +29,6 @@ const renderApp = () => {
 test("renders the app shell with navigation when logged out", async () => {
   renderApp();
 
-  expect(await screen.findByText("RATE IT")).toBeInTheDocument();
+  expect(await screen.findByText("Rate It")).toBeInTheDocument();
   expect(screen.getByRole("link", { name: /log in/i })).toBeInTheDocument();
 });

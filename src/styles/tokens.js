@@ -23,5 +23,7 @@ export const tokens = {
   layout: {
     feedMaxWidth: 600,
     sidebarWidth: 240,
+    rightRailWidth: 300,
+    authMaxWidth: 420,
   },
 };

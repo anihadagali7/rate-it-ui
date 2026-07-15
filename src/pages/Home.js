@@ -1,13 +1,12 @@
 import React, { useContext, useState } from "react";
-import { Box, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
-import RatingCard from "../components/ratingcard/RatingCard";
+import FeedList from "../components/feed/FeedList";
 import FeedLayout from "../shared/layout/FeedLayout";
 import TabBar from "../shared/navigation/TabBar";
 import RatingsLoading from "../shared/loading/RatingsLoading";
+import EmptyState from "../shared/primitives/EmptyState";
 import UserContext from "../shared/context/userContext";
 import QueryErrorState from "../shared/errors/QueryErrorState";
-import { tokens } from "../styles/tokens";
 import { useQuery } from "@tanstack/react-query";
 
 const FEED_TABS = {
@@ -44,14 +43,17 @@ const Home = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
+  const isFollowingTab =
+    currentUser && activeTab === FEED_TABS.FOLLOWING;
+
   const isLoading =
-    isExploreLoading || (currentUser && isFeedLoading && activeTab === FEED_TABS.FOLLOWING);
+    isExploreLoading || (currentUser && isFeedLoading && isFollowingTab);
 
   if (isLoading) {
     return <RatingsLoading />;
   }
 
-  if (isExploreError && (!currentUser || activeTab === FEED_TABS.DISCOVER)) {
+  if (isExploreError && (!currentUser || !isFollowingTab)) {
     return (
       <FeedLayout>
         <QueryErrorState
@@ -62,9 +64,6 @@ const Home = () => {
     );
   }
 
-  const isFollowingTab =
-    currentUser && activeTab === FEED_TABS.FOLLOWING;
-
   const ratingsToShow = isFollowingTab ? feedRatingsList : exploreRatingsList;
 
   const shouldShowRatings = isFollowingTab
@@ -72,7 +71,7 @@ const Home = () => {
     : exploreRatingsList?.length > 0;
 
   return (
-    <FeedLayout>
+    <FeedLayout showRail={!!currentUser}>
       {currentUser ? (
         <TabBar
           tabs={[
@@ -84,7 +83,7 @@ const Home = () => {
         />
       ) : null}
 
-      {currentUser && activeTab === FEED_TABS.FOLLOWING && isFeedError ? (
+      {currentUser && isFollowingTab && isFeedError ? (
         <QueryErrorState
           message="Unable to load your feed."
           onRetry={refetchFeed}
@@ -92,49 +91,24 @@ const Home = () => {
       ) : null}
 
       {currentUser &&
-      activeTab === FEED_TABS.FOLLOWING &&
+      isFollowingTab &&
       !isFeedError &&
       feedRatingsList?.length === 0 ? (
-        <Box
-          sx={{
-            textAlign: "center",
-            py: 6,
-            px: 2,
-            border: `1px solid ${tokens.colors.border}`,
-            borderRadius: `${tokens.radius.card}px`,
-            backgroundColor: tokens.colors.surface,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: tokens.colors.textPrimary,
-              mb: 1,
-            }}
-          >
-            Your feed is empty
-          </Typography>
-          <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
-            Follow people to see their reviews here, or switch to Discover.
-          </Typography>
-        </Box>
+        <EmptyState
+          title="Your feed is empty"
+          description="Follow people to see their reviews here, or switch to Discover."
+        />
       ) : null}
 
       {shouldShowRatings ? (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          {ratingsToShow?.map((rating) => (
-            <RatingCard rating={rating} key={rating._id} />
-          ))}
-        </Box>
+        <FeedList ratings={ratingsToShow} />
       ) : null}
 
       {!currentUser && exploreRatingsList?.length === 0 && !isExploreError ? (
-        <Typography
-          sx={{ textAlign: "center", color: tokens.colors.textSecondary, py: 4 }}
-        >
-          No reviews yet. Be the first to rate something!
-        </Typography>
+        <EmptyState
+          title="No reviews yet"
+          description="Be the first to rate something!"
+        />
       ) : null}
     </FeedLayout>
   );

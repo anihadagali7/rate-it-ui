@@ -1,17 +1,28 @@
 import { Box } from "@mui/material";
 import { tokens } from "../../styles/tokens";
+import RightRail from "./RightRail";
 
-const FeedLayout = ({ children }) => {
+const FeedLayout = ({ children, showRail = false }) => {
   return (
     <Box
       sx={{
+        display: "flex",
+        justifyContent: "center",
         width: "100%",
-        maxWidth: tokens.layout.feedMaxWidth,
-        mx: "auto",
-        px: { xs: 0, sm: 1 },
+        gap: 3,
       }}
     >
-      {children}
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: tokens.layout.feedMaxWidth,
+          flexShrink: 0,
+          px: { xs: 0, sm: 1 },
+        }}
+      >
+        {children}
+      </Box>
+      {showRail ? <RightRail /> : null}
     </Box>
   );
 };

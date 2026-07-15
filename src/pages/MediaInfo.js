@@ -1,116 +1,38 @@
-import React, { useContext, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import MediaClient from "../client/MediaClient";
-import WishlistClient from "../client/WishlistClient";
-import { Container, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import NotFoundImage from "../imgs/Image-Not-Available.jpeg";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import StarIcon from "@mui/icons-material/Star";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import AddRatingModal from "../components/modals/AddRatingModal";
-import RatingClient from "../client/RatingClient";
-import Avatar from "@mui/material/Avatar";
-import moment from "moment/moment";
-import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import MediaInfoMobileLoading from "../shared/loading/MediaInfoMobileLoading";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
-import UserContext from "../shared/context/userContext";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import AddIcon from "@mui/icons-material/Add";
-import { useMediaQuery, useTheme } from "@mui/material";
-import MobilePlaylistDrawer from "./../components/mediainfo/MobilePlaylistDrawer";
-import DesktopPlaylistDialog from "./../components/mediainfo/DesktopPlaylistDialog";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useContext, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import MediaClient from "../client/MediaClient";
+import RatingClient from "../client/RatingClient";
+import WishlistClient from "../client/WishlistClient";
 import AddPlaylistModal from "../components/modals/AddPlaylistModal";
+import AddRatingModal from "../components/modals/AddRatingModal";
+import DesktopPlaylistDialog from "../components/mediainfo/DesktopPlaylistDialog";
+import MediaInfoHero from "../components/mediainfo/MediaInfoHero";
+import MediaMetadata from "../components/mediainfo/MediaMetadata";
+import MobilePlaylistDrawer from "../components/mediainfo/MobilePlaylistDrawer";
+import FeedList from "../components/feed/FeedList";
+import Button from "../shared/buttons/Button";
+import FeedLayout from "../shared/layout/FeedLayout";
+import MediaInfoLoading from "../shared/loading/MediaInfoLoading";
+import SurfaceCard from "../shared/primitives/SurfaceCard";
+import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import QueryErrorState from "../shared/errors/QueryErrorState";
-
-const mediaTypeConfig = {
-  movie: [
-    { label: "Description", dataKey: "description", displayLabel: false },
-    { label: "Director", dataKey: "director", displayLabel: true },
-    { label: "Producer", dataKey: "producer", displayLabel: true },
-    { label: "Cast", dataKey: "cast", displayLabel: true },
-  ],
-  tv: [
-    { label: "Description", dataKey: "description", displayLabel: false },
-    { label: "Director", dataKey: "director", displayLabel: true },
-    { label: "Producer", dataKey: "producer", displayLabel: true },
-    { label: "Cast", dataKey: "cast", displayLabel: true },
-  ],
-  music: [
-    { label: "Album", dataKey: "album" },
-    { label: "Artist", dataKey: "artist" },
-  ],
-  book: [
-    { label: "Description", dataKey: "description", displayLabel: false },
-    { label: "Author", dataKey: "author", displayLabel: true },
-    { label: "Genre", dataKey: "genre", displayLabel: true },
-  ],
-};
-
-const MediaInfoDisplay = ({ mediaType, mediaInfo }) => {
-  const config = mediaTypeConfig[mediaType.toLowerCase()];
-
-  if (!config) return null;
-
-  return (
-    <div>
-      {config.map(({ label, dataKey, displayLabel }) => (
-        <DisplayLabelData
-          key={label}
-          data={mediaInfo[dataKey]}
-          label={label}
-          displayLabel={displayLabel}
-        />
-      ))}
-    </div>
-  );
-};
-
-const DisplayLabelData = ({ data, label, displayLabel }) => {
-  const listToString = (list) => {
-    let newString = "";
-
-    if (typeof list === "string") {
-      return list;
-    }
-
-    list &&
-      list.length > 0 &&
-      list.forEach((name) => {
-        newString += name + ", ";
-      });
-
-    return newString.substring(0, newString.length - 2);
-  };
-
-  if (!data || data.length === 0) return null;
-
-  return (
-    <Typography mb={3}>
-      {displayLabel && <span>{label}: </span>}
-      {listToString(data)}
-    </Typography>
-  );
-};
+import UserContext from "../shared/context/userContext";
+import { tokens } from "../styles/tokens";
 
 const MediaInfo = () => {
   const { id, mediaType } = useParams();
-  const [openRatingModal, setOpenRatingModal] = useState(false);
-  const [openPlaylist, setOpenPlaylist] = useState(false);
-  const { currentUser } = useContext(UserContext);
-  const [displayTokenModal, setDisplayTokenModal] = useState(false);
-    const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const { currentUser } = useContext(UserContext);
+
+  const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [openPlaylist, setOpenPlaylist] = useState(false);
+  const [displayTokenModal, setDisplayTokenModal] = useState(false);
+  const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
 
   const {
     isLoading,
@@ -119,7 +41,7 @@ const MediaInfo = () => {
     data: mediaInfo,
   } = useQuery({
     queryKey: ["mediaInfoDetails", { mediaType, id }],
-    queryFn: async () => await MediaClient.getMediaInfoDetails(mediaType, id),
+    queryFn: async () => MediaClient.getMediaInfoDetails(mediaType, id),
     staleTime: 60000,
     select: ({ data }) => data.data.media,
   });
@@ -129,8 +51,8 @@ const MediaInfo = () => {
     isError: isRatingsError,
     refetch: refetchRatings,
   } = useQuery({
-    queryKey: ["ratingsForMedia", { mediaType: mediaType, id: id }],
-    queryFn: async () => await RatingClient.getAllRatingsForMedia(id),
+    queryKey: ["ratingsForMedia", { mediaType, id }],
+    queryFn: async () => RatingClient.getAllRatingsForMedia(id),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
   });
@@ -139,263 +61,169 @@ const MediaInfo = () => {
     mutationFn: async (requestBody) => {
       await WishlistClient.addToWishlist(requestBody);
     },
-    onSuccess: () => {},
   });
 
-  const handleAddRatingModalOpen = () => {
-    setOpenRatingModal(true);
+  const requireAuth = (action) => {
+    if (!currentUser) {
+      setDisplayTokenModal(true);
+      return;
+    }
+    action();
   };
 
-  const handleAddRatingModalClose = () => {
-    setOpenRatingModal(false);
+  const handleAddToWishlist = () => {
+    requireAuth(() => {
+      addToWishlist({ mediaId: mediaInfo.mediaId });
+    });
   };
 
-  const handleAddToWishlist = async () => {
-    let requestBody = {};
-    requestBody.mediaId = mediaInfo.mediaId;
-    addToWishlist(requestBody);
+  const handleOpenRating = () => {
+    requireAuth(() => setOpenRatingModal(true));
   };
 
-  const getTimeAgo = (date) => {
-    const timeAgo = moment(date).fromNow(true);
-    const units = timeAgo.split(" ")[1];
-    return "" + timeAgo.split(" ")[0] + units[0];
-  };
-
-  const handlePlaylistOpen = () => {
-    setOpenPlaylist(true);
-  };
-
-  const handlePlaylistClose = () => {
-    setOpenPlaylist(false);
-  };
-
-  const handleNewPlaylistModalOpen = () => {
-    setNewPlaylistModal(true);
-  };
-
-  const handleNewPlaylistModalClose = () => {
-    setNewPlaylistModal(false);
+  const handleOpenPlaylist = () => {
+    requireAuth(() => setOpenPlaylist(true));
   };
 
   return (
-    <Box>
-      <Container
-        maxWidth={"sm"}
-        sx={{ marginTop: "25px", marginBottom: "25px" }}
+    <FeedLayout>
+      <Button
+        variant="ghost"
+        leftIcon={<KeyboardBackspaceIcon />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 2 }}
       >
-        <Box>
-          <Paper
-            elevation={6}
-            sx={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "17px",
-              padding: "35px",
-            }}
-          >
-            <PrimaryButton
-              variant="text"
-              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              onClick={() => navigate(-1)}
-            >
-              Return
-            </PrimaryButton>
-            {isLoading ? (
-              <MediaInfoMobileLoading />
-            ) : isError ? (
-              <QueryErrorState
-                message="Unable to load media details."
-                onRetry={refetch}
-              />
-            ) : (
-              mediaInfo && (
-                <Grid container spacing={5} sx={{ paddingTop: "20px" }}>
-                  <Grid item xs={12}>
-                    <Typography variant="h3">{mediaInfo.name}</Typography>
-                  </Grid>
-                  <Grid item xs={12} container justifyContent="center">
-                    <img
-                      width="80%"
-                      height="100%"
-                      alt="poster"
-                      style={{ margin: "auto", borderRadius: 7 }}
-                      src={
-                        mediaInfo.picture ? mediaInfo.picture : NotFoundImage
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} container justifyContent="center">
-                    <PrimaryButton
-                      variant="contained"
-                      leftIcon={<StarIcon style={{ color: "#FFFFFF" }} />}
-                      onClick={handleAddRatingModalOpen}
-                    >
-                      Add Rating
-                    </PrimaryButton>
-                  </Grid>
-                  <Grid item xs={12} container justifyContent="center">
-                    <PrimaryButton
-                      variant="text"
-                      leftIcon={
-                        <PlaylistAddIcon style={{ color: "#00a8ff" }} />
-                      }
-                      onClick={handleAddToWishlist}
-                    >
-                      Add to Wishlist
-                    </PrimaryButton>
-                  </Grid>
-                  <Grid item xs={12} container justifyContent="center">
-                    <PrimaryButton
-                      variant="text"
-                      leftIcon={<AddIcon style={{ color: "#00a8ff" }} />}
-                      onClick={handlePlaylistOpen}
-                    >
-                      Add to Playlist
-                    </PrimaryButton>
-                  </Grid>
-                  <Grid item xs={12} sx={{ marginTop: "15px" }}>
-                    <Stack spacing={6} direction="column">
-                      <MediaInfoDisplay
-                        mediaType={mediaInfo.mediaType}
-                        mediaInfo={mediaInfo}
-                      />
-                    </Stack>
-                  </Grid>
-                </Grid>
-              )
-            )}
-          </Paper>
-        </Box>
-        {isRatingsError && (
-          <Paper elevation={6} sx={{ backgroundColor: "#FFFFFF", borderRadius: "17px", margin: "15px 0" }}>
-            <QueryErrorState
-              message="Unable to load reviews."
-              onRetry={refetchRatings}
+        Back
+      </Button>
+
+      {isLoading ? <MediaInfoLoading /> : null}
+
+      {isError ? (
+        <QueryErrorState
+          message="Unable to load media details."
+          onRetry={refetch}
+        />
+      ) : null}
+
+      {!isLoading && !isError && mediaInfo ? (
+        <>
+          <SurfaceCard padding={2.5} sx={{ mb: 2 }}>
+            <MediaInfoHero
+              mediaInfo={mediaInfo}
+              ratingsList={ratingsList || []}
+              onRate={handleOpenRating}
+              onWishlist={handleAddToWishlist}
+              onPlaylist={handleOpenPlaylist}
             />
-          </Paper>
-        )}
-        {!isRatingsError && ratingsList && ratingsList.length > 0 && (
-          <Paper
-            elevation={6}
-            sx={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "17px",
-              margin: "15px 0 150px 0",
-            }}
-          >
-            <Typography
+
+            <Box
               sx={{
-                fontWeight: "bold",
-                fontSize: "22px",
-                paddingTop: "15px",
-                paddingLeft: "25px",
+                mt: 3,
+                pt: 2.5,
+                borderTop: `1px solid ${tokens.colors.border}`,
               }}
             >
-              User reviews
-            </Typography>
-            <List
-              component="nav"
-              sx={{ marginLeft: "15px", marginRight: "15px" }}
-            >
-              {ratingsList &&
-                ratingsList.length > 0 &&
-                ratingsList.map((rating) => (
-                  <>
-                    <ListItem>
-                      <Stack direction="row" spacing={2}>
-                        <>
-                          <Avatar
-                            sx={{
-                              bgcolor: "#00a8ff",
-                              textDecoration: "none",
-                            }}
-                            component={Link}
-                            to={`/profile/${rating.ratedBy.userName}`}
-                          >
-                            {rating.ratedBy.firstName[0]}
-                            {rating.ratedBy.lastName[0]}
-                          </Avatar>
-                          <div>
-                            <Stack direction="column">
-                              <span style={{ fontWeight: "bold" }}>
-                                {rating.ratedBy.firstName}{" "}
-                                {rating.ratedBy.lastName}
-                                <span style={{ fontWeight: "normal" }}>
-                                  {" "}
-                                  @{rating.ratedBy.userName}
-                                </span>
-                                <span style={{ fontWeight: "normal" }}>
-                                  {" "}
-                                  &#8226; {getTimeAgo(rating.dateCreated)}
-                                </span>
-                              </span>
-                              <span>
-                                <Typography
-                                  component={Link}
-                                  sx={{ textDecoration: "none" }}
-                                  to={`/${rating.media.mediaType}/${rating.media.mediaId}`}
-                                >
-                                  -{rating.media.name}
-                                </Typography>
-                              </span>
-                              <Typography>Rating: {rating.rating}</Typography>
-                              <Typography>
-                                Comments: {rating.comments}
-                              </Typography>
-                            </Stack>
-                          </div>
-                        </>
-                      </Stack>
-                    </ListItem>
-                    <Divider
-                      sx={{
-                        margin: "0 10px",
-                      }}
-                    />
-                  </>
-                ))}
-            </List>
-          </Paper>
-        )}
-      </Container>
-      {openRatingModal && (
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: tokens.colors.textPrimary,
+                  mb: 1.5,
+                }}
+              >
+                About
+              </Typography>
+              <MediaMetadata
+                mediaType={mediaInfo.mediaType}
+                mediaInfo={mediaInfo}
+              />
+            </Box>
+          </SurfaceCard>
+
+          {isRatingsError ? (
+            <SurfaceCard padding={2.5} sx={{ mb: 2 }}>
+              <QueryErrorState
+                message="Unable to load reviews."
+                onRetry={refetchRatings}
+              />
+            </SurfaceCard>
+          ) : null}
+
+          {!isRatingsError && ratingsList?.length > 0 ? (
+            <Box sx={{ mb: 4 }}>
+              <Typography
+                sx={{
+                  fontSize: 18,
+                  fontWeight: 600,
+                  color: tokens.colors.textPrimary,
+                  mb: 1.5,
+                }}
+              >
+                Community reviews ({ratingsList.length})
+              </Typography>
+              <FeedList ratings={ratingsList} />
+            </Box>
+          ) : null}
+
+          {!isRatingsError && ratingsList?.length === 0 ? (
+            <SurfaceCard padding={3}>
+              <Typography
+                sx={{
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: tokens.colors.textPrimary,
+                  mb: 0.5,
+                }}
+              >
+                No reviews yet
+              </Typography>
+              <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
+                Be the first to rate this title.
+              </Typography>
+            </SurfaceCard>
+          ) : null}
+        </>
+      ) : null}
+
+      {openRatingModal && mediaInfo ? (
         <AddRatingModal
           open={openRatingModal}
-          onClose={handleAddRatingModalClose}
+          onClose={() => setOpenRatingModal(false)}
           mediaDetails={mediaInfo}
         />
-      )}
-      {openNewPlaylistModal && (
+      ) : null}
+
+      {openNewPlaylistModal ? (
         <AddPlaylistModal
           open={openNewPlaylistModal}
-          onClose={handleNewPlaylistModalClose}
+          onClose={() => setNewPlaylistModal(false)}
           profileUserName={currentUser?.userName}
         />
-      )}
-      {displayTokenModal && (
+      ) : null}
+
+      {displayTokenModal ? (
         <LoginErrorModal
           open={displayTokenModal}
-          onClose={() => {
-            setDisplayTokenModal(false);
-          }}
+          onClose={() => setDisplayTokenModal(false)}
         />
-      )}
+      ) : null}
+
       {isMobile ? (
         <MobilePlaylistDrawer
           open={openPlaylist}
-          onClose={handlePlaylistClose}
-          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
-          mediaId={mediaInfo != null && mediaInfo._id}
+          onClose={() => setOpenPlaylist(false)}
+          handleNewPlaylistModalOpen={() => setNewPlaylistModal(true)}
+          mediaId={mediaInfo?._id}
         />
       ) : (
         <DesktopPlaylistDialog
           open={openPlaylist}
-          onClose={handlePlaylistClose}
-          handleNewPlaylistModalOpen={handleNewPlaylistModalOpen}
-          mediaId={mediaInfo && mediaInfo._id}
+          onClose={() => setOpenPlaylist(false)}
+          handleNewPlaylistModalOpen={() => setNewPlaylistModal(true)}
+          mediaId={mediaInfo?._id}
         />
       )}
-    </Box>
+    </FeedLayout>
   );
 };
 

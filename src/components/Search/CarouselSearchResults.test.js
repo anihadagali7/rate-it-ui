@@ -23,8 +23,6 @@ describe("CarouselSearchResults", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie], tv: [], music: [song] }}
-        loading={false}
-        searchQuery="shutter"
         setViewAllMedia={jest.fn()}
         setViewAllType={jest.fn()}
       />
@@ -32,7 +30,7 @@ describe("CarouselSearchResults", () => {
 
     expect(screen.getByText("Movies")).toBeInTheDocument();
     expect(screen.getByText("Shutter Island")).toBeInTheDocument();
-    expect(screen.getByText("Music")).toBeInTheDocument();
+    expect(screen.getByText("Let's Live For Today")).toBeInTheDocument();
     expect(screen.queryByText("TV Shows")).not.toBeInTheDocument();
     expect(screen.queryByText("Books")).not.toBeInTheDocument();
   });
@@ -41,8 +39,6 @@ describe("CarouselSearchResults", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie] }}
-        loading={false}
-        searchQuery="shutter"
         setViewAllMedia={jest.fn()}
         setViewAllType={jest.fn()}
       />
@@ -54,35 +50,31 @@ describe("CarouselSearchResults", () => {
     );
   });
 
-  it("shows a no results message when every category is empty", () => {
-    renderWithProviders(
+  it("returns null when every category is empty", () => {
+    const { container } = renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [], tv: [], book: [], music: [] }}
-        loading={false}
-        searchQuery="asdkjaslkdjasd"
         setViewAllMedia={jest.fn()}
         setViewAllType={jest.fn()}
       />
     );
 
-    expect(screen.getByText("No results found")).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it("switches to the full results view for a category when View All is clicked", () => {
+  it("switches to the full results view for a category when See all is clicked", () => {
     const setViewAllMedia = jest.fn();
     const setViewAllType = jest.fn();
 
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie] }}
-        loading={false}
-        searchQuery="shutter"
         setViewAllMedia={setViewAllMedia}
         setViewAllType={setViewAllType}
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /view all/i }));
+    fireEvent.click(screen.getByRole("button", { name: /see all/i }));
 
     expect(setViewAllType).toHaveBeenCalledWith({ type: "movie", title: "Movies" });
     expect(setViewAllMedia).toHaveBeenCalledWith(true);

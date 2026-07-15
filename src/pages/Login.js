@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import { Container, Stack, Typography } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import AuthClient from "../client/AuthClient";
-import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
+import Button from "../shared/buttons/Button";
 import PrimaryInputField from "../shared/inputfield/PrimaryInputField";
 import UserContext from "../shared/context/userContext";
+import AuthLayout from "../shared/layout/AuthLayout";
+import SurfaceCard from "../shared/primitives/SurfaceCard";
+import { tokens } from "../styles/tokens";
 import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
@@ -85,115 +85,97 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth={"sm"} sx={{ marginTop: "50px" }}>
-      <Paper
-        elevation={6}
-        sx={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: "17px",
-        }}
-      >
-        <Box sx={{ padding: "10px 35px" }} mb={2}>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 2, xl: 5 }}
-            columns={{ md: 12 }}
-          >
-            <Grid item xs={8}>
-              <Typography variant="h3">Sign In</Typography>
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  marginTop: "7px",
-                }}
-              >
-                Stay updated on your media
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sx={{ width: "100%" }}>
-              <PrimaryInputField
-                label="Email"
-                value={payload.email}
-                name="email"
-                required
-                onChange={(e) => handleChange(e)}
-                error={errorValue["email"]["value"]}
-                helperText={
-                  (errorValue["email"]["value"] &&
-                    errorValue["email"]["message"]) ||
-                  " "
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ width: "100%" }}>
-              <PrimaryInputField
-                label="Password"
-                value={payload.password}
-                name="password"
-                required
-                type="password"
-                onChange={(e) => handleChange(e)}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              container
-              alignContent="center"
-              sx={{ marginTop: "15px" }}
-            >
-              <PrimaryButton
-                testId="forgotPassword"
-                buttonElement={Link}
-                variant="text"
-                link="/signup"
-                disabled
-              >
-                Forgot password
-              </PrimaryButton>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              container
-              justifyContent="flex-end"
-              sx={{ marginTop: "15px" }}
-            >
-              <PrimaryButton
-                variant="contained"
-                disabled={checkToDisable()}
-                onClick={handleLogin}
-              >
-                Sign In
-              </PrimaryButton>
-            </Grid>
-          </Grid>
-          <Divider
-            variant="middle"
+    <AuthLayout>
+      <SurfaceCard padding={3}>
+        <Typography
+          sx={{
+            fontSize: 28,
+            fontWeight: 700,
+            color: tokens.colors.textPrimary,
+            mb: 0.5,
+          }}
+        >
+          Sign In
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: 14,
+            color: tokens.colors.textSecondary,
+            mb: 3,
+          }}
+        >
+          Stay updated on your media
+        </Typography>
+
+        <Box component="form" onSubmit={handleLogin}>
+          <Stack spacing={2}>
+            <PrimaryInputField
+              label="Email"
+              value={payload.email}
+              name="email"
+              required
+              onChange={(e) => handleChange(e)}
+              error={errorValue["email"]["value"]}
+              helperText={
+                (errorValue["email"]["value"] &&
+                  errorValue["email"]["message"]) ||
+                " "
+              }
+            />
+            <PrimaryInputField
+              label="Password"
+              value={payload.password}
+              name="password"
+              required
+              type="password"
+              onChange={(e) => handleChange(e)}
+            />
+          </Stack>
+
+          <Box
             sx={{
-              marginTop: "25px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 2.5,
             }}
-          />
-          <Grid container sx={{ paddingTop: "20px" }}>
-            <Grid item xs={12} container justifyContent="center">
-              <Stack direction="row" spacing={4}>
-                <Typography sx={{ fontWeight: 550, alignContent: "center" }}>
-                  New to Rate It?
-                </Typography>
-                <PrimaryButton
-                  testId="signUpLink"
-                  buttonElement={Link}
-                  variant="text"
-                  link="/signup"
-                >
-                  Join Now
-                </PrimaryButton>
-              </Stack>
-            </Grid>
-          </Grid>
+          >
+            <Button
+              testId="forgotPassword"
+              buttonElement={Link}
+              variant="ghost"
+              link="/signup"
+              disabled
+            >
+              Forgot password
+            </Button>
+            <Button
+              variant="primary"
+              disabled={checkToDisable()}
+              onClick={handleLogin}
+            >
+              Sign In
+            </Button>
+          </Box>
         </Box>
-      </Paper>
-    </Container>
+
+        <Divider sx={{ my: 3 }} />
+
+        <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+          <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
+            New to Rate It?
+          </Typography>
+          <Button
+            testId="signUpLink"
+            buttonElement={Link}
+            variant="ghost"
+            link="/signup"
+          >
+            Join Now
+          </Button>
+        </Stack>
+      </SurfaceCard>
+    </AuthLayout>
   );
 };
 

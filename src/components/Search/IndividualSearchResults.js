@@ -1,22 +1,23 @@
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { Container, Typography } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import React, { useEffect } from "react";
 import SearchClient from "../../client/SearchClient";
-import NotFoundImage from "../../imgs/Image-Not-Available.jpeg";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import IndividualSearchResultsLoading from "../../shared/loading/IndividualSearchResultsLoading";
+import Button from "../../shared/buttons/Button";
+import useInfiniteScroll from "../../shared/hooks/useInfiniteScroll";
+import MediaCard from "../../shared/media/MediaCard";
 import QueryErrorState from "../../shared/errors/QueryErrorState";
+import IndividualSearchResultsLoading from "../../shared/loading/IndividualSearchResultsLoading";
+import PeopleSearchResults from "./PeopleSearchResults";
+import { tokens } from "../../styles/tokens";
 
 const IndividualSearchResults = ({
   searchKeyword,
   viewAllType,
   setViewAllMedia,
+  onRefresh,
 }) => {
-  const loadMoreRef = useRef(null);
+  const isPeople = viewAllType.type === "user";
 
   const {
     data: searchResults,
@@ -38,7 +39,7 @@ const IndividualSearchResults = ({
       return {
         data: response.data.data.mediaList,
         currentPage: pageParam,
-        totalPages: response.data.data.totalPages,
+        totalPages: response.data.data.totalPages || 1,
       };
     },
     {
@@ -49,99 +50,118 @@ const IndividualSearchResults = ({
         return undefined;
       },
       staleTime: 60000,
-      enabled: !!searchKeyword,
+      enabled: !!searchKeyword && !!viewAllType.type && !isPeople,
     }
   );
 
+  const {
+    data: peopleResults,
+    isLoading: isPeopleLoading,
+    isError: isPeopleError,
+    refetch: refetchPeople,
+  } = useQuery({
+    queryKey: ["searchPeople", searchKeyword],
+    queryFn: async () => {
+      const response = await SearchClient.searchMedia("user", searchKeyword, 1);
+      return response.data.data.mediaList;
+    },
+    staleTime: 60000,
+    enabled: !!searchKeyword && isPeople,
+  });
+
+  const loadMoreRef = useInfiniteScroll({
+    onLoadMore: fetchNextPage,
+    hasMore: !!hasNextPage,
+    isLoading: isFetchingNextPage,
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
-    if (!loadMoreRef.current || !hasNextPage) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchNextPage();
-        }
-      },
-      {
-        rootMargin: "500px",
-        threshold: 0,
-      }
-    );
-
-    observer.observe(loadMoreRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [fetchNextPage, hasNextPage]);
+  }, [viewAllType.type]);
 
   const allItems = searchResults?.pages.flatMap((page) => page.data) ?? [];
+  const people = isPeople ? peopleResults ?? [] : [];
+
+  const showLoading = isPeople ? isPeopleLoading : isLoading;
+  const showError = isPeople ? isPeopleError : isError;
+  const handleRetry = isPeople ? refetchPeople : refetch;
 
   return (
-    <Container>
-      <PrimaryButton
-        variant="text"
-        leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
+    <Box>
+      <Button
+        variant="ghost"
+        leftIcon={<KeyboardBackspaceIcon />}
         onClick={() => setViewAllMedia(false)}
+        sx={{ mb: 2 }}
       >
-        Return
-      </PrimaryButton>
-      <Typography variant="h5" className="font-medium">
-        Results for "{searchKeyword}"
-      </Typography>
-      <Typography variant="h6" className=" font-medium">
+        Back to results
+      </Button>
+
+      <Typography
+        sx={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: tokens.colors.textPrimary,
+          mb: 0.5,
+        }}
+      >
         {viewAllType.title}
       </Typography>
-      {isError && (
+      <Typography
+        sx={{ fontSize: 14, color: tokens.colors.textSecondary, mb: 2 }}
+      >
+        Results for &ldquo;{searchKeyword}&rdquo;
+      </Typography>
+
+      {showError ? (
         <QueryErrorState
           message="Unable to load search results."
-          onRetry={refetch}
+          onRetry={handleRetry}
         />
-      )}
-      <List>
-        {!isError && isSuccess &&
-          allItems &&
-          allItems.length > 0 &&
-          allItems.map((row, index) => {
-            return (
-              <ListItem
-                component={Link}
-                to={`/${viewAllType.type}/${row.mediaId}`}
-                key={index}
-              >
-                <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
-                  <div
-                    class="w-full h-96 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"
-                    style={{
-                      backgroundImage: `url(${
-                        row.poster ? row.poster : NotFoundImage
-                      })`,
-                    }}
-                  ></div>
+      ) : null}
 
-                  <div class="w-full max-w-full -mt-10 overflow-hidden rounded-lg shadow-lg md:w-64 bg-gray-800 h-12 flex items-center justify-center px-2">
-                    <h3 class="text-sm font-bold text-center uppercase text-white line-clamp-2 leading-tight">
-                      {row.name}
-                    </h3>
-                  </div>
-                </div>
-              </ListItem>
-            );
-          })}
-        {isLoading && <IndividualSearchResultsLoading />}
-      </List>
-      <div ref={loadMoreRef} className="h-10" />
+      {showLoading ? <IndividualSearchResultsLoading /> : null}
 
-      {isFetchingNextPage && (
-        <div className="flex justify-center my-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      )}
-    </Container>
+      {!showError && !showLoading && isPeople ? (
+        <PeopleSearchResults
+          people={people}
+          onRefresh={onRefresh}
+          variant="list"
+        />
+      ) : null}
+
+      {!showError && !showLoading && !isPeople && isSuccess && allItems.length > 0 ? (
+        <Grid container spacing={2}>
+          {allItems.map((item) => (
+            <Grid item xs={6} sm={4} md={3} key={`${viewAllType.type}-${item.mediaId}`}>
+              <MediaCard
+                item={item}
+                mediaType={viewAllType.type}
+                variant="grid"
+              />
+            </Grid>
+          ))}
+        </Grid>
+      ) : null}
+
+      {!showError &&
+      !showLoading &&
+      !isPeople &&
+      isSuccess &&
+      allItems.length === 0 ? (
+        <Typography sx={{ color: tokens.colors.textSecondary, py: 4 }}>
+          No results found.
+        </Typography>
+      ) : null}
+
+      {!isPeople ? <Box ref={loadMoreRef} sx={{ minHeight: 24, py: 2 }} /> : null}
+
+      {isFetchingNextPage ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+          <CircularProgress size={24} />
+        </Box>
+      ) : null}
+    </Box>
   );
 };
 
