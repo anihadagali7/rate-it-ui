@@ -1,8 +1,8 @@
 import {
   AccountCircle,
   Home,
+  Login as LoginIcon,
   PlaylistPlay as PlaylistIcon,
-  Search,
   Search as SearchIcon,
 } from "@mui/icons-material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -19,13 +19,14 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../shared/context/userContext";
+import { tokens } from "../styles/tokens";
 import Sidebar from "./Sidebar";
 import TopAppBar from "./TopAppBar";
 
-const drawerWidth = 240;
+const drawerWidth = tokens.layout.sidebarWidth;
 
 const ResponsiveLayout = ({ children }) => {
   const theme = useTheme();
@@ -34,55 +35,81 @@ const ResponsiveLayout = ({ children }) => {
   const navigate = useNavigate();
   const { currentUser } = useContext(UserContext);
 
-  const bottomNavItems = [
-    {
-      label: "Home",
-      alternateIcon: <Home />,
-      icon: <HomeOutlinedIcon />,
-      path: "/",
-    },
-    {
-      label: "Search",
-      icon: <SearchIcon />,
-      alternateIcon: <SearchIcon />,
-      path: `/search`,
-    },
-    {
-      label: "Playlists",
-      icon: <PlaylistIcon />,
-      alternateIcon: <PlaylistIcon />,
-      path: `/playlist/${currentUser?.userName}`,
-    },
-    {
-      label: "Wishlist",
-      icon: <FavoriteBorderOutlinedIcon />,
-      alternateIcon: <FavoriteIcon />,
-      path: `/wishlist/${currentUser?.userName}`,
-    },
-    {
-      label: "Profile",
-      icon: <AccountCircleOutlinedIcon />,
-      alternateIcon: <AccountCircle />,
-      path: `/profile/${currentUser?.userName}`,
-    },
-  ];
+  const bottomNavItems = useMemo(() => {
+    if (!currentUser) {
+      return [
+        {
+          label: "Home",
+          alternateIcon: <Home />,
+          icon: <HomeOutlinedIcon />,
+          path: "/",
+        },
+        {
+          label: "Search",
+          icon: <SearchIcon />,
+          alternateIcon: <SearchIcon />,
+          path: "/search",
+        },
+        {
+          label: "Log in",
+          icon: <LoginIcon />,
+          alternateIcon: <LoginIcon />,
+          path: "/login",
+        },
+      ];
+    }
+
+    return [
+      {
+        label: "Home",
+        alternateIcon: <Home />,
+        icon: <HomeOutlinedIcon />,
+        path: "/",
+      },
+      {
+        label: "Search",
+        icon: <SearchIcon />,
+        alternateIcon: <SearchIcon />,
+        path: "/search",
+      },
+      {
+        label: "Playlists",
+        icon: <PlaylistIcon />,
+        alternateIcon: <PlaylistIcon />,
+        path: `/playlist/${currentUser.userName}`,
+      },
+      {
+        label: "Wishlist",
+        icon: <FavoriteBorderOutlinedIcon />,
+        alternateIcon: <FavoriteIcon />,
+        path: `/wishlist/${currentUser.userName}`,
+      },
+      {
+        label: "Profile",
+        icon: <AccountCircleOutlinedIcon />,
+        alternateIcon: <AccountCircle />,
+        path: `/profile/${currentUser.userName}`,
+      },
+    ];
+  }, [currentUser]);
 
   const handleNavChange = (event, newValue) => {
     navigate(bottomNavItems[newValue].path);
   };
 
-  const currentNavIndex = bottomNavItems.findIndex(
-    (item) => item.path === location.pathname
-  );
+  const currentNavIndex = bottomNavItems.findIndex((item) => {
+    if (item.path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(item.path);
+  });
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor: tokens.colors.background }}>
       <CssBaseline />
 
-      {/* Top AppBar for mobile */}
       {isMobile && <TopAppBar />}
 
-      {/* Sidebar for desktop */}
       {!isMobile && (
         <Drawer
           variant="permanent"
@@ -92,25 +119,25 @@ const ResponsiveLayout = ({ children }) => {
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: "border-box",
+              backgroundColor: tokens.colors.surface,
+              borderRight: `1px solid ${tokens.colors.border}`,
+              boxShadow: "none",
             },
           }}
         >
           <Toolbar />
-          <Box sx={{ p: 2 }}>
-            <Sidebar />
-          </Box>
+          <Sidebar />
         </Drawer>
       )}
 
-      {/* Main content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
-          p: 2,
-          pt: isMobile ? 12 : 3,
-          pb: isMobile ? "70px" : 3,
+          px: { xs: 2, sm: 3 },
+          pt: isMobile ? 10 : 3,
+          pb: isMobile ? "80px" : 3,
           overflowX: "hidden",
           minHeight: "100vh",
         }}
@@ -118,23 +145,35 @@ const ResponsiveLayout = ({ children }) => {
         {children}
       </Box>
 
-      {/* Bottom Navigation for mobile */}
       {isMobile && (
         <BottomNavigation
           showLabels
-          value={currentNavIndex}
+          value={currentNavIndex === -1 ? false : currentNavIndex}
           onChange={handleNavChange}
           sx={{
             position: "fixed",
             bottom: 0,
             left: 0,
             right: 0,
-            borderTop: "1px solid #e0e0e0",
+            borderTop: `1px solid ${tokens.colors.border}`,
+            backgroundColor: tokens.colors.surface,
             zIndex: 1300,
+            height: 64,
+            "& .MuiBottomNavigationAction-root": {
+              color: tokens.colors.textMuted,
+              minWidth: 0,
+              paddingTop: 1,
+            },
+            "& .Mui-selected": {
+              color: `${tokens.colors.accent} !important`,
+            },
           }}
         >
           {bottomNavItems.map((item) => {
-            const isActive = location.pathname === item.path;
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.path);
             return (
               <BottomNavigationAction
                 key={item.label}

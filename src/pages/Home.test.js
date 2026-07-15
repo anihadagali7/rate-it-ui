@@ -7,8 +7,17 @@ jest.mock("../client/RatingClient");
 
 const exploreRating = {
   _id: "e1",
-  media: { name: "Better Call Saul", mediaType: "TV", mediaId: "60059" },
-  ratedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
+  media: {
+    name: "Better Call Saul",
+    mediaType: "TV",
+    mediaId: "60059",
+    picture: "https://example.com/poster.jpg",
+  },
+  ratedBy: {
+    userName: "anihadagali7",
+    firstName: "Anirudha",
+    lastName: "Hadagali",
+  },
   rating: "10",
   comments: "slippin jimmy",
   dateCreated: "2022-09-23T09:05:40.853Z",
@@ -16,7 +25,12 @@ const exploreRating = {
 
 const feedRating = {
   _id: "f1",
-  media: { name: "Friends", mediaType: "TV", mediaId: "1668" },
+  media: {
+    name: "Friends",
+    mediaType: "TV",
+    mediaId: "1668",
+    picture: "https://example.com/friends.jpg",
+  },
   ratedBy: { userName: "shree", firstName: "Shree", lastName: "Balaji" },
   rating: "9",
   comments: "great show",
@@ -34,23 +48,23 @@ describe("Home", () => {
     const { container } = renderWithProviders(<Home />);
 
     expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
-    expect(screen.queryByText("Explore")).not.toBeInTheDocument();
+    expect(screen.queryByText("Discover")).not.toBeInTheDocument();
   });
 
-  it("shows only the Explore section for a logged-out user", async () => {
+  it("shows the discover feed for a logged-out user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
       mockRatingsList([exploreRating])
     );
 
     renderWithProviders(<Home />);
 
-    expect(await screen.findByText("Explore")).toBeInTheDocument();
-    expect(screen.getByText("Comments: slippin jimmy")).toBeInTheDocument();
-    expect(screen.queryByText("For you")).not.toBeInTheDocument();
+    expect(await screen.findByText("slippin jimmy")).toBeInTheDocument();
+    expect(screen.getByText("Better Call Saul")).toBeInTheDocument();
+    expect(screen.queryByText("Following")).not.toBeInTheDocument();
     expect(RatingClient.getFeedRatings).not.toHaveBeenCalled();
   });
 
-  it("shows both For you and Explore sections for a logged in user", async () => {
+  it("shows following feed by default for a logged in user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
       mockRatingsList([exploreRating])
     );
@@ -60,13 +74,13 @@ describe("Home", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("For you")).toBeInTheDocument();
-    expect(screen.getByText("Explore")).toBeInTheDocument();
-    expect(screen.getByText("Comments: great show")).toBeInTheDocument();
-    expect(screen.getByText("Comments: slippin jimmy")).toBeInTheDocument();
+    expect(await screen.findByText("Following")).toBeInTheDocument();
+    expect(screen.getByText("Discover")).toBeInTheDocument();
+    expect(screen.getByText("great show")).toBeInTheDocument();
+    expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
   });
 
-  it("hides the For you section when the feed has no ratings", async () => {
+  it("shows an empty state when the following feed has no ratings", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
       mockRatingsList([exploreRating])
     );
@@ -76,8 +90,8 @@ describe("Home", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("Explore")).toBeInTheDocument();
-    expect(screen.queryByText("For you")).not.toBeInTheDocument();
+    expect(await screen.findByText("Your feed is empty")).toBeInTheDocument();
+    expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
   });
 
   it("shows an error message when explore ratings fail to load", async () => {

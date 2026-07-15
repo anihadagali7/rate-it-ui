@@ -1,18 +1,27 @@
-import React, { useContext } from "react";
-import { Container, Paper, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import RatingClient from "../client/RatingClient";
+import RatingCard from "../components/ratingcard/RatingCard";
+import FeedLayout from "../shared/layout/FeedLayout";
+import TabBar from "../shared/navigation/TabBar";
 import RatingsLoading from "../shared/loading/RatingsLoading";
 import UserContext from "../shared/context/userContext";
-import { useQuery } from "@tanstack/react-query";
-import RatingCard from "../components/ratingcard/RatingCard";
 import QueryErrorState from "../shared/errors/QueryErrorState";
+import { tokens } from "../styles/tokens";
+import { useQuery } from "@tanstack/react-query";
+
+const FEED_TABS = {
+  FOLLOWING: "following",
+  DISCOVER: "discover",
+};
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
+  const [activeTab, setActiveTab] = useState(FEED_TABS.FOLLOWING);
 
   const {
     data: exploreRatingsList,
-    isLoading,
+    isLoading: isExploreLoading,
     isError: isExploreError,
     refetch: refetchExplore,
   } = useQuery({
@@ -24,7 +33,7 @@ const Home = () => {
 
   const {
     data: feedRatingsList,
-    isLoading: isFeedRatingsLoading,
+    isLoading: isFeedLoading,
     isError: isFeedError,
     refetch: refetchFeed,
   } = useQuery({
@@ -35,83 +44,99 @@ const Home = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
-  if (isLoading || (currentUser && isFeedRatingsLoading)) {
+  const isLoading =
+    isExploreLoading || (currentUser && isFeedLoading && activeTab === FEED_TABS.FOLLOWING);
+
+  if (isLoading) {
     return <RatingsLoading />;
   }
 
-  if (isExploreError) {
+  if (isExploreError && (!currentUser || activeTab === FEED_TABS.DISCOVER)) {
     return (
-      <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
+      <FeedLayout>
         <QueryErrorState
           message="Unable to load explore ratings."
           onRetry={refetchExplore}
         />
-      </Container>
+      </FeedLayout>
     );
   }
 
+  const isFollowingTab =
+    currentUser && activeTab === FEED_TABS.FOLLOWING;
+
+  const ratingsToShow = isFollowingTab ? feedRatingsList : exploreRatingsList;
+
+  const shouldShowRatings = isFollowingTab
+    ? !isFeedError && feedRatingsList?.length > 0
+    : exploreRatingsList?.length > 0;
+
   return (
-    <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
-      {currentUser && isFeedError && (
+    <FeedLayout>
+      {currentUser ? (
+        <TabBar
+          tabs={[
+            { id: FEED_TABS.FOLLOWING, label: "Following" },
+            { id: FEED_TABS.DISCOVER, label: "Discover" },
+          ]}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+      ) : null}
+
+      {currentUser && activeTab === FEED_TABS.FOLLOWING && isFeedError ? (
         <QueryErrorState
           message="Unable to load your feed."
           onRetry={refetchFeed}
         />
-      )}
-      {currentUser && !isFeedError && feedRatingsList && feedRatingsList.length > 0 && (
-        <>
+      ) : null}
+
+      {currentUser &&
+      activeTab === FEED_TABS.FOLLOWING &&
+      !isFeedError &&
+      feedRatingsList?.length === 0 ? (
+        <Box
+          sx={{
+            textAlign: "center",
+            py: 6,
+            px: 2,
+            border: `1px solid ${tokens.colors.border}`,
+            borderRadius: `${tokens.radius.card}px`,
+            backgroundColor: tokens.colors.surface,
+          }}
+        >
           <Typography
             sx={{
-              fontWeight: "bold",
-              fontSize: "22px",
+              fontSize: 16,
+              fontWeight: 600,
+              color: tokens.colors.textPrimary,
+              mb: 1,
             }}
           >
-            For you
+            Your feed is empty
           </Typography>
-          {feedRatingsList.map((rating) => (
-            <Paper
-              elevation={6}
-              key={rating._id}
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "17px",
-                marginTop: "15px",
-                padding: "25px",
-              }}
-            >
-              <RatingCard rating={rating} key={rating.id} />
-            </Paper>
-          ))}
-        </>
-      )}
-      {exploreRatingsList && exploreRatingsList.length > 0 && (
-        <>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "22px",
-              paddingTop: "15px",
-            }}
-          >
-            Explore
+          <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
+            Follow people to see their reviews here, or switch to Discover.
           </Typography>
-          {exploreRatingsList.map((rating) => (
-            <Paper
-              elevation={6}
-              key={rating._id}
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "17px",
-                marginTop: "15px",
-                padding: "25px",
-              }}
-            >
-              <RatingCard rating={rating} key={rating.id} />
-            </Paper>
+        </Box>
+      ) : null}
+
+      {shouldShowRatings ? (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {ratingsToShow?.map((rating) => (
+            <RatingCard rating={rating} key={rating._id} />
           ))}
-        </>
-      )}
-    </Container>
+        </Box>
+      ) : null}
+
+      {!currentUser && exploreRatingsList?.length === 0 && !isExploreError ? (
+        <Typography
+          sx={{ textAlign: "center", color: tokens.colors.textSecondary, py: 4 }}
+        >
+          No reviews yet. Be the first to rate something!
+        </Typography>
+      ) : null}
+    </FeedLayout>
   );
 };
 
