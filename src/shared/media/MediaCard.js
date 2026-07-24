@@ -13,9 +13,7 @@ const getSubtitle = (item, mediaType) => {
     return item.author;
   }
   if (item.description) {
-    return item.description.length > 60
-      ? `${item.description.slice(0, 60)}…`
-      : item.description;
+    return item.description;
   }
   return null;
 };
@@ -33,7 +31,7 @@ const MediaCard = ({ item, mediaType, variant = "carousel" }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 1,
+        gap: 0.75,
         minWidth: isGrid ? 0 : 140,
         maxWidth: isGrid ? "100%" : 160,
         textDecoration: "none",
@@ -47,37 +45,43 @@ const MediaCard = ({ item, mediaType, variant = "carousel" }) => {
         height={posterHeight}
         sx={{ width: "100%", height: posterHeight }}
       />
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 4.2em auto",
+          rowGap: 0.5,
+          alignContent: "start",
+        }}
+      >
         <Typography
           sx={{
             fontSize: 14,
             fontWeight: 600,
             color: tokens.colors.textPrimary,
             lineHeight: 1.3,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {item.name}
         </Typography>
-        {subtitle ? (
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: tokens.colors.textSecondary,
-              lineHeight: 1.4,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {subtitle}
-          </Typography>
-        ) : null}
-        <MediaTypeBadge type={mediaType} />
+        <Typography
+          sx={{
+            fontSize: 12,
+            color: tokens.colors.textSecondary,
+            lineHeight: 1.4,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {subtitle || "\u00A0"}
+        </Typography>
+        <Box>
+          <MediaTypeBadge type={mediaType} />
+        </Box>
       </Box>
     </Box>
   );

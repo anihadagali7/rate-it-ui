@@ -33,6 +33,9 @@ beforeEach(() => {
   }));
   MediaClient.getMediaInfoDetails.mockResolvedValue({ data: mediaInfoResponse });
   RatingClient.getAllRatingsForMedia.mockResolvedValue({ data: ratingsResponse });
+  WishlistClient.getAllWishlistForUser.mockResolvedValue({
+    data: { data: { wishlistList: [] } },
+  });
 });
 
 describe("MediaInfo", () => {
@@ -106,6 +109,36 @@ describe("MediaInfo", () => {
         mediaId: "76331",
       })
     );
+    expect(
+      await screen.findByText("Succession saved to your wishlist")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /saved to wishlist/i })
+    ).toBeDisabled();
+  });
+
+  it("disables the wishlist button when the media is already saved", async () => {
+    WishlistClient.getAllWishlistForUser.mockResolvedValue({
+      data: {
+        data: {
+          wishlistList: [
+            {
+              _id: "w1",
+              media: { mediaId: "76331", name: "Succession", mediaType: "TV" },
+            },
+          ],
+        },
+      },
+    });
+
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
+    await screen.findByRole("heading", { name: "Succession" });
+
+    expect(
+      await screen.findByRole("button", { name: /saved to wishlist/i })
+    ).toBeDisabled();
   });
 
   it("opens the add rating modal and submits a rating", async () => {
@@ -132,6 +165,40 @@ describe("MediaInfo", () => {
         rating: 5,
       })
     );
+    expect(
+      await screen.findByText("You rated Succession 5/10")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /rated 5\/10/i })
+    ).toBeDisabled();
+  });
+
+  it("disables the rate button when the user already rated the media", async () => {
+    RatingClient.getAllRatingsForMedia.mockResolvedValue({
+      data: {
+        data: {
+          ratingsList: [
+            {
+              ...ratingsResponse.data.ratingsList[0],
+              ratedBy: {
+                ...ratingsResponse.data.ratingsList[0].ratedBy,
+                userName: "janedoe",
+              },
+              rating: 8,
+            },
+          ],
+        },
+      },
+    });
+
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
+    await screen.findByRole("heading", { name: "Succession" });
+
+    expect(
+      await screen.findByRole("button", { name: /rated 8\/10/i })
+    ).toBeDisabled();
   });
 
   it("opens the add to playlist dialog and lists the user's playlists", async () => {

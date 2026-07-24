@@ -1,7 +1,8 @@
-import AddIcon from "@mui/icons-material/Add";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { Box } from "@mui/material";
 import Button from "../../shared/buttons/Button";
 
@@ -10,6 +11,10 @@ const MediaActionBar = ({
   onWishlist,
   onPlaylist,
   isMobile = false,
+  isOnWishlist = false,
+  isWishlistLoading = false,
+  hasRated = false,
+  userRating = null,
 }) => {
   return (
     <Box
@@ -21,20 +26,38 @@ const MediaActionBar = ({
       }}
     >
       <Button
-        variant="primary"
-        leftIcon={<StarIcon sx={{ fontSize: 18 }} />}
+        variant={hasRated ? "secondary" : "primary"}
+        leftIcon={
+          hasRated ? (
+            <StarIcon sx={{ fontSize: 18 }} />
+          ) : (
+            <StarBorderIcon sx={{ fontSize: 18 }} />
+          )
+        }
         onClick={onRate}
+        disabled={hasRated}
         sx={{ flex: isMobile ? 1 : "initial" }}
       >
-        Rate
+        {hasRated
+          ? userRating != null
+            ? `Rated ${userRating}/10`
+            : "Rated"
+          : "Rate"}
       </Button>
       <Button
         variant="secondary"
-        leftIcon={<FavoriteBorderIcon sx={{ fontSize: 18 }} />}
+        leftIcon={
+          isOnWishlist ? (
+            <FavoriteIcon sx={{ fontSize: 18 }} />
+          ) : (
+            <FavoriteBorderIcon sx={{ fontSize: 18 }} />
+          )
+        }
         onClick={onWishlist}
+        disabled={isOnWishlist || isWishlistLoading}
         sx={{ flex: isMobile ? 1 : "initial" }}
       >
-        Add to wishlist
+        {isOnWishlist ? "Saved to wishlist" : "Add to wishlist"}
       </Button>
       <Button
         variant="secondary"

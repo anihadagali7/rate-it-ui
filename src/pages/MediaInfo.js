@@ -1,7 +1,7 @@
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MediaClient from "../client/MediaClient";
 import RatingClient from "../client/RatingClient";
@@ -17,6 +17,7 @@ import Button from "../shared/buttons/Button";
 import FeedLayout from "../shared/layout/FeedLayout";
 import MediaInfoLoading from "../shared/loading/MediaInfoLoading";
 import SurfaceCard from "../shared/primitives/SurfaceCard";
+import Toast from "../shared/feedback/Toast";
 import LoginErrorModal from "../shared/errorModals/LoginErrorModal";
 import QueryErrorState from "../shared/errors/QueryErrorState";
 import UserContext from "../shared/context/userContext";
@@ -28,11 +29,15 @@ const MediaInfo = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [openPlaylist, setOpenPlaylist] = useState(false);
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
+  const [toast, setToast] = useState({ open: false, message: "" });
+  const [wishlistJustAdded, setWishlistJustAdded] = useState(false);
+  const [ratingJustAdded, setRatingJustAdded] = useState(null);
 
   const {
     isLoading,
@@ -57,9 +62,64 @@ const MediaInfo = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
-  const { mutate: addToWishlist } = useMutation({
+  const { data: wishlistList } = useQuery({
+    queryKey: ["getAllWishlistForUser", currentUser?.userName],
+    queryFn: async () =>
+      WishlistClient.getAllWishlistForUser(currentUser.userName),
+    staleTime: 60000,
+    enabled: !!currentUser?.userName,
+    select: ({ data }) => data.data.wishlistList,
+  });
+
+  useEffect(() => {
+    setWishlistJustAdded(false);
+    setRatingJustAdded(null);
+  }, [id]);
+
+  const existingUserRating = useMemo(() => {
+    if (!currentUser?.userName || !ratingsList?.length) {
+      return null;
+    }
+    const match = ratingsList.find(
+      (rating) => rating.ratedBy?.userName === currentUser.userName
+    );
+    return match ? match.rating : null;
+  }, [ratingsList, currentUser?.userName]);
+
+  const hasRated = ratingJustAdded != null || existingUserRating != null;
+  const userRating =
+    ratingJustAdded != null ? ratingJustAdded : existingUserRating;
+
+  const isOnWishlist = useMemo(() => {
+    if (wishlistJustAdded) {
+      return true;
+    }
+    const mediaId = mediaInfo?.mediaId || id;
+    if (!mediaId || !wishlistList?.length) {
+      return false;
+    }
+    return wishlistList.some((item) => item.media?.mediaId === mediaId);
+  }, [wishlistList, mediaInfo?.mediaId, id, wishlistJustAdded]);
+
+  const { mutate: addToWishlist, isLoading: isWishlistLoading } = useMutation({
     mutationFn: async (requestBody) => {
       await WishlistClient.addToWishlist(requestBody);
+    },
+    onSuccess: () => {
+      setWishlistJustAdded(true);
+      queryClient.invalidateQueries({
+        queryKey: ["getAllWishlistForUser", currentUser?.userName],
+      });
+      setToast({
+        open: true,
+        message: `${mediaInfo?.name || "Title"} saved to your wishlist`,
+      });
+    },
+    onError: () => {
+      setToast({
+        open: true,
+        message: "Couldn't add to wishlist. Try again.",
+      });
     },
   });
 
@@ -72,13 +132,55 @@ const MediaInfo = () => {
   };
 
   const handleAddToWishlist = () => {
+    if (isOnWishlist || isWishlistLoading) {
+      return;
+    }
     requireAuth(() => {
       addToWishlist({ mediaId: mediaInfo.mediaId });
     });
   };
 
   const handleOpenRating = () => {
+    if (hasRated) {
+      return;
+    }
     requireAuth(() => setOpenRatingModal(true));
+  };
+
+  const handleRatingSuccess = ({ rating }) => {
+    setRatingJustAdded(rating);
+    setToast({
+      open: true,
+      message: `You rated ${mediaInfo?.name || "this title"} ${rating}/10`,
+    });
+  };
+
+  const handleRatingError = () => {
+    setToast({
+      open: true,
+      message: "Couldn't submit your rating. Try again.",
+    });
+  };
+
+  const handlePlaylistSuccess = ({
+    playlistsToAdd = [],
+    playlistsToRemove = [],
+  } = {}) => {
+    let message = "Playlists updated";
+
+    if (playlistsToAdd.length > 0 && playlistsToRemove.length === 0) {
+      message =
+        playlistsToAdd.length === 1
+          ? "Added to playlist"
+          : `Added to ${playlistsToAdd.length} playlists`;
+    } else if (playlistsToRemove.length > 0 && playlistsToAdd.length === 0) {
+      message =
+        playlistsToRemove.length === 1
+          ? "Removed from playlist"
+          : `Removed from ${playlistsToRemove.length} playlists`;
+    }
+
+    setToast({ open: true, message });
   };
 
   const handleOpenPlaylist = () => {
@@ -114,6 +216,10 @@ const MediaInfo = () => {
               onRate={handleOpenRating}
               onWishlist={handleAddToWishlist}
               onPlaylist={handleOpenPlaylist}
+              isOnWishlist={isOnWishlist}
+              isWishlistLoading={isWishlistLoading}
+              hasRated={hasRated}
+              userRating={userRating}
             />
 
             <Box
@@ -190,6 +296,8 @@ const MediaInfo = () => {
           open={openRatingModal}
           onClose={() => setOpenRatingModal(false)}
           mediaDetails={mediaInfo}
+          onSuccess={handleRatingSuccess}
+          onError={handleRatingError}
         />
       ) : null}
 
@@ -214,6 +322,7 @@ const MediaInfo = () => {
           onClose={() => setOpenPlaylist(false)}
           handleNewPlaylistModalOpen={() => setNewPlaylistModal(true)}
           mediaId={mediaInfo?._id}
+          onSuccess={handlePlaylistSuccess}
         />
       ) : (
         <DesktopPlaylistDialog
@@ -221,8 +330,15 @@ const MediaInfo = () => {
           onClose={() => setOpenPlaylist(false)}
           handleNewPlaylistModalOpen={() => setNewPlaylistModal(true)}
           mediaId={mediaInfo?._id}
+          onSuccess={handlePlaylistSuccess}
         />
       )}
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        onClose={() => setToast({ open: false, message: "" })}
+      />
     </FeedLayout>
   );
 };

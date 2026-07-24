@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Dialog,
-  DialogTitle,
-  Grid,
-  Rating,
+  IconButton,
   Typography,
 } from "@mui/material";
-import RatingClient from "../../client/RatingClient";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import TextAreaField from "../../shared/inputfield/TextAreaField";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import RatingClient from "../../client/RatingClient";
+import Button from "../../shared/buttons/Button";
+import MediaPoster from "../../shared/primitives/MediaPoster";
+import MediaTypeBadge from "../../shared/media/MediaTypeBadge";
+import { tokens } from "../../styles/tokens";
 
-const AddRatingModal = ({ open, onClose, mediaDetails }) => {
+const SCORE_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const MAX_CHARS = 280;
+
+const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => {
   const [payload, setPayload] = useState({
     comments: "",
     rating: 5,
@@ -20,109 +24,297 @@ const AddRatingModal = ({ open, onClose, mediaDetails }) => {
   const queryClient = useQueryClient();
 
   const submitRating = useMutation({
-    mutationFn: (requestBody) => {
-      return RatingClient.submitRating(requestBody);
-    },
+    mutationFn: (requestBody) => RatingClient.submitRating(requestBody),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          "ratingsForMedia",
-          {
-            mediaType: mediaDetails.mediaType,
-            id: mediaDetails.mediaId,
-          },
-        ],
+        queryKey: ["ratingsForMedia"],
       });
       onClose();
+      onSuccess?.({ rating: payload.rating });
+    },
+    onError: () => {
+      onError?.();
     },
   });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setPayload((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+  const handleSubmitRating = () => {
+    submitRating.mutate({
+      mediaId: mediaDetails.mediaId,
+      comments: payload.comments.trim(),
+      rating: payload.rating,
+    });
   };
 
-  const handleSubmitRating = async () => {
-    let requestBody = {};
-    requestBody.mediaId = mediaDetails.mediaId;
-    requestBody.comments = payload.comments;
-    requestBody.rating = payload.rating;
+  const isDisabled =
+    !payload.rating ||
+    !payload.comments.trim() ||
+    submitRating.isLoading;
 
-    submitRating.mutate(requestBody);
-  };
-
-  const checkToDisable = () => {
-    const { rating, comments } = payload;
-
-    const hasAllRequiredFields = rating && comments;
-
-    return !hasAllRequiredFields || submitRating.isLoading;
-  };
+  const mediaType = mediaDetails?.mediaType?.toLowerCase();
+  const charCount = payload.comments.length;
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth="sm"
       sx={{
         "& .MuiDialog-paper": {
           width: "100%",
-          maxHeight: 600,
-          maxWidth: 500,
-          overflowY: "hidden",
+          maxWidth: 440,
+          borderRadius: `${tokens.radius.card}px`,
+          border: `1px solid ${tokens.colors.border}`,
+          backgroundColor: tokens.colors.surface,
+          boxShadow: tokens.shadows.lift,
+          overflow: "hidden",
+        },
+        "& .MuiBackdrop-root": {
+          backgroundColor: "rgba(20, 24, 31, 0.45)",
+          backdropFilter: "blur(4px)",
         },
       }}
     >
-      <DialogTitle
-        sx={{
-          fontSize: "13px",
-          fontWeight: "bold",
-          height: "0px",
-          textAlign: "center",
-        }}
-      >
-        {mediaDetails.name}
-      </DialogTitle>
-      <Box sx={{ margin: "20px" }}>
-        <Grid container spacing={{ xs: 2, md: 2, xl: 2 }} columns={{ md: 12 }}>
-          <Grid item xs={12}>
-            <Typography component="legend">Enter a rating: </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Rating
-              defaultValue={5}
-              max={10}
-              precision={0.1}
-              value={payload.rating}
-              name="rating"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextAreaField
-              label="Enter comments"
-              required
-              hasCharacterCount
-              maxCharacters={100}
-              minRows={2}
-              value={payload.comments}
-              name="comments"
-              onChange={(e) => handleChange(e)}
-            ></TextAreaField>
-          </Grid>
-          <Grid item xs={12} container justifyContent="end">
-            <PrimaryButton
-              variant="contained"
-              disabled={checkToDisable()}
-              onClick={handleSubmitRating}
+      <Box sx={{ position: "relative", p: { xs: 2.5, sm: 3 } }}>
+        <IconButton
+          aria-label="Close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            color: tokens.colors.textMuted,
+            "&:hover": {
+              color: tokens.colors.textPrimary,
+              backgroundColor: tokens.colors.surfaceHover,
+            },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "flex-start",
+            pr: 4,
+            mb: 3,
+          }}
+        >
+          <MediaPoster
+            src={mediaDetails?.picture}
+            alt={mediaDetails?.name}
+            width={72}
+            height={108}
+          />
+          <Box sx={{ minWidth: 0, pt: 0.5 }}>
+            <Typography
+              sx={{
+                fontFamily: tokens.fonts.body,
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: tokens.colors.textMuted,
+                mb: 0.75,
+              }}
             >
-              Submit
-            </PrimaryButton>
-          </Grid>
-        </Grid>
+              Rate this
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: tokens.fonts.display,
+                fontSize: 22,
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+                color: tokens.colors.textPrimary,
+                lineHeight: 1.2,
+                mb: 1,
+              }}
+            >
+              {mediaDetails?.name}
+            </Typography>
+            {mediaType ? <MediaTypeBadge type={mediaType} /> : null}
+          </Box>
+        </Box>
+
+        <Box sx={{ textAlign: "center", mb: 2.5 }}>
+          <Typography
+            sx={{
+              fontFamily: tokens.fonts.display,
+              fontSize: 56,
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+              color: tokens.colors.signal,
+              mb: 0.5,
+            }}
+          >
+            {payload.rating}
+            <Box
+              component="span"
+              sx={{
+                fontSize: 22,
+                fontWeight: 600,
+                color: tokens.colors.textMuted,
+                ml: 0.5,
+              }}
+            >
+              /10
+            </Box>
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: 13,
+              color: tokens.colors.textSecondary,
+              mb: 2,
+            }}
+          >
+            Tap a score
+          </Typography>
+
+          <Box
+            role="radiogroup"
+            aria-label="Rating score"
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(10, 1fr)",
+              gap: 0.5,
+            }}
+          >
+            {SCORE_OPTIONS.map((score) => {
+              const selected = payload.rating === score;
+              return (
+                <Box
+                  key={score}
+                  component="button"
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={`Rate ${score} out of 10`}
+                  onClick={() =>
+                    setPayload((prev) => ({ ...prev, rating: score }))
+                  }
+                  sx={{
+                    border: `1.5px solid ${
+                      selected
+                        ? tokens.colors.signal
+                        : tokens.colors.borderStrong
+                    }`,
+                    backgroundColor: selected
+                      ? tokens.colors.signal
+                      : "transparent",
+                    color: selected ? "#FFFFFF" : tokens.colors.textSecondary,
+                    borderRadius: `${tokens.radius.button}px`,
+                    height: 36,
+                    cursor: "pointer",
+                    fontFamily: tokens.fonts.display,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    transition: `all ${tokens.motion.quick}`,
+                    "&:hover": {
+                      borderColor: tokens.colors.signal,
+                      color: selected ? "#FFFFFF" : tokens.colors.signal,
+                      backgroundColor: selected
+                        ? tokens.colors.signal
+                        : tokens.colors.signalSoft,
+                    },
+                  }}
+                >
+                  {score}
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+
+        <Box sx={{ mb: 3 }}>
+          <Typography
+            component="label"
+            htmlFor="rating-comments"
+            sx={{
+              display: "block",
+              fontSize: 13,
+              fontWeight: 650,
+              color: tokens.colors.textPrimary,
+              mb: 1,
+            }}
+          >
+            Your take
+          </Typography>
+          <Box
+            component="textarea"
+            id="rating-comments"
+            name="comments"
+            value={payload.comments}
+            maxLength={MAX_CHARS}
+            placeholder="What stood out? Spoiler-free thoughts welcome."
+            onChange={(event) =>
+              setPayload((prev) => ({
+                ...prev,
+                comments: event.target.value,
+              }))
+            }
+            sx={{
+              width: "100%",
+              minHeight: 96,
+              boxSizing: "border-box",
+              resize: "vertical",
+              border: `1.5px solid ${tokens.colors.borderStrong}`,
+              borderRadius: `${tokens.radius.button}px`,
+              backgroundColor: tokens.colors.surface,
+              color: tokens.colors.textPrimary,
+              fontFamily: tokens.fonts.body,
+              fontSize: 15,
+              lineHeight: 1.5,
+              padding: "12px 14px",
+              outline: "none",
+              transition: `border-color ${tokens.motion.quick}`,
+              "&::placeholder": {
+                color: tokens.colors.textMuted,
+              },
+              "&:hover": {
+                borderColor: tokens.colors.accent,
+              },
+              "&:focus": {
+                borderColor: tokens.colors.accent,
+              },
+            }}
+          />
+          <Typography
+            sx={{
+              mt: 0.75,
+              fontSize: 12,
+              textAlign: "right",
+              color:
+                charCount >= MAX_CHARS
+                  ? tokens.colors.danger
+                  : tokens.colors.textMuted,
+            }}
+          >
+            {charCount}/{MAX_CHARS}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1.25,
+          }}
+        >
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            disabled={isDisabled}
+            onClick={handleSubmitRating}
+          >
+            Submit
+          </Button>
+        </Box>
       </Box>
     </Dialog>
   );

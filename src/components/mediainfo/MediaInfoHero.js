@@ -25,6 +25,10 @@ const MediaInfoHero = ({
   onRate,
   onWishlist,
   onPlaylist,
+  isOnWishlist = false,
+  isWishlistLoading = false,
+  hasRated = false,
+  userRating = null,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -100,6 +104,10 @@ const MediaInfoHero = ({
               onRate={onRate}
               onWishlist={onWishlist}
               onPlaylist={onPlaylist}
+              isOnWishlist={isOnWishlist}
+              isWishlistLoading={isWishlistLoading}
+              hasRated={hasRated}
+              userRating={userRating}
             />
           ) : null}
         </Box>
@@ -111,6 +119,10 @@ const MediaInfoHero = ({
             onRate={onRate}
             onWishlist={onWishlist}
             onPlaylist={onPlaylist}
+            isOnWishlist={isOnWishlist}
+            isWishlistLoading={isWishlistLoading}
+            hasRated={hasRated}
+            userRating={userRating}
             isMobile
           />
         </Box>
