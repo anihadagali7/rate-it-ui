@@ -54,8 +54,12 @@ const MediaActionBar = ({
           )
         }
         onClick={onWishlist}
-        disabled={isOnWishlist || isWishlistLoading}
-        sx={{ flex: isMobile ? 1 : "initial" }}
+        disabled={isWishlistLoading}
+        sx={{
+          flex: isMobile ? 1 : "initial",
+          // Reserve space for the longer label so Rate / Playlist don't shift
+          minWidth: isMobile ? undefined : 188,
+        }}
       >
         {isOnWishlist ? "Saved to wishlist" : "Add to wishlist"}
       </Button>

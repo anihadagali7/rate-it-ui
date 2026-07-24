@@ -36,7 +36,7 @@ const MediaInfo = () => {
   const [displayTokenModal, setDisplayTokenModal] = useState(false);
   const [openNewPlaylistModal, setNewPlaylistModal] = useState(false);
   const [toast, setToast] = useState({ open: false, message: "" });
-  const [wishlistJustAdded, setWishlistJustAdded] = useState(false);
+  const [wishlistOverride, setWishlistOverride] = useState(null);
   const [ratingJustAdded, setRatingJustAdded] = useState(null);
 
   const {
@@ -72,7 +72,7 @@ const MediaInfo = () => {
   });
 
   useEffect(() => {
-    setWishlistJustAdded(false);
+    setWishlistOverride(null);
     setRatingJustAdded(null);
   }, [id]);
 
@@ -91,25 +91,29 @@ const MediaInfo = () => {
     ratingJustAdded != null ? ratingJustAdded : existingUserRating;
 
   const isOnWishlist = useMemo(() => {
-    if (wishlistJustAdded) {
-      return true;
+    if (wishlistOverride != null) {
+      return wishlistOverride;
     }
     const mediaId = mediaInfo?.mediaId || id;
     if (!mediaId || !wishlistList?.length) {
       return false;
     }
     return wishlistList.some((item) => item.media?.mediaId === mediaId);
-  }, [wishlistList, mediaInfo?.mediaId, id, wishlistJustAdded]);
+  }, [wishlistList, mediaInfo?.mediaId, id, wishlistOverride]);
 
-  const { mutate: addToWishlist, isLoading: isWishlistLoading } = useMutation({
+  const invalidateWishlist = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["getAllWishlistForUser", currentUser?.userName],
+    });
+  };
+
+  const { mutate: addToWishlist, isLoading: isAddingWishlist } = useMutation({
     mutationFn: async (requestBody) => {
       await WishlistClient.addToWishlist(requestBody);
     },
     onSuccess: () => {
-      setWishlistJustAdded(true);
-      queryClient.invalidateQueries({
-        queryKey: ["getAllWishlistForUser", currentUser?.userName],
-      });
+      setWishlistOverride(true);
+      invalidateWishlist();
       setToast({
         open: true,
         message: `${mediaInfo?.name || "Title"} saved to your wishlist`,
@@ -123,6 +127,29 @@ const MediaInfo = () => {
     },
   });
 
+  const { mutate: removeFromWishlist, isLoading: isRemovingWishlist } =
+    useMutation({
+      mutationFn: async (mediaId) => {
+        await WishlistClient.removeFromWishlist(mediaId);
+      },
+      onSuccess: () => {
+        setWishlistOverride(false);
+        invalidateWishlist();
+        setToast({
+          open: true,
+          message: `${mediaInfo?.name || "Title"} removed from your wishlist`,
+        });
+      },
+      onError: () => {
+        setToast({
+          open: true,
+          message: "Couldn't remove from wishlist. Try again.",
+        });
+      },
+    });
+
+  const isWishlistLoading = isAddingWishlist || isRemovingWishlist;
+
   const requireAuth = (action) => {
     if (!currentUser) {
       setDisplayTokenModal(true);
@@ -131,12 +158,16 @@ const MediaInfo = () => {
     action();
   };
 
-  const handleAddToWishlist = () => {
-    if (isOnWishlist || isWishlistLoading) {
+  const handleWishlistToggle = () => {
+    if (isWishlistLoading) {
       return;
     }
     requireAuth(() => {
-      addToWishlist({ mediaId: mediaInfo.mediaId });
+      if (isOnWishlist) {
+        removeFromWishlist(mediaInfo.mediaId);
+      } else {
+        addToWishlist({ mediaId: mediaInfo.mediaId });
+      }
     });
   };
 
@@ -214,7 +245,7 @@ const MediaInfo = () => {
               mediaInfo={mediaInfo}
               ratingsList={ratingsList || []}
               onRate={handleOpenRating}
-              onWishlist={handleAddToWishlist}
+              onWishlist={handleWishlistToggle}
               onPlaylist={handleOpenPlaylist}
               isOnWishlist={isOnWishlist}
               isWishlistLoading={isWishlistLoading}

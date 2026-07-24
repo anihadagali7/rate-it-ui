@@ -10,6 +10,11 @@ export default class WishlistClient {
     return axios.post(url, wishlist, getHeaders());
   }
 
+  static removeFromWishlist(mediaId) {
+    const url = `${API_URL}/api/wishlist/${mediaId}`;
+    return axios.delete(url, getHeaders());
+  }
+
   static getAllWishlistForUser(userName) {
     const url = `${API_URL}/api/wishlist/user/${userName}`;
     return axios.get(url, getHeaders());

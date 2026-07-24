@@ -7,10 +7,11 @@ const variantStyles = {
   primary: {
     backgroundColor: tokens.colors.accent,
     color: "#FBFCFB",
-    border: `1px solid ${tokens.colors.accent}`,
+    border: `1.5px solid ${tokens.colors.accent}`,
     "&:hover": {
       backgroundColor: tokens.colors.accentHover,
       borderColor: tokens.colors.accentHover,
+      borderWidth: 1.5,
     },
   },
   secondary: {
@@ -20,23 +21,26 @@ const variantStyles = {
     "&:hover": {
       backgroundColor: tokens.colors.surfaceHover,
       borderColor: tokens.colors.accent,
+      borderWidth: 1.5,
     },
   },
   ghost: {
     backgroundColor: "transparent",
     color: tokens.colors.accent,
-    border: "1px solid transparent",
+    border: "1.5px solid transparent",
     "&:hover": {
       backgroundColor: tokens.colors.accentSubtle,
+      borderWidth: 1.5,
     },
   },
   danger: {
     backgroundColor: tokens.colors.danger,
     color: "#FFFFFF",
-    border: `1px solid ${tokens.colors.danger}`,
+    border: `1.5px solid ${tokens.colors.danger}`,
     "&:hover": {
       backgroundColor: "#B93A3A",
       borderColor: "#B93A3A",
+      borderWidth: 1.5,
     },
   },
 };
@@ -46,6 +50,7 @@ const StyledButton = styled(MuiButton, {
     !["buttonVariant", "customWidth", "customHeight"].includes(prop),
 })(({ buttonVariant = "primary", customWidth, customHeight }) => ({
   borderRadius: `${tokens.radius.button}px`,
+  boxSizing: "border-box",
   textTransform: "none",
   fontFamily: tokens.fonts.body,
   fontWeight: 650,
@@ -55,12 +60,16 @@ const StyledButton = styled(MuiButton, {
   boxShadow: "none",
   width: customWidth,
   height: customHeight,
-  transition: `background-color ${tokens.motion.quick}, border-color ${tokens.motion.quick}, color ${tokens.motion.quick}`,
+  transition: `background-color ${tokens.motion.quick}, border-color ${tokens.motion.quick}, color ${tokens.motion.quick}, transform ${tokens.motion.quick}`,
   ...variantStyles[buttonVariant],
   "&.Mui-disabled": {
     backgroundColor: tokens.colors.surfaceHover,
     color: tokens.colors.textMuted,
     borderColor: tokens.colors.border,
+    borderWidth: 1.5,
+  },
+  "&.Mui-focusVisible": {
+    borderWidth: 1.5,
   },
 }));
 

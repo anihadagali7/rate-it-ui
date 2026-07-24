@@ -114,10 +114,10 @@ describe("MediaInfo", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /saved to wishlist/i })
-    ).toBeDisabled();
+    ).toBeInTheDocument();
   });
 
-  it("disables the wishlist button when the media is already saved", async () => {
+  it("removes the media from the wishlist when already saved", async () => {
     WishlistClient.getAllWishlistForUser.mockResolvedValue({
       data: {
         data: {
@@ -130,15 +130,26 @@ describe("MediaInfo", () => {
         },
       },
     });
+    WishlistClient.removeFromWishlist.mockResolvedValue({});
 
     renderWithProviders(<MediaInfo />, {
       userContextValue: { currentUser: { userName: "janedoe" } },
     });
     await screen.findByRole("heading", { name: "Succession" });
 
-    expect(
+    fireEvent.click(
       await screen.findByRole("button", { name: /saved to wishlist/i })
-    ).toBeDisabled();
+    );
+
+    await waitFor(() =>
+      expect(WishlistClient.removeFromWishlist).toHaveBeenCalledWith("76331")
+    );
+    expect(
+      await screen.findByText("Succession removed from your wishlist")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /add to wishlist/i })
+    ).toBeInTheDocument();
   });
 
   it("opens the add rating modal and submits a rating", async () => {
