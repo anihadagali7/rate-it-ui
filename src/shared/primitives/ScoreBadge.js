@@ -11,22 +11,23 @@ const ScoreBadge = ({ score, maxScore = 10, size = "md" }) => {
         display: "inline-flex",
         alignItems: "center",
         gap: 0.5,
-        backgroundColor: "#FFFBEB",
-        border: `1px solid ${tokens.colors.ratingGold}`,
+        backgroundColor: tokens.colors.signalSoft,
+        border: `1px solid ${tokens.colors.signal}`,
         borderRadius: `${tokens.radius.button}px`,
         px: isSmall ? 1 : 1.25,
-        py: isSmall ? 0.25 : 0.5,
+        py: isSmall ? 0.25 : 0.45,
       }}
     >
       <StarIcon
         sx={{
           fontSize: isSmall ? 14 : 16,
-          color: tokens.colors.ratingGold,
+          color: tokens.colors.signal,
         }}
       />
       <Typography
         component="span"
         sx={{
+          fontFamily: tokens.fonts.display,
           fontSize: isSmall ? 12 : 14,
           fontWeight: 700,
           color: tokens.colors.textPrimary,

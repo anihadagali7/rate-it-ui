@@ -19,19 +19,20 @@ const MediaTypeBadge = ({ type }) => {
         alignItems: "center",
         px: 1,
         py: 0.25,
-        borderRadius: `${tokens.radius.pill}px`,
+        borderRadius: `${tokens.radius.button}px`,
         backgroundColor: tokens.colors.accentSubtle,
         border: `1px solid ${tokens.colors.border}`,
       }}
     >
       <Typography
         sx={{
+          fontFamily: tokens.fonts.body,
           fontSize: 11,
-          fontWeight: 600,
+          fontWeight: 700,
           color: tokens.colors.accent,
           lineHeight: 1.2,
           textTransform: "uppercase",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.06em",
         }}
       >
         {label}

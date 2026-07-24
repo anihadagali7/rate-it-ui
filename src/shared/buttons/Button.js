@@ -6,7 +6,7 @@ import { tokens } from "../../styles/tokens";
 const variantStyles = {
   primary: {
     backgroundColor: tokens.colors.accent,
-    color: "#FFFFFF",
+    color: "#FBFCFB",
     border: `1px solid ${tokens.colors.accent}`,
     "&:hover": {
       backgroundColor: tokens.colors.accentHover,
@@ -14,12 +14,12 @@ const variantStyles = {
     },
   },
   secondary: {
-    backgroundColor: tokens.colors.surface,
+    backgroundColor: "transparent",
     color: tokens.colors.textPrimary,
-    border: `1px solid ${tokens.colors.borderStrong}`,
+    border: `1.5px solid ${tokens.colors.borderStrong}`,
     "&:hover": {
       backgroundColor: tokens.colors.surfaceHover,
-      borderColor: tokens.colors.borderStrong,
+      borderColor: tokens.colors.accent,
     },
   },
   ghost: {
@@ -35,8 +35,8 @@ const variantStyles = {
     color: "#FFFFFF",
     border: `1px solid ${tokens.colors.danger}`,
     "&:hover": {
-      backgroundColor: "#B91C1C",
-      borderColor: "#B91C1C",
+      backgroundColor: "#B93A3A",
+      borderColor: "#B93A3A",
     },
   },
 };
@@ -47,13 +47,15 @@ const StyledButton = styled(MuiButton, {
 })(({ buttonVariant = "primary", customWidth, customHeight }) => ({
   borderRadius: `${tokens.radius.button}px`,
   textTransform: "none",
-  fontWeight: 600,
+  fontFamily: tokens.fonts.body,
+  fontWeight: 650,
   fontSize: 14,
   lineHeight: "20px",
-  padding: "8px 16px",
+  padding: "9px 18px",
   boxShadow: "none",
   width: customWidth,
   height: customHeight,
+  transition: `background-color ${tokens.motion.quick}, border-color ${tokens.motion.quick}, color ${tokens.motion.quick}`,
   ...variantStyles[buttonVariant],
   "&.Mui-disabled": {
     backgroundColor: tokens.colors.surfaceHover,

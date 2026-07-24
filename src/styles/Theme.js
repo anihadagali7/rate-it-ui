@@ -1,7 +1,8 @@
 import { createTheme } from "@mui/material";
 import { tokens } from "./tokens";
 
-const fontFamily = '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+const fontFamily = tokens.fonts.body;
+const displayFamily = tokens.fonts.display;
 
 export const theme = createTheme({
   breakpoints: {
@@ -9,7 +10,7 @@ export const theme = createTheme({
       xs: 0,
       sm: 640,
       md: 960,
-      lg: 1440,
+      lg: 1280,
       xl: 1920,
     },
   },
@@ -19,51 +20,54 @@ export const theme = createTheme({
       color: tokens.colors.textPrimary,
     },
     h1: {
-      fontFamily,
-      fontSize: 28,
-      lineHeight: "36px",
+      fontFamily: displayFamily,
+      fontSize: 34,
+      lineHeight: "40px",
       fontWeight: 700,
+      letterSpacing: "-0.03em",
     },
     h2: {
-      fontFamily,
-      fontSize: 24,
-      lineHeight: "32px",
+      fontFamily: displayFamily,
+      fontSize: 28,
+      lineHeight: "34px",
       fontWeight: 700,
+      letterSpacing: "-0.02em",
     },
     h3: {
-      fontFamily,
-      fontSize: 20,
+      fontFamily: displayFamily,
+      fontSize: 22,
       lineHeight: "28px",
-      fontWeight: 600,
+      fontWeight: 700,
+      letterSpacing: "-0.02em",
     },
     h4: {
-      fontFamily,
+      fontFamily: displayFamily,
       fontSize: 18,
-      lineHeight: "26px",
-      fontWeight: 600,
+      lineHeight: "24px",
+      fontWeight: 650,
     },
     h5: {
-      fontFamily,
+      fontFamily: displayFamily,
       fontSize: 16,
-      lineHeight: "24px",
-      fontWeight: 600,
+      lineHeight: "22px",
+      fontWeight: 650,
     },
     h6: {
-      fontFamily,
+      fontFamily: fontFamily,
       fontSize: 14,
       lineHeight: "20px",
       fontWeight: 600,
     },
     body1: {
       fontFamily,
-      fontSize: 15,
-      lineHeight: "24px",
+      fontSize: 16,
+      lineHeight: "26px",
       fontWeight: 400,
     },
     body2: {
       fontFamily,
-      fontSize: 13,
-      lineHeight: "20px",
+      fontSize: 14,
+      lineHeight: "22px",
       fontWeight: 400,
       color: tokens.colors.textSecondary,
     },
@@ -92,19 +96,16 @@ export const theme = createTheme({
       lineHeight: "20px",
       fontWeight: 600,
     },
-    logo: {
-      fontFamily,
-      fontSize: "22px",
-      fontWeight: 700,
-      color: tokens.colors.accent,
-      textDecoration: "none",
-    },
   },
   spacing: 4,
   palette: {
     primary: {
       main: tokens.colors.accent,
       dark: tokens.colors.accentHover,
+      light: "#2A9A94",
+    },
+    secondary: {
+      main: tokens.colors.signal,
     },
     background: {
       default: tokens.colors.background,
@@ -129,7 +130,14 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: tokens.colors.background,
+          background: tokens.gradients.canvas,
+          backgroundAttachment: "fixed",
+          minHeight: "100vh",
+          fontFamily,
+        },
+        "::selection": {
+          backgroundColor: tokens.colors.accentSubtle,
+          color: tokens.colors.textPrimary,
         },
       },
     },
@@ -148,6 +156,7 @@ export const theme = createTheme({
           textTransform: "none",
           borderRadius: tokens.radius.button,
           fontWeight: 600,
+          fontFamily,
         },
       },
     },
@@ -173,7 +182,8 @@ export const theme = createTheme({
         paper: {
           borderRadius: tokens.radius.card,
           border: `1px solid ${tokens.colors.border}`,
-          boxShadow: "none",
+          boxShadow: tokens.shadows.lift,
+          backgroundColor: tokens.colors.surface,
         },
       },
     },
@@ -207,15 +217,15 @@ export const theme = createTheme({
         root: {
           backgroundColor: tokens.colors.surface,
           borderRadius: tokens.radius.button,
-          border: `1.5px solid ${tokens.colors.textMuted}`,
+          border: `1.5px solid ${tokens.colors.borderStrong}`,
           color: tokens.colors.textPrimary,
-          padding: "10px 16px",
-          transition: "border-color 0.15s ease",
+          padding: "10px 14px",
+          transition: `border-color ${tokens.motion.quick}`,
           "&:before, &:after": {
             display: "none",
           },
           "&:hover": {
-            borderColor: tokens.colors.textSecondary,
+            borderColor: tokens.colors.accent,
           },
           "&.Mui-focused": {
             borderColor: tokens.colors.accent,
@@ -239,7 +249,7 @@ export const theme = createTheme({
           lineHeight: "20px",
           marginBottom: 4,
           color: tokens.colors.textPrimary,
-          fontWeight: 500,
+          fontWeight: 600,
         },
         formControl: {
           display: "inline",
@@ -262,18 +272,18 @@ export const theme = createTheme({
           "& .MuiInputBase-root": {
             fontFamily,
             borderRadius: tokens.radius.button,
-            border: `1.5px solid ${tokens.colors.textMuted}`,
-            padding: "10px 16px",
+            border: `1.5px solid ${tokens.colors.borderStrong}`,
+            padding: "10px 14px",
             backgroundColor: tokens.colors.surface,
             fontWeight: 400,
             lineHeight: "20px",
             color: tokens.colors.textPrimary,
-            transition: "border-color 0.15s ease",
+            transition: `border-color ${tokens.motion.quick}`,
             "&:before, &:after": {
               display: "none",
             },
             "&:hover": {
-              borderColor: tokens.colors.textSecondary,
+              borderColor: tokens.colors.accent,
             },
           },
           "& .MuiInputBase-input": {
@@ -300,7 +310,7 @@ export const theme = createTheme({
         root: {
           fontFamily,
           textTransform: "none",
-          fontWeight: 500,
+          fontWeight: 600,
         },
       },
     },

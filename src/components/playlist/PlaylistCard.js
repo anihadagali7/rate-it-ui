@@ -18,9 +18,10 @@ const PlaylistCard = ({ playlist, userName }) => {
         borderRadius: `${tokens.radius.card}px`,
         overflow: "hidden",
         backgroundColor: tokens.colors.surface,
-        transition: "border-color 0.15s ease",
+        transition: `border-color ${tokens.motion.quick}, transform ${tokens.motion.calm}`,
         "&:hover": {
-          borderColor: tokens.colors.borderStrong,
+          borderColor: tokens.colors.accent,
+          transform: "translateY(-2px)",
         },
       }}
     >
@@ -79,10 +80,11 @@ const PlaylistCard = ({ playlist, userName }) => {
       <Box sx={{ p: 1.5 }}>
         <Typography
           sx={{
+            fontFamily: tokens.fonts.display,
             fontSize: 14,
-            fontWeight: 600,
+            fontWeight: 650,
             color: tokens.colors.textPrimary,
-            textAlign: "center",
+            textAlign: "left",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",

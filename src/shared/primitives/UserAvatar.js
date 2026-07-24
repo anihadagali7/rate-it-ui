@@ -18,6 +18,17 @@ const getInitials = (firstName, lastName, userName) => {
   return "?";
 };
 
+const avatarSx = (dimension) => ({
+  width: dimension,
+  height: dimension,
+  bgcolor: tokens.colors.accentSubtle,
+  color: tokens.colors.accent,
+  fontFamily: tokens.fonts.display,
+  fontSize: dimension * 0.34,
+  fontWeight: 700,
+  border: `1.5px solid ${tokens.colors.border}`,
+});
+
 const UserAvatar = ({
   src,
   firstName,
@@ -29,23 +40,6 @@ const UserAvatar = ({
   const dimension = sizeMap[size] || sizeMap.md;
   const initials = getInitials(firstName, lastName, userName);
 
-  const avatar = (
-    <MuiAvatar
-      src={src || undefined}
-      alt={userName ? `@${userName}` : "User avatar"}
-      sx={{
-        width: dimension,
-        height: dimension,
-        bgcolor: tokens.colors.accentSubtle,
-        color: tokens.colors.accent,
-        fontSize: dimension * 0.38,
-        fontWeight: 600,
-      }}
-    >
-      {!src ? initials : null}
-    </MuiAvatar>
-  );
-
   if (href) {
     return (
       <MuiAvatar
@@ -53,22 +47,22 @@ const UserAvatar = ({
         to={href}
         src={src || undefined}
         alt={userName ? `@${userName}` : "User avatar"}
-        sx={{
-          width: dimension,
-          height: dimension,
-          bgcolor: tokens.colors.accentSubtle,
-          color: tokens.colors.accent,
-          fontSize: dimension * 0.38,
-          fontWeight: 600,
-          textDecoration: "none",
-        }}
+        sx={{ ...avatarSx(dimension), textDecoration: "none" }}
       >
         {!src ? initials : null}
       </MuiAvatar>
     );
   }
 
-  return avatar;
+  return (
+    <MuiAvatar
+      src={src || undefined}
+      alt={userName ? `@${userName}` : "User avatar"}
+      sx={avatarSx(dimension)}
+    >
+      {!src ? initials : null}
+    </MuiAvatar>
+  );
 };
 
 export default UserAvatar;

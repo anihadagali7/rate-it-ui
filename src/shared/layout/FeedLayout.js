@@ -7,17 +7,18 @@ const FeedLayout = ({ children, showRail = false }) => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
+        justifyContent: showRail ? "space-between" : "center",
+        alignItems: "flex-start",
         width: "100%",
-        gap: 3,
+        gap: { md: 4, lg: 5 },
       }}
     >
       <Box
         sx={{
           width: "100%",
           maxWidth: tokens.layout.feedMaxWidth,
-          flexShrink: 0,
-          px: { xs: 0, sm: 1 },
+          flex: "1 1 auto",
+          minWidth: 0,
         }}
       >
         {children}

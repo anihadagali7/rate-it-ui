@@ -6,7 +6,6 @@ import RatingClient from "../../client/RatingClient";
 import UserClient from "../../client/UserClient";
 import FollowButton from "../social/FollowButton";
 import UserAvatar from "../primitives/UserAvatar";
-import SurfaceCard from "../primitives/SurfaceCard";
 import MediaPoster from "../primitives/MediaPoster";
 import { tokens } from "../../styles/tokens";
 import UserContext from "../context/userContext";
@@ -142,26 +141,30 @@ const RightRail = () => {
 
   return (
     <Box
+      component="aside"
       sx={{
         width: tokens.layout.rightRailWidth,
         flexShrink: 0,
         display: { xs: "none", lg: "block" },
         position: "sticky",
-        top: 24,
+        top: tokens.layout.mastheadHeight + 24,
         alignSelf: "flex-start",
       }}
     >
       {suggestedUsers.length > 0 ? (
-        <SurfaceCard padding={2} sx={{ mb: 2 }}>
+        <Box sx={{ mb: 4 }}>
           <Typography
             sx={{
-              fontSize: 15,
-              fontWeight: 600,
-              color: tokens.colors.textPrimary,
-              mb: 1,
+              fontFamily: tokens.fonts.display,
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: tokens.colors.textMuted,
+              mb: 1.5,
             }}
           >
-            Suggested for you
+            People to follow
           </Typography>
           {suggestedUsers.map((user) => {
             const isFollowing = user.followers?.includes(currentUser.userName);
@@ -176,20 +179,23 @@ const RightRail = () => {
               />
             );
           })}
-        </SurfaceCard>
+        </Box>
       ) : null}
 
       {trendingMedia.length > 0 ? (
-        <SurfaceCard padding={2}>
+        <Box>
           <Typography
             sx={{
-              fontSize: 15,
-              fontWeight: 600,
-              color: tokens.colors.textPrimary,
+              fontFamily: tokens.fonts.display,
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: tokens.colors.textMuted,
               mb: 1.5,
             }}
           >
-            Trending now
+            On the radar
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             {trendingMedia.map((media) => {
@@ -206,13 +212,9 @@ const RightRail = () => {
                     gap: 1.5,
                     textDecoration: "none",
                     color: "inherit",
-                    borderRadius: `${tokens.radius.button}px`,
-                    p: 0.5,
-                    mx: -0.5,
-                    transition: "background-color 0.15s ease",
-                    "&:hover": {
-                      backgroundColor: tokens.colors.surfaceHover,
-                    },
+                    py: 0.5,
+                    transition: `opacity ${tokens.motion.quick}`,
+                    "&:hover": { opacity: 0.8 },
                   }}
                 >
                   <MediaPoster
@@ -224,8 +226,9 @@ const RightRail = () => {
                   <Box sx={{ minWidth: 0 }}>
                     <Typography
                       sx={{
-                        fontSize: 13,
-                        fontWeight: 600,
+                        fontFamily: tokens.fonts.display,
+                        fontSize: 14,
+                        fontWeight: 650,
                         color: tokens.colors.textPrimary,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -248,7 +251,7 @@ const RightRail = () => {
               );
             })}
           </Box>
-        </SurfaceCard>
+        </Box>
       ) : null}
     </Box>
   );

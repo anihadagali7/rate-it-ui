@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import MovieOutlinedIcon from "@mui/icons-material/MovieOutlined";
 import { tokens } from "../../styles/tokens";
 

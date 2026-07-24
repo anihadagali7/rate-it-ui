@@ -16,10 +16,14 @@ const SurfaceCard = ({
         border: `1px solid ${tokens.colors.border}`,
         borderRadius: `${tokens.radius.card}px`,
         padding,
-        transition: "border-color 0.15s ease",
+        boxShadow: "none",
+        transition: `border-color ${tokens.motion.quick}, transform ${tokens.motion.calm}`,
         cursor: onClick ? "pointer" : "default",
         "&:hover": onClick
-          ? { borderColor: tokens.colors.borderStrong }
+          ? {
+              borderColor: tokens.colors.borderStrong,
+              transform: "translateY(-1px)",
+            }
           : undefined,
         ...sx,
       }}

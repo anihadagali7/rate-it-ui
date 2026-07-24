@@ -6,9 +6,9 @@ const TabBar = ({ tabs, activeTab, onChange }) => {
     <Box
       sx={{
         display: "flex",
-        gap: 0.5,
+        gap: 2.5,
+        mb: 2.5,
         borderBottom: `1px solid ${tokens.colors.border}`,
-        mb: 2,
       }}
     >
       {tabs.map((tab) => {
@@ -20,33 +20,41 @@ const TabBar = ({ tabs, activeTab, onChange }) => {
             type="button"
             onClick={() => onChange(tab.id)}
             sx={{
-              flex: 1,
+              position: "relative",
               border: "none",
               background: "none",
               cursor: "pointer",
+              px: 0.25,
               py: 1.25,
-              px: 2,
-              borderRadius: `${tokens.radius.button}px ${tokens.radius.button}px 0 0`,
-              backgroundColor: isActive
-                ? tokens.colors.accentSubtle
-                : "transparent",
-              borderBottom: isActive
-                ? `2px solid ${tokens.colors.accent}`
-                : "2px solid transparent",
-              mb: "-1px",
             }}
           >
             <Typography
               sx={{
-                fontSize: 14,
-                fontWeight: isActive ? 600 : 500,
+                fontFamily: tokens.fonts.display,
+                fontSize: 15,
+                fontWeight: isActive ? 700 : 500,
+                letterSpacing: "-0.01em",
                 color: isActive
-                  ? tokens.colors.accent
+                  ? tokens.colors.textPrimary
                   : tokens.colors.textSecondary,
               }}
             >
               {tab.label}
             </Typography>
+            <Box
+              sx={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: -1,
+                height: 2,
+                borderRadius: 2,
+                backgroundColor: tokens.colors.signal,
+                transform: isActive ? "scaleX(1)" : "scaleX(0)",
+                transformOrigin: "left center",
+                transition: `transform ${tokens.motion.calm}`,
+              }}
+            />
           </Box>
         );
       })}

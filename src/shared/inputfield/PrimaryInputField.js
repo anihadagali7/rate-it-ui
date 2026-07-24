@@ -33,7 +33,8 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
           sx={{
             mb: 1,
             fontSize: 14,
-            fontWeight: 500,
+            fontWeight: 600,
+            fontFamily: tokens.fonts.body,
             color: tokens.colors.textPrimary,
           }}
         >
@@ -68,17 +69,18 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
         onKeyDown={onKeyDown}
         sx={{
           "& .MuiInputBase-root": {
-            backgroundColor: tokens.colors.background,
+            backgroundColor: tokens.colors.surface,
             border: `1.5px solid ${tokens.colors.borderStrong}`,
             borderRadius: `${tokens.radius.button}px`,
-            padding: "10px 14px",
+            padding: "11px 14px",
             color: tokens.colors.textPrimary,
+            fontFamily: tokens.fonts.body,
+            transition: `border-color ${tokens.motion.quick}`,
             "&:before, &:after": {
               display: "none",
             },
             "&:hover": {
-              borderColor: tokens.colors.textSecondary,
-              backgroundColor: tokens.colors.surface,
+              borderColor: tokens.colors.accent,
             },
             "&.Mui-focused": {
               borderColor: tokens.colors.accent,

@@ -24,27 +24,31 @@ const FilterChips = ({ options, activeId, onChange }) => {
             onClick={() => onChange(option.id)}
             sx={{
               flexShrink: 0,
-              border: `1px solid ${
+              border: `1.5px solid ${
                 isActive ? tokens.colors.accent : tokens.colors.borderStrong
               }`,
               backgroundColor: isActive
-                ? tokens.colors.accentSubtle
-                : tokens.colors.surface,
-              color: isActive ? tokens.colors.accent : tokens.colors.textSecondary,
-              borderRadius: `${tokens.radius.pill}px`,
-              px: 2,
+                ? tokens.colors.accent
+                : "transparent",
+              color: isActive ? "#FBFCFB" : tokens.colors.textSecondary,
+              borderRadius: `${tokens.radius.button}px`,
+              px: 1.75,
               py: 0.75,
               cursor: "pointer",
-              transition: "all 0.15s ease",
+              transition: `all ${tokens.motion.quick}`,
               "&:hover": {
                 borderColor: tokens.colors.accent,
-                backgroundColor: isActive
-                  ? tokens.colors.accentSubtle
-                  : tokens.colors.surfaceHover,
+                color: isActive ? "#FBFCFB" : tokens.colors.accent,
               },
             }}
           >
-            <Typography sx={{ fontSize: 13, fontWeight: isActive ? 600 : 500 }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: isActive ? 700 : 550,
+                fontFamily: tokens.fonts.body,
+              }}
+            >
               {option.label}
             </Typography>
           </Box>
