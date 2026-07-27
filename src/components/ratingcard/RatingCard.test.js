@@ -1,9 +1,11 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "../../testUtils/renderWithProviders";
+import CommentClient from "../../client/CommentClient";
 import LikeClient from "../../client/LikeClient";
 import RatingCard from "./RatingCard";
 
 jest.mock("../../client/LikeClient");
+jest.mock("../../client/CommentClient");
 
 const rating = {
   _id: "rating-1",
@@ -23,6 +25,19 @@ const rating = {
   dateCreated: "2024-06-10T18:03:58.946Z",
   likeCount: 2,
   likedByCurrentUser: false,
+  commentCount: 1,
+  commentList: [
+    {
+      _id: "c1",
+      text: "Spot on",
+      dateCreated: "2024-06-11T12:00:00.000Z",
+      commentedBy: {
+        userName: "shree",
+        firstName: "Shree",
+        lastName: "Balaji",
+      },
+    },
+  ],
 };
 
 describe("RatingCard", () => {
@@ -73,5 +88,43 @@ describe("RatingCard", () => {
     );
     expect(screen.getByRole("button", { name: /^like$/i })).toBeInTheDocument();
     expect(screen.getByText("4")).toBeInTheDocument();
+  });
+
+  it("adds a comment when signed in", async () => {
+    CommentClient.addComment.mockResolvedValue({});
+
+    renderWithProviders(<RatingCard rating={rating} />, {
+      userContextValue: { currentUser: { userName: "shree" } },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+    expect(screen.getByText("Spot on")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByPlaceholderText(/write a comment/i), {
+      target: { value: "Totally agree" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^post$/i }));
+
+    await waitFor(() =>
+      expect(CommentClient.addComment).toHaveBeenCalledWith(
+        "rating-1",
+        "Totally agree"
+      )
+    );
+  });
+
+  it("deletes the current user's comment", async () => {
+    CommentClient.deleteComment.mockResolvedValue({});
+
+    renderWithProviders(<RatingCard rating={rating} />, {
+      userContextValue: { currentUser: { userName: "shree" } },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+    fireEvent.click(screen.getByRole("button", { name: /delete comment/i }));
+
+    await waitFor(() =>
+      expect(CommentClient.deleteComment).toHaveBeenCalledWith("c1")
+    );
   });
 });

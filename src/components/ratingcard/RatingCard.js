@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment/moment";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
+import CommentClient from "../../client/CommentClient";
 import LikeClient from "../../client/LikeClient";
 import UserContext from "../../shared/context/userContext";
 import MediaPoster from "../../shared/primitives/MediaPoster";
@@ -27,6 +28,13 @@ const getTimeAgo = (date) => {
     return `${timeAgo.split(" ")[0]}${units[0]}`;
   }
   return moment(date).format("MMM D, YYYY");
+};
+
+const invalidateRatingQueries = (queryClient) => {
+  queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
+  queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+  queryClient.invalidateQueries({ queryKey: ["ratingsForUser"] });
+  queryClient.invalidateQueries({ queryKey: ["ratingsForMedia"] });
 };
 
 const RatingCard = ({ rating }) => {
@@ -54,12 +62,22 @@ const RatingCard = ({ rating }) => {
         await LikeClient.unlikeRating(rating._id);
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
-      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
-      queryClient.invalidateQueries({ queryKey: ["ratingsForUser"] });
-      queryClient.invalidateQueries({ queryKey: ["ratingsForMedia"] });
+    onSuccess: () => invalidateRatingQueries(queryClient),
+  });
+
+  const { mutateAsync: addComment, isLoading: isCommentSubmitting } =
+    useMutation({
+      mutationFn: async (text) => {
+        await CommentClient.addComment(rating._id, text);
+      },
+      onSuccess: () => invalidateRatingQueries(queryClient),
+    });
+
+  const { mutateAsync: deleteComment } = useMutation({
+    mutationFn: async (commentId) => {
+      await CommentClient.deleteComment(commentId);
     },
+    onSuccess: () => invalidateRatingQueries(queryClient),
   });
 
   return (
@@ -184,6 +202,7 @@ const RatingCard = ({ rating }) => {
       <Box
         sx={{
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: 1,
           mt: 2,
@@ -198,7 +217,14 @@ const RatingCard = ({ rating }) => {
           isLoading={isLikeLoading}
           onToggle={toggleLike}
         />
-        <CommentThread commentCount={0} disabled />
+        <CommentThread
+          comments={rating?.commentList || []}
+          commentCount={rating?.commentCount ?? 0}
+          currentUser={currentUser}
+          isSubmitting={isCommentSubmitting}
+          onAdd={addComment}
+          onDelete={deleteComment}
+        />
       </Box>
     </SurfaceCard>
   );
