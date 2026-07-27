@@ -1,53 +1,42 @@
-import { Box, Container, Paper, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import { Typography } from "@mui/material";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import DisplayWishlistByUser from "../components/wishlist/DisplayWishlistByUser";
-import UserContext from "../shared/context/userContext";
+import FeedLayout from "../shared/layout/FeedLayout";
+import Toast from "../shared/feedback/Toast";
+import { tokens } from "../styles/tokens";
 
 const Wishlist = () => {
   const { userName } = useParams();
-  const { currentUser } = useContext(UserContext);
-  const profileUserName = currentUser?.profileUserName;
-  const userViewingOwnProfile = userName === profileUserName;
+  const [toast, setToast] = useState({ open: false, message: "" });
 
   return (
-    <Box>
-      <Container
-        maxWidth={"sm"}
-        sx={{ marginBottom: "25px", marginTop: "25px" }}
+    <FeedLayout>
+      <Typography
+        sx={{
+          fontSize: 22,
+          fontWeight: 700,
+          color: tokens.colors.textPrimary,
+          mb: 2,
+        }}
       >
-        <Paper
-          elevation={6}
-          sx={{
-            width: "100%",
-            minHeight: "300px",
-            height: "100%",
-            backgroundColor: "#FFFFFF",
-            margin: "auto",
-            borderRadius: "17px",
-            padding: "20px",
-          }}
-        >
-          <Box
-            sx={{
-              minHeight: "100vh",
-              padding: 2,
-              boxSizing: "border-box",
-            }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: "22px",
-              }}
-            >
-              Wishlist
-            </Typography>
-            <DisplayWishlistByUser profileView={false} userName={userName} />
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+        Wishlist
+      </Typography>
+      <DisplayWishlistByUser
+        userName={userName}
+        onRemoved={() =>
+          setToast({
+            open: true,
+            message: "Removed from your wishlist",
+          })
+        }
+      />
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        onClose={() => setToast({ open: false, message: "" })}
+      />
+    </FeedLayout>
   );
 };
 

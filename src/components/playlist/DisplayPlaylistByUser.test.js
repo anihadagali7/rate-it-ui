@@ -17,48 +17,25 @@ describe("DisplayPlaylistByUser", () => {
       mockPlaylistResponse([playlist("p1", "Movies to watch"), playlist("p2", "Favorites")])
     );
 
-    renderWithProviders(
-      <DisplayPlaylistByUser userName="anihadagali7" profileView={false} />
-    );
+    renderWithProviders(<DisplayPlaylistByUser userName="anihadagali7" />);
 
     expect(await screen.findByText("Movies to watch")).toBeInTheDocument();
     expect(screen.getByText("Favorites")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: /see all playlists/i })
-    ).not.toBeInTheDocument();
     expect(PlaylistClient.getAllPlaylistForUser).toHaveBeenCalledWith(
       "anihadagali7"
     );
   });
 
-  it("limits to 3 playlists and shows a See all playlists link in profile view", async () => {
-    PlaylistClient.getAllPlaylistForUser.mockResolvedValue(
-      mockPlaylistResponse([
-        playlist("p1", "Movies to watch"),
-        playlist("p2", "Favorites"),
-        playlist("p3", "TV Shows"),
-        playlist("p4", "Rewatch"),
-      ])
-    );
+  it("shows an empty state when there are no playlists", async () => {
+    PlaylistClient.getAllPlaylistForUser.mockResolvedValue(mockPlaylistResponse([]));
 
-    renderWithProviders(
-      <DisplayPlaylistByUser userName="anihadagali7" profileView={true} />
-    );
+    renderWithProviders(<DisplayPlaylistByUser userName="anihadagali7" />);
 
-    // select() reverses the list, so the most recently returned 3 are shown
-    expect(await screen.findByText("Rewatch")).toBeInTheDocument();
-    expect(screen.getByText("TV Shows")).toBeInTheDocument();
-    expect(screen.getByText("Favorites")).toBeInTheDocument();
-    expect(screen.queryByText("Movies to watch")).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /see all playlists/i })
-    ).toHaveAttribute("href", "/playlist/anihadagali7");
+    expect(await screen.findByText("No playlists yet")).toBeInTheDocument();
   });
 
   it("does not fetch playlists when no userName is provided", () => {
-    renderWithProviders(
-      <DisplayPlaylistByUser userName={undefined} profileView={false} />
-    );
+    renderWithProviders(<DisplayPlaylistByUser userName={undefined} />);
 
     expect(PlaylistClient.getAllPlaylistForUser).not.toHaveBeenCalled();
   });

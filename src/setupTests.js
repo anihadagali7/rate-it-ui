@@ -3,3 +3,19 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+class IntersectionObserverMock {
+  constructor(callback) {
+    this.callback = callback;
+  }
+
+  observe(element) {
+    this.element = element;
+  }
+
+  unobserve() {}
+
+  disconnect() {}
+}
+
+global.IntersectionObserver = IntersectionObserverMock;

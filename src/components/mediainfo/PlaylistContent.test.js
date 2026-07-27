@@ -60,7 +60,7 @@ describe("PlaylistContent", () => {
     renderPlaylistContent();
 
     await screen.findByText("Movies to watch");
-    fireEvent.change(screen.getByPlaceholderText(/find a playlist/i), {
+    fireEvent.change(screen.getByPlaceholderText(/search your playlists/i), {
       target: { value: "tv" },
     });
 
@@ -71,8 +71,9 @@ describe("PlaylistContent", () => {
 
   it("adds the media to a newly selected playlist on save", async () => {
     const onClose = jest.fn();
+    const onSuccess = jest.fn();
     PlaylistClient.addMediaToMultiplePlaylists.mockResolvedValue({});
-    renderPlaylistContent({ onClose });
+    renderPlaylistContent({ onClose, onSuccess });
 
     fireEvent.click(await screen.findByRole("checkbox", { name: "TV Shows" }));
     fireEvent.click(screen.getByRole("button", { name: /save/i }));
@@ -85,6 +86,10 @@ describe("PlaylistContent", () => {
       })
     );
     await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onSuccess).toHaveBeenCalledWith({
+      playlistsToAdd: ["p3"],
+      playlistsToRemove: [],
+    });
   });
 
   it("removes the media from a deselected playlist on save", async () => {

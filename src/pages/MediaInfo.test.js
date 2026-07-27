@@ -33,6 +33,9 @@ beforeEach(() => {
   }));
   MediaClient.getMediaInfoDetails.mockResolvedValue({ data: mediaInfoResponse });
   RatingClient.getAllRatingsForMedia.mockResolvedValue({ data: ratingsResponse });
+  WishlistClient.getAllWishlistForUser.mockResolvedValue({
+    data: { data: { wishlistList: [] } },
+  });
 });
 
 describe("MediaInfo", () => {
@@ -51,7 +54,7 @@ describe("MediaInfo", () => {
     expect(
       await screen.findByRole("heading", { name: "Succession" })
     ).toBeInTheDocument();
-    expect(screen.getByAltText("poster")).toHaveAttribute(
+    expect(screen.getAllByAltText("Succession")[0]).toHaveAttribute(
       "src",
       mediaInfoResponse.data.media.picture
     );
@@ -63,41 +66,40 @@ describe("MediaInfo", () => {
     expect(screen.queryByText(/Producer:/)).not.toBeInTheDocument();
   });
 
-  it("renders user reviews when ratings exist", async () => {
-    const { container } = renderWithProviders(<MediaInfo />);
+  it("renders community reviews when ratings exist", async () => {
+    renderWithProviders(<MediaInfo />);
 
-    await screen.findByText("User reviews");
-
-    const reviewItem = container.querySelector(".MuiListItem-root");
-    expect(reviewItem).toHaveTextContent("Anirudha Hadagali");
-    expect(reviewItem).toHaveTextContent("@anihadagali7");
-    expect(reviewItem).toHaveTextContent("Rating: 9");
-    expect(reviewItem).toHaveTextContent("Comments: great story");
+    expect(await screen.findByText("Community reviews (1)")).toBeInTheDocument();
+    expect(screen.getByText("Anirudha Hadagali")).toBeInTheDocument();
+    expect(screen.getByText("great story")).toBeInTheDocument();
   });
 
-  it("does not render a reviews section when there are no ratings", async () => {
+  it("shows an empty reviews state when there are no ratings", async () => {
     RatingClient.getAllRatingsForMedia.mockResolvedValue({
       data: { status: "success", data: { ratingsList: [] } },
     });
 
     renderWithProviders(<MediaInfo />);
 
-    await screen.findByRole("heading", { name: "Succession" });
-    expect(screen.queryByText("User reviews")).not.toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Succession" })).toBeInTheDocument();
+    expect(screen.queryByText(/community reviews/i)).not.toBeInTheDocument();
+    expect(screen.getByText("No reviews yet")).toBeInTheDocument();
   });
 
-  it("navigates back when Return is clicked", async () => {
+  it("navigates back when Back is clicked", async () => {
     renderWithProviders(<MediaInfo />);
     await screen.findByRole("heading", { name: "Succession" });
 
-    fireEvent.click(screen.getByRole("button", { name: /return/i }));
+    fireEvent.click(screen.getByRole("button", { name: /back/i }));
 
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   it("adds the media to the wishlist", async () => {
     WishlistClient.addToWishlist.mockResolvedValue({});
-    renderWithProviders(<MediaInfo />);
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
     await screen.findByRole("heading", { name: "Succession" });
 
     fireEvent.click(screen.getByRole("button", { name: /add to wishlist/i }));
@@ -107,14 +109,57 @@ describe("MediaInfo", () => {
         mediaId: "76331",
       })
     );
+    expect(
+      await screen.findByText("Succession saved to your wishlist")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /saved to wishlist/i })
+    ).toBeInTheDocument();
+  });
+
+  it("removes the media from the wishlist when already saved", async () => {
+    WishlistClient.getAllWishlistForUser.mockResolvedValue({
+      data: {
+        data: {
+          wishlistList: [
+            {
+              _id: "w1",
+              media: { mediaId: "76331", name: "Succession", mediaType: "TV" },
+            },
+          ],
+        },
+      },
+    });
+    WishlistClient.removeFromWishlist.mockResolvedValue({});
+
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
+    await screen.findByRole("heading", { name: "Succession" });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /saved to wishlist/i })
+    );
+
+    await waitFor(() =>
+      expect(WishlistClient.removeFromWishlist).toHaveBeenCalledWith("76331")
+    );
+    expect(
+      await screen.findByText("Succession removed from your wishlist")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /add to wishlist/i })
+    ).toBeInTheDocument();
   });
 
   it("opens the add rating modal and submits a rating", async () => {
     RatingClient.submitRating.mockResolvedValue({});
-    renderWithProviders(<MediaInfo />);
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
     await screen.findByRole("heading", { name: "Succession" });
 
-    fireEvent.click(screen.getByRole("button", { name: /add rating/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^rate$/i }));
 
     const dialog = await screen.findByRole("dialog");
     expect(dialog).toHaveTextContent("Succession");
@@ -131,6 +176,40 @@ describe("MediaInfo", () => {
         rating: 5,
       })
     );
+    expect(
+      await screen.findByText("You rated Succession 5/10")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /rated 5\/10/i })
+    ).toBeDisabled();
+  });
+
+  it("disables the rate button when the user already rated the media", async () => {
+    RatingClient.getAllRatingsForMedia.mockResolvedValue({
+      data: {
+        data: {
+          ratingsList: [
+            {
+              ...ratingsResponse.data.ratingsList[0],
+              ratedBy: {
+                ...ratingsResponse.data.ratingsList[0].ratedBy,
+                userName: "janedoe",
+              },
+              rating: 8,
+            },
+          ],
+        },
+      },
+    });
+
+    renderWithProviders(<MediaInfo />, {
+      userContextValue: { currentUser: { userName: "janedoe" } },
+    });
+    await screen.findByRole("heading", { name: "Succession" });
+
+    expect(
+      await screen.findByRole("button", { name: /rated 8\/10/i })
+    ).toBeDisabled();
   });
 
   it("opens the add to playlist dialog and lists the user's playlists", async () => {
@@ -148,7 +227,8 @@ describe("MediaInfo", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /add to playlist/i }));
 
-    expect(await screen.findByText("Add to playlist")).toBeInTheDocument();
-    expect(await screen.findByText("Favorites")).toBeInTheDocument();
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Add to playlist");
+    expect(await within(dialog).findByText("Favorites")).toBeInTheDocument();
   });
 });

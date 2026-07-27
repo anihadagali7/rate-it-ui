@@ -1,17 +1,6 @@
 import React from "react";
 import { InputLabel, TextField } from "@mui/material";
-
-// available props
-// type: string (text, email)
-// placeholder: string
-// validationState: string (error, success, default)
-// value: string
-// testId: string
-// disabled: bool
-// readOnly: bool
-// error: bool
-// onChange: function (to access or validate internal text value)
-// onClick: function (to activate some form behavior like a radio toggle)
+import { tokens } from "../../styles/tokens";
 
 const PrimaryInputField = React.forwardRef((props, ref) => {
   const {
@@ -36,14 +25,22 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
 
   return (
     <>
-      <InputLabel
-        disableAnimation
-        shrink={false}
-        required={required}
-        sx={{ mb: 1 }}
-      >
-        {label}
-      </InputLabel>
+      {label ? (
+        <InputLabel
+          disableAnimation
+          shrink={false}
+          required={required}
+          sx={{
+            mb: 1,
+            fontSize: 14,
+            fontWeight: 600,
+            fontFamily: tokens.fonts.body,
+            color: tokens.colors.textPrimary,
+          }}
+        >
+          {label}
+        </InputLabel>
+      ) : null}
       <TextField
         InputProps={{
           readOnly,
@@ -70,8 +67,48 @@ const PrimaryInputField = React.forwardRef((props, ref) => {
         helperText={helperText}
         variant="standard"
         onKeyDown={onKeyDown}
-      ></TextField>
+        sx={{
+          "& .MuiInputBase-root": {
+            backgroundColor: tokens.colors.surface,
+            border: `1.5px solid ${tokens.colors.borderStrong}`,
+            borderRadius: `${tokens.radius.button}px`,
+            padding: "11px 14px",
+            color: tokens.colors.textPrimary,
+            fontFamily: tokens.fonts.body,
+            transition: `border-color ${tokens.motion.quick}`,
+            "&:before, &:after": {
+              display: "none",
+            },
+            "&:hover": {
+              borderColor: tokens.colors.accent,
+            },
+            "&.Mui-focused": {
+              borderColor: tokens.colors.accent,
+              backgroundColor: tokens.colors.surface,
+            },
+            "&.Mui-error": {
+              borderColor: tokens.colors.danger,
+            },
+            "&.Mui-disabled": {
+              backgroundColor: tokens.colors.surfaceHover,
+              borderColor: tokens.colors.border,
+            },
+          },
+          "& .MuiInputBase-input": {
+            padding: 0,
+            color: tokens.colors.textPrimary,
+            "&::placeholder": {
+              color: tokens.colors.textMuted,
+              opacity: 1,
+            },
+          },
+          "& .MuiFormHelperText-root": {
+            marginLeft: 0,
+          },
+        }}
+      />
     </>
   );
 });
+
 export default PrimaryInputField;

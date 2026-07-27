@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import DisplayWishlistByUser from "./DisplayWishlistByUser";
 import WishlistClient from "../../client/WishlistClient";
@@ -7,7 +7,12 @@ jest.mock("../../client/WishlistClient");
 
 const makeWishlistItem = (id, name, mediaId) => ({
   _id: id,
-  media: { name, mediaType: "TV", mediaId },
+  media: {
+    name,
+    mediaType: "TV",
+    mediaId,
+    picture: "https://example.com/poster.jpg",
+  },
   addedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
   dateCreated: "2024-01-01T00:00:00.000Z",
 });
@@ -21,7 +26,7 @@ describe("DisplayWishlistByUser", () => {
     WishlistClient.getAllWishlistForUser.mockReturnValue(new Promise(() => {}));
 
     const { container } = renderWithProviders(
-      <DisplayWishlistByUser userName="anihadagali7" profileView={false} />
+      <DisplayWishlistByUser userName="anihadagali7" />
     );
 
     expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
@@ -35,46 +40,66 @@ describe("DisplayWishlistByUser", () => {
       ])
     );
 
-    renderWithProviders(
-      <DisplayWishlistByUser userName="anihadagali7" profileView={false} />
-    );
+    renderWithProviders(<DisplayWishlistByUser userName="anihadagali7" />);
 
     expect(await screen.findByText("Succession")).toBeInTheDocument();
     expect(screen.getByText("Friends")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: /see all wishlists/i })
-    ).not.toBeInTheDocument();
     expect(WishlistClient.getAllWishlistForUser).toHaveBeenCalledWith(
       "anihadagali7"
     );
   });
 
-  it("limits the list to 3 items and shows a See all wishlists link in profile view", async () => {
-    WishlistClient.getAllWishlistForUser.mockResolvedValue(
-      mockWishlistResponse([
-        makeWishlistItem("w1", "Succession", "76331"),
-        makeWishlistItem("w2", "Friends", "1668"),
-        makeWishlistItem("w3", "Shutter Island", "11324"),
-        makeWishlistItem("w4", "Mr. Robot", "62560"),
-      ])
-    );
+  it("shows an empty state when the wishlist has no items", async () => {
+    WishlistClient.getAllWishlistForUser.mockResolvedValue(mockWishlistResponse([]));
 
-    renderWithProviders(
-      <DisplayWishlistByUser userName="anihadagali7" profileView={true} />
-    );
+    renderWithProviders(<DisplayWishlistByUser userName="anihadagali7" />);
 
-    expect(await screen.findByText("Succession")).toBeInTheDocument();
-    expect(screen.getByText("Friends")).toBeInTheDocument();
-    expect(screen.getByText("Shutter Island")).toBeInTheDocument();
-    expect(screen.queryByText("Mr. Robot")).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /see all wishlists/i })
-    ).toHaveAttribute("href", "/wishlist/anihadagali7");
+    expect(await screen.findByText("Wishlist is empty")).toBeInTheDocument();
   });
 
   it("does not fetch a wishlist when no userName is provided", () => {
-    renderWithProviders(<DisplayWishlistByUser userName={undefined} profileView={false} />);
+    renderWithProviders(<DisplayWishlistByUser userName={undefined} />);
 
     expect(WishlistClient.getAllWishlistForUser).not.toHaveBeenCalled();
+  });
+
+  it("shows remove controls on your own wishlist and removes an item", async () => {
+    WishlistClient.getAllWishlistForUser.mockResolvedValue(
+      mockWishlistResponse([makeWishlistItem("w1", "Succession", "76331")])
+    );
+    WishlistClient.removeFromWishlist.mockResolvedValue({});
+    const onRemoved = jest.fn();
+
+    renderWithProviders(
+      <DisplayWishlistByUser userName="anihadagali7" onRemoved={onRemoved} />,
+      { userContextValue: { currentUser: { userName: "anihadagali7" } } }
+    );
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /remove succession from wishlist/i,
+      })
+    );
+
+    await waitFor(() =>
+      expect(WishlistClient.removeFromWishlist).toHaveBeenCalledWith("76331")
+    );
+    expect(onRemoved).toHaveBeenCalledWith("76331");
+  });
+
+  it("hides remove controls when viewing someone else's wishlist", async () => {
+    WishlistClient.getAllWishlistForUser.mockResolvedValue(
+      mockWishlistResponse([makeWishlistItem("w1", "Succession", "76331")])
+    );
+
+    renderWithProviders(
+      <DisplayWishlistByUser userName="anihadagali7" />,
+      { userContextValue: { currentUser: { userName: "someoneelse" } } }
+    );
+
+    expect(await screen.findByText("Succession")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /remove succession from wishlist/i })
+    ).not.toBeInTheDocument();
   });
 });

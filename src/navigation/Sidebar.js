@@ -1,8 +1,8 @@
 import {
-    Home as HomeIcon,
-    Notifications as NotificationsIcon,
-    PlaylistPlay as PlaylistIcon,
-    Search as SearchIcon,
+  Home as HomeIcon,
+  Notifications as NotificationsIcon,
+  PlaylistPlay as PlaylistIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -12,172 +12,166 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import {
-    Box,
-    Divider,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Toolbar,
-    Typography,
-} from "@mui/material";
-import React, { useContext } from "react";
+import { Box, Divider, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import React, { useContext, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import PrimaryButton from "../shared/buttons/PrimaryButton";
+import Button from "../shared/buttons/Button";
 import UserContext from "../shared/context/userContext";
-
-const drawerWidth = 240;
+import { tokens } from "../styles/tokens";
 
 const Sidebar = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const location = useLocation();
 
   const logoutUser = () => {
-    // Cleanup when user logs out
     setCurrentUser(null);
     localStorage.removeItem("userName");
     localStorage.removeItem("accessToken");
   };
 
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
-          width: drawerWidth,
-          boxSizing: "border-box",
+  const navItems = useMemo(() => {
+    const items = [
+      {
+        text: "Home",
+        link: "/",
+        icon: <HomeOutlinedIcon />,
+        alternateIcon: <HomeIcon />,
+      },
+      {
+        text: "Search",
+        link: "/search",
+        icon: <SearchIcon />,
+        alternateIcon: <SearchIcon />,
+      },
+    ];
+
+    if (currentUser) {
+      items.push(
+        {
+          text: "Playlists",
+          icon: <PlaylistIcon />,
+          alternateIcon: <PlaylistIcon />,
+          link: `/playlist/${currentUser.userName}`,
         },
+        {
+          text: "Wishlist",
+          link: `/wishlist/${currentUser.userName}`,
+          alternateIcon: <FavoriteIcon />,
+          icon: <FavoriteBorderOutlinedIcon />,
+        },
+        {
+          text: "Notifications",
+          link: "/notifications",
+          alternateIcon: <NotificationsIcon />,
+          icon: <NotificationsNoneOutlinedIcon />,
+        },
+        {
+          text: "Profile",
+          link: `/profile/${currentUser.userName}`,
+          icon: <AccountCircleOutlinedIcon />,
+          alternateIcon: <AccountCircleIcon />,
+        }
+      );
+    }
+
+    return items;
+  }, [currentUser]);
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        minHeight: "calc(100vh - 64px)",
       }}
     >
-      <Toolbar>
-        <PrimaryButton
-          buttonElement={Link}
-          link="/"
-          sx={{ display: { xs: "none", md: "flex", color: "#00a8ff" } }}
-        >
-          <Typography variant="logo">RATE IT</Typography>
-        </PrimaryButton>
-      </Toolbar>
-      <Box
-        sx={{
-          minHeight: "calc(100vh - 64px)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {[
-              {
-                text: "Home",
-                link: "/",
-                icon: <HomeOutlinedIcon />,
-                alternateIcon: <HomeIcon />,
-              },
-              {
-                text: "Search",
-                link: "/search",
-                icon: <SearchIcon />,
-                alternateIcon: <SearchIcon />,
-              },
-              {
-                text: "Playlists",
-                icon: <PlaylistIcon />,
-                alternateIcon: <PlaylistIcon />,
-                link: `/playlist/${currentUser?.userName}`,
-              },
-              {
-                text: "Wishlist",
-                link: `/wishlist/${currentUser?.userName}`,
-                alternateIcon: <FavoriteIcon />,
-                icon: <FavoriteBorderOutlinedIcon />,
-              },
-              {
-                text: "Notifications",
-                link: "/notifications",
-                alternateIcon: <NotificationsIcon />,
-                icon: <NotificationsNoneOutlinedIcon />,
-              },
-              {
-                text: "Profile",
-                link: `/profile/${currentUser?.userName}`,
-                icon: <AccountCircleOutlinedIcon />,
-                alternateIcon: <AccountCircleIcon />,
-              },
-            ].map(({ text, icon, link, alternateIcon }) => {
-              const isActive = location.pathname === link;
-              return (
-                <ListItem
-                  button
-                  key={text}
-                  component={Link}
-                  to={link}
-                  sx={{
-                    fontWeight: isActive ? "bold" : "normal",
-                    backgroundColor: isActive
-                      ? "rgba(0, 0, 0, 0.08)"
-                      : "transparent",
-                    borderRadius: 1,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{ color: isActive ? "primary.main" : "inherit" }}
-                  >
-                    {isActive ? alternateIcon : icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={text}
-                    primaryTypographyProps={{
-                      fontWeight: isActive ? "bold" : "normal",
-                    }}
-                  />
-                </ListItem>
-              );
-            })}
-          </List>
-        </Box>
-
-        <Box
+      <Box sx={{ px: 1, py: 2 }}>
+        <Typography
+          component={Link}
+          to="/"
           sx={{
-            marginTop: "auto",
+            fontSize: 22,
+            fontWeight: 700,
+            color: tokens.colors.accent,
+            textDecoration: "none",
+            letterSpacing: "-0.02em",
           }}
         >
-          <Divider />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {currentUser ? (
-              <PrimaryButton
-                variant="text"
-                buttonElement={Link}
-                onClick={() => logoutUser()}
-                link="/"
-                rightIcon={<LogoutIcon />}
-              >
-                Log out
-              </PrimaryButton>
-            ) : (
-              <PrimaryButton
-                variant="contained"
-                buttonElement={Link}
-                link="/login"
-                rightIcon={<LoginIcon />}
-              >
-                Log in
-              </PrimaryButton>
-            )}
-          </Box>
-        </Box>
+          Rate It
+        </Typography>
       </Box>
-    </Drawer>
+
+      <List sx={{ px: 1 }}>
+        {navItems.map(({ text, icon, link, alternateIcon }) => {
+          const isActive = location.pathname === link;
+          return (
+            <ListItemButton
+              key={text}
+              component={Link}
+              to={link}
+              sx={{
+                borderRadius: `${tokens.radius.button}px`,
+                mb: 0.5,
+                backgroundColor: isActive
+                  ? tokens.colors.accentSubtle
+                  : "transparent",
+                "&:hover": {
+                  backgroundColor: isActive
+                    ? tokens.colors.accentSubtle
+                    : tokens.colors.surfaceHover,
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 40,
+                  color: isActive ? tokens.colors.accent : tokens.colors.textSecondary,
+                }}
+              >
+                {isActive ? alternateIcon : icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={text}
+                primaryTypographyProps={{
+                  fontSize: 14,
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive
+                    ? tokens.colors.accent
+                    : tokens.colors.textPrimary,
+                }}
+              />
+            </ListItemButton>
+          );
+        })}
+      </List>
+
+      <Box sx={{ mt: "auto", px: 2, pb: 3 }}>
+        <Divider sx={{ mb: 2, borderColor: tokens.colors.border }} />
+        {currentUser ? (
+          <Button
+            variant="ghost"
+            onClick={logoutUser}
+            rightIcon={<LogoutIcon />}
+            sx={{ width: "100%", justifyContent: "flex-start" }}
+            buttonElement={Link}
+            link="/"
+          >
+            Log out
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            buttonElement={Link}
+            link="/login"
+            rightIcon={<LoginIcon />}
+            sx={{ width: "100%" }}
+          >
+            Log in
+          </Button>
+        )}
+      </Box>
+    </Box>
   );
 };
 

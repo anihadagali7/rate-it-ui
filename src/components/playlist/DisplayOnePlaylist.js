@@ -1,26 +1,19 @@
-import AddIcon from "@mui/icons-material/Add";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Stack from "@mui/material/Stack";
+import { Box, Grid, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PlaylistClient from "../../client/PlaylistClient";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import UserContext from "../../shared/context/userContext";
+import MediaCard from "../../shared/media/MediaCard";
+import Button from "../../shared/buttons/Button";
+import FeedLayout from "../../shared/layout/FeedLayout";
 import ProfileWishlistLoading from "../../shared/loading/ProfileWishlistLoading";
-import PlaylistCard from "./PlaylistCard";
+import EmptyState from "../../shared/primitives/EmptyState";
 import QueryErrorState from "../../shared/errors/QueryErrorState";
+import { tokens } from "../../styles/tokens";
 
 const DisplayOnePlaylist = () => {
-  const { userName, playlistId } = useParams();
+  const { playlistId } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useContext(UserContext);
-  const profileUserName = currentUser?.userName;
-  const userViewingOwnProfile = userName === profileUserName;
 
   const {
     data: playlistDetails,
@@ -36,97 +29,72 @@ const DisplayOnePlaylist = () => {
     select: ({ data }) => data.data.mediaByPlaylist,
   });
 
-  const displayMediaList = () => {
-    const mediaList = playlistDetails?.mediaList;
-    return (
-      <>
-        {mediaList &&
-          mediaList.length !== 0 &&
-          mediaList.map((media) => (
-            <>
-              <ListItem>
-                <Stack direction="row" spacing={2} key={media._id}>
-                  <>
-                    <div>
-                      <Stack direction="column">
-                        <Typography
-                          component={Link}
-                          sx={{ textDecoration: "none" }}
-                          to={`/${media.mediaType}/${media.mediaId}`}
-                        >
-                          {media.name}
-                        </Typography>
-                      </Stack>
-                    </div>
-                  </>
-                </Stack>
-              </ListItem>
-              <Divider
-                sx={{ width: "95%", marginLeft: "auto", marginRight: "auto" }}
-              />
-            </>
-          ))}
-      </>
-    );
-  };
+  const mediaList = playlistDetails?.mediaList || [];
+  const playlistName = playlistDetails?.playlist?.name;
 
   return (
-    <Box>
-      <Container
-        maxWidth={"sm"}
-        sx={{ marginBottom: "25px", marginTop: "25px" }}
+    <FeedLayout>
+      <Button
+        variant="ghost"
+        leftIcon={<KeyboardBackspaceIcon />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 2 }}
       >
-        <Paper
-          elevation={6}
+        Back
+      </Button>
+
+      {playlistName ? (
+        <Typography
           sx={{
-            width: "100%",
-            minHeight: "300px",
-            height: "100%",
-            backgroundColor: "#FFFFFF",
-            margin: "auto",
-            borderRadius: "17px",
-            padding: "20px",
+            fontSize: 22,
+            fontWeight: 700,
+            color: tokens.colors.textPrimary,
+            mb: 2,
           }}
         >
-          <Box>
-            <PrimaryButton
-              variant="text"
-              leftIcon={<KeyboardBackspaceIcon style={{ color: "#000" }} />}
-              onClick={() => navigate(-1)}
-            >
-              Return
-            </PrimaryButton>
+          {playlistName}
+        </Typography>
+      ) : null}
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {playlistDetails && (
-                <PlaylistCard
-                  playlist={playlistDetails?.playlist}
-                  userName={userName}
+      {isLoading ? <ProfileWishlistLoading /> : null}
+
+      {isError ? (
+        <QueryErrorState
+          message="Unable to load playlist media."
+          onRetry={refetch}
+        />
+      ) : null}
+
+      {!isLoading && !isError && mediaList.length > 0 ? (
+        <Grid container spacing={2}>
+          {mediaList.map((media) => {
+            const mediaType = media.mediaType?.toLowerCase();
+
+            return (
+              <Grid item xs={6} sm={4} md={3} key={media._id}>
+                <MediaCard
+                  item={{
+                    mediaId: media.mediaId,
+                    name: media.name,
+                    poster: media.picture,
+                    description: media.description,
+                  }}
+                  mediaType={mediaType}
+                  variant="grid"
                 />
-              )}
-            </Box>
-            <List component="nav">
-              {isLoading ? (
-                <ProfileWishlistLoading />
-              ) : isError ? (
-                <QueryErrorState
-                  message="Unable to load playlist media."
-                  onRetry={refetch}
-                />
-              ) : (
-                displayMediaList()
-              )}
-            </List>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
+      ) : null}
+
+      {!isLoading && !isError && mediaList.length === 0 ? (
+        <EmptyState
+          title="This playlist is empty"
+          description="Add media from a title page to build your playlist."
+        />
+      ) : null}
+    </FeedLayout>
   );
 };
 

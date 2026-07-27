@@ -39,7 +39,12 @@ const otherProfileFollowing = {
 
 const rating = {
   _id: "r1",
-  media: { name: "Friends", mediaType: "TV", mediaId: "1668" },
+  media: {
+    name: "Friends",
+    mediaType: "TV",
+    mediaId: "1668",
+    picture: "https://example.com/friends.jpg",
+  },
   ratedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
   rating: "9",
   comments: "great show",
@@ -70,7 +75,7 @@ describe("Profile", () => {
       screen.queryByRole("button", { name: /^follow$/i })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /following/i })
+      screen.queryByRole("button", { name: /^following$/i })
     ).not.toBeInTheDocument();
   });
 
@@ -82,7 +87,7 @@ describe("Profile", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("Shree")).toBeInTheDocument();
+    expect(await screen.findByText("Shree Balaji")).toBeInTheDocument();
     expect(screen.getByText("@shree")).toBeInTheDocument();
     expect(container).toHaveTextContent("1 following");
     expect(container).toHaveTextContent("2 followers");
@@ -105,7 +110,7 @@ describe("Profile", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("Anirudha")).toBeInTheDocument();
+    expect(await screen.findByText("Anirudha Hadagali")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /add friends/i })
     ).not.toBeInTheDocument();
@@ -139,14 +144,14 @@ describe("Profile", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    fireEvent.click(await screen.findByRole("button", { name: /following/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /^following$/i }));
 
     await waitFor(() =>
       expect(UserClient.unFollowUser).toHaveBeenCalledWith("anihadagali7")
     );
   });
 
-  it("loads the user's ratings in the default Ratings tab", async () => {
+  it("loads the user's ratings in the default Reviews tab", async () => {
     mockUserNameParam = "shree";
     UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
     RatingClient.getAllRatingsForUser.mockResolvedValue(mockRatingsList([rating]));
@@ -155,11 +160,11 @@ describe("Profile", () => {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("Comments: great show")).toBeInTheDocument();
+    expect(await screen.findByText("great show")).toBeInTheDocument();
     expect(RatingClient.getAllRatingsForUser).toHaveBeenCalledWith("shree");
   });
 
-  it("switches to the Playlist tab and loads the user's playlists", async () => {
+  it("switches to the Playlists tab and loads the user's playlists", async () => {
     mockUserNameParam = "shree";
     UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
     PlaylistClient.getAllPlaylistForUser.mockResolvedValue(
@@ -171,7 +176,7 @@ describe("Profile", () => {
     });
 
     await screen.findByText("@shree");
-    fireEvent.click(screen.getByRole("tab", { name: "Playlist" }));
+    fireEvent.click(screen.getByRole("button", { name: "Playlists" }));
 
     expect(await screen.findByText("Favorites")).toBeInTheDocument();
     expect(PlaylistClient.getAllPlaylistForUser).toHaveBeenCalledWith("shree");

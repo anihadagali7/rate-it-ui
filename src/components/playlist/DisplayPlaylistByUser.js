@@ -1,13 +1,12 @@
 import { Box, Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { Link } from "react-router-dom";
 import PlaylistClient from "../../client/PlaylistClient";
-import PrimaryButton from "../../shared/buttons/PrimaryButton";
-import PlaylistCard from "./PlaylistCard";
 import QueryErrorState from "../../shared/errors/QueryErrorState";
+import EmptyState from "../../shared/primitives/EmptyState";
+import { tokens } from "../../styles/tokens";
+import PlaylistCard from "./PlaylistCard";
 
-const DisplayPlaylistByUser = ({ userName, profileView }) => {
+const DisplayPlaylistByUser = ({ userName }) => {
   const {
     data: playlistList,
     isLoading,
@@ -15,57 +14,57 @@ const DisplayPlaylistByUser = ({ userName, profileView }) => {
     refetch,
   } = useQuery({
     queryKey: ["getAllPlaylistForUser", userName],
-    queryFn: async () => {
-      return await PlaylistClient.getAllPlaylistForUser(userName);
-    },
+    queryFn: async () => PlaylistClient.getAllPlaylistForUser(userName),
     staleTime: 60000,
     enabled: !!userName,
     select: ({ data }) => [...data.data.playlistList].reverse(),
   });
 
-  let newList = [];
-  if (playlistList) {
-    if (profileView) {
-      newList = playlistList.slice(0, 3);
-    } else {
-      newList = playlistList;
-    }
+  if (isError) {
+    return (
+      <QueryErrorState
+        message="Unable to load playlists."
+        onRetry={refetch}
+      />
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Grid container spacing={2}>
+        {[1, 2, 3].map((item) => (
+          <Grid item xs={6} sm={4} md={3} key={item}>
+            <Box
+              sx={{
+                border: `1px solid ${tokens.colors.border}`,
+                borderRadius: `${tokens.radius.card}px`,
+                height: 220,
+                backgroundColor: tokens.colors.surfaceHover,
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  }
+
+  if (!playlistList?.length) {
+    return (
+      <EmptyState
+        title="No playlists yet"
+        description="Playlists will show up here once they are created."
+      />
+    );
   }
 
   return (
-    <Box>
-      {isError ? (
-        <QueryErrorState
-          message="Unable to load playlists."
-          onRetry={refetch}
-        />
-      ) : (
-      <Grid container spacing={2} sx={{ margin: "10px 0" }}>
-        {newList &&
-          newList.length > 0 &&
-          newList.map((playlist, index) => (
-            <Grid item xs={5} sm={4} md={4} lg={4} sx={{ margin: "10px" }}>
-              <PlaylistCard
-                playlist={playlist}
-                userName={userName}
-                key={index}
-              />
-            </Grid>
-          ))}
-      </Grid>
-      )}
-      {profileView && !isError && (
-        <Box sx={{ margin: "10px", justifyContent: "center", display: "flex" }}>
-          <PrimaryButton
-            variant="outlined"
-            buttonElement={Link}
-            link={`/playlist/${userName}`}
-          >
-            See all playlists
-          </PrimaryButton>
-        </Box>
-      )}
-    </Box>
+    <Grid container spacing={2}>
+      {playlistList.map((playlist) => (
+        <Grid item xs={6} sm={4} md={3} key={playlist._id}>
+          <PlaylistCard playlist={playlist} userName={userName} />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

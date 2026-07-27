@@ -1,22 +1,30 @@
-import React, { useContext } from "react";
-import { Container, Paper, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
 import RatingClient from "../client/RatingClient";
+import FeedList from "../components/feed/FeedList";
+import FeedLayout from "../shared/layout/FeedLayout";
+import TabBar from "../shared/navigation/TabBar";
 import RatingsLoading from "../shared/loading/RatingsLoading";
+import EmptyState from "../shared/primitives/EmptyState";
 import UserContext from "../shared/context/userContext";
-import { useQuery } from "@tanstack/react-query";
-import RatingCard from "../components/ratingcard/RatingCard";
 import QueryErrorState from "../shared/errors/QueryErrorState";
+import { useQuery } from "@tanstack/react-query";
+
+const FEED_TABS = {
+  FOLLOWING: "following",
+  DISCOVER: "discover",
+};
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
+  const [activeTab, setActiveTab] = useState(FEED_TABS.FOLLOWING);
 
   const {
     data: exploreRatingsList,
-    isLoading,
+    isLoading: isExploreLoading,
     isError: isExploreError,
     refetch: refetchExplore,
   } = useQuery({
-    queryKey: ["allExploreRatings"],
+    queryKey: ["allExploreRatings", currentUser?.userName ?? "anonymous"],
     queryFn: async () => await RatingClient.getAllExploreRatings(),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
@@ -24,7 +32,7 @@ const Home = () => {
 
   const {
     data: feedRatingsList,
-    isLoading: isFeedRatingsLoading,
+    isLoading: isFeedLoading,
     isError: isFeedError,
     refetch: refetchFeed,
   } = useQuery({
@@ -35,83 +43,84 @@ const Home = () => {
     select: ({ data }) => data.data.ratingsList,
   });
 
-  if (isLoading || (currentUser && isFeedRatingsLoading)) {
+  const isFollowingTab =
+    currentUser && activeTab === FEED_TABS.FOLLOWING;
+
+  const isLoading =
+    isExploreLoading || (currentUser && isFeedLoading && isFollowingTab);
+
+  if (isLoading) {
     return <RatingsLoading />;
   }
 
-  if (isExploreError) {
+  if (isExploreError && (!currentUser || !isFollowingTab)) {
     return (
-      <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
+      <FeedLayout>
         <QueryErrorState
           message="Unable to load explore ratings."
           onRetry={refetchExplore}
         />
-      </Container>
+      </FeedLayout>
     );
   }
 
+  const ratingsToShow = isFollowingTab ? feedRatingsList : exploreRatingsList;
+
+  const shouldShowRatings = isFollowingTab
+    ? !isFeedError && feedRatingsList?.length > 0
+    : exploreRatingsList?.length > 0;
+
   return (
-    <Container maxWidth={"md"} sx={{ marginBottom: "25px", marginTop: "25px" }}>
-      {currentUser && isFeedError && (
+    <FeedLayout showRail={!!currentUser}>
+      {currentUser ? (
+        <TabBar
+          tabs={[
+            { id: FEED_TABS.FOLLOWING, label: "Following" },
+            { id: FEED_TABS.DISCOVER, label: "Discover" },
+          ]}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+      ) : null}
+
+      {currentUser && isFollowingTab && isFeedError ? (
         <QueryErrorState
           message="Unable to load your feed."
           onRetry={refetchFeed}
         />
-      )}
-      {currentUser && !isFeedError && feedRatingsList && feedRatingsList.length > 0 && (
-        <>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "22px",
-            }}
-          >
-            For you
-          </Typography>
-          {feedRatingsList.map((rating) => (
-            <Paper
-              elevation={6}
-              key={rating._id}
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "17px",
-                marginTop: "15px",
-                padding: "25px",
-              }}
-            >
-              <RatingCard rating={rating} key={rating.id} />
-            </Paper>
-          ))}
-        </>
-      )}
-      {exploreRatingsList && exploreRatingsList.length > 0 && (
-        <>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "22px",
-              paddingTop: "15px",
-            }}
-          >
-            Explore
-          </Typography>
-          {exploreRatingsList.map((rating) => (
-            <Paper
-              elevation={6}
-              key={rating._id}
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "17px",
-                marginTop: "15px",
-                padding: "25px",
-              }}
-            >
-              <RatingCard rating={rating} key={rating.id} />
-            </Paper>
-          ))}
-        </>
-      )}
-    </Container>
+      ) : null}
+
+      {currentUser &&
+      isFollowingTab &&
+      !isFeedError &&
+      feedRatingsList?.length === 0 ? (
+        <EmptyState
+          title="Your feed is empty"
+          description="Follow people to see their reviews here, or switch to Discover."
+        />
+      ) : null}
+
+      {shouldShowRatings ? (
+        <FeedList ratings={ratingsToShow} />
+      ) : null}
+
+      {!currentUser && exploreRatingsList?.length === 0 && !isExploreError ? (
+        <EmptyState
+          title="No reviews yet"
+          description="Be the first to rate something!"
+        />
+      ) : null}
+
+      {currentUser &&
+      !isFollowingTab &&
+      !isExploreError &&
+      exploreRatingsList?.length === 0 ? (
+        <EmptyState
+          title="Nothing new to discover"
+          description="You're already following everyone who's rated, or there aren't other reviews yet."
+        />
+      ) : null}
+    </FeedLayout>
   );
 };
 

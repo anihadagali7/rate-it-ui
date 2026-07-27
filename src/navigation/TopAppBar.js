@@ -18,6 +18,7 @@ import useScrollTrigger from "@mui/material/useScrollTrigger";
 import React, { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../shared/context/userContext";
+import { tokens } from "../styles/tokens";
 
 function HideOnScroll({ children, window }) {
   const trigger = useScrollTrigger({ target: window ? window() : undefined });
@@ -55,101 +56,84 @@ const TopAppBar = () => {
       <Box sx={{ flexGrow: 1, display: { xs: "block", md: "none" } }}>
         <AppBar
           position="fixed"
-          sx={{ top: 0, backgroundColor: "#FFFFFF", padding: "5px 0" }}
+          elevation={0}
+          sx={{
+            top: 0,
+            backgroundColor: tokens.colors.surface,
+            borderBottom: `1px solid ${tokens.colors.border}`,
+          }}
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ width: "30%" }} variant="logo">
-              RATE IT
-            </Typography>
-            <Box
+            <Typography
+              component={Link}
+              to="/"
               sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
+                fontSize: 20,
+                fontWeight: 700,
+                color: tokens.colors.accent,
+                textDecoration: "none",
               }}
             >
+              Rate It
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               {currentUser && (
                 <IconButton
                   component={Link}
                   to="/notifications"
-                  color="primary"
+                  sx={{ color: tokens.colors.textSecondary }}
                 >
                   {location.pathname === "/notifications" ? (
-                    <NotificationsIcon />
+                    <NotificationsIcon sx={{ color: tokens.colors.accent }} />
                   ) : (
                     <NotificationsNoneOutlinedIcon />
                   )}
                 </IconButton>
               )}
-              <Box>
-                <IconButton onClick={handleOpenUserMenu} color="primary">
-                  <SettingsIcon />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={userMenu}
-                  keepMounted
-                  transformOrigin={{ horizontal: "right", vertical: "top" }}
-                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                  open={userMenu}
-                  onClose={handleCloseUserMenu}
-                  PaperProps={{
-                    elevation: 0,
-                    sx: {
-                      overflow: "visible",
-                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                      mt: 1.5,
-                      "& .MuiAvatar-root": {
-                        width: 32,
-                        height: 32,
-                        ml: -0.5,
-                        mr: 1,
-                      },
-                      "&::before": {
-                        content: '""',
-                        display: "block",
-                        position: "absolute",
-                        top: 0,
-                        right: 4,
-                        width: 10,
-                        height: 10,
-                        bgcolor: "background.paper",
-                        transform: "translateY(-50%) rotate(45deg)",
-                        zIndex: 0,
-                      },
-                    },
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ color: tokens.colors.textSecondary }}
+              >
+                <SettingsIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={userMenu}
+                keepMounted
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                open={Boolean(userMenu)}
+                onClose={handleCloseUserMenu}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    mt: 1,
+                    border: `1px solid ${tokens.colors.border}`,
+                    borderRadius: `${tokens.radius.button}px`,
+                  },
+                }}
+              >
+                <MenuItem
+                  key="auth-action"
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    if (currentUser) {
+                      logoutUser();
+                    }
                   }}
+                  component={currentUser ? "li" : Link}
+                  to={currentUser ? undefined : "/login"}
                 >
-                  <MenuItem key={"logout"} onClick={handleCloseUserMenu}>
+                  <ListItemIcon>
                     {currentUser ? (
-                      <>
-                        <ListItemIcon>
-                          <Logout fontSize="small" />
-                        </ListItemIcon>
-                        <Typography
-                          textAlign="center"
-                          onClick={() => logoutUser()}
-                        >
-                          Logout
-                        </Typography>
-                      </>
+                      <Logout fontSize="small" />
                     ) : (
-                      <>
-                        <ListItemIcon>
-                          <LoginIcon fontSize="small" />
-                        </ListItemIcon>
-                        <Typography
-                          textAlign="center"
-                          component={Link}
-                          to={`/login`}
-                        >
-                          Login
-                        </Typography>
-                      </>
+                      <LoginIcon fontSize="small" />
                     )}
-                  </MenuItem>
-                </Menu>
-              </Box>
+                  </ListItemIcon>
+                  {currentUser ? "Log out" : "Log in"}
+                </MenuItem>
+              </Menu>
             </Box>
           </Toolbar>
         </AppBar>
