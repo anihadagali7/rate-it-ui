@@ -3,14 +3,29 @@ import { tokens } from "../../styles/tokens";
 
 const LABELS = {
   movie: "Movie",
+  movies: "Movie",
   tv: "TV",
+  "tv show": "TV",
+  "tv shows": "TV",
+  tvshow: "TV",
+  tvshows: "TV",
   music: "Music",
   book: "Book",
+  books: "Book",
   user: "Person",
+  person: "Person",
 };
 
+const normalizeType = (type) =>
+  String(type || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+
 const MediaTypeBadge = ({ type }) => {
-  const label = LABELS[type?.toLowerCase()] || type;
+  const normalized = normalizeType(type);
+  const label = LABELS[normalized] || type;
 
   return (
     <Box
