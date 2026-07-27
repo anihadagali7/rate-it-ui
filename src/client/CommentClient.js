@@ -13,4 +13,14 @@ export default class CommentClient {
     const url = `${API_URL}/api/comments/${commentId}`;
     return axios.delete(url, getHeaders());
   }
+
+  static likeComment(commentId) {
+    const url = `${API_URL}/api/comments/${commentId}/like`;
+    return axios.post(url, {}, getHeaders());
+  }
+
+  static unlikeComment(commentId) {
+    const url = `${API_URL}/api/comments/${commentId}/like`;
+    return axios.delete(url, getHeaders());
+  }
 }

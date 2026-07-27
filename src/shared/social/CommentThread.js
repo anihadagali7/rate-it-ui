@@ -7,6 +7,7 @@ import { tokens } from "../../styles/tokens";
 import Button from "../buttons/Button";
 import TextAreaField from "../inputfield/TextAreaField";
 import UserAvatar from "../primitives/UserAvatar";
+import LikeButton from "./LikeButton";
 
 const formatCommentTime = (date) => {
   if (!date) return "";
@@ -28,6 +29,7 @@ const CommentThread = ({
   isSubmitting = false,
   onAdd,
   onDelete,
+  onToggleLike,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [draft, setDraft] = useState("");
@@ -171,6 +173,19 @@ const CommentThread = ({
                         >
                           {comment.text}
                         </Typography>
+                        <Box sx={{ mt: 0.25, ml: -1 }}>
+                          <LikeButton
+                            initialLiked={!!comment.likedByCurrentUser}
+                            initialCount={comment.likeCount ?? 0}
+                            disabled={!currentUser || !onToggleLike}
+                            onToggle={
+                              onToggleLike
+                                ? (shouldLike) =>
+                                    onToggleLike(comment._id, shouldLike)
+                                : undefined
+                            }
+                          />
+                        </Box>
                       </Box>
                       {canDelete ? (
                         <IconButton

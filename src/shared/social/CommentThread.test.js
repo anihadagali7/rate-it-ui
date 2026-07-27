@@ -65,4 +65,28 @@ describe("CommentThread", () => {
 
     await waitFor(() => expect(onDelete).toHaveBeenCalledWith("c1"));
   });
+
+  it("toggles a comment like", async () => {
+    const onToggleLike = jest.fn().mockResolvedValue(undefined);
+
+    renderWithProviders(
+      <CommentThread
+        comments={[
+          {
+            ...comments[0],
+            likeCount: 2,
+            likedByCurrentUser: false,
+          },
+        ]}
+        commentCount={1}
+        currentUser={{ userName: "shree" }}
+        onToggleLike={onToggleLike}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^like$/i }));
+
+    await waitFor(() => expect(onToggleLike).toHaveBeenCalledWith("c1", true));
+  });
 });

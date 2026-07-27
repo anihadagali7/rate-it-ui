@@ -31,6 +31,8 @@ const rating = {
       _id: "c1",
       text: "Spot on",
       dateCreated: "2024-06-11T12:00:00.000Z",
+      likeCount: 1,
+      likedByCurrentUser: false,
       commentedBy: {
         userName: "shree",
         firstName: "Shree",
@@ -125,6 +127,24 @@ describe("RatingCard", () => {
 
     await waitFor(() =>
       expect(CommentClient.deleteComment).toHaveBeenCalledWith("c1")
+    );
+  });
+
+  it("likes a comment when signed in", async () => {
+    CommentClient.likeComment.mockResolvedValue({});
+
+    renderWithProviders(<RatingCard rating={rating} />, {
+      userContextValue: { currentUser: { userName: "shree" } },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+
+    const likeButtons = screen.getAllByRole("button", { name: /^like$/i });
+    // First is rating like; second is comment like
+    fireEvent.click(likeButtons[1]);
+
+    await waitFor(() =>
+      expect(CommentClient.likeComment).toHaveBeenCalledWith("c1")
     );
   });
 });

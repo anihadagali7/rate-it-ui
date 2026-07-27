@@ -80,6 +80,17 @@ const RatingCard = ({ rating }) => {
     onSuccess: () => invalidateRatingQueries(queryClient),
   });
 
+  const { mutateAsync: toggleCommentLike } = useMutation({
+    mutationFn: async ({ commentId, shouldLike }) => {
+      if (shouldLike) {
+        await CommentClient.likeComment(commentId);
+      } else {
+        await CommentClient.unlikeComment(commentId);
+      }
+    },
+    onSuccess: () => invalidateRatingQueries(queryClient),
+  });
+
   return (
     <SurfaceCard>
       <Stack
@@ -224,6 +235,9 @@ const RatingCard = ({ rating }) => {
           isSubmitting={isCommentSubmitting}
           onAdd={addComment}
           onDelete={deleteComment}
+          onToggleLike={(commentId, shouldLike) =>
+            toggleCommentLike({ commentId, shouldLike })
+          }
         />
       </Box>
     </SurfaceCard>
