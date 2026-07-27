@@ -17,6 +17,7 @@ import Search from "./pages/Search";
 import Signup from "./pages/Signup";
 import Wishlist from "./pages/Wishlist";
 import Protected from "./shared/Protected";
+import GuestOnly from "./shared/GuestOnly";
 import { theme } from "./styles/Theme";
 import DisplayOnePlaylist from "./components/playlist/DisplayOnePlaylist";
 
@@ -70,8 +71,24 @@ const App = React.memo(() => {
                       path="/search/:keyword"
                       element={<Search />}
                     ></Route>
-                    <Route exact path="/login" element={<Login />}></Route>
-                    <Route exact path="/signup" element={<Signup />}></Route>
+                    <Route
+                      exact
+                      path="/login"
+                      element={
+                        <GuestOnly>
+                          <Login />
+                        </GuestOnly>
+                      }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/signup"
+                      element={
+                        <GuestOnly>
+                          <Signup />
+                        </GuestOnly>
+                      }
+                    ></Route>
                     <Route
                       exact
                       path="/:mediaType/:id"

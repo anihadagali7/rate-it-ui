@@ -1,6 +1,11 @@
 import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment/moment";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import CommentClient from "../../client/CommentClient";
+import LikeClient from "../../client/LikeClient";
+import UserContext from "../../shared/context/userContext";
 import MediaPoster from "../../shared/primitives/MediaPoster";
 import ScoreBadge from "../../shared/primitives/ScoreBadge";
 import SurfaceCard from "../../shared/primitives/SurfaceCard";
@@ -25,9 +30,18 @@ const getTimeAgo = (date) => {
   return moment(date).format("MMM D, YYYY");
 };
 
+const invalidateRatingQueries = (queryClient) => {
+  queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
+  queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+  queryClient.invalidateQueries({ queryKey: ["ratingsForUser"] });
+  queryClient.invalidateQueries({ queryKey: ["ratingsForMedia"] });
+};
+
 const RatingCard = ({ rating }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const reviewText = rating?.comments || "";
   const isLongReview = reviewText.length > MAX_REVIEW_LENGTH;
@@ -39,6 +53,43 @@ const RatingCard = ({ rating }) => {
   const mediaPath = mediaType
     ? `/${mediaType}/${rating.media.mediaId}`
     : "#";
+
+  const { mutateAsync: toggleLike, isLoading: isLikeLoading } = useMutation({
+    mutationFn: async (shouldLike) => {
+      if (shouldLike) {
+        await LikeClient.likeRating(rating._id);
+      } else {
+        await LikeClient.unlikeRating(rating._id);
+      }
+    },
+    onSuccess: () => invalidateRatingQueries(queryClient),
+  });
+
+  const { mutateAsync: addComment, isLoading: isCommentSubmitting } =
+    useMutation({
+      mutationFn: async (text) => {
+        await CommentClient.addComment(rating._id, text);
+      },
+      onSuccess: () => invalidateRatingQueries(queryClient),
+    });
+
+  const { mutateAsync: deleteComment } = useMutation({
+    mutationFn: async (commentId) => {
+      await CommentClient.deleteComment(commentId);
+    },
+    onSuccess: () => invalidateRatingQueries(queryClient),
+  });
+
+  const { mutateAsync: toggleCommentLike } = useMutation({
+    mutationFn: async ({ commentId, shouldLike }) => {
+      if (shouldLike) {
+        await CommentClient.likeComment(commentId);
+      } else {
+        await CommentClient.unlikeComment(commentId);
+      }
+    },
+    onSuccess: () => invalidateRatingQueries(queryClient),
+  });
 
   return (
     <SurfaceCard>
@@ -162,6 +213,7 @@ const RatingCard = ({ rating }) => {
       <Box
         sx={{
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: 1,
           mt: 2,
@@ -169,8 +221,24 @@ const RatingCard = ({ rating }) => {
           borderTop: `1px solid ${tokens.colors.border}`,
         }}
       >
-        <LikeButton disabled />
-        <CommentThread commentCount={0} disabled />
+        <LikeButton
+          initialLiked={!!rating?.likedByCurrentUser}
+          initialCount={rating?.likeCount ?? 0}
+          disabled={!currentUser}
+          isLoading={isLikeLoading}
+          onToggle={toggleLike}
+        />
+        <CommentThread
+          comments={rating?.commentList || []}
+          commentCount={rating?.commentCount ?? 0}
+          currentUser={currentUser}
+          isSubmitting={isCommentSubmitting}
+          onAdd={addComment}
+          onDelete={deleteComment}
+          onToggleLike={(commentId, shouldLike) =>
+            toggleCommentLike({ commentId, shouldLike })
+          }
+        />
       </Box>
     </SurfaceCard>
   );
