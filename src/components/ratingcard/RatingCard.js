@@ -1,6 +1,10 @@
 import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment/moment";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import LikeClient from "../../client/LikeClient";
+import UserContext from "../../shared/context/userContext";
 import MediaPoster from "../../shared/primitives/MediaPoster";
 import ScoreBadge from "../../shared/primitives/ScoreBadge";
 import SurfaceCard from "../../shared/primitives/SurfaceCard";
@@ -28,6 +32,8 @@ const getTimeAgo = (date) => {
 const RatingCard = ({ rating }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { currentUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const reviewText = rating?.comments || "";
   const isLongReview = reviewText.length > MAX_REVIEW_LENGTH;
@@ -39,6 +45,22 @@ const RatingCard = ({ rating }) => {
   const mediaPath = mediaType
     ? `/${mediaType}/${rating.media.mediaId}`
     : "#";
+
+  const { mutateAsync: toggleLike, isLoading: isLikeLoading } = useMutation({
+    mutationFn: async (shouldLike) => {
+      if (shouldLike) {
+        await LikeClient.likeRating(rating._id);
+      } else {
+        await LikeClient.unlikeRating(rating._id);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["ratingsForUser"] });
+      queryClient.invalidateQueries({ queryKey: ["ratingsForMedia"] });
+    },
+  });
 
   return (
     <SurfaceCard>
@@ -169,7 +191,13 @@ const RatingCard = ({ rating }) => {
           borderTop: `1px solid ${tokens.colors.border}`,
         }}
       >
-        <LikeButton disabled />
+        <LikeButton
+          initialLiked={!!rating?.likedByCurrentUser}
+          initialCount={rating?.likeCount ?? 0}
+          disabled={!currentUser}
+          isLoading={isLikeLoading}
+          onToggle={toggleLike}
+        />
         <CommentThread commentCount={0} disabled />
       </Box>
     </SurfaceCard>
