@@ -122,6 +122,8 @@ const RightRail = () => {
       queryClient.invalidateQueries({
         queryKey: ["profileInfo", { userName: currentUser?.userName }],
       });
+      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
     },
   });
 
@@ -132,6 +134,8 @@ const RightRail = () => {
       queryClient.invalidateQueries({
         queryKey: ["profileInfo", { userName: currentUser?.userName }],
       });
+      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
     },
   });
 

@@ -24,7 +24,7 @@ const Home = () => {
     isError: isExploreError,
     refetch: refetchExplore,
   } = useQuery({
-    queryKey: ["allExploreRatings"],
+    queryKey: ["allExploreRatings", currentUser?.userName ?? "anonymous"],
     queryFn: async () => await RatingClient.getAllExploreRatings(),
     staleTime: 60000,
     select: ({ data }) => data.data.ratingsList,
@@ -108,6 +108,16 @@ const Home = () => {
         <EmptyState
           title="No reviews yet"
           description="Be the first to rate something!"
+        />
+      ) : null}
+
+      {currentUser &&
+      !isFollowingTab &&
+      !isExploreError &&
+      exploreRatingsList?.length === 0 ? (
+        <EmptyState
+          title="Nothing new to discover"
+          description="You're already following everyone who's rated, or there aren't other reviews yet."
         />
       ) : null}
     </FeedLayout>

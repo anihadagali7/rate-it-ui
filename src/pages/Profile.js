@@ -54,6 +54,8 @@ const Profile = () => {
       queryClient.invalidateQueries({
         queryKey: ["profileInfo", { userName: currentUser?.userName }],
       });
+      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
     },
   });
 
@@ -64,6 +66,8 @@ const Profile = () => {
       queryClient.invalidateQueries({
         queryKey: ["profileInfo", { userName: currentUser?.userName }],
       });
+      queryClient.invalidateQueries({ queryKey: ["allExploreRatings"] });
+      queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
     },
   });
 

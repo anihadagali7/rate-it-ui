@@ -144,9 +144,8 @@ const RatingCard = ({ rating }) => {
               <MediaPoster
                 src={rating?.media?.picture}
                 alt={rating?.media?.name}
-                width="100%"
-                height={60}
-                sx={{ width: "100%", height: 60 }}
+                width={112}
+                height={168}
               />
             </Box>
           ) : null}

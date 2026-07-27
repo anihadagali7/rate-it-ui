@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Home from "./Home";
 import RatingClient from "../client/RatingClient";
@@ -80,18 +80,37 @@ describe("Home", () => {
     expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
   });
 
-  it("shows an empty state when the following feed has no ratings", async () => {
+  it("shows discover ratings when a logged in user switches tabs", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
       mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
     );
-    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
+    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
 
     renderWithProviders(<Home />, {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    expect(await screen.findByText("Your feed is empty")).toBeInTheDocument();
-    expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
+    expect(await screen.findByText("great show")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Discover"));
+
+    expect(await screen.findByText("slippin jimmy")).toBeInTheDocument();
+    expect(screen.queryByText("great show")).not.toBeInTheDocument();
+  });
+
+  it("shows an empty state when discover has no ratings for a logged in user", async () => {
+    RatingClient.getAllExploreRatings.mockResolvedValue(mockRatingsList([]));
+    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
+
+    renderWithProviders(<Home />, {
+      userContextValue: { currentUser: { userName: "shree" } },
+    });
+
+    fireEvent.click(await screen.findByText("Discover"));
+
+    expect(
+      await screen.findByText("Nothing new to discover")
+    ).toBeInTheDocument();
   });
 
   it("paginates the discover feed and loads more ratings on scroll", async () => {
