@@ -17,7 +17,10 @@ export const setupAuthInterceptor = () => {
       const status = error.response?.status;
       const message = error.response?.data?.errors?.msg;
 
+      const hadSession = !!localStorage.getItem("accessToken");
+
       if (
+        hadSession &&
         (status === 401 || status === 403) &&
         AUTH_FAILURE_MESSAGES.has(message)
       ) {

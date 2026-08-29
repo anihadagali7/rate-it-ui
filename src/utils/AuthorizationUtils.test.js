@@ -13,9 +13,9 @@ describe("getHeaders", () => {
     });
   });
 
-  it("returns a null Authorization header when no access token is stored", () => {
+  it("omits the Authorization header when no access token is stored", () => {
     expect(getHeaders()).toEqual({
-      headers: { Authorization: null },
+      headers: {},
     });
   });
 });

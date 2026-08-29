@@ -6,6 +6,24 @@ import FollowButton from "../../shared/social/FollowButton";
 import UserAvatar from "../../shared/primitives/UserAvatar";
 import { tokens } from "../../styles/tokens";
 
+const StatDivider = () => (
+  <Typography sx={{ fontSize: 14, color: tokens.colors.border }}>
+    &bull;
+  </Typography>
+);
+
+const StatValue = ({ count, label }) => (
+  <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
+    <Typography
+      component="span"
+      sx={{ fontWeight: 600, color: tokens.colors.textPrimary }}
+    >
+      {count}
+    </Typography>{" "}
+    {label}
+  </Typography>
+);
+
 const StatButton = ({ count, label, onClick }) => (
   <Box
     component="button"
@@ -17,17 +35,14 @@ const StatButton = ({ count, label, onClick }) => (
       cursor: "pointer",
       padding: 0,
       textAlign: "left",
+      borderRadius: `${tokens.radius.button}px`,
+      transition: `color ${tokens.motion.quick}`,
+      "&:hover": {
+        "& .MuiTypography-root": { color: tokens.colors.accent },
+      },
     }}
   >
-    <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
-      <Typography
-        component="span"
-        sx={{ fontWeight: 600, color: tokens.colors.textPrimary }}
-      >
-        {count}
-      </Typography>{" "}
-      {label}
-    </Typography>
+    <StatValue count={count} label={label} />
   </Box>
 );
 
@@ -54,14 +69,26 @@ const ProfileHeader = ({
     >
       <Box
         sx={{
-          height: 72,
-          backgroundColor: tokens.colors.accentSubtle,
-          borderBottom: `1px solid ${tokens.colors.border}`,
+          height: 108,
+          background: `linear-gradient(135deg, ${tokens.colors.accent} 0%, ${tokens.colors.accentHover} 55%, ${tokens.colors.signal} 130%)`,
         }}
       />
 
       <Box sx={{ px: 2.5, pb: 2.5 }}>
-        <Box sx={{ mt: -4, mb: 1.5 }}>
+        <Box
+          sx={{
+            mt: "-44px",
+            mb: 1.5,
+            width: 64,
+            height: 64,
+            borderRadius: "50%",
+            backgroundColor: tokens.colors.surface,
+            boxShadow: tokens.shadows.soft,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <UserAvatar
             src={profile?.picture}
             firstName={profile?.firstName}
@@ -91,26 +118,26 @@ const ProfileHeader = ({
           sx={{
             display: "flex",
             flexWrap: "wrap",
-            gap: 1.5,
+            alignItems: "center",
+            gap: 1,
             mb: 2,
           }}
         >
           {typeof reviewCount === "number" ? (
-            <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
-              <Typography
-                component="span"
-                sx={{ fontWeight: 600, color: tokens.colors.textPrimary }}
-              >
-                {reviewCount}
-              </Typography>{" "}
-              {reviewCount === 1 ? "review" : "reviews"}
-            </Typography>
+            <>
+              <StatValue
+                count={reviewCount}
+                label={reviewCount === 1 ? "review" : "reviews"}
+              />
+              <StatDivider />
+            </>
           ) : null}
           <StatButton
             count={profile?.following?.length || 0}
             label="following"
             onClick={onFollowingClick}
           />
+          <StatDivider />
           <StatButton
             count={profile?.followers?.length || 0}
             label="followers"

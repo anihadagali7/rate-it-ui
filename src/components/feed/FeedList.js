@@ -5,7 +5,7 @@ import useInfiniteScroll from "../../shared/hooks/useInfiniteScroll";
 
 const FEED_PAGE_SIZE = 10;
 
-const FeedList = ({ ratings = [] }) => {
+const FeedList = ({ ratings = [], hideMedia = false }) => {
   const { visibleItems, hasMore, loadMore } = useClientPagination(
     ratings,
     FEED_PAGE_SIZE
@@ -25,7 +25,7 @@ const FeedList = ({ ratings = [] }) => {
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
         {visibleItems.map((rating) => (
-          <RatingCard rating={rating} key={rating._id} />
+          <RatingCard rating={rating} hideMedia={hideMedia} key={rating._id} />
         ))}
       </Box>
 

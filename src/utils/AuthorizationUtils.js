@@ -1,7 +1,7 @@
 export const getHeaders = () => {
+  const accessToken = localStorage.getItem("accessToken");
+
   return {
-    headers: {
-      Authorization: localStorage.getItem("accessToken"),
-    },
+    headers: accessToken ? { Authorization: accessToken } : {},
   };
 };
