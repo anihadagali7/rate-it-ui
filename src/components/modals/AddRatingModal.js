@@ -19,7 +19,7 @@ const MAX_CHARS = 280;
 const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => {
   const [payload, setPayload] = useState({
     comments: "",
-    rating: 5,
+    rating: null,
   });
   const queryClient = useQueryClient();
 
@@ -45,10 +45,19 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
     });
   };
 
-  const isDisabled =
-    !payload.rating ||
-    !payload.comments.trim() ||
-    submitRating.isLoading;
+  const missingRating = !payload.rating;
+  const missingComment = !payload.comments.trim();
+  const isDisabled = missingRating || missingComment || submitRating.isLoading;
+
+  const helperMessage = submitRating.isLoading
+    ? null
+    : missingRating && missingComment
+    ? "Pick a score and share a quick take to submit."
+    : missingRating
+    ? "Select a score to continue."
+    : missingComment
+    ? "Add a quick take to submit."
+    : null;
 
   const mediaType = mediaDetails?.mediaType?.toLowerCase();
   const charCount = payload.comments.length;
@@ -147,11 +156,13 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
               fontWeight: 800,
               letterSpacing: "-0.04em",
               lineHeight: 1,
-              color: tokens.colors.signal,
+              color: payload.rating
+                ? tokens.colors.signal
+                : tokens.colors.textMuted,
               mb: 0.5,
             }}
           >
-            {payload.rating}
+            {payload.rating ?? "–"}
             <Box
               component="span"
               sx={{
@@ -171,7 +182,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
               mb: 2,
             }}
           >
-            Tap a score
+            Tap a score to rate
           </Typography>
 
           <Box
@@ -179,8 +190,11 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
             aria-label="Rating score"
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(10, 1fr)",
-              gap: 0.5,
+              gridTemplateColumns: {
+                xs: "repeat(5, 1fr)",
+                sm: "repeat(10, 1fr)",
+              },
+              gap: 0.75,
             }}
           >
             {SCORE_OPTIONS.map((score) => {
@@ -207,7 +221,7 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
                       : "transparent",
                     color: selected ? "#FFFFFF" : tokens.colors.textSecondary,
                     borderRadius: `${tokens.radius.button}px`,
-                    height: 36,
+                    height: { xs: 44, sm: 36 },
                     cursor: "pointer",
                     fontFamily: tokens.fonts.display,
                     fontSize: 13,
@@ -242,6 +256,12 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
             }}
           >
             Your take
+            <Box
+              component="span"
+              sx={{ color: tokens.colors.danger, ml: 0.25 }}
+            >
+              *
+            </Box>
           </Typography>
           <Box
             component="textarea"
@@ -300,20 +320,30 @@ const AddRatingModal = ({ open, onClose, mediaDetails, onSuccess, onError }) => 
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            alignItems: "center",
+            justifyContent: helperMessage ? "space-between" : "flex-end",
             gap: 1.25,
           }}
         >
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            disabled={isDisabled}
-            onClick={handleSubmitRating}
-          >
-            Submit
-          </Button>
+          {helperMessage ? (
+            <Typography
+              sx={{ fontSize: 12, color: tokens.colors.textMuted }}
+            >
+              {helperMessage}
+            </Typography>
+          ) : null}
+          <Box sx={{ display: "flex", gap: 1.25, flexShrink: 0 }}>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              disabled={isDisabled}
+              onClick={handleSubmitRating}
+            >
+              Submit
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Dialog>

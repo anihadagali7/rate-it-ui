@@ -167,6 +167,9 @@ describe("MediaInfo", () => {
     fireEvent.change(within(dialog).getByRole("textbox"), {
       target: { value: "Loved it" },
     });
+    fireEvent.click(
+      within(dialog).getByRole("radio", { name: /rate 5 out of 10/i })
+    );
     fireEvent.click(within(dialog).getByRole("button", { name: /submit/i }));
 
     await waitFor(() =>
