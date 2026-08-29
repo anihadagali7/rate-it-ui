@@ -56,6 +56,22 @@ describe("authInterceptor", () => {
     expect(window.location.assign).toHaveBeenCalledWith("/login");
   });
 
+  it("does not redirect anonymous requests that never had a session", async () => {
+    setupAuthInterceptor();
+    const onRejected = axios.interceptors.response.use.mock.calls[0][1];
+
+    await expect(
+      onRejected({
+        response: {
+          status: 403,
+          data: { errors: { msg: "Invalid token" } },
+        },
+      })
+    ).rejects.toBeDefined();
+
+    expect(window.location.assign).not.toHaveBeenCalled();
+  });
+
   it("does not clear the session for login credential errors", async () => {
     setupAuthInterceptor();
     const onRejected = axios.interceptors.response.use.mock.calls[0][1];
