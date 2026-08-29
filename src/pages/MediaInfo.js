@@ -298,7 +298,7 @@ const MediaInfo = () => {
               >
                 Community reviews ({ratingsList.length})
               </Typography>
-              <FeedList ratings={ratingsList} />
+              <FeedList ratings={ratingsList} hideMedia />
             </Box>
           ) : null}
 

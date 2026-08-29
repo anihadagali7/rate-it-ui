@@ -37,7 +37,7 @@ const invalidateRatingQueries = (queryClient) => {
   queryClient.invalidateQueries({ queryKey: ["ratingsForMedia"] });
 };
 
-const RatingCard = ({ rating }) => {
+const RatingCard = ({ rating, hideMedia = false }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { currentUser } = useContext(UserContext);
@@ -94,9 +94,9 @@ const RatingCard = ({ rating }) => {
   return (
     <SurfaceCard>
       <Stack
-        direction={isMobile ? "column" : "row"}
+        direction={isMobile && !hideMedia ? "column" : "row"}
         spacing={2}
-        alignItems={isMobile ? "stretch" : "flex-start"}
+        alignItems={isMobile && !hideMedia ? "stretch" : "flex-start"}
       >
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Stack direction="row" spacing={1.5} alignItems="center" mb={1.5}>
@@ -108,7 +108,7 @@ const RatingCard = ({ rating }) => {
               size="md"
               href={`/profile/${rating?.ratedBy?.userName}`}
             />
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography
                 component={Link}
                 to={`/profile/${rating?.ratedBy?.userName}`}
@@ -139,30 +139,35 @@ const RatingCard = ({ rating }) => {
                 {getTimeAgo(rating?.dateCreated)}
               </Typography>
             </Box>
+            {hideMedia ? (
+              <ScoreBadge score={rating?.rating} size="sm" />
+            ) : null}
           </Stack>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            flexWrap="wrap"
-            mb={1}
-          >
-            <Typography
-              component={Link}
-              to={mediaPath}
-              sx={{
-                fontSize: 15,
-                fontWeight: 600,
-                color: tokens.colors.textPrimary,
-                textDecoration: "none",
-                "&:hover": { color: tokens.colors.accent },
-              }}
+          {!hideMedia ? (
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              flexWrap="wrap"
+              mb={1}
             >
-              {rating?.media?.name}
-            </Typography>
-            <ScoreBadge score={rating?.rating} />
-          </Stack>
+              <Typography
+                component={Link}
+                to={mediaPath}
+                sx={{
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: tokens.colors.textPrimary,
+                  textDecoration: "none",
+                  "&:hover": { color: tokens.colors.accent },
+                }}
+              >
+                {rating?.media?.name}
+              </Typography>
+              <ScoreBadge score={rating?.rating} />
+            </Stack>
+          ) : null}
 
           {reviewText ? (
             <Typography
@@ -190,7 +195,7 @@ const RatingCard = ({ rating }) => {
             </Typography>
           ) : null}
 
-          {isMobile ? (
+          {isMobile && !hideMedia ? (
             <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
               <MediaPoster
                 src={rating?.media?.picture}
@@ -202,7 +207,7 @@ const RatingCard = ({ rating }) => {
           ) : null}
         </Box>
 
-        {!isMobile ? (
+        {!isMobile && !hideMedia ? (
           <MediaPoster
             src={rating?.media?.picture}
             alt={rating?.media?.name}

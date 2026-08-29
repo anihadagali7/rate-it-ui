@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { tokens } from "../../styles/tokens";
 
 const listToString = (list) => {
@@ -16,25 +16,25 @@ const listToString = (list) => {
 const MediaMetadata = ({ mediaType, mediaInfo }) => {
   const config = {
     movie: [
-      { label: "Synopsis", dataKey: "description", displayLabel: false },
-      { label: "Director", dataKey: "director", displayLabel: true },
-      { label: "Producer", dataKey: "producer", displayLabel: true },
-      { label: "Cast", dataKey: "cast", displayLabel: true },
+      { label: "Synopsis", dataKey: "description", isSynopsis: true },
+      { label: "Director", dataKey: "director" },
+      { label: "Producer", dataKey: "producer" },
+      { label: "Cast", dataKey: "cast", wide: true },
     ],
     tv: [
-      { label: "Synopsis", dataKey: "description", displayLabel: false },
-      { label: "Director", dataKey: "director", displayLabel: true },
-      { label: "Producer", dataKey: "producer", displayLabel: true },
-      { label: "Cast", dataKey: "cast", displayLabel: true },
+      { label: "Synopsis", dataKey: "description", isSynopsis: true },
+      { label: "Director", dataKey: "director" },
+      { label: "Producer", dataKey: "producer" },
+      { label: "Cast", dataKey: "cast", wide: true },
     ],
     music: [
-      { label: "Album", dataKey: "album", displayLabel: true },
-      { label: "Artist", dataKey: "artist", displayLabel: true },
+      { label: "Album", dataKey: "album" },
+      { label: "Artist", dataKey: "artist" },
     ],
     book: [
-      { label: "Synopsis", dataKey: "description", displayLabel: false },
-      { label: "Author", dataKey: "author", displayLabel: true },
-      { label: "Genre", dataKey: "genre", displayLabel: true },
+      { label: "Synopsis", dataKey: "description", isSynopsis: true },
+      { label: "Author", dataKey: "author" },
+      { label: "Genre", dataKey: "genre" },
     ],
   }[mediaType?.toLowerCase()];
 
@@ -42,41 +42,65 @@ const MediaMetadata = ({ mediaType, mediaInfo }) => {
     return null;
   }
 
-  return (
-    <>
-      {config.map(({ label, dataKey, displayLabel }) => {
-        const value = listToString(mediaInfo?.[dataKey]);
-        if (!value) {
-          return null;
-        }
+  const fields = config
+    .map((field) => ({ ...field, value: listToString(mediaInfo?.[field.dataKey]) }))
+    .filter((field) => field.value);
 
-        return (
-          <Typography
-            key={label}
-            sx={{
-              fontSize: 14,
-              lineHeight: 1.6,
-              color: tokens.colors.textPrimary,
-              mb: 1.5,
-            }}
-          >
-            {!displayLabel ? (
-              value
-            ) : (
-              <>
-                <Typography
-                  component="span"
-                  sx={{ fontWeight: 600, color: tokens.colors.textPrimary }}
-                >
-                  {label}:{" "}
-                </Typography>
+  const synopsis = fields.find((field) => field.isSynopsis);
+  const specs = fields.filter((field) => !field.isSynopsis);
+
+  return (
+    <Box>
+      {synopsis ? (
+        <Typography
+          sx={{
+            fontSize: 14,
+            lineHeight: 1.6,
+            color: tokens.colors.textPrimary,
+            mb: specs.length ? 2.5 : 0,
+          }}
+        >
+          {synopsis.value}
+        </Typography>
+      ) : null}
+
+      {specs.length ? (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+            columnGap: 3,
+            rowGap: 1.75,
+          }}
+        >
+          {specs.map(({ label, value, wide }) => (
+            <Box key={label} sx={{ gridColumn: wide ? "1 / -1" : "auto" }}>
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  color: tokens.colors.textMuted,
+                  mb: 0.5,
+                }}
+              >
+                {label}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  color: tokens.colors.textPrimary,
+                }}
+              >
                 {value}
-              </>
-            )}
-          </Typography>
-        );
-      })}
-    </>
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      ) : null}
+    </Box>
   );
 };
 

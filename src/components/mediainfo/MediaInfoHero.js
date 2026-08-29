@@ -38,8 +38,6 @@ const MediaInfoHero = ({
     ? moment(mediaInfo.dateReleased).format("YYYY")
     : null;
 
-  const subtitle = [mediaType, releaseYear].filter(Boolean).join(" · ");
-
   return (
     <Box>
       <Stack
@@ -79,14 +77,14 @@ const MediaInfoHero = ({
               mb: 1.5,
             }}
           >
-            {subtitle ? (
+            <MediaTypeBadge type={mediaType} />
+            {releaseYear ? (
               <Typography
                 sx={{ fontSize: 14, color: tokens.colors.textSecondary }}
               >
-                {subtitle}
+                {releaseYear}
               </Typography>
             ) : null}
-            <MediaTypeBadge type={mediaType} />
           </Box>
 
           {averageRating ? (

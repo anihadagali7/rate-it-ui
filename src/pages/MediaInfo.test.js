@@ -59,11 +59,12 @@ describe("MediaInfo", () => {
       mediaInfoResponse.data.media.picture
     );
     expect(screen.getByText(/Roy family/)).toBeInTheDocument();
-    expect(screen.getByText(/Jeremy Strong/)).toHaveTextContent(
-      "Cast: Jeremy Strong, Sarah Snook, Kieran Culkin, Brian Cox"
-    );
-    expect(screen.queryByText(/Director:/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Producer:/)).not.toBeInTheDocument();
+    expect(screen.getByText("Cast")).toBeInTheDocument();
+    expect(
+      screen.getByText("Jeremy Strong, Sarah Snook, Kieran Culkin, Brian Cox")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Director")).not.toBeInTheDocument();
+    expect(screen.queryByText("Producer")).not.toBeInTheDocument();
   });
 
   it("renders community reviews when ratings exist", async () => {
