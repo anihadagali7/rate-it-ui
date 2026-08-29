@@ -67,4 +67,54 @@ describe("AuthClient", () => {
       );
     });
   });
+
+  describe("loginWithGoogle", () => {
+    it("POSTs the auth code to the Google endpoint without auth headers", () => {
+      AuthClient.loginWithGoogle("auth-code");
+
+      expect(axios.post).toHaveBeenCalledWith(`${API_URL}/api/auth/google`, {
+        code: "auth-code",
+      });
+    });
+  });
+
+  describe("loginWithFacebook", () => {
+    it("POSTs the access token to the Facebook endpoint without auth headers", () => {
+      AuthClient.loginWithFacebook("fb-access-token");
+
+      expect(axios.post).toHaveBeenCalledWith(
+        `${API_URL}/api/auth/facebook`,
+        { accessToken: "fb-access-token" }
+      );
+    });
+  });
+
+  describe("loginWithApple", () => {
+    it("POSTs the identity token and optional name to the Apple endpoint", () => {
+      AuthClient.loginWithApple({
+        identityToken: "identity-token",
+        user: { name: { firstName: "Ali" } },
+      });
+
+      expect(axios.post).toHaveBeenCalledWith(`${API_URL}/api/auth/apple`, {
+        identityToken: "identity-token",
+        user: { name: { firstName: "Ali" } },
+      });
+    });
+  });
+
+  describe("completeProfile", () => {
+    it("PUTs the profile using the stored access token", () => {
+      localStorage.setItem("accessToken", "jwt-token");
+      const profile = { userName: "newuser" };
+
+      AuthClient.completeProfile(profile);
+
+      expect(axios.put).toHaveBeenCalledWith(
+        `${API_URL}/api/account/complete-profile`,
+        profile,
+        { headers: { Authorization: "jwt-token" } }
+      );
+    });
+  });
 });

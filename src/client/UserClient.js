@@ -9,6 +9,11 @@ export default class UserClient {
     return axios.get(url, getHeaders());
   }
 
+  static getMe() {
+    const url = `${API_URL}/api/account/me`;
+    return axios.get(url, getHeaders());
+  }
+
   static getAllUsers() {
     const url = `${API_URL}/api/allUsers`;
     return axios.get(url, getHeaders());

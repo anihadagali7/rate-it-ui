@@ -8,6 +8,7 @@ import AuthClient from "../../client/AuthClient";
 import Button from "../../shared/buttons/Button";
 import ResetPassword from "./ResetPassword";
 import PrimaryInputField from "../../shared/inputfield/PrimaryInputField";
+import SocialAuthButtons from "../../shared/social/SocialAuthButtons";
 import UserContext from "../../shared/context/userContext";
 import AuthLayout from "../../shared/layout/AuthLayout";
 import SurfaceCard from "../../shared/primitives/SurfaceCard";
@@ -87,6 +88,21 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
       navigate(`/profile/${currentUser.userName}`);
     },
   });
+
+  const [socialError, setSocialError] = useState("");
+
+  const handleSocialSuccess = (user, accessToken) => {
+    localStorage.setItem("accessToken", accessToken);
+    if (user.userName) {
+      localStorage.setItem("userName", user.userName);
+    }
+    setCurrentUser(user);
+    navigate(user.isProfileComplete ? "/" : "/complete-profile");
+  };
+
+  const handleSocialError = () => {
+    setSocialError("Couldn't sign in. Please try again.");
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -363,6 +379,38 @@ const ProfileDetails = ({ createProfile, updateProfile }) => {
                     {createProfile ? "Sign Up" : "Save"}
                   </Button>
                 </Grid>
+                {createProfile && (
+                  <Grid item xs={12}>
+                    <Divider sx={{ my: 2.5 }}>
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: tokens.colors.textMuted,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                        }}
+                      >
+                        Or continue with
+                      </Typography>
+                    </Divider>
+                    <SocialAuthButtons
+                      onSuccess={handleSocialSuccess}
+                      onError={handleSocialError}
+                    />
+                    {socialError ? (
+                      <Typography
+                        sx={{
+                          fontSize: 13,
+                          color: tokens.colors.danger,
+                          mt: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {socialError}
+                      </Typography>
+                    ) : null}
+                  </Grid>
+                )}
                 <Grid item xs={12}>
                   <Divider sx={{ marginTop: "25px" }} />
                 </Grid>

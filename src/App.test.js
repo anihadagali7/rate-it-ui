@@ -32,3 +32,26 @@ test("renders the app shell with navigation when logged out", async () => {
   expect(await screen.findByText("Rate It")).toBeInTheDocument();
   expect(screen.getByRole("link", { name: /log in/i })).toBeInTheDocument();
 });
+
+test("resolves the current user via getMe when only an access token is stored (mid social-signup onboarding)", async () => {
+  localStorage.setItem("accessToken", "jwt-token");
+
+  axios.get.mockImplementation((url) => {
+    if (url.includes("/api/account/me")) {
+      return Promise.resolve({
+        data: {
+          data: {
+            user: { firstName: "New", isProfileComplete: false },
+          },
+        },
+      });
+    }
+    return Promise.resolve({ data: { data: { ratingsList: [] } } });
+  });
+
+  renderApp();
+
+  expect(
+    await screen.findByText("Finish setting up")
+  ).toBeInTheDocument();
+});

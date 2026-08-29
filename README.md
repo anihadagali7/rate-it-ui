@@ -27,11 +27,19 @@ Create a `.env` file in the project root (gitignored):
 
 ```env
 REACT_APP_BASE_URL=http://localhost:8080
+
+REACT_APP_GOOGLE_CLIENT_ID=your-google-oauth-client-id
+REACT_APP_FACEBOOK_APP_ID=your-facebook-app-id
+REACT_APP_APPLE_CLIENT_ID=your-apple-services-id
+REACT_APP_APPLE_REDIRECT_URI=https://your-app-origin
 ```
 
 | Variable | Required | Notes |
 |----------|----------|--------|
 | `REACT_APP_BASE_URL` | Yes | Base URL of the API (no trailing slash). Example: `https://your-rate-it-service.herokuapp.com` |
+| `REACT_APP_GOOGLE_CLIENT_ID` | For Google sign-in | OAuth client ID from Google Cloud Console. Never put the client *secret* here — that stays backend-only |
+| `REACT_APP_FACEBOOK_APP_ID` | For Facebook sign-in | From a Facebook Login app |
+| `REACT_APP_APPLE_CLIENT_ID` / `REACT_APP_APPLE_REDIRECT_URI` | For Apple sign-in | Your Apple Services ID and its registered return URL. Apple's sign-in popup requires HTTPS, even locally |
 
 Create React App reads `REACT_APP_*` variables at **build time**. If you change this value on Heroku, trigger a new deploy so the production bundle is rebuilt.
 
@@ -124,6 +132,10 @@ Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
 
    ```bash
    heroku config:set REACT_APP_BASE_URL="https://your-rate-it-service.herokuapp.com"
+   heroku config:set REACT_APP_GOOGLE_CLIENT_ID="your-google-oauth-client-id"
+   heroku config:set REACT_APP_FACEBOOK_APP_ID="your-facebook-app-id"
+   heroku config:set REACT_APP_APPLE_CLIENT_ID="your-apple-services-id"
+   heroku config:set REACT_APP_APPLE_REDIRECT_URI="https://your-rate-it-ui.herokuapp.com"
    ```
 
    Or set them in the Heroku Dashboard under **Settings → Config Vars**.
