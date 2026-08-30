@@ -95,11 +95,7 @@ const RatingCard = ({ rating, hideMedia = false }) => {
 
   return (
     <SurfaceCard>
-      <Stack
-        direction={isMobile && !hideMedia ? "column" : "row"}
-        spacing={2}
-        alignItems={isMobile && !hideMedia ? "stretch" : "flex-start"}
-      >
+      <Stack direction="row" spacing={1.5} alignItems="flex-start">
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Stack direction="row" spacing={1.5} alignItems="center" mb={1.5}>
             <UserAvatar
@@ -177,7 +173,6 @@ const RatingCard = ({ rating, hideMedia = false }) => {
                 fontSize: 14,
                 lineHeight: 1.6,
                 color: tokens.colors.textPrimary,
-                mb: isMobile ? 1.5 : 0,
               }}
             >
               {displayReview}
@@ -196,23 +191,14 @@ const RatingCard = ({ rating, hideMedia = false }) => {
               ) : null}
             </Typography>
           ) : null}
-
-          {isMobile && !hideMedia ? (
-            <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-              <MediaPoster
-                src={rating?.media?.picture}
-                alt={rating?.media?.name}
-                width={112}
-                height={168}
-              />
-            </Box>
-          ) : null}
         </Box>
 
-        {!isMobile && !hideMedia ? (
+        {!hideMedia ? (
           <MediaPoster
             src={rating?.media?.picture}
             alt={rating?.media?.name}
+            width={isMobile ? 64 : 80}
+            height={isMobile ? 96 : 120}
           />
         ) : null}
       </Stack>
