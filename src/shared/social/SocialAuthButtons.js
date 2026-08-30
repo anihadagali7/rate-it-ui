@@ -94,15 +94,31 @@ const AppleButton = ({ onSuccess, onError }) => {
   );
 };
 
-const SocialAuthButtons = ({ onSuccess, onError }) => {
+// Facebook and Apple are temporarily disabled here — Facebook's app dashboard
+// setup isn't working yet, and Apple's web flow needs a real HTTPS domain we
+// don't have configured yet. Add "facebook" / "apple" back once those are
+// ready; no other changes needed, both buttons are already fully wired up.
+const DEFAULT_ENABLED_PROVIDERS = ["google"];
+
+const SocialAuthButtons = ({
+  onSuccess,
+  onError,
+  providers = DEFAULT_ENABLED_PROVIDERS,
+}) => {
   const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <Box sx={{ display: "flex", gap: 1 }}>
-        <GoogleButton onSuccess={onSuccess} onError={onError} />
-        <FacebookButton onSuccess={onSuccess} onError={onError} />
-        <AppleButton onSuccess={onSuccess} onError={onError} />
+        {providers.includes("google") ? (
+          <GoogleButton onSuccess={onSuccess} onError={onError} />
+        ) : null}
+        {providers.includes("facebook") ? (
+          <FacebookButton onSuccess={onSuccess} onError={onError} />
+        ) : null}
+        {providers.includes("apple") ? (
+          <AppleButton onSuccess={onSuccess} onError={onError} />
+        ) : null}
       </Box>
     </GoogleOAuthProvider>
   );

@@ -30,8 +30,28 @@ describe("SocialAuthButtons", () => {
     useAppleSdk.mockReturnValue({ signIn: jest.fn() });
   });
 
-  it("renders a button for each provider", () => {
+  it("only renders Google by default (Facebook and Apple are temporarily disabled)", () => {
     render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
+
+    expect(
+      screen.getByRole("button", { name: /google/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /facebook/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /apple/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders a button for each provider passed in", () => {
+    render(
+      <SocialAuthButtons
+        onSuccess={onSuccess}
+        onError={onError}
+        providers={["google", "facebook", "apple"]}
+      />
+    );
 
     expect(
       screen.getByRole("button", { name: /google/i })
@@ -72,7 +92,13 @@ describe("SocialAuthButtons", () => {
       data: { accessToken: "jwt-token", data: { user: { userName: "fb" } } },
     });
 
-    render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
+    render(
+      <SocialAuthButtons
+        onSuccess={onSuccess}
+        onError={onError}
+        providers={["google", "facebook", "apple"]}
+      />
+    );
     fireEvent.click(screen.getByRole("button", { name: /facebook/i }));
 
     await waitFor(() =>
@@ -98,7 +124,13 @@ describe("SocialAuthButtons", () => {
       },
     });
 
-    render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
+    render(
+      <SocialAuthButtons
+        onSuccess={onSuccess}
+        onError={onError}
+        providers={["google", "facebook", "apple"]}
+      />
+    );
     fireEvent.click(screen.getByRole("button", { name: /apple/i }));
 
     await waitFor(() =>
@@ -113,7 +145,13 @@ describe("SocialAuthButtons", () => {
     const login = jest.fn().mockRejectedValue(new Error("cancelled"));
     useFacebookSdk.mockReturnValue({ login });
 
-    render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
+    render(
+      <SocialAuthButtons
+        onSuccess={onSuccess}
+        onError={onError}
+        providers={["google", "facebook", "apple"]}
+      />
+    );
     fireEvent.click(screen.getByRole("button", { name: /facebook/i }));
 
     await waitFor(() => expect(onError).toHaveBeenCalled());
