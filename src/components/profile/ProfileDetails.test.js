@@ -5,6 +5,12 @@ import AuthClient from "../../client/AuthClient";
 
 jest.mock("../../client/AuthClient");
 
+let socialAuthButtonsProps;
+jest.mock("../../shared/social/SocialAuthButtons", () => (props) => {
+  socialAuthButtonsProps = props;
+  return null;
+});
+
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -124,6 +130,31 @@ describe("ProfileDetails - sign up", () => {
     await waitFor(() =>
       expect(screen.getByText("email already in use")).toBeInTheDocument()
     );
+  });
+
+  it("navigates a brand-new social sign-up to finish their profile", () => {
+    const setCurrentUser = jest.fn();
+    renderWithProviders(<ProfileDetails createProfile updateProfile={false} />, {
+      userContextValue: { setCurrentUser },
+    });
+
+    socialAuthButtonsProps.onSuccess(
+      { isProfileComplete: false },
+      "jwt-token"
+    );
+
+    expect(localStorage.getItem("accessToken")).toBe("jwt-token");
+    expect(mockNavigate).toHaveBeenCalledWith("/complete-profile");
+  });
+
+  it("does not render social sign-in on the edit-profile form", () => {
+    socialAuthButtonsProps = undefined;
+    renderWithProviders(
+      <ProfileDetails createProfile={false} updateProfile />,
+      { userContextValue: { currentUser: { userName: "janedoe" } } }
+    );
+
+    expect(socialAuthButtonsProps).toBeUndefined();
   });
 });
 

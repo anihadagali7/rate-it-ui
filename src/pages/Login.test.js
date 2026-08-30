@@ -5,6 +5,12 @@ import AuthClient from "../client/AuthClient";
 
 jest.mock("../client/AuthClient");
 
+let socialAuthButtonsProps;
+jest.mock("../shared/social/SocialAuthButtons", () => (props) => {
+  socialAuthButtonsProps = props;
+  return null;
+});
+
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -98,5 +104,49 @@ describe("Login", () => {
       expect(screen.getByText("Invalid credentials")).toBeInTheDocument()
     );
     expect(localStorage.getItem("accessToken")).toBeNull();
+  });
+
+  it("navigates home after a social sign-in for a user with a complete profile", () => {
+    const setCurrentUser = jest.fn();
+    renderWithProviders(<Login />, { userContextValue: { setCurrentUser } });
+
+    socialAuthButtonsProps.onSuccess(
+      { userName: "johndoe", isProfileComplete: true },
+      "jwt-token"
+    );
+
+    expect(localStorage.getItem("accessToken")).toBe("jwt-token");
+    expect(localStorage.getItem("userName")).toBe("johndoe");
+    expect(setCurrentUser).toHaveBeenCalledWith({
+      userName: "johndoe",
+      isProfileComplete: true,
+    });
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("sends a brand-new social user to finish their profile instead", () => {
+    const setCurrentUser = jest.fn();
+    renderWithProviders(<Login />, { userContextValue: { setCurrentUser } });
+
+    socialAuthButtonsProps.onSuccess(
+      { isProfileComplete: false },
+      "jwt-token"
+    );
+
+    expect(localStorage.getItem("accessToken")).toBe("jwt-token");
+    expect(localStorage.getItem("userName")).toBeNull();
+    expect(mockNavigate).toHaveBeenCalledWith("/complete-profile");
+  });
+
+  it("shows an error message when social sign-in fails", async () => {
+    renderWithProviders(<Login />);
+
+    socialAuthButtonsProps.onError(new Error("popup closed"));
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("Couldn't sign in. Please try again.")
+      ).toBeInTheDocument()
+    );
   });
 });

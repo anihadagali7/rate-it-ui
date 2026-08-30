@@ -26,4 +26,24 @@ export default class AuthClient {
     const url = `${API_URL}/api/account/resetPassword`;
     return axios.post(url, passwordRequest, getHeaders());
   }
+
+  static loginWithGoogle(code) {
+    const url = `${API_URL}/api/auth/google`;
+    return axios.post(url, { code });
+  }
+
+  static loginWithFacebook(accessToken) {
+    const url = `${API_URL}/api/auth/facebook`;
+    return axios.post(url, { accessToken });
+  }
+
+  static loginWithApple({ identityToken, user }) {
+    const url = `${API_URL}/api/auth/apple`;
+    return axios.post(url, { identityToken, user });
+  }
+
+  static completeProfile(profile) {
+    const url = `${API_URL}/api/account/complete-profile`;
+    return axios.put(url, profile, getHeaders());
+  }
 }

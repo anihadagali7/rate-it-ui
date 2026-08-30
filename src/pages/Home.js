@@ -16,7 +16,7 @@ const FEED_TABS = {
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
-  const [activeTab, setActiveTab] = useState(FEED_TABS.FOLLOWING);
+  const [selectedTab, setSelectedTab] = useState(null);
 
   const {
     data: exploreRatingsList,
@@ -42,6 +42,14 @@ const Home = () => {
     enabled: !!currentUser,
     select: ({ data }) => data.data.ratingsList,
   });
+
+  // Default a first-time visitor with nothing in their Following feed
+  // straight to Discover, so they don't land on an empty page. Only applies
+  // until they explicitly pick a tab themselves.
+  const defaultsToDiscover =
+    !!currentUser && !isFeedError && feedRatingsList?.length === 0;
+  const activeTab =
+    selectedTab ?? (defaultsToDiscover ? FEED_TABS.DISCOVER : FEED_TABS.FOLLOWING);
 
   const isFollowingTab =
     currentUser && activeTab === FEED_TABS.FOLLOWING;
@@ -79,7 +87,7 @@ const Home = () => {
             { id: FEED_TABS.DISCOVER, label: "Discover" },
           ]}
           activeTab={activeTab}
-          onChange={setActiveTab}
+          onChange={setSelectedTab}
         />
       ) : null}
 

@@ -25,6 +25,15 @@ describe("UserClient", () => {
     );
   });
 
+  it("getMe GETs the authenticated user's own account with auth headers", () => {
+    UserClient.getMe();
+
+    expect(axios.get).toHaveBeenCalledWith(
+      `${API_URL}/api/account/me`,
+      authHeaders
+    );
+  });
+
   it("getAllUsers GETs the full user list with auth headers", () => {
     UserClient.getAllUsers();
 

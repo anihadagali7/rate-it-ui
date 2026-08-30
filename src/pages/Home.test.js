@@ -80,6 +80,36 @@ describe("Home", () => {
     expect(screen.queryByText("slippin jimmy")).not.toBeInTheDocument();
   });
 
+  it("defaults to Discover when a logged in user's following feed is empty", async () => {
+    RatingClient.getAllExploreRatings.mockResolvedValue(
+      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+    );
+    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
+
+    renderWithProviders(<Home />, {
+      userContextValue: { currentUser: { userName: "newuser" } },
+    });
+
+    expect(await screen.findByText("slippin jimmy")).toBeInTheDocument();
+    expect(screen.queryByText("Your feed is empty")).not.toBeInTheDocument();
+  });
+
+  it("still shows the empty following state if the user switches back to it", async () => {
+    RatingClient.getAllExploreRatings.mockResolvedValue(
+      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+    );
+    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
+
+    renderWithProviders(<Home />, {
+      userContextValue: { currentUser: { userName: "newuser" } },
+    });
+
+    await screen.findByText("slippin jimmy");
+    fireEvent.click(screen.getByText("Following"));
+
+    expect(await screen.findByText("Your feed is empty")).toBeInTheDocument();
+  });
+
   it("shows discover ratings when a logged in user switches tabs", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
       mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
