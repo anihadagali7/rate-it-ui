@@ -27,6 +27,48 @@ describe("CommentThread", () => {
     expect(screen.getByText(/sign in to leave a comment/i)).toBeInTheDocument();
   });
 
+  it("prompts login when a logged-out visitor tries to comment", () => {
+    const onRequireAuth = jest.fn();
+
+    renderWithProviders(
+      <CommentThread
+        comments={comments}
+        commentCount={1}
+        onRequireAuth={onRequireAuth}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /sign in to leave a comment/i })
+    );
+
+    expect(onRequireAuth).toHaveBeenCalled();
+  });
+
+  it("prompts login when a logged-out visitor tries to like a comment", async () => {
+    const onRequireAuth = jest.fn();
+    const onToggleLike = jest.fn();
+
+    renderWithProviders(
+      <CommentThread
+        comments={[{ ...comments[0], likeCount: 2, likedByCurrentUser: false }]}
+        commentCount={1}
+        onToggleLike={onToggleLike}
+        onRequireAuth={onRequireAuth}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^like$/i }));
+
+    // LikeButton's own revert-on-reject behavior is already covered by
+    // LikeButton.test.js; this just confirms the auth prompt fires instead
+    // of the real toggle callback.
+    await waitFor(() => expect(onRequireAuth).toHaveBeenCalled());
+    expect(onToggleLike).not.toHaveBeenCalled();
+  });
+
   it("posts a comment when signed in", async () => {
     const onAdd = jest.fn().mockResolvedValue(undefined);
 

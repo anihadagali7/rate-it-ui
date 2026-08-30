@@ -50,14 +50,20 @@ const Search = () => {
     data: searchData,
   } = useMutation({
     mutationFn: async () => {
+      // People search requires an account (profile pages do too), so skip
+      // it for anonymous visitors rather than letting Promise.all reject
+      // the whole search — otherwise a 401 on people-search alone would
+      // fail media search too, which should work while logged out.
       const [mediaResponse, peopleResponse] = await Promise.all([
         SearchClient.searchAllMedia(searchKeyword),
-        SearchClient.searchMedia("user", searchKeyword, 1),
+        currentUser
+          ? SearchClient.searchMedia("user", searchKeyword, 1)
+          : Promise.resolve(null),
       ]);
 
       return {
         media: mediaResponse.data.data.fullSearchList,
-        people: peopleResponse.data.data.mediaList,
+        people: peopleResponse?.data.data.mediaList ?? [],
       };
     },
   });
