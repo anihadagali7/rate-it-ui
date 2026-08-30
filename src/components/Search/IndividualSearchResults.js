@@ -58,7 +58,12 @@ const IndividualSearchResults = ({
 
   const {
     data: peopleResults,
-    isLoading: isPeopleLoading,
+    // react-query v4's `isLoading` reflects `status === "loading"`, which
+    // stays true forever for a disabled query with no cached data — use
+    // `isInitialLoading` (status === "loading" && actually fetching)
+    // instead, so this doesn't get stuck showing a loading skeleton for
+    // anonymous visitors, who never trigger this query at all.
+    isInitialLoading: isPeopleLoading,
     isError: isPeopleError,
     refetch: refetchPeople,
   } = useQuery({
