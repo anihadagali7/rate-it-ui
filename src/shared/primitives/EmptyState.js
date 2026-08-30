@@ -5,7 +5,7 @@ const EmptyState = ({ title, description, action }) => {
   return (
     <Box
       sx={{
-        textAlign: "left",
+        textAlign: "center",
         py: 4,
         px: 0,
         borderTop: `1px solid ${tokens.colors.border}`,
@@ -31,6 +31,7 @@ const EmptyState = ({ title, description, action }) => {
             lineHeight: 1.6,
             color: tokens.colors.textSecondary,
             maxWidth: 420,
+            mx: "auto",
           }}
         >
           {description}
