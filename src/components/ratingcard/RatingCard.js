@@ -1,10 +1,11 @@
 import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment/moment";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import CommentClient from "../../client/CommentClient";
 import LikeClient from "../../client/LikeClient";
+import LoginErrorModal from "../../shared/errorModals/LoginErrorModal";
 import UserContext from "../../shared/context/userContext";
 import MediaPoster from "../../shared/primitives/MediaPoster";
 import ScoreBadge from "../../shared/primitives/ScoreBadge";
@@ -42,6 +43,7 @@ const RatingCard = ({ rating, hideMedia = false }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { currentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
+  const [displayTokenModal, setDisplayTokenModal] = useState(false);
 
   const reviewText = rating?.comments || "";
   const isLongReview = reviewText.length > MAX_REVIEW_LENGTH;
@@ -229,9 +231,19 @@ const RatingCard = ({ rating, hideMedia = false }) => {
         <LikeButton
           initialLiked={!!rating?.likedByCurrentUser}
           initialCount={rating?.likeCount ?? 0}
-          disabled={!currentUser}
           isLoading={isLikeLoading}
-          onToggle={toggleLike}
+          onToggle={async (shouldLike) => {
+            if (!currentUser) {
+              setDisplayTokenModal(true);
+              // LikeButton applies an optimistic update before calling
+              // onToggle, and only reverts it if this rejects — throwing
+              // here (rather than requireAuth's silent no-op) is required
+              // so the heart doesn't end up visually "liked" with nothing
+              // having actually happened.
+              throw new Error("Sign in required");
+            }
+            return toggleLike(shouldLike);
+          }}
         />
         <CommentThread
           comments={rating?.commentList || []}
@@ -243,8 +255,16 @@ const RatingCard = ({ rating, hideMedia = false }) => {
           onToggleLike={(commentId, shouldLike) =>
             toggleCommentLike({ commentId, shouldLike })
           }
+          onRequireAuth={() => setDisplayTokenModal(true)}
         />
       </Box>
+
+      {displayTokenModal ? (
+        <LoginErrorModal
+          open={displayTokenModal}
+          onClose={() => setDisplayTokenModal(false)}
+        />
+      ) : null}
     </SurfaceCard>
   );
 };

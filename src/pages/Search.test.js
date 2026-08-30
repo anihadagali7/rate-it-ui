@@ -49,7 +49,38 @@ describe("Search", () => {
 
     expect(await screen.findByText("Shutter Island")).toBeInTheDocument();
     expect(SearchClient.searchAllMedia).toHaveBeenCalledWith("shutter island");
-    expect(SearchClient.searchMedia).toHaveBeenCalledWith("user", "shutter island", 1);
+  });
+
+  it("skips people search for anonymous visitors, without failing media search", async () => {
+    mockKeyword = "shutter island";
+    SearchClient.searchAllMedia.mockResolvedValue(
+      mockSearchResponse({
+        movie: [
+          { id: "m1", mediaId: "11324", name: "Shutter Island", poster: "poster.jpg" },
+        ],
+      })
+    );
+
+    renderWithProviders(<Search />);
+
+    expect(await screen.findByText("Shutter Island")).toBeInTheDocument();
+    expect(SearchClient.searchMedia).not.toHaveBeenCalled();
+  });
+
+  it("also searches people when signed in", async () => {
+    mockKeyword = "shutter island";
+    SearchClient.searchAllMedia.mockResolvedValue(mockSearchResponse({}));
+
+    renderWithProviders(<Search />, {
+      userContextValue: { currentUser: { userName: "viewer" } },
+    });
+
+    await screen.findByText("No results found");
+    expect(SearchClient.searchMedia).toHaveBeenCalledWith(
+      "user",
+      "shutter island",
+      1
+    );
   });
 
   it("does not run a search on mount when there is no keyword in the URL", () => {

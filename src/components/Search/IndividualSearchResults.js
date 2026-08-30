@@ -1,7 +1,7 @@
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import SearchClient from "../../client/SearchClient";
 import Button from "../../shared/buttons/Button";
 import useInfiniteScroll from "../../shared/hooks/useInfiniteScroll";
@@ -9,6 +9,7 @@ import MediaCard from "../../shared/media/MediaCard";
 import QueryErrorState from "../../shared/errors/QueryErrorState";
 import IndividualSearchResultsLoading from "../../shared/loading/IndividualSearchResultsLoading";
 import PeopleSearchResults from "./PeopleSearchResults";
+import UserContext from "../../shared/context/userContext";
 import { tokens } from "../../styles/tokens";
 
 const IndividualSearchResults = ({
@@ -17,6 +18,7 @@ const IndividualSearchResults = ({
   setViewAllMedia,
   onRefresh,
 }) => {
+  const { currentUser } = useContext(UserContext);
   const isPeople = viewAllType.type === "user";
 
   const {
@@ -66,7 +68,7 @@ const IndividualSearchResults = ({
       return response.data.data.mediaList;
     },
     staleTime: 60000,
-    enabled: !!searchKeyword && isPeople,
+    enabled: !!searchKeyword && isPeople && !!currentUser,
   });
 
   const loadMoreRef = useInfiniteScroll({
@@ -122,7 +124,13 @@ const IndividualSearchResults = ({
 
       {showLoading ? <IndividualSearchResultsLoading /> : null}
 
-      {!showError && !showLoading && isPeople ? (
+      {isPeople && !currentUser ? (
+        <Typography sx={{ color: tokens.colors.textSecondary, py: 4 }}>
+          Sign in to search for people.
+        </Typography>
+      ) : null}
+
+      {!showError && !showLoading && isPeople && currentUser ? (
         <PeopleSearchResults
           people={people}
           onRefresh={onRefresh}

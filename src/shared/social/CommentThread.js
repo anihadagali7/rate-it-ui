@@ -30,6 +30,7 @@ const CommentThread = ({
   onAdd,
   onDelete,
   onToggleLike,
+  onRequireAuth,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [draft, setDraft] = useState("");
@@ -177,11 +178,22 @@ const CommentThread = ({
                           <LikeButton
                             initialLiked={!!comment.likedByCurrentUser}
                             initialCount={comment.likeCount ?? 0}
-                            disabled={!currentUser || !onToggleLike}
+                            disabled={!onToggleLike}
                             onToggle={
                               onToggleLike
-                                ? (shouldLike) =>
-                                    onToggleLike(comment._id, shouldLike)
+                                ? async (shouldLike) => {
+                                    if (!currentUser) {
+                                      onRequireAuth?.();
+                                      // Revert LikeButton's optimistic
+                                      // update since nothing actually
+                                      // happened.
+                                      throw new Error("Sign in required");
+                                    }
+                                    return onToggleLike(
+                                      comment._id,
+                                      shouldLike
+                                    );
+                                  }
                                 : undefined
                             }
                           />
@@ -227,11 +239,29 @@ const CommentThread = ({
                   </Button>
                 </Box>
               </Box>
+            ) : !currentUser ? (
+              <Box
+                component="button"
+                type="button"
+                onClick={() => onRequireAuth?.()}
+                sx={{
+                  border: "none",
+                  background: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  fontSize: 13,
+                  color: tokens.colors.accent,
+                  fontWeight: 500,
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                Sign in to leave a comment.
+              </Box>
             ) : (
               <Typography
                 sx={{ fontSize: 13, color: tokens.colors.textMuted }}
               >
-                Sign in to leave a comment.
+                Commenting is disabled.
               </Typography>
             )}
           </Box>
