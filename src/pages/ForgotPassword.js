@@ -34,6 +34,9 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (forgotPassword.isLoading) {
+      return;
+    }
     if (!isValidEmail(email)) {
       setEmailError("Value should be a valid email.");
       return;

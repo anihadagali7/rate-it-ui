@@ -33,6 +33,29 @@ test("renders the app shell with navigation when logged out", async () => {
   expect(screen.getByRole("link", { name: /log in/i })).toBeInTheDocument();
 });
 
+test("does not redirect an already logged-in user away from a password reset link", async () => {
+  localStorage.setItem("accessToken", "jwt-token");
+  localStorage.setItem("userName", "existinguser");
+  window.history.pushState({}, "", "/reset-password?token=abc123");
+
+  axios.get.mockImplementation((url) => {
+    if (url.includes("/api/account/existinguser")) {
+      return Promise.resolve({
+        data: { data: { user: { userName: "existinguser" } } },
+      });
+    }
+    return Promise.resolve({ data: { data: { ratingsList: [] } } });
+  });
+
+  renderApp();
+
+  expect(
+    await screen.findByText("Choose a new password")
+  ).toBeInTheDocument();
+
+  window.history.pushState({}, "", "/");
+});
+
 test("resolves the current user via getMe when only an access token is stored (mid social-signup onboarding)", async () => {
   localStorage.setItem("accessToken", "jwt-token");
 

@@ -11,11 +11,6 @@ import UserContext from "../shared/context/userContext";
 import { isValidPassword } from "../shared/validation/passwordValidation";
 import { tokens } from "../styles/tokens";
 
-const initialErrorState = {
-  newPassword: { value: false, message: "" },
-  confirmNewPassword: { value: false, message: "" },
-};
-
 const ResetPasswordConfirm = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(UserContext);
@@ -26,7 +21,8 @@ const ResetPasswordConfirm = () => {
     newPassword: "",
     confirmNewPassword: "",
   });
-  const [errorValue, setErrorValue] = useState(initialErrorState);
+  const [newPasswordError, setNewPasswordError] = useState("");
+  const [confirmNewPasswordError, setConfirmNewPasswordError] = useState("");
   const [submitError, setSubmitError] = useState("");
 
   const resetPassword = useMutation({
@@ -57,24 +53,23 @@ const ResetPasswordConfirm = () => {
     const newPasswordValidity = isValidPassword(payload.newPassword);
     const confirmValidity = payload.newPassword === payload.confirmNewPassword;
 
-    setErrorValue({
-      newPassword: newPasswordValidity
-        ? { value: false, message: "" }
-        : {
-            value: true,
-            message:
-              "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit.",
-          },
-      confirmNewPassword: confirmValidity
-        ? { value: false, message: "" }
-        : { value: true, message: "Passwords should be equal" },
-    });
+    setNewPasswordError(
+      newPasswordValidity
+        ? ""
+        : "Password should contain at least one upper case letter, one lower case letter, one special character, and one digit."
+    );
+    setConfirmNewPasswordError(
+      confirmValidity ? "" : "Passwords should be equal"
+    );
 
     return newPasswordValidity && confirmValidity;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (resetPassword.isLoading) {
+      return;
+    }
     setSubmitError("");
     if (validate()) {
       resetPassword.mutate();
@@ -142,8 +137,8 @@ const ResetPasswordConfirm = () => {
               type="password"
               required
               onChange={handleChange}
-              error={errorValue.newPassword.value}
-              helperText={errorValue.newPassword.message || " "}
+              error={!!newPasswordError}
+              helperText={newPasswordError || " "}
             />
             <PrimaryInputField
               label="Confirm New Password"
@@ -152,8 +147,8 @@ const ResetPasswordConfirm = () => {
               type="password"
               required
               onChange={handleChange}
-              error={errorValue.confirmNewPassword.value}
-              helperText={errorValue.confirmNewPassword.message || " "}
+              error={!!confirmNewPasswordError}
+              helperText={confirmNewPasswordError || " "}
             />
           </Stack>
 

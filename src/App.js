@@ -109,20 +109,12 @@ const App = React.memo(() => {
                     <Route
                       exact
                       path="/forgot-password"
-                      element={
-                        <GuestOnly>
-                          <ForgotPassword />
-                        </GuestOnly>
-                      }
+                      element={<ForgotPassword />}
                     ></Route>
                     <Route
                       exact
                       path="/reset-password"
-                      element={
-                        <GuestOnly>
-                          <ResetPasswordConfirm />
-                        </GuestOnly>
-                      }
+                      element={<ResetPasswordConfirm />}
                     ></Route>
                     <Route
                       exact
