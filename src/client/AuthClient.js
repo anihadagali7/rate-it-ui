@@ -53,4 +53,14 @@ export default class AuthClient {
     formData.append("picture", file);
     return axios.put(url, formData, getHeaders());
   }
+
+  static forgotPassword(email) {
+    const url = `${API_URL}/api/forgot-password`;
+    return axios.post(url, { email });
+  }
+
+  static resetPasswordWithToken(token, newPassword) {
+    const url = `${API_URL}/api/reset-password`;
+    return axios.post(url, { token, newPassword });
+  }
 }

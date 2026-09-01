@@ -160,8 +160,7 @@ const Login = () => {
               testId="forgotPassword"
               buttonElement={Link}
               variant="ghost"
-              link="/signup"
-              disabled
+              link="/forgot-password"
             >
               Forgot password
             </Button>
