@@ -15,15 +15,16 @@ import ProfileLoading from "../shared/loading/ProfileLoading";
 import TabBar from "../shared/navigation/TabBar";
 import UserContext from "../shared/context/userContext";
 import QueryErrorState from "../shared/errors/QueryErrorState";
+import {
+  ALLOWED_PICTURE_TYPES,
+  MAX_PICTURE_SIZE_BYTES,
+} from "../shared/constants/profilePicture";
 
 const PROFILE_TABS = {
   REVIEWS: "reviews",
   WISHLIST: "wishlist",
   PLAYLISTS: "playlists",
 };
-
-const ALLOWED_PICTURE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024;
 
 const Profile = () => {
   const { userName } = useParams();
@@ -77,14 +78,40 @@ const Profile = () => {
   });
 
   const uploadPicture = useMutation({
-    mutationFn: (file) => AuthClient.uploadProfilePicture(file),
-    onSuccess: ({ data }) => {
+    mutationFn: ({ file }) => AuthClient.uploadProfilePicture(file),
+    // `variables.targetUserName` (captured at the moment upload started) is
+    // used instead of the outer `userName` closure, which react-query
+    // rebinds to whatever profile is being viewed when this resolves --
+    // without it, navigating to a different profile mid-upload would patch
+    // the wrong profile's cache.
+    onSuccess: ({ data }, variables) => {
       const updatedUser = data.data.user;
-      setCurrentUser((previousUser) => ({
-        ...previousUser,
-        picture: updatedUser.picture,
-      }));
-      queryClient.invalidateQueries({ queryKey: ["profileInfo", { userName }] });
+
+      setCurrentUser((previousUser) =>
+        previousUser
+          ? { ...previousUser, picture: updatedUser.picture }
+          : previousUser
+      );
+
+      queryClient.setQueryData(
+        ["profileInfo", { userName: variables.targetUserName }],
+        (previousResponse) =>
+          previousResponse
+            ? {
+                ...previousResponse,
+                data: {
+                  ...previousResponse.data,
+                  data: {
+                    ...previousResponse.data.data,
+                    user: {
+                      ...previousResponse.data.data.user,
+                      picture: updatedUser.picture,
+                    },
+                  },
+                },
+              }
+            : previousResponse
+      );
     },
     onError: (error) => {
       setPictureError(
@@ -104,12 +131,13 @@ const Profile = () => {
       return;
     }
     setPictureError("");
-    uploadPicture.mutate(file);
+    uploadPicture.mutate({ file, targetUserName: userName });
   };
 
   useEffect(() => {
     setOpenFriendsModal(false);
     setActiveTab(PROFILE_TABS.REVIEWS);
+    setPictureError("");
   }, [userName]);
 
   const handleFriendsModalClose = () => {

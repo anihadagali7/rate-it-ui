@@ -1,10 +1,13 @@
-import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, render, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
 import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Profile from "./Profile";
 import AuthClient from "../client/AuthClient";
 import UserClient from "../client/UserClient";
 import RatingClient from "../client/RatingClient";
 import PlaylistClient from "../client/PlaylistClient";
+import UserContext from "../shared/context/userContext";
 
 jest.mock("../client/AuthClient");
 jest.mock("../client/UserClient");
@@ -240,6 +243,9 @@ describe("Profile", () => {
         userName: "shree",
         picture: "https://example.com/new.png",
       });
+      // Guards against resurrecting a logged-out session if the upload
+      // resolves after the user has already logged out.
+      expect(updater(null)).toBeNull();
     });
 
     it("rejects a disallowed file type without calling the API", async () => {
@@ -307,6 +313,48 @@ describe("Profile", () => {
       expect(
         await screen.findByText("Could not upload your picture.")
       ).toBeInTheDocument();
+    });
+
+    it("clears a stale picture error when navigating to a different profile", async () => {
+      mockUserNameParam = "shree";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
+      AuthClient.uploadProfilePicture.mockRejectedValue({
+        response: { data: { errors: { msg: "Could not upload your picture." } } },
+      });
+
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+          mutations: { retry: false },
+        },
+      });
+      const buildTree = () => (
+        <QueryClientProvider client={queryClient}>
+          <UserContext.Provider
+            value={{ currentUser: { userName: "shree" }, setCurrentUser: jest.fn() }}
+          >
+            <MemoryRouter>
+              <Profile />
+            </MemoryRouter>
+          </UserContext.Provider>
+        </QueryClientProvider>
+      );
+
+      const { container, rerender } = render(buildTree());
+
+      await screen.findByText("@shree");
+      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      fireEvent.change(input, { target: { files: [pngFile()] } });
+      await screen.findByText("Could not upload your picture.");
+
+      mockUserNameParam = "anihadagali7";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+      rerender(buildTree());
+
+      await screen.findByText("Anirudha Hadagali");
+      expect(
+        screen.queryByText("Could not upload your picture.")
+      ).not.toBeInTheDocument();
     });
   });
 });

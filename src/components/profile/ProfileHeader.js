@@ -7,9 +7,7 @@ import Button from "../../shared/buttons/Button";
 import FollowButton from "../../shared/social/FollowButton";
 import UserAvatar from "../../shared/primitives/UserAvatar";
 import { tokens } from "../../styles/tokens";
-
-const ALLOWED_PICTURE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024;
+import { ALLOWED_PICTURE_TYPES } from "../../shared/constants/profilePicture";
 
 const StatDivider = () => (
   <Typography sx={{ fontSize: 14, color: tokens.colors.border }}>
@@ -66,11 +64,10 @@ const ProfileHeader = ({
   pictureError,
 }) => {
   const fileInputRef = useRef(null);
+  const canUploadPicture = isOwnProfile && !!onPictureSelected;
 
   const handlePictureButtonClick = () => {
-    if (!isUploadingPicture) {
-      fileInputRef.current?.click();
-    }
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (event) => {
@@ -129,7 +126,7 @@ const ProfileHeader = ({
             />
           </Box>
 
-          {isOwnProfile ? (
+          {canUploadPicture ? (
             <>
               <input
                 ref={fileInputRef}
@@ -141,6 +138,7 @@ const ProfileHeader = ({
               />
               <IconButton
                 aria-label="Change profile picture"
+                aria-busy={isUploadingPicture}
                 onClick={handlePictureButtonClick}
                 disabled={isUploadingPicture}
                 sx={{
@@ -165,8 +163,9 @@ const ProfileHeader = ({
           ) : null}
         </Box>
 
-        {pictureError ? (
+        {canUploadPicture && pictureError ? (
           <Typography
+            role="alert"
             sx={{
               fontSize: 12,
               color: tokens.colors.danger,
