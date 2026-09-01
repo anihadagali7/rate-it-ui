@@ -8,12 +8,14 @@ import UserClient from "./client/UserClient";
 import ResponsiveLayout from "./navigation/ResponsiveLayout";
 import CompleteProfile from "./pages/CompleteProfile";
 import EditProfile from "./pages/EditProfile";
+import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MediaInfo from "./pages/MediaInfo";
 import Notifications from "./pages/Notifications";
 import Playlist from "./pages/Playlist";
 import Profile from "./pages/Profile";
+import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Search from "./pages/Search";
 import Signup from "./pages/Signup";
 import Wishlist from "./pages/Wishlist";
@@ -103,6 +105,16 @@ const App = React.memo(() => {
                           <Signup />
                         </GuestOnly>
                       }
+                    ></Route>
+                    <Route
+                      exact
+                      path="/forgot-password"
+                      element={<ForgotPassword />}
+                    ></Route>
+                    <Route
+                      exact
+                      path="/reset-password"
+                      element={<ResetPasswordConfirm />}
                     ></Route>
                     <Route
                       exact

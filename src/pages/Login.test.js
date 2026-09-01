@@ -138,6 +138,14 @@ describe("Login", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/complete-profile");
   });
 
+  it("links Forgot password to the forgot-password page", () => {
+    renderWithProviders(<Login />);
+
+    expect(
+      screen.getByRole("link", { name: /forgot password/i })
+    ).toHaveAttribute("href", "/forgot-password");
+  });
+
   it("shows an error message when social sign-in fails", async () => {
     renderWithProviders(<Login />);
 
