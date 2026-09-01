@@ -1,10 +1,12 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Profile from "./Profile";
+import AuthClient from "../client/AuthClient";
 import UserClient from "../client/UserClient";
 import RatingClient from "../client/RatingClient";
 import PlaylistClient from "../client/PlaylistClient";
 
+jest.mock("../client/AuthClient");
 jest.mock("../client/UserClient");
 jest.mock("../client/RatingClient");
 jest.mock("../client/PlaylistClient");
@@ -180,5 +182,131 @@ describe("Profile", () => {
 
     expect(await screen.findByText("Favorites")).toBeInTheDocument();
     expect(PlaylistClient.getAllPlaylistForUser).toHaveBeenCalledWith("shree");
+  });
+
+  describe("profile picture upload", () => {
+    const pngFile = (name = "avatar.png", size = 1024) => {
+      const file = new File(["a".repeat(size)], name, { type: "image/png" });
+      return file;
+    };
+
+    it("shows the change-picture control only on the logged-in user's own profile", async () => {
+      mockUserNameParam = "anihadagali7";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+
+      renderWithProviders(<Profile />, {
+        userContextValue: {
+          currentUser: { userName: "shree" },
+          setCurrentUser: jest.fn(),
+        },
+      });
+
+      await screen.findByText("Anirudha Hadagali");
+      expect(
+        screen.queryByRole("button", { name: /change profile picture/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("uploads a selected image and updates the current user's picture", async () => {
+      mockUserNameParam = "shree";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
+      AuthClient.uploadProfilePicture.mockResolvedValue({
+        data: {
+          data: { user: { ...ownProfileInfo, picture: "https://example.com/new.png" } },
+        },
+      });
+      const setCurrentUser = jest.fn();
+
+      const { container } = renderWithProviders(<Profile />, {
+        userContextValue: {
+          currentUser: { userName: "shree" },
+          setCurrentUser,
+        },
+      });
+
+      await screen.findByText("@shree");
+      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      fireEvent.change(input, { target: { files: [pngFile()] } });
+
+      await waitFor(() =>
+        expect(AuthClient.uploadProfilePicture).toHaveBeenCalledWith(
+          expect.any(File)
+        )
+      );
+      await waitFor(() => expect(setCurrentUser).toHaveBeenCalled());
+
+      const updater = setCurrentUser.mock.calls[0][0];
+      expect(updater({ userName: "shree" })).toEqual({
+        userName: "shree",
+        picture: "https://example.com/new.png",
+      });
+    });
+
+    it("rejects a disallowed file type without calling the API", async () => {
+      mockUserNameParam = "shree";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
+
+      const { container } = renderWithProviders(<Profile />, {
+        userContextValue: {
+          currentUser: { userName: "shree" },
+          setCurrentUser: jest.fn(),
+        },
+      });
+
+      await screen.findByText("@shree");
+      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const textFile = new File(["hello"], "notes.txt", { type: "text/plain" });
+      fireEvent.change(input, { target: { files: [textFile] } });
+
+      expect(
+        await screen.findByText(/please choose a jpeg, png, or webp image/i)
+      ).toBeInTheDocument();
+      expect(AuthClient.uploadProfilePicture).not.toHaveBeenCalled();
+    });
+
+    it("rejects an oversized file without calling the API", async () => {
+      mockUserNameParam = "shree";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
+
+      const { container } = renderWithProviders(<Profile />, {
+        userContextValue: {
+          currentUser: { userName: "shree" },
+          setCurrentUser: jest.fn(),
+        },
+      });
+
+      await screen.findByText("@shree");
+      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const oversized = pngFile("huge.png", 6 * 1024 * 1024);
+      fireEvent.change(input, { target: { files: [oversized] } });
+
+      expect(
+        await screen.findByText(/please choose an image under 5mb/i)
+      ).toBeInTheDocument();
+      expect(AuthClient.uploadProfilePicture).not.toHaveBeenCalled();
+    });
+
+    it("shows an error message when the upload fails", async () => {
+      mockUserNameParam = "shree";
+      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
+      AuthClient.uploadProfilePicture.mockRejectedValue({
+        response: { data: { errors: { msg: "Could not upload your picture." } } },
+      });
+
+      const { container } = renderWithProviders(<Profile />, {
+        userContextValue: {
+          currentUser: { userName: "shree" },
+          setCurrentUser: jest.fn(),
+        },
+      });
+
+      await screen.findByText("@shree");
+      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      fireEvent.change(input, { target: { files: [pngFile()] } });
+
+      expect(
+        await screen.findByText("Could not upload your picture.")
+      ).toBeInTheDocument();
+    });
   });
 });

@@ -1,10 +1,15 @@
+import { useRef } from "react";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
-import { Box, Typography } from "@mui/material";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import Button from "../../shared/buttons/Button";
 import FollowButton from "../../shared/social/FollowButton";
 import UserAvatar from "../../shared/primitives/UserAvatar";
 import { tokens } from "../../styles/tokens";
+
+const ALLOWED_PICTURE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024;
 
 const StatDivider = () => (
   <Typography sx={{ fontSize: 14, color: tokens.colors.border }}>
@@ -56,7 +61,26 @@ const ProfileHeader = ({
   onFollowingClick,
   onFollowersClick,
   onAddFriends,
+  onPictureSelected,
+  isUploadingPicture,
+  pictureError,
 }) => {
+  const fileInputRef = useRef(null);
+
+  const handlePictureButtonClick = () => {
+    if (!isUploadingPicture) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) {
+      onPictureSelected?.(file);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -77,26 +101,81 @@ const ProfileHeader = ({
       <Box sx={{ px: 2.5, pb: 2.5 }}>
         <Box
           sx={{
+            position: "relative",
             mt: "-44px",
             mb: 1.5,
             width: 64,
             height: 64,
-            borderRadius: "50%",
-            backgroundColor: tokens.colors.surface,
-            boxShadow: tokens.shadows.soft,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          <UserAvatar
-            src={profile?.picture}
-            firstName={profile?.firstName}
-            lastName={profile?.lastName}
-            userName={profile?.userName}
-            size="lg"
-          />
+          <Box
+            sx={{
+              width: 64,
+              height: 64,
+              borderRadius: "50%",
+              backgroundColor: tokens.colors.surface,
+              boxShadow: tokens.shadows.soft,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <UserAvatar
+              src={profile?.picture}
+              firstName={profile?.firstName}
+              lastName={profile?.lastName}
+              userName={profile?.userName}
+              size="lg"
+            />
+          </Box>
+
+          {isOwnProfile ? (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={ALLOWED_PICTURE_TYPES.join(",")}
+                onChange={handleFileChange}
+                data-testid="profile-picture-input"
+                style={{ display: "none" }}
+              />
+              <IconButton
+                aria-label="Change profile picture"
+                onClick={handlePictureButtonClick}
+                disabled={isUploadingPicture}
+                sx={{
+                  position: "absolute",
+                  bottom: -2,
+                  right: -2,
+                  zIndex: 2,
+                  width: 28,
+                  height: 28,
+                  backgroundColor: "rgba(20, 24, 31, 0.72)",
+                  color: "#FBFCFB",
+                  "&:hover": { backgroundColor: tokens.colors.accent },
+                }}
+              >
+                {isUploadingPicture ? (
+                  <CircularProgress size={14} sx={{ color: "#FBFCFB" }} />
+                ) : (
+                  <CameraAltIcon sx={{ fontSize: 15 }} />
+                )}
+              </IconButton>
+            </>
+          ) : null}
         </Box>
+
+        {pictureError ? (
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: tokens.colors.danger,
+              mb: 1,
+            }}
+          >
+            {pictureError}
+          </Typography>
+        ) : null}
 
         <Typography
           sx={{

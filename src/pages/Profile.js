@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import AuthClient from "../client/AuthClient";
 import UserClient from "../client/UserClient";
 import RatingClient from "../client/RatingClient";
 import AddFriendsModal from "../components/modals/AddFriendsModal";
@@ -21,6 +22,9 @@ const PROFILE_TABS = {
   PLAYLISTS: "playlists",
 };
 
+const ALLOWED_PICTURE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_PICTURE_SIZE_BYTES = 5 * 1024 * 1024;
+
 const Profile = () => {
   const { userName } = useParams();
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.REVIEWS);
@@ -28,7 +32,8 @@ const Profile = () => {
   const [openAddFriendsModal, setOpenAddFriendsModal] = useState(false);
   const [friendsAdded, setFriendsAdded] = useState(0);
   const [friendsTab, setFriendsTab] = useState(0);
-  const { currentUser } = useContext(UserContext);
+  const [pictureError, setPictureError] = useState("");
+  const { currentUser, setCurrentUser } = useContext(UserContext);
   const queryClient = useQueryClient();
   const isOwnProfile = currentUser?.userName === userName;
 
@@ -70,6 +75,37 @@ const Profile = () => {
       queryClient.invalidateQueries({ queryKey: ["feedRatings"] });
     },
   });
+
+  const uploadPicture = useMutation({
+    mutationFn: (file) => AuthClient.uploadProfilePicture(file),
+    onSuccess: ({ data }) => {
+      const updatedUser = data.data.user;
+      setCurrentUser((previousUser) => ({
+        ...previousUser,
+        picture: updatedUser.picture,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["profileInfo", { userName }] });
+    },
+    onError: (error) => {
+      setPictureError(
+        error?.response?.data?.errors?.msg ||
+          "Couldn't upload your picture. Please try again."
+      );
+    },
+  });
+
+  const handlePictureSelected = (file) => {
+    if (!ALLOWED_PICTURE_TYPES.includes(file.type)) {
+      setPictureError("Please choose a JPEG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > MAX_PICTURE_SIZE_BYTES) {
+      setPictureError("Please choose an image under 5MB.");
+      return;
+    }
+    setPictureError("");
+    uploadPicture.mutate(file);
+  };
 
   useEffect(() => {
     setOpenFriendsModal(false);
@@ -132,6 +168,9 @@ const Profile = () => {
         onFollowingClick={() => handleFriendsModalOpen(0)}
         onFollowersClick={() => handleFriendsModalOpen(1)}
         onAddFriends={() => setOpenAddFriendsModal(true)}
+        onPictureSelected={handlePictureSelected}
+        isUploadingPicture={uploadPicture.isLoading}
+        pictureError={pictureError}
       />
 
       <TabBar
