@@ -46,4 +46,11 @@ export default class AuthClient {
     const url = `${API_URL}/api/account/complete-profile`;
     return axios.put(url, profile, getHeaders());
   }
+
+  static uploadProfilePicture(file) {
+    const url = `${API_URL}/api/account/picture`;
+    const formData = new FormData();
+    formData.append("picture", file);
+    return axios.put(url, formData, getHeaders());
+  }
 }
