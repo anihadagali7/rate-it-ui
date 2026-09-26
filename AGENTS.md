@@ -153,8 +153,13 @@ and the full endpoint table is in `../rate-it-service/AGENTS.md`.
 - One story per branch and PR. Keep PRs focused; don't refactor unrelated code.
 - PR description: summary, `Closes #<issue>`, how it was tested (tests + browser check),
   screenshots for visual changes, and any env var or backend dependencies.
-- Stories are GitHub Issues. See `.agents/workflows/` for the `write-story` and
-  `build-story` workflows (`/story` and `/build-story` in Claude Code and Cursor).
+- Stories are GitHub Issues. The workflows in `.agents/workflows/` run as commands in
+  Claude Code and Cursor:
+  - `/story <idea>`: write a story (`write-story.md`)
+  - `/build-story <issue>`: build one story into a PR (`build-story.md`)
+  - `/ship-feature <idea | issue> [--plan]`: build every story in a feature across both
+    repos, in dependency order (`ship-feature.md`). It stops when a PR needs merging, and
+    re-running it resumes.
 
 ## Known issues / tech debt
 
