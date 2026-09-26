@@ -13,19 +13,20 @@ accurate: if you change a convention described here, update this file in the sam
 nvm use              # Node 24 (.nvmrc)
 npm install
 npm start            # Vite dev server on http://localhost:3000
+npm run typecheck    # tsc --noEmit (CI runs it before the tests)
 npm run test:ci      # full Vitest suite, non-interactive (what CI runs)
 npx vitest run src/pages/Wishlist.test.js   # one file
 npm run build        # production build into build/
 ```
 
-Always run `npm run test:ci` before opening a PR. The UI needs the API running
+Always run `npm run typecheck` and `npm run test:ci` before opening a PR. The UI needs the API running
 locally (`npm start` in `../rate-it-service`, port 8080) to be used in the browser.
 
 ## Stack
 
-- React 18 on Vite (config in `vite.config.mjs`), plain JavaScript. JSX lives in `.js`
-  files; a small plugin in the Vite config compiles it, so keep new components as `.js`
-  until the TypeScript migration renames them.
+- React 18 on Vite (config in `vite.config.mjs`), moving gradually from JavaScript to
+  TypeScript (see [TypeScript](#typescript)). Existing JSX lives in `.js` files; a small
+  plugin in the Vite config compiles it.
 - React Router v6 — all routes are declared in `src/App.js`
 - TanStack React Query **v4** (`@tanstack/react-query`) for all server state
 - MUI v5 for components; style with the `sx` prop and design tokens from
@@ -43,6 +44,7 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 | `src/components/<feature>/` | Feature components (`ratingcard`, `mediainfo`, `playlist`, `profile`, `modals`, `Search`, ...). |
 | `src/shared/` | Reusable building blocks: `primitives/` (ScoreBadge, MediaPoster, EmptyState, SurfaceCard, UserAvatar), `layout/` (FeedLayout, RightRail, AuthLayout, SectionHeader), `feedback/Toast`, `errors/` (QueryErrorState, ErrorBoundary), `loading/` skeletons, `hooks/`, `social/` (LikeButton, FollowButton, CommentThread), `buttons/`, `inputfield/`. **Check here before building something new.** |
 | `src/client/` | One static class per API area (`RatingClient`, `UserClient`, ...). Every API call goes through these. |
+| `src/types/` | `api.ts`: the API contract types (`ApiSuccess<T>`, `ApiError`, `Rating`, `PublicUser`, ...). |
 | `src/navigation/` | App shell: `ResponsiveLayout`, `Sidebar`, `TopAppBar`, `Masthead`. |
 | `src/utils/` | `AuthorizationUtils.getHeaders()`, `authInterceptor`. |
 | `src/styles/` | `tokens.js`, MUI `Theme.js`. |
@@ -50,11 +52,25 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 
 ## Conventions
 
+### TypeScript
+
+- New files are `.ts` (or `.tsx` for components). Convert a `.js` file to TypeScript
+  when you substantially change it; otherwise leave it alone. JS and TS import each
+  other freely (`allowJs`), and JS files are not type-checked.
+- `tsconfig.json` is `strict`. Don't use `any`; if it's truly unavoidable, add a comment
+  explaining why.
+- API types live in `src/types/api.ts`, and other code imports them only from there.
+  When the service contract changes (a path, request field, or response payload),
+  update `api.ts` and the client method's return type in the same PR. Each type names
+  its source file in `rate-it-service`. These types are hand-written for now; #64
+  replaces them with types generated from the service's OpenAPI spec.
+
 ### Data fetching
 
-- Add API calls as static methods on the matching `src/client/*Client.js` class, using
+- Add API calls as static methods on the matching `src/client/*Client.ts` class, using
   `` `${API_URL}/api/...` `` (`import { BASE_URL as API_URL } from "../config"`) and
-  `getHeaders()`.
+  `getHeaders()`. Type the parameters and the return value, e.g.
+  `Promise<AxiosResponse<ApiSuccess<{ ratingsList: Rating[] }>>>`.
 - Use `useQuery` / `useMutation` in components. API responses are
   `{ status, data: { <payload> } }`, so unwrap with `select: ({ data }) => data.data.<payload>`.
 - After a mutation, `queryClient.invalidateQueries({ queryKey: [...] })` for every
@@ -142,6 +158,7 @@ and the full endpoint table is in `../rate-it-service/AGENTS.md`.
 
 ## Known issues / tech debt
 
-- A TypeScript migration is planned as its own story; it will rename `.js` files as it
-  converts them and can then drop the JSX-in-`.js` plugin from `vite.config.mjs`.
+- The TypeScript migration is gradual: only the API client layer (`src/client/`,
+  `AuthorizationUtils`, `config`) is converted so far. Once no `.js` file contains JSX,
+  drop the JSX-in-`.js` plugin from `vite.config.mjs`.
 - `src/mockdata/` holds old fixtures; prefer inline test data in new tests.

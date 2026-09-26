@@ -31,6 +31,9 @@ jobs:
             'src/*.js' 'src/*.jsx' 'src/*.ts' 'src/*.tsx' 'src/*.json' 'src/*.css' 'src/*.scss' 'src/*.md' \
             | xargs -0 -r npx prettier --check
 
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Run tests
         run: npm run test:ci
 
