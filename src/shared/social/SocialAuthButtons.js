@@ -13,6 +13,18 @@ const handleAuthResponse = ({ data }, onSuccess) => {
   onSuccess(data.data.user, data.accessToken);
 };
 
+const GoogleButtonBase = ({ onClick }) => (
+  <Button
+    testId="googleSignIn"
+    variant="secondary"
+    leftIcon={<GoogleIcon />}
+    onClick={onClick}
+    sx={{ flex: 1, minWidth: 0 }}
+  >
+    Google
+  </Button>
+);
+
 const GoogleButton = ({ onSuccess, onError }) => {
   const login = useGoogleLogin({
     flow: "auth-code",
@@ -27,18 +39,16 @@ const GoogleButton = ({ onSuccess, onError }) => {
     onError: () => onError?.(new Error("Google sign-in failed")),
   });
 
-  return (
-    <Button
-      testId="googleSignIn"
-      variant="secondary"
-      leftIcon={<GoogleIcon />}
-      onClick={() => login()}
-      sx={{ flex: 1, minWidth: 0 }}
-    >
-      Google
-    </Button>
-  );
+  return <GoogleButtonBase onClick={() => login()} />;
 };
+
+// Google's SDK throws during render when it has no client ID, which would take down
+// the whole page. Keep the button and report the failure on click instead.
+const UnconfiguredGoogleButton = ({ onError }) => (
+  <GoogleButtonBase
+    onClick={() => onError?.(new Error("VITE_GOOGLE_CLIENT_ID is not set"))}
+  />
+);
 
 const FacebookButton = ({ onSuccess, onError }) => {
   const { login } = useFacebookSdk();
@@ -106,22 +116,24 @@ const SocialAuthButtons = ({
   onError,
   providers = DEFAULT_ENABLED_PROVIDERS,
 }) => {
-  const googleClientId = GOOGLE_CLIENT_ID;
-
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        {providers.includes("google") ? (
-          <GoogleButton onSuccess={onSuccess} onError={onError} />
-        ) : null}
-        {providers.includes("facebook") ? (
-          <FacebookButton onSuccess={onSuccess} onError={onError} />
-        ) : null}
-        {providers.includes("apple") ? (
-          <AppleButton onSuccess={onSuccess} onError={onError} />
-        ) : null}
-      </Box>
-    </GoogleOAuthProvider>
+    <Box sx={{ display: "flex", gap: 1 }}>
+      {providers.includes("google") ? (
+        GOOGLE_CLIENT_ID ? (
+          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+            <GoogleButton onSuccess={onSuccess} onError={onError} />
+          </GoogleOAuthProvider>
+        ) : (
+          <UnconfiguredGoogleButton onError={onError} />
+        )
+      ) : null}
+      {providers.includes("facebook") ? (
+        <FacebookButton onSuccess={onSuccess} onError={onError} />
+      ) : null}
+      {providers.includes("apple") ? (
+        <AppleButton onSuccess={onSuccess} onError={onError} />
+      ) : null}
+    </Box>
   );
 };
 

@@ -8,6 +8,14 @@ vi.mock("../../client/AuthClient");
 vi.mock("../hooks/useFacebookSdk");
 vi.mock("../hooks/useAppleSdk");
 
+const mockConfig = vi.hoisted(() => ({ googleClientId: "test-client-id" }));
+vi.mock("../../config", async () => ({
+  ...(await vi.importActual("../../config")),
+  get GOOGLE_CLIENT_ID() {
+    return mockConfig.googleClientId;
+  },
+}));
+
 let mockGoogleOnSuccess;
 let mockGoogleOnError;
 
@@ -26,8 +34,21 @@ describe("SocialAuthButtons", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockConfig.googleClientId = "test-client-id";
+    mockGoogleOnSuccess = undefined;
     useFacebookSdk.mockReturnValue({ login: vi.fn() });
     useAppleSdk.mockReturnValue({ signIn: vi.fn() });
+  });
+
+  it("keeps the Google button without a client ID and reports an error on click", () => {
+    mockConfig.googleClientId = undefined;
+
+    render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
+    fireEvent.click(screen.getByRole("button", { name: /google/i }));
+
+    expect(mockGoogleOnSuccess).toBeUndefined();
+    expect(onError).toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 
   it("only renders Google by default (Facebook and Apple are temporarily disabled)", () => {
