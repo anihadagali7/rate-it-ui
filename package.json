@@ -45,6 +45,7 @@
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false --forceExit --runInBand",
     "eject": "react-scripts eject",
+    "prepare": "husky install",
     "postinstall": "npm run build",
     "heroku-postbuild": "npm install && npm run build"
   },
@@ -65,11 +66,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "devDependencies": {
     "@types/react": "^18.3.20",

@@ -28,7 +28,8 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 - MUI v5 for components; style with the `sx` prop and design tokens from
   `src/styles/tokens.js` (colors, fonts, radius, shadows). Tailwind/daisyUI are
   installed but not used — don't introduce them.
-- axios for HTTP; Prettier via lint-staged
+- axios for HTTP; Prettier formats staged `src/` files in a husky pre-commit hook
+  (installed by `npm install` via the `prepare` script)
 - Deployed on Heroku (`Procfile` → `scripts/heroku-start.js` serves the build)
 
 ## Project structure
@@ -112,8 +113,14 @@ and the full endpoint table is in `../rate-it-service/AGENTS.md`.
 
 ## Git & PR workflow
 
-- Never commit or push directly to `master`. Branch as `feature/<slug>`, `fix/<slug>`,
-  or `chore/<slug>`.
+- Never commit or push directly to `master`. Branch as `feature/<issue>-<slug>`,
+  `fix/<issue>-<slug>`, or `chore/<issue>-<slug>` (e.g. `feature/58-weekly-top-rated`);
+  drop `<issue>-` only when there is no issue.
+- Guardrails: `.claude/settings.json` (Claude Code) and `.cursor/hooks.json` (Cursor)
+  block reading `.env` files, commits/pushes on `master`, force pushes, and `gh pr merge`.
+  The Cursor hook scripts in `.cursor/hooks/` are identical in both repos — keep them in sync.
+  The hooks fail open (a missing or broken script allows the command); GitHub branch
+  protection on `master` is the server-side backstop.
 - One story per branch and PR. Keep PRs focused; don't refactor unrelated code.
 - PR description: summary, `Closes #<issue>`, how it was tested (tests + browser check),
   screenshots for visual changes, and any env var or backend dependencies.
