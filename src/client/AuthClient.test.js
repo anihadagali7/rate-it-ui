@@ -1,13 +1,12 @@
 import axios from "axios";
 import AuthClient from "./AuthClient";
+import { BASE_URL as API_URL } from "../config";
 
-jest.mock("axios");
-
-const API_URL = process.env.REACT_APP_BASE_URL;
+vi.mock("axios");
 
 describe("AuthClient", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 

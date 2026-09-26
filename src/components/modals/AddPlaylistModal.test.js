@@ -3,12 +3,12 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import AddPlaylistModal from "./AddPlaylistModal";
 import PlaylistClient from "../../client/PlaylistClient";
 
-jest.mock("../../client/PlaylistClient");
+vi.mock("../../client/PlaylistClient");
 
 describe("AddPlaylistModal", () => {
   it("disables Submit until a name is entered", () => {
     renderWithProviders(
-      <AddPlaylistModal open onClose={jest.fn()} profileUserName="shree" />,
+      <AddPlaylistModal open onClose={vi.fn()} profileUserName="shree" />,
       { userContextValue: { currentUser: { userName: "shree" } } }
     );
 
@@ -22,7 +22,7 @@ describe("AddPlaylistModal", () => {
   });
 
   it("creates the playlist and closes the modal on success", async () => {
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     PlaylistClient.createPlaylist.mockResolvedValue({});
 
     renderWithProviders(

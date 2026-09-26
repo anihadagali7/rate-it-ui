@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getHeaders } from "../utils/AuthorizationUtils";
-
-const API_URL = process.env.REACT_APP_BASE_URL;
+import { BASE_URL as API_URL } from "../config";
 
 export default class UserClient {
   static getUserInfo(userName) {

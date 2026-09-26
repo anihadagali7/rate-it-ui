@@ -26,7 +26,7 @@ describe("CommentThread", () => {
   });
 
   it("prompts login when a logged-out visitor tries to comment", () => {
-    const onRequireAuth = jest.fn();
+    const onRequireAuth = vi.fn();
 
     renderWithProviders(
       <CommentThread
@@ -45,8 +45,8 @@ describe("CommentThread", () => {
   });
 
   it("prompts login when a logged-out visitor tries to like a comment", async () => {
-    const onRequireAuth = jest.fn();
-    const onToggleLike = jest.fn();
+    const onRequireAuth = vi.fn();
+    const onToggleLike = vi.fn();
 
     renderWithProviders(
       <CommentThread
@@ -68,7 +68,7 @@ describe("CommentThread", () => {
   });
 
   it("posts a comment when signed in", async () => {
-    const onAdd = jest.fn().mockResolvedValue(undefined);
+    const onAdd = vi.fn().mockResolvedValue(undefined);
 
     renderWithProviders(
       <CommentThread
@@ -89,7 +89,7 @@ describe("CommentThread", () => {
   });
 
   it("lets the author delete their comment", async () => {
-    const onDelete = jest.fn().mockResolvedValue(undefined);
+    const onDelete = vi.fn().mockResolvedValue(undefined);
 
     renderWithProviders(
       <CommentThread
@@ -107,7 +107,7 @@ describe("CommentThread", () => {
   });
 
   it("toggles a comment like", async () => {
-    const onToggleLike = jest.fn().mockResolvedValue(undefined);
+    const onToggleLike = vi.fn().mockResolvedValue(undefined);
 
     renderWithProviders(
       <CommentThread

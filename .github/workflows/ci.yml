@@ -16,10 +16,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version-file: .nvmrc
           cache: npm
 
-      # Skip postinstall build — the build runs as its own step below
+      # Skip the husky `prepare` hook — git hooks aren't needed on CI
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
@@ -32,16 +32,7 @@ jobs:
             | xargs -0 -r npx prettier --check
 
       - name: Run tests
-        # --forceExit: CRA does not process.exit() after Jest, so open handles
-        # on CI can leave exit code 1 even when every test passed.
         run: npm run test:ci
-        env:
-          CI: true
-          NODE_OPTIONS: --max_old_space_size=4096
 
       - name: Production build
-        # CI=false matches Heroku, which does not treat lint warnings as errors.
         run: npm run build
-        env:
-          CI: false
-          NODE_OPTIONS: --max_old_space_size=4096

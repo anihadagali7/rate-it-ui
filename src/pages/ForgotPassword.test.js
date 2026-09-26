@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import ForgotPassword from "./ForgotPassword";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
 describe("ForgotPassword", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("disables the submit button until an email is entered", () => {

@@ -3,14 +3,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
 import App from "./App";
 
-jest.mock("axios");
+vi.mock("axios");
 
 beforeEach(() => {
   axios.get.mockResolvedValue({ data: { data: { ratingsList: [] } } });
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   localStorage.clear();
 });
 

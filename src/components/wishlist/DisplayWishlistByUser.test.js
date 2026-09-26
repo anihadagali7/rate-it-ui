@@ -3,7 +3,7 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import DisplayWishlistByUser from "./DisplayWishlistByUser";
 import WishlistClient from "../../client/WishlistClient";
 
-jest.mock("../../client/WishlistClient");
+vi.mock("../../client/WishlistClient");
 
 const makeWishlistItem = (id, name, mediaId) => ({
   _id: id,
@@ -76,7 +76,7 @@ describe("DisplayWishlistByUser", () => {
       mockWishlistResponse([makeWishlistItem("w1", "Succession", "76331")])
     );
     WishlistClient.removeFromWishlist.mockResolvedValue({});
-    const onRemoved = jest.fn();
+    const onRemoved = vi.fn();
 
     renderWithProviders(
       <DisplayWishlistByUser userName="anihadagali7" onRemoved={onRemoved} />,

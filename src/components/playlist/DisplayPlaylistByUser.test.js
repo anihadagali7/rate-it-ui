@@ -3,7 +3,7 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import DisplayPlaylistByUser from "./DisplayPlaylistByUser";
 import PlaylistClient from "../../client/PlaylistClient";
 
-jest.mock("../../client/PlaylistClient");
+vi.mock("../../client/PlaylistClient");
 
 const playlist = (id, name) => ({ _id: id, name, posters: [] });
 

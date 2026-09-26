@@ -8,28 +8,28 @@ import PlaylistClient from "../client/PlaylistClient";
 import mediaInfoResponse from "../mockdata/media_info.json";
 import ratingsResponse from "../mockdata/ratings_media.json";
 
-jest.mock("../client/MediaClient");
-jest.mock("../client/RatingClient");
-jest.mock("../client/WishlistClient");
-jest.mock("../client/PlaylistClient");
+vi.mock("../client/MediaClient");
+vi.mock("../client/RatingClient");
+vi.mock("../client/WishlistClient");
+vi.mock("../client/PlaylistClient");
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
   useParams: () => ({ mediaType: "tv", id: "76331" }),
 }));
 
 beforeEach(() => {
-  window.matchMedia = jest.fn().mockImplementation((query) => ({
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }));
   MediaClient.getMediaInfoDetails.mockResolvedValue({
     data: mediaInfoResponse,

@@ -11,7 +11,7 @@ describe("QueryErrorState", () => {
   });
 
   it("renders a custom message and retry button", () => {
-    const onRetry = jest.fn();
+    const onRetry = vi.fn();
 
     render(
       <QueryErrorState

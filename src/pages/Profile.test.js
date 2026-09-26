@@ -9,15 +9,15 @@ import RatingClient from "../client/RatingClient";
 import PlaylistClient from "../client/PlaylistClient";
 import UserContext from "../shared/context/userContext";
 
-jest.mock("../client/AuthClient");
-jest.mock("../client/UserClient");
-jest.mock("../client/RatingClient");
-jest.mock("../client/PlaylistClient");
-jest.mock("../client/WishlistClient");
+vi.mock("../client/AuthClient");
+vi.mock("../client/UserClient");
+vi.mock("../client/RatingClient");
+vi.mock("../client/PlaylistClient");
+vi.mock("../client/WishlistClient");
 
 let mockUserNameParam = "shree";
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useParams: () => ({ userName: mockUserNameParam }),
 }));
 
@@ -220,7 +220,7 @@ describe("Profile", () => {
       renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
@@ -240,7 +240,7 @@ describe("Profile", () => {
           },
         },
       });
-      const setCurrentUser = jest.fn();
+      const setCurrentUser = vi.fn();
 
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
@@ -279,7 +279,7 @@ describe("Profile", () => {
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
@@ -303,7 +303,7 @@ describe("Profile", () => {
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
@@ -332,7 +332,7 @@ describe("Profile", () => {
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
@@ -367,7 +367,7 @@ describe("Profile", () => {
           <UserContext.Provider
             value={{
               currentUser: { userName: "shree" },
-              setCurrentUser: jest.fn(),
+              setCurrentUser: vi.fn(),
             }}
           >
             <MemoryRouter>

@@ -3,7 +3,7 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Home from "./Home";
 import RatingClient from "../client/RatingClient";
 
-jest.mock("../client/RatingClient");
+vi.mock("../client/RatingClient");
 
 const exploreRating = (id, name, comment) => ({
   _id: id,

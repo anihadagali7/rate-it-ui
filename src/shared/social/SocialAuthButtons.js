@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import AuthClient from "../../client/AuthClient";
+import { GOOGLE_CLIENT_ID } from "../../config";
 import Button from "../buttons/Button";
 import useAppleSdk from "../hooks/useAppleSdk";
 import useFacebookSdk from "../hooks/useFacebookSdk";
@@ -105,7 +106,7 @@ const SocialAuthButtons = ({
   onError,
   providers = DEFAULT_ENABLED_PROVIDERS,
 }) => {
-  const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  const googleClientId = GOOGLE_CLIENT_ID;
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>

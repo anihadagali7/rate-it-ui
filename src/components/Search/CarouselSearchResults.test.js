@@ -3,15 +3,15 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import CarouselSearchResults from "./CarouselSearchResults";
 
 beforeEach(() => {
-  window.matchMedia = jest.fn().mockImplementation((query) => ({
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
     matches: query.includes("min-width"),
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }));
 });
 
@@ -32,8 +32,8 @@ describe("CarouselSearchResults", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie], tv: [], music: [song] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -48,8 +48,8 @@ describe("CarouselSearchResults", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -63,8 +63,8 @@ describe("CarouselSearchResults", () => {
     const { container } = renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [], tv: [], book: [], music: [] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -72,8 +72,8 @@ describe("CarouselSearchResults", () => {
   });
 
   it("switches to the full results view for a category when See all is clicked", () => {
-    const setViewAllMedia = jest.fn();
-    const setViewAllType = jest.fn();
+    const setViewAllMedia = vi.fn();
+    const setViewAllType = vi.fn();
 
     renderWithProviders(
       <CarouselSearchResults

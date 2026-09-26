@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Search from "./Search";
 import SearchClient from "../client/SearchClient";
 
-jest.mock("../client/SearchClient");
+vi.mock("../client/SearchClient");
 
 let mockKeyword;
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useParams: () => ({ keyword: mockKeyword }),
 }));
 
@@ -22,15 +22,15 @@ const mockPeopleResponse = (mediaList = []) => ({
 beforeEach(() => {
   mockKeyword = undefined;
   SearchClient.searchMedia.mockResolvedValue(mockPeopleResponse());
-  window.matchMedia = jest.fn().mockImplementation((query) => ({
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
     matches: query.includes("min-width"),
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }));
 });
 

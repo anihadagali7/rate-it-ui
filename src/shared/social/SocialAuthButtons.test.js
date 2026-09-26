@@ -4,30 +4,30 @@ import AuthClient from "../../client/AuthClient";
 import useFacebookSdk from "../hooks/useFacebookSdk";
 import useAppleSdk from "../hooks/useAppleSdk";
 
-jest.mock("../../client/AuthClient");
-jest.mock("../hooks/useFacebookSdk");
-jest.mock("../hooks/useAppleSdk");
+vi.mock("../../client/AuthClient");
+vi.mock("../hooks/useFacebookSdk");
+vi.mock("../hooks/useAppleSdk");
 
 let mockGoogleOnSuccess;
 let mockGoogleOnError;
 
-jest.mock("@react-oauth/google", () => ({
+vi.mock("@react-oauth/google", () => ({
   GoogleOAuthProvider: ({ children }) => children,
   useGoogleLogin: (options) => {
     mockGoogleOnSuccess = options.onSuccess;
     mockGoogleOnError = options.onError;
-    return jest.fn();
+    return vi.fn();
   },
 }));
 
 describe("SocialAuthButtons", () => {
-  const onSuccess = jest.fn();
-  const onError = jest.fn();
+  const onSuccess = vi.fn();
+  const onError = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    useFacebookSdk.mockReturnValue({ login: jest.fn() });
-    useAppleSdk.mockReturnValue({ signIn: jest.fn() });
+    vi.clearAllMocks();
+    useFacebookSdk.mockReturnValue({ login: vi.fn() });
+    useAppleSdk.mockReturnValue({ signIn: vi.fn() });
   });
 
   it("only renders Google by default (Facebook and Apple are temporarily disabled)", () => {
@@ -80,7 +80,7 @@ describe("SocialAuthButtons", () => {
   });
 
   it("logs in with Facebook and forwards the resulting user", async () => {
-    const login = jest.fn().mockResolvedValue("fb-access-token");
+    const login = vi.fn().mockResolvedValue("fb-access-token");
     useFacebookSdk.mockReturnValue({ login });
     AuthClient.loginWithFacebook.mockResolvedValue({
       data: { accessToken: "jwt-token", data: { user: { userName: "fb" } } },
@@ -106,7 +106,7 @@ describe("SocialAuthButtons", () => {
   });
 
   it("signs in with Apple, forwarding the one-time name payload", async () => {
-    const signIn = jest.fn().mockResolvedValue({
+    const signIn = vi.fn().mockResolvedValue({
       authorization: { id_token: "id-token" },
       user: { name: { firstName: "Ali" } },
     });
@@ -136,7 +136,7 @@ describe("SocialAuthButtons", () => {
   });
 
   it("reports an error when a provider sign-in throws", async () => {
-    const login = jest.fn().mockRejectedValue(new Error("cancelled"));
+    const login = vi.fn().mockRejectedValue(new Error("cancelled"));
     useFacebookSdk.mockReturnValue({ login });
 
     render(

@@ -3,11 +3,11 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import ResetPassword from "./ResetPassword";
 import AuthClient from "../../client/AuthClient";
 
-jest.mock("../../client/AuthClient");
+vi.mock("../../client/AuthClient");
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
@@ -23,7 +23,7 @@ const currentUser = { userName: "johndoe" };
 
 describe("ResetPassword", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("disables reset until all password fields are filled in", () => {

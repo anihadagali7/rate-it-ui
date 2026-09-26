@@ -10,11 +10,12 @@ accurate: if you change a convention described here, update this file in the sam
 ## Commands
 
 ```bash
-npm install          # NOTE: postinstall also runs a production build
-npm start            # dev server on http://localhost:3000
-npm run test:ci      # full test suite, non-interactive (what CI runs)
-npx react-scripts test --watchAll=false src/pages/Wishlist.test.js   # one file
-npm run build
+nvm use              # Node 24 (.nvmrc)
+npm install
+npm start            # Vite dev server on http://localhost:3000
+npm run test:ci      # full Vitest suite, non-interactive (what CI runs)
+npx vitest run src/pages/Wishlist.test.js   # one file
+npm run build        # production build into build/
 ```
 
 Always run `npm run test:ci` before opening a PR. The UI needs the API running
@@ -22,7 +23,9 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 
 ## Stack
 
-- React 18 on Create React App (`react-scripts` 5), plain JavaScript
+- React 18 on Vite (config in `vite.config.mjs`), plain JavaScript. JSX lives in `.js`
+  files; a small plugin in the Vite config compiles it, so keep new components as `.js`
+  until the TypeScript migration renames them.
 - React Router v6 — all routes are declared in `src/App.js`
 - TanStack React Query **v4** (`@tanstack/react-query`) for all server state
 - MUI v5 for components; style with the `sx` prop and design tokens from
@@ -50,7 +53,8 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 ### Data fetching
 
 - Add API calls as static methods on the matching `src/client/*Client.js` class, using
-  `` `${process.env.REACT_APP_BASE_URL}/api/...` `` and `getHeaders()`.
+  `` `${API_URL}/api/...` `` (`import { BASE_URL as API_URL } from "../config"`) and
+  `getHeaders()`.
 - Use `useQuery` / `useMutation` in components. API responses are
   `{ status, data: { <payload> } }`, so unwrap with `select: ({ data }) => data.data.<payload>`.
 - After a mutation, `queryClient.invalidateQueries({ queryKey: [...] })` for every
@@ -79,22 +83,27 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 
 ## Tests
 
-- Jest + React Testing Library, colocated as `<Component>.test.js`.
+- Vitest (globals on, jsdom) + React Testing Library, colocated as `<Component>.test.js`.
+  Setup is in `src/setupTests.js`.
 - Render with `renderWithProviders(ui, { userContextValue, route })` from
   `src/testUtils/renderWithProviders.js` (QueryClient + UserContext + MemoryRouter).
-- Mock the API layer with `jest.mock("../client/<Name>Client")` and
+- Mock the API layer with `vi.mock("../client/<Name>Client")` and
   `mockResolvedValue({ data: { data: { ... } } })`. Never make real HTTP calls.
+- `vi.mock` factories for a default export must return `{ default: ... }`; for a partial
+  mock use `async () => ({ ...(await vi.importActual("x")), ... })`.
 - Query by role/label/text as a user would (`getByRole`, `findByText`), not by class names.
 - New pages or components with logic need tests for: rendering data, empty state,
   error state, and the main user interaction. Cover the logged-out path when relevant.
 
 ## Environments & data safety
 
-- `REACT_APP_BASE_URL` points at the API. Locally that's `http://localhost:8080`, whose
+- `VITE_BASE_URL` points at the API. Locally that's `http://localhost:8080`, whose
   `.env` uses the **dev** MongoDB. Never point the UI at the prod API while testing.
 - Do not read or print `.env` values; variable names are documented in `README.md`.
-- `REACT_APP_*` vars are baked in at build time. A new one must be added to the README
-  and set on Heroku; call this out in the PR.
+- `VITE_*` vars are baked in at build time and read in one place, `src/config.js`
+  (`import.meta.env`) — import from there rather than reading `import.meta.env` directly.
+  A new one must be added to `src/config.js` and the README, and set on Heroku; call
+  this out in the PR.
 
 ## Verifying changes in the browser
 
@@ -133,6 +142,6 @@ and the full endpoint table is in `../rate-it-service/AGENTS.md`.
 
 ## Known issues / tech debt
 
-- Create React App is deprecated; a migration (Vite and TypeScript) is planned as its
-  own story. Don't add CRA-specific config in the meantime.
+- A TypeScript migration is planned as its own story; it will rename `.js` files as it
+  converts them and can then drop the JSX-in-`.js` plugin from `vite.config.mjs`.
 - `src/mockdata/` holds old fixtures; prefer inline test data in new tests.

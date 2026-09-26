@@ -3,17 +3,19 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import ProfileDetails from "./ProfileDetails";
 import AuthClient from "../../client/AuthClient";
 
-jest.mock("../../client/AuthClient");
+vi.mock("../../client/AuthClient");
 
 let socialAuthButtonsProps;
-jest.mock("../../shared/social/SocialAuthButtons", () => (props) => {
-  socialAuthButtonsProps = props;
-  return null;
-});
+vi.mock("../../shared/social/SocialAuthButtons", () => ({
+  default: (props) => {
+    socialAuthButtonsProps = props;
+    return null;
+  },
+}));
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
@@ -36,7 +38,7 @@ const validSignupPayload = {
 
 describe("ProfileDetails - sign up", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
@@ -82,7 +84,7 @@ describe("ProfileDetails - sign up", () => {
   });
 
   it("signs up, stores the access token, sets the current user, and navigates home", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.signUp.mockResolvedValueOnce({
       data: {
         accessToken: "jwt-token",
@@ -131,7 +133,7 @@ describe("ProfileDetails - sign up", () => {
   });
 
   it("navigates a brand-new social sign-up to finish their profile", () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     renderWithProviders(
       <ProfileDetails createProfile updateProfile={false} />,
       {
@@ -158,7 +160,7 @@ describe("ProfileDetails - sign up", () => {
 
 describe("ProfileDetails - edit profile", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const currentUser = {
@@ -185,7 +187,7 @@ describe("ProfileDetails - edit profile", () => {
   });
 
   it("saves changes and navigates to the user's profile", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.editProfile.mockResolvedValueOnce({
       data: { data: { user: { ...currentUser, firstName: "Janet" } } },
     });
