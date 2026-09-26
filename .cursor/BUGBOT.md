@@ -1,12 +1,12 @@
 # Bugbot review rules — rate-it-ui
 
-React 18 (Vite) frontend for Rate It. Full conventions are in `AGENTS.md`; these are the
+React 18 (CRA) frontend for Rate It. Full conventions are in `AGENTS.md`; these are the
 rules most worth flagging in review. The API lives in `anihadagali7/rate-it-service`.
 
 ## Data fetching
 - API calls must go through a static method on a `src/client/*Client.js` class, using
-  `` `${API_URL}/api/...` `` (`BASE_URL` from `src/config.js`) and `getHeaders()`. Flag
-  `axios`/`fetch` calls made directly in components or pages.
+  `` `${process.env.REACT_APP_BASE_URL}/api/...` `` and `getHeaders()`. Flag `axios`/`fetch`
+  calls made directly in components or pages.
 - API responses are `{ status, data: { <payload> } }`. `useQuery` should unwrap with
   `select: ({ data }) => data.data.<payload>`. Flag code that reads the wrong level.
 - Every `useMutation` must `invalidateQueries` for each list it affects (ratings feeds,
@@ -34,13 +34,12 @@ rules most worth flagging in review. The API lives in `anihadagali7/rate-it-serv
 ## Tests
 - New pages/components with logic need tests for: data rendering, empty state, error
   state, the main interaction, and the logged-out path when relevant.
-- Tests must mock `src/client/*` (`vi.mock(...)`) and never make real HTTP calls; render
+- Tests must mock `src/client/*` (`jest.mock(...)`) and never make real HTTP calls; render
   with `renderWithProviders`; query by role/label/text, not class names.
 
 ## Scope and config
-- A new `VITE_*` variable must be exported from `src/config.js`, documented in `README.md`,
-  and called out in the PR (it is baked in at build time and must be set on Heroku). Flag
-  `import.meta.env` or `process.env` reads outside `src/config.js`.
+- A new `REACT_APP_*` variable must be documented in `README.md` and called out in the PR
+  (it is baked in at build time and must be set on Heroku).
 - Flag unrelated refactors or drive-by changes outside the story's scope.
 - If the PR relies on a new or changed endpoint, check that the response shape it reads
   matches the service, and that the PR says which service PR it depends on.
