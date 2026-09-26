@@ -119,6 +119,8 @@ and the full endpoint table is in `../rate-it-service/AGENTS.md`.
 - Guardrails: `.claude/settings.json` (Claude Code) and `.cursor/hooks.json` (Cursor)
   block reading `.env` files, commits/pushes on `master`, force pushes, and `gh pr merge`.
   The Cursor hook scripts in `.cursor/hooks/` are identical in both repos — keep them in sync.
+  The hooks fail open (a missing or broken script allows the command); GitHub branch
+  protection on `master` is the server-side backstop.
 - One story per branch and PR. Keep PRs focused; don't refactor unrelated code.
 - PR description: summary, `Closes #<issue>`, how it was tested (tests + browser check),
   screenshots for visual changes, and any env var or backend dependencies.
