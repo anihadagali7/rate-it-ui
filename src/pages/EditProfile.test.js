@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import EditProfile from "./EditProfile";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
@@ -21,7 +21,7 @@ const currentUser = {
 
 describe("EditProfile", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("renders the Edit profile form pre-filled with the current user, with username and email locked", () => {
@@ -56,7 +56,7 @@ describe("EditProfile", () => {
   });
 
   it("saves changes and navigates to the user's profile", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.editProfile.mockResolvedValueOnce({
       data: { data: { user: { ...currentUser, firstName: "Janet" } } },
     });

@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Signup from "./Signup";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
@@ -33,9 +33,13 @@ describe("Signup (logged out)", () => {
     const { container } = renderWithProviders(<Signup />);
 
     expect(screen.getByText("Create an Account")).toBeInTheDocument();
-    expect(container.querySelector('input[name="userName"]')).not.toBeDisabled();
+    expect(
+      container.querySelector('input[name="userName"]')
+    ).not.toBeDisabled();
     expect(container.querySelector('input[name="email"]')).not.toBeDisabled();
-    expect(screen.getByRole("button", { name: /sign up/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /sign up/i })
+    ).toBeInTheDocument();
   });
 
   it("disables Sign Up until all required fields, including password, are filled in", () => {
@@ -45,9 +49,7 @@ describe("Signup (logged out)", () => {
 
     fillForm(container, validSignupPayload);
 
-    expect(
-      screen.getByRole("button", { name: /sign up/i })
-    ).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /sign up/i })).not.toBeDisabled();
   });
 
   it("blocks submission and shows errors for invalid fields", async () => {
@@ -78,7 +80,7 @@ describe("Signup (logged out)", () => {
   });
 
   it("signs up, stores the access token, sets the current user, and navigates home", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.signUp.mockResolvedValueOnce({
       data: {
         accessToken: "jwt-token",
@@ -132,7 +134,7 @@ describe("Signup (logged out)", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 });

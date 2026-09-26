@@ -11,7 +11,7 @@ const BrokenComponent = ({ shouldThrow }) => {
 
 describe("ErrorBoundary", () => {
   beforeEach(() => {
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

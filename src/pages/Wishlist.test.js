@@ -3,17 +3,21 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Wishlist from "./Wishlist";
 import WishlistClient from "../client/WishlistClient";
 
-jest.mock("../client/WishlistClient");
+vi.mock("../client/WishlistClient");
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useParams: () => ({ userName: "anihadagali7" }),
 }));
 
 const makeWishlistItem = (id, name, mediaId) => ({
   _id: id,
   media: { name, mediaType: "TV", mediaId },
-  addedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
+  addedBy: {
+    userName: "anihadagali7",
+    firstName: "Anirudha",
+    lastName: "Hadagali",
+  },
   dateCreated: "2024-01-01T00:00:00.000Z",
 });
 

@@ -3,17 +3,19 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Login from "./Login";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
 let socialAuthButtonsProps;
-jest.mock("../shared/social/SocialAuthButtons", () => (props) => {
-  socialAuthButtonsProps = props;
-  return null;
-});
+vi.mock("../shared/social/SocialAuthButtons", () => ({
+  default: (props) => {
+    socialAuthButtonsProps = props;
+    return null;
+  },
+}));
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
@@ -32,7 +34,7 @@ const fillForm = (container, { email, password }) => {
 
 describe("Login", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
@@ -43,9 +45,7 @@ describe("Login", () => {
 
     fillForm(container, { email: "user@example.com", password: "Password1!" });
 
-    expect(
-      screen.getByRole("button", { name: /sign in/i })
-    ).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /sign in/i })).not.toBeDisabled();
   });
 
   it("shows a validation error and does not submit for an invalid email", async () => {
@@ -63,7 +63,7 @@ describe("Login", () => {
   });
 
   it("logs in, stores the access token, sets the current user, and navigates home on success", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.login.mockResolvedValueOnce({
       data: {
         accessToken: "jwt-token",
@@ -107,7 +107,7 @@ describe("Login", () => {
   });
 
   it("navigates home after a social sign-in for a user with a complete profile", () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     renderWithProviders(<Login />, { userContextValue: { setCurrentUser } });
 
     socialAuthButtonsProps.onSuccess(
@@ -125,13 +125,10 @@ describe("Login", () => {
   });
 
   it("sends a brand-new social user to finish their profile instead", () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     renderWithProviders(<Login />, { userContextValue: { setCurrentUser } });
 
-    socialAuthButtonsProps.onSuccess(
-      { isProfileComplete: false },
-      "jwt-token"
-    );
+    socialAuthButtonsProps.onSuccess({ isProfileComplete: false }, "jwt-token");
 
     expect(localStorage.getItem("accessToken")).toBe("jwt-token");
     expect(localStorage.getItem("userName")).toBeNull();

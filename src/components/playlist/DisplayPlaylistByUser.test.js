@@ -3,7 +3,7 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import DisplayPlaylistByUser from "./DisplayPlaylistByUser";
 import PlaylistClient from "../../client/PlaylistClient";
 
-jest.mock("../../client/PlaylistClient");
+vi.mock("../../client/PlaylistClient");
 
 const playlist = (id, name) => ({ _id: id, name, posters: [] });
 
@@ -14,7 +14,10 @@ const mockPlaylistResponse = (playlistList) => ({
 describe("DisplayPlaylistByUser", () => {
   it("renders the user's playlists", async () => {
     PlaylistClient.getAllPlaylistForUser.mockResolvedValue(
-      mockPlaylistResponse([playlist("p1", "Movies to watch"), playlist("p2", "Favorites")])
+      mockPlaylistResponse([
+        playlist("p1", "Movies to watch"),
+        playlist("p2", "Favorites"),
+      ])
     );
 
     renderWithProviders(<DisplayPlaylistByUser userName="anihadagali7" />);
@@ -27,7 +30,9 @@ describe("DisplayPlaylistByUser", () => {
   });
 
   it("shows an empty state when there are no playlists", async () => {
-    PlaylistClient.getAllPlaylistForUser.mockResolvedValue(mockPlaylistResponse([]));
+    PlaylistClient.getAllPlaylistForUser.mockResolvedValue(
+      mockPlaylistResponse([])
+    );
 
     renderWithProviders(<DisplayPlaylistByUser userName="anihadagali7" />);
 

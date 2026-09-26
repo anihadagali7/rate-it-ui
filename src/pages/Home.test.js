@@ -3,7 +3,7 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Home from "./Home";
 import RatingClient from "../client/RatingClient";
 
-jest.mock("../client/RatingClient");
+vi.mock("../client/RatingClient");
 
 const exploreRating = (id, name, comment) => ({
   _id: id,
@@ -47,13 +47,17 @@ describe("Home", () => {
 
     const { container } = renderWithProviders(<Home />);
 
-    expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
+    expect(
+      container.querySelectorAll(".MuiSkeleton-root").length
+    ).toBeGreaterThan(0);
     expect(screen.queryByText("Discover")).not.toBeInTheDocument();
   });
 
   it("shows the discover feed for a logged-out user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+      mockRatingsList([
+        exploreRating("e1", "Better Call Saul", "slippin jimmy"),
+      ])
     );
 
     renderWithProviders(<Home />);
@@ -66,9 +70,13 @@ describe("Home", () => {
 
   it("shows following feed by default for a logged in user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+      mockRatingsList([
+        exploreRating("e1", "Better Call Saul", "slippin jimmy"),
+      ])
     );
-    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
+    RatingClient.getFeedRatings.mockResolvedValue(
+      mockRatingsList([feedRating])
+    );
 
     renderWithProviders(<Home />, {
       userContextValue: { currentUser: { userName: "shree" } },
@@ -82,7 +90,9 @@ describe("Home", () => {
 
   it("defaults to Discover when a logged in user's following feed is empty", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+      mockRatingsList([
+        exploreRating("e1", "Better Call Saul", "slippin jimmy"),
+      ])
     );
     RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
 
@@ -96,7 +106,9 @@ describe("Home", () => {
 
   it("still shows the empty following state if the user switches back to it", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+      mockRatingsList([
+        exploreRating("e1", "Better Call Saul", "slippin jimmy"),
+      ])
     );
     RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([]));
 
@@ -112,9 +124,13 @@ describe("Home", () => {
 
   it("shows discover ratings when a logged in user switches tabs", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(
-      mockRatingsList([exploreRating("e1", "Better Call Saul", "slippin jimmy")])
+      mockRatingsList([
+        exploreRating("e1", "Better Call Saul", "slippin jimmy"),
+      ])
     );
-    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
+    RatingClient.getFeedRatings.mockResolvedValue(
+      mockRatingsList([feedRating])
+    );
 
     renderWithProviders(<Home />, {
       userContextValue: { currentUser: { userName: "shree" } },
@@ -130,7 +146,9 @@ describe("Home", () => {
 
   it("shows an empty state when discover has no ratings for a logged in user", async () => {
     RatingClient.getAllExploreRatings.mockResolvedValue(mockRatingsList([]));
-    RatingClient.getFeedRatings.mockResolvedValue(mockRatingsList([feedRating]));
+    RatingClient.getFeedRatings.mockResolvedValue(
+      mockRatingsList([feedRating])
+    );
 
     renderWithProviders(<Home />, {
       userContextValue: { currentUser: { userName: "shree" } },
@@ -148,7 +166,9 @@ describe("Home", () => {
       exploreRating(`e${index}`, `Show ${index}`, `review ${index}`)
     );
 
-    RatingClient.getAllExploreRatings.mockResolvedValue(mockRatingsList(ratings));
+    RatingClient.getAllExploreRatings.mockResolvedValue(
+      mockRatingsList(ratings)
+    );
 
     renderWithProviders(<Home />);
 
@@ -158,13 +178,17 @@ describe("Home", () => {
   });
 
   it("shows an error message when explore ratings fail to load", async () => {
-    RatingClient.getAllExploreRatings.mockRejectedValue(new Error("Network error"));
+    RatingClient.getAllExploreRatings.mockRejectedValue(
+      new Error("Network error")
+    );
 
     renderWithProviders(<Home />);
 
     expect(
       await screen.findByText("Unable to load explore ratings.")
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /try again/i })
+    ).toBeInTheDocument();
   });
 });

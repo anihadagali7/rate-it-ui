@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { APPLE_CLIENT_ID, APPLE_REDIRECT_URI } from "../../config";
 
 let appleSdkPromise = null;
 
@@ -37,8 +38,8 @@ const loadAppleSdk = ({ clientId, redirectURI }) => {
 };
 
 const useAppleSdk = () => {
-  const clientId = process.env.REACT_APP_APPLE_CLIENT_ID;
-  const redirectURI = process.env.REACT_APP_APPLE_REDIRECT_URI;
+  const clientId = APPLE_CLIENT_ID;
+  const redirectURI = APPLE_REDIRECT_URI;
 
   const signIn = useCallback(async () => {
     const AppleID = await loadAppleSdk({ clientId, redirectURI });

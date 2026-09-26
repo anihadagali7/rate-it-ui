@@ -11,7 +11,7 @@ describe("LikeButton", () => {
   });
 
   it("optimistically toggles liked state and count", async () => {
-    const onToggle = jest.fn().mockResolvedValue(undefined);
+    const onToggle = vi.fn().mockResolvedValue(undefined);
     render(
       <LikeButton initialCount={1} initialLiked={false} onToggle={onToggle} />
     );
@@ -24,7 +24,7 @@ describe("LikeButton", () => {
   });
 
   it("rolls back when onToggle rejects", async () => {
-    const onToggle = jest.fn().mockRejectedValue(new Error("failed"));
+    const onToggle = vi.fn().mockRejectedValue(new Error("failed"));
     render(
       <LikeButton initialCount={4} initialLiked={true} onToggle={onToggle} />
     );
@@ -32,16 +32,16 @@ describe("LikeButton", () => {
     fireEvent.click(screen.getByRole("button", { name: /unlike/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /unlike/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /unlike/i })
+      ).toBeInTheDocument();
       expect(screen.getByText("4")).toBeInTheDocument();
     });
   });
 
   it("does not toggle when disabled", () => {
-    const onToggle = jest.fn();
-    render(
-      <LikeButton initialCount={0} disabled onToggle={onToggle} />
-    );
+    const onToggle = vi.fn();
+    render(<LikeButton initialCount={0} disabled onToggle={onToggle} />);
 
     fireEvent.click(screen.getByRole("button", { name: /like/i }));
 

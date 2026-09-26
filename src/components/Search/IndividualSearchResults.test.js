@@ -3,7 +3,7 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import IndividualSearchResults from "./IndividualSearchResults";
 import SearchClient from "../../client/SearchClient";
 
-jest.mock("../../client/SearchClient");
+vi.mock("../../client/SearchClient");
 
 describe("IndividualSearchResults - people tab", () => {
   const viewAllType = { type: "user", title: "People" };
@@ -29,7 +29,12 @@ describe("IndividualSearchResults - people tab", () => {
       data: {
         data: {
           mediaList: [
-            { userName: "janedoe", firstName: "Jane", lastName: "Doe", followers: [] },
+            {
+              userName: "janedoe",
+              firstName: "Jane",
+              lastName: "Doe",
+              followers: [],
+            },
           ],
         },
       },

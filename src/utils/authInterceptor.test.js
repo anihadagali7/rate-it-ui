@@ -1,10 +1,12 @@
 import axios from "axios";
 import { clearAuthSession, setupAuthInterceptor } from "./authInterceptor";
 
-jest.mock("axios", () => ({
-  interceptors: {
-    response: {
-      use: jest.fn(),
+vi.mock("axios", () => ({
+  default: {
+    interceptors: {
+      response: {
+        use: vi.fn(),
+      },
     },
   },
 }));
@@ -16,7 +18,7 @@ describe("authInterceptor", () => {
     localStorage.clear();
     axios.interceptors.response.use.mockClear();
     delete window.location;
-    window.location = { pathname: "/", assign: jest.fn() };
+    window.location = { pathname: "/", assign: vi.fn() };
   });
 
   afterEach(() => {

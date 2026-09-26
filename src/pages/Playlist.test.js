@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import Playlist from "./Playlist";
 import PlaylistClient from "../client/PlaylistClient";
 
-jest.mock("../client/PlaylistClient");
+vi.mock("../client/PlaylistClient");
 
 let mockUserNameParam = "shree";
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useParams: () => ({ userName: mockUserNameParam }),
 }));
 

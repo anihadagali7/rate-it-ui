@@ -1,13 +1,12 @@
 import axios from "axios";
 import AuthClient from "./AuthClient";
+import { BASE_URL as API_URL } from "../config";
 
-jest.mock("axios");
-
-const API_URL = process.env.REACT_APP_BASE_URL;
+vi.mock("axios");
 
 describe("AuthClient", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
@@ -82,10 +81,9 @@ describe("AuthClient", () => {
     it("POSTs the access token to the Facebook endpoint without auth headers", () => {
       AuthClient.loginWithFacebook("fb-access-token");
 
-      expect(axios.post).toHaveBeenCalledWith(
-        `${API_URL}/api/auth/facebook`,
-        { accessToken: "fb-access-token" }
-      );
+      expect(axios.post).toHaveBeenCalledWith(`${API_URL}/api/auth/facebook`, {
+        accessToken: "fb-access-token",
+      });
     });
   });
 
