@@ -1,9 +1,9 @@
 import axios from "axios";
 import UserClient from "./UserClient";
+import { BASE_URL as API_URL } from "../config";
 
-jest.mock("axios");
+vi.mock("axios");
 
-const API_URL = process.env.REACT_APP_BASE_URL;
 const authHeaders = { headers: { Authorization: "jwt-token" } };
 
 describe("UserClient", () => {
@@ -12,7 +12,7 @@ describe("UserClient", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 

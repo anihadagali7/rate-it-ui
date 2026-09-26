@@ -3,11 +3,11 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import ForgotPassword from "./ForgotPassword";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
 describe("ForgotPassword", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("disables the submit button until an email is entered", () => {
@@ -55,9 +55,7 @@ describe("ForgotPassword", () => {
     fireEvent.click(screen.getByRole("button", { name: /send reset link/i }));
 
     expect(await screen.findByText(/we've sent a link/i)).toBeInTheDocument();
-    expect(AuthClient.forgotPassword).toHaveBeenCalledWith(
-      "user@example.com"
-    );
+    expect(AuthClient.forgotPassword).toHaveBeenCalledWith("user@example.com");
   });
 
   it("shows an error message if the request itself fails", async () => {

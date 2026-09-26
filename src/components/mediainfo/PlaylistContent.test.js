@@ -3,7 +3,7 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import PlaylistContent from "./PlaylistContent";
 import PlaylistClient from "../../client/PlaylistClient";
 
-jest.mock("../../client/PlaylistClient");
+vi.mock("../../client/PlaylistClient");
 
 const playlist = (id, name) => ({ _id: id, name });
 
@@ -19,8 +19,8 @@ const renderPlaylistContent = (props = {}) =>
   renderWithProviders(
     <PlaylistContent
       mediaId="media-1"
-      onClose={jest.fn()}
-      handleNewPlaylistModalOpen={jest.fn()}
+      onClose={vi.fn()}
+      handleNewPlaylistModalOpen={vi.fn()}
       {...props}
     />,
     { userContextValue: { currentUser: { userName: "shree" } } }
@@ -70,8 +70,8 @@ describe("PlaylistContent", () => {
   });
 
   it("adds the media to a newly selected playlist on save", async () => {
-    const onClose = jest.fn();
-    const onSuccess = jest.fn();
+    const onClose = vi.fn();
+    const onSuccess = vi.fn();
     PlaylistClient.addMediaToMultiplePlaylists.mockResolvedValue({});
     renderPlaylistContent({ onClose, onSuccess });
 
@@ -150,8 +150,8 @@ describe("PlaylistContent", () => {
   });
 
   it("opens the new playlist modal from + New playlist", async () => {
-    const onClose = jest.fn();
-    const handleNewPlaylistModalOpen = jest.fn();
+    const onClose = vi.fn();
+    const handleNewPlaylistModalOpen = vi.fn();
     renderPlaylistContent({ onClose, handleNewPlaylistModalOpen });
 
     await screen.findByText("Movies to watch");

@@ -4,8 +4,8 @@ import CommentClient from "../../client/CommentClient";
 import LikeClient from "../../client/LikeClient";
 import RatingCard from "./RatingCard";
 
-jest.mock("../../client/LikeClient");
-jest.mock("../../client/CommentClient");
+vi.mock("../../client/LikeClient");
+vi.mock("../../client/CommentClient");
 
 const rating = {
   _id: "rating-1",
@@ -44,7 +44,7 @@ const rating = {
 
 describe("RatingCard", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("shows the like count without requiring login just to view it", () => {

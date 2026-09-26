@@ -3,17 +3,17 @@ import { renderWithProviders } from "../testUtils/renderWithProviders";
 import CompleteProfile from "./CompleteProfile";
 import AuthClient from "../client/AuthClient";
 
-jest.mock("../client/AuthClient");
+vi.mock("../client/AuthClient");
 
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useNavigate: () => mockNavigate,
 }));
 
 describe("CompleteProfile", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
@@ -114,7 +114,7 @@ describe("CompleteProfile", () => {
   });
 
   it("sets the current user and navigates home on success", async () => {
-    const setCurrentUser = jest.fn();
+    const setCurrentUser = vi.fn();
     AuthClient.completeProfile.mockResolvedValueOnce({
       data: {
         data: {

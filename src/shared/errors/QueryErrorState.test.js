@@ -11,7 +11,7 @@ describe("QueryErrorState", () => {
   });
 
   it("renders a custom message and retry button", () => {
-    const onRetry = jest.fn();
+    const onRetry = vi.fn();
 
     render(
       <QueryErrorState
@@ -20,7 +20,9 @@ describe("QueryErrorState", () => {
       />
     );
 
-    expect(screen.getByText("Unable to load explore ratings.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Unable to load explore ratings.")
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /try again/i }));
     expect(onRetry).toHaveBeenCalledTimes(1);
   });

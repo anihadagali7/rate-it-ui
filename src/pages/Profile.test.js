@@ -9,15 +9,15 @@ import RatingClient from "../client/RatingClient";
 import PlaylistClient from "../client/PlaylistClient";
 import UserContext from "../shared/context/userContext";
 
-jest.mock("../client/AuthClient");
-jest.mock("../client/UserClient");
-jest.mock("../client/RatingClient");
-jest.mock("../client/PlaylistClient");
-jest.mock("../client/WishlistClient");
+vi.mock("../client/AuthClient");
+vi.mock("../client/UserClient");
+vi.mock("../client/RatingClient");
+vi.mock("../client/PlaylistClient");
+vi.mock("../client/WishlistClient");
 
 let mockUserNameParam = "shree";
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
   useParams: () => ({ userName: mockUserNameParam }),
 }));
 
@@ -50,7 +50,11 @@ const rating = {
     mediaId: "1668",
     picture: "https://example.com/friends.jpg",
   },
-  ratedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
+  ratedBy: {
+    userName: "anihadagali7",
+    firstName: "Anirudha",
+    lastName: "Hadagali",
+  },
   rating: "9",
   comments: "great show",
   dateCreated: "2024-06-10T18:03:58.946Z",
@@ -59,8 +63,12 @@ const rating = {
 const playlist = { _id: "p1", name: "Favorites", posters: [] };
 
 const mockUserInfo = (user) => ({ data: { data: { user } } });
-const mockRatingsList = (ratings) => ({ data: { data: { ratingsList: ratings } } });
-const mockPlaylistList = (playlists) => ({ data: { data: { playlistList: playlists } } });
+const mockRatingsList = (ratings) => ({
+  data: { data: { ratingsList: ratings } },
+});
+const mockPlaylistList = (playlists) => ({
+  data: { data: { playlistList: playlists } },
+});
 
 beforeEach(() => {
   RatingClient.getAllRatingsForUser.mockResolvedValue(mockRatingsList([]));
@@ -109,7 +117,9 @@ describe("Profile", () => {
 
   it("hides the Add friends action and shows Follow when viewing another user who isn't followed", async () => {
     mockUserNameParam = "anihadagali7";
-    UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+    UserClient.getUserInfo.mockResolvedValue(
+      mockUserInfo(otherProfileNotFollowing)
+    );
 
     renderWithProviders(<Profile />, {
       userContextValue: { currentUser: { userName: "shree" } },
@@ -126,7 +136,9 @@ describe("Profile", () => {
 
   it("follows a profile that isn't followed yet", async () => {
     mockUserNameParam = "anihadagali7";
-    UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+    UserClient.getUserInfo.mockResolvedValue(
+      mockUserInfo(otherProfileNotFollowing)
+    );
     UserClient.followUser.mockResolvedValue({});
 
     renderWithProviders(<Profile />, {
@@ -142,14 +154,18 @@ describe("Profile", () => {
 
   it("unfollows a profile that is already followed", async () => {
     mockUserNameParam = "anihadagali7";
-    UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileFollowing));
+    UserClient.getUserInfo.mockResolvedValue(
+      mockUserInfo(otherProfileFollowing)
+    );
     UserClient.unFollowUser.mockResolvedValue({});
 
     renderWithProviders(<Profile />, {
       userContextValue: { currentUser: { userName: "shree" } },
     });
 
-    fireEvent.click(await screen.findByRole("button", { name: /^following$/i }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /^following$/i })
+    );
 
     await waitFor(() =>
       expect(UserClient.unFollowUser).toHaveBeenCalledWith("anihadagali7")
@@ -159,7 +175,9 @@ describe("Profile", () => {
   it("loads the user's ratings in the default Reviews tab", async () => {
     mockUserNameParam = "shree";
     UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
-    RatingClient.getAllRatingsForUser.mockResolvedValue(mockRatingsList([rating]));
+    RatingClient.getAllRatingsForUser.mockResolvedValue(
+      mockRatingsList([rating])
+    );
 
     renderWithProviders(<Profile />, {
       userContextValue: { currentUser: { userName: "shree" } },
@@ -195,12 +213,14 @@ describe("Profile", () => {
 
     it("shows the change-picture control only on the logged-in user's own profile", async () => {
       mockUserNameParam = "anihadagali7";
-      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+      UserClient.getUserInfo.mockResolvedValue(
+        mockUserInfo(otherProfileNotFollowing)
+      );
 
       renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
@@ -215,10 +235,12 @@ describe("Profile", () => {
       UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
       AuthClient.uploadProfilePicture.mockResolvedValue({
         data: {
-          data: { user: { ...ownProfileInfo, picture: "https://example.com/new.png" } },
+          data: {
+            user: { ...ownProfileInfo, picture: "https://example.com/new.png" },
+          },
         },
       });
-      const setCurrentUser = jest.fn();
+      const setCurrentUser = vi.fn();
 
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
@@ -228,7 +250,9 @@ describe("Profile", () => {
       });
 
       await screen.findByText("@shree");
-      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const input = container.querySelector(
+        '[data-testid="profile-picture-input"]'
+      );
       fireEvent.change(input, { target: { files: [pngFile()] } });
 
       await waitFor(() =>
@@ -255,12 +279,14 @@ describe("Profile", () => {
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
       await screen.findByText("@shree");
-      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const input = container.querySelector(
+        '[data-testid="profile-picture-input"]'
+      );
       const textFile = new File(["hello"], "notes.txt", { type: "text/plain" });
       fireEvent.change(input, { target: { files: [textFile] } });
 
@@ -277,12 +303,14 @@ describe("Profile", () => {
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
       await screen.findByText("@shree");
-      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const input = container.querySelector(
+        '[data-testid="profile-picture-input"]'
+      );
       const oversized = pngFile("huge.png", 6 * 1024 * 1024);
       fireEvent.change(input, { target: { files: [oversized] } });
 
@@ -296,18 +324,22 @@ describe("Profile", () => {
       mockUserNameParam = "shree";
       UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
       AuthClient.uploadProfilePicture.mockRejectedValue({
-        response: { data: { errors: { msg: "Could not upload your picture." } } },
+        response: {
+          data: { errors: { msg: "Could not upload your picture." } },
+        },
       });
 
       const { container } = renderWithProviders(<Profile />, {
         userContextValue: {
           currentUser: { userName: "shree" },
-          setCurrentUser: jest.fn(),
+          setCurrentUser: vi.fn(),
         },
       });
 
       await screen.findByText("@shree");
-      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const input = container.querySelector(
+        '[data-testid="profile-picture-input"]'
+      );
       fireEvent.change(input, { target: { files: [pngFile()] } });
 
       expect(
@@ -319,7 +351,9 @@ describe("Profile", () => {
       mockUserNameParam = "shree";
       UserClient.getUserInfo.mockResolvedValue(mockUserInfo(ownProfileInfo));
       AuthClient.uploadProfilePicture.mockRejectedValue({
-        response: { data: { errors: { msg: "Could not upload your picture." } } },
+        response: {
+          data: { errors: { msg: "Could not upload your picture." } },
+        },
       });
 
       const queryClient = new QueryClient({
@@ -331,7 +365,10 @@ describe("Profile", () => {
       const buildTree = () => (
         <QueryClientProvider client={queryClient}>
           <UserContext.Provider
-            value={{ currentUser: { userName: "shree" }, setCurrentUser: jest.fn() }}
+            value={{
+              currentUser: { userName: "shree" },
+              setCurrentUser: vi.fn(),
+            }}
           >
             <MemoryRouter>
               <Profile />
@@ -343,12 +380,16 @@ describe("Profile", () => {
       const { container, rerender } = render(buildTree());
 
       await screen.findByText("@shree");
-      const input = container.querySelector('[data-testid="profile-picture-input"]');
+      const input = container.querySelector(
+        '[data-testid="profile-picture-input"]'
+      );
       fireEvent.change(input, { target: { files: [pngFile()] } });
       await screen.findByText("Could not upload your picture.");
 
       mockUserNameParam = "anihadagali7";
-      UserClient.getUserInfo.mockResolvedValue(mockUserInfo(otherProfileNotFollowing));
+      UserClient.getUserInfo.mockResolvedValue(
+        mockUserInfo(otherProfileNotFollowing)
+      );
       rerender(buildTree());
 
       await screen.findByText("Anirudha Hadagali");

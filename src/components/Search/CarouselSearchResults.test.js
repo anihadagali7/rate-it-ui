@@ -3,28 +3,37 @@ import { renderWithProviders } from "../../testUtils/renderWithProviders";
 import CarouselSearchResults from "./CarouselSearchResults";
 
 beforeEach(() => {
-  window.matchMedia = jest.fn().mockImplementation((query) => ({
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
     matches: query.includes("min-width"),
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }));
 });
 
-const movie = { id: "m1", mediaId: "11324", name: "Shutter Island", poster: "poster.jpg" };
-const song = { id: "s1", mediaId: "6EGh05sts1Y48cG6RhLdWm", name: "Let's Live For Today" };
+const movie = {
+  id: "m1",
+  mediaId: "11324",
+  name: "Shutter Island",
+  poster: "poster.jpg",
+};
+const song = {
+  id: "s1",
+  mediaId: "6EGh05sts1Y48cG6RhLdWm",
+  name: "Let's Live For Today",
+};
 
 describe("CarouselSearchResults", () => {
   it("renders only the categories that have results", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie], tv: [], music: [song] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -39,8 +48,8 @@ describe("CarouselSearchResults", () => {
     renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [movie] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -54,8 +63,8 @@ describe("CarouselSearchResults", () => {
     const { container } = renderWithProviders(
       <CarouselSearchResults
         searchResults={{ movie: [], tv: [], book: [], music: [] }}
-        setViewAllMedia={jest.fn()}
-        setViewAllType={jest.fn()}
+        setViewAllMedia={vi.fn()}
+        setViewAllType={vi.fn()}
       />
     );
 
@@ -63,8 +72,8 @@ describe("CarouselSearchResults", () => {
   });
 
   it("switches to the full results view for a category when See all is clicked", () => {
-    const setViewAllMedia = jest.fn();
-    const setViewAllType = jest.fn();
+    const setViewAllMedia = vi.fn();
+    const setViewAllType = vi.fn();
 
     renderWithProviders(
       <CarouselSearchResults
@@ -76,7 +85,10 @@ describe("CarouselSearchResults", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /see all/i }));
 
-    expect(setViewAllType).toHaveBeenCalledWith({ type: "movie", title: "Movies" });
+    expect(setViewAllType).toHaveBeenCalledWith({
+      type: "movie",
+      title: "Movies",
+    });
     expect(setViewAllMedia).toHaveBeenCalledWith(true);
   });
 });

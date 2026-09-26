@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { FACEBOOK_APP_ID } from "../../config";
 
 let fbSdkPromise = null;
 
@@ -38,7 +39,7 @@ const loadFacebookSdk = (appId) => {
 };
 
 const useFacebookSdk = () => {
-  const appId = process.env.REACT_APP_FACEBOOK_APP_ID;
+  const appId = FACEBOOK_APP_ID;
 
   const login = useCallback(async () => {
     const FB = await loadFacebookSdk(appId);
