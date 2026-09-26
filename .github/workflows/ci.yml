@@ -11,15 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
 
-      # Skip postinstall build — tests don't need a production bundle
+      # Skip postinstall build — the build runs as its own step below
       - name: Install dependencies
         run: npm ci --ignore-scripts
+
+      # Only files changed in the PR: much of src/ predates the Prettier hook.
+      - name: Check formatting of changed files
+        if: github.event_name == 'pull_request'
+        run: |
+          git diff -z --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" -- \
+            'src/*.js' 'src/*.jsx' 'src/*.ts' 'src/*.tsx' 'src/*.json' 'src/*.css' 'src/*.scss' 'src/*.md' \
+            | xargs -0 -r npx prettier --check
 
       - name: Run tests
         # --forceExit: CRA does not process.exit() after Jest, so open handles
@@ -27,4 +37,11 @@ jobs:
         run: npm run test:ci
         env:
           CI: true
+          NODE_OPTIONS: --max_old_space_size=4096
+
+      - name: Production build
+        # CI=false matches Heroku, which does not treat lint warnings as errors.
+        run: npm run build
+        env:
+          CI: false
           NODE_OPTIONS: --max_old_space_size=4096
