@@ -80,6 +80,12 @@ Run the test suite once (non-interactive):
 npm run test:ci
 ```
 
+Type-check the TypeScript files (CI runs this too):
+
+```bash
+npm run typecheck
+```
+
 Run a specific test file (or `npm test` for watch mode):
 
 ```bash

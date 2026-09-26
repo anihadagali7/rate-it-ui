@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import AuthClient from "./AuthClient";
 import { BASE_URL as API_URL } from "../config";
+import type { AuthResponse, SignUpRequest } from "../types/api";
 
 vi.mock("axios");
 
@@ -19,11 +20,44 @@ describe("AuthClient", () => {
         password: "Password1!",
       });
     });
+
+    it("resolves with the access token and the signed-in account", async () => {
+      const body: AuthResponse = {
+        status: "success",
+        accessToken: "jwt-token",
+        data: {
+          user: {
+            _id: "user-1",
+            userName: "abc",
+            firstName: "A",
+            lastName: "B",
+            followers: [],
+            following: [],
+            isEmailVerified: true,
+            isProfileComplete: true,
+          },
+        },
+      };
+      vi.mocked(axios.post).mockResolvedValue({
+        data: body,
+      } as AxiosResponse<AuthResponse>);
+
+      const response = await AuthClient.login("a@b.com", "Password1!");
+
+      expect(response.data.accessToken).toBe("jwt-token");
+      expect(response.data.data.user.userName).toBe("abc");
+    });
   });
 
   describe("signUp", () => {
     it("POSTs the new account payload to the create-user endpoint", () => {
-      const newAccount = { email: "a@b.com", userName: "abc" };
+      const newAccount: SignUpRequest = {
+        firstName: "A",
+        lastName: "B",
+        email: "a@b.com",
+        password: "Password1!",
+        userName: "abc",
+      };
 
       AuthClient.signUp(newAccount);
 

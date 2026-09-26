@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import UserClient from "./UserClient";
 import { BASE_URL as API_URL } from "../config";
+import type { ApiSuccess, PublicUser } from "../types/api";
 
 vi.mock("axios");
 
@@ -41,6 +42,33 @@ describe("UserClient", () => {
       `${API_URL}/api/allUsers`,
       authHeaders
     );
+  });
+
+  it("getFriendsList resolves with followers and following as public users", async () => {
+    const friend: PublicUser = {
+      _id: "user-2",
+      userName: "janedoe",
+      firstName: "Jane",
+      lastName: "Doe",
+      followers: ["johndoe"],
+      following: [],
+    };
+    type FriendsListResponse = ApiSuccess<{
+      followersList: PublicUser[];
+      followingList: PublicUser[];
+    }>;
+    const body: FriendsListResponse = {
+      status: "success",
+      data: { followersList: [friend], followingList: [] },
+    };
+    vi.mocked(axios.get).mockResolvedValue({
+      data: body,
+    } as AxiosResponse<FriendsListResponse>);
+
+    const response = await UserClient.getFriendsList("johndoe");
+
+    expect(response.data.data.followersList[0].userName).toBe("janedoe");
+    expect(response.data.data.followingList).toEqual([]);
   });
 
   it("getFollowing GETs the following list for a user", () => {
