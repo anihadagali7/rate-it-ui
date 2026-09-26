@@ -29,7 +29,12 @@ describe("IndividualSearchResults - people tab", () => {
       data: {
         data: {
           mediaList: [
-            { userName: "janedoe", firstName: "Jane", lastName: "Doe", followers: [] },
+            {
+              userName: "janedoe",
+              firstName: "Jane",
+              lastName: "Doe",
+              followers: [],
+            },
           ],
         },
       },

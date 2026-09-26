@@ -43,9 +43,7 @@ describe("Login", () => {
 
     fillForm(container, { email: "user@example.com", password: "Password1!" });
 
-    expect(
-      screen.getByRole("button", { name: /sign in/i })
-    ).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /sign in/i })).not.toBeDisabled();
   });
 
   it("shows a validation error and does not submit for an invalid email", async () => {
@@ -128,10 +126,7 @@ describe("Login", () => {
     const setCurrentUser = jest.fn();
     renderWithProviders(<Login />, { userContextValue: { setCurrentUser } });
 
-    socialAuthButtonsProps.onSuccess(
-      { isProfileComplete: false },
-      "jwt-token"
-    );
+    socialAuthButtonsProps.onSuccess({ isProfileComplete: false }, "jwt-token");
 
     expect(localStorage.getItem("accessToken")).toBe("jwt-token");
     expect(localStorage.getItem("userName")).toBeNull();

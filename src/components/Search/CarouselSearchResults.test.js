@@ -15,8 +15,17 @@ beforeEach(() => {
   }));
 });
 
-const movie = { id: "m1", mediaId: "11324", name: "Shutter Island", poster: "poster.jpg" };
-const song = { id: "s1", mediaId: "6EGh05sts1Y48cG6RhLdWm", name: "Let's Live For Today" };
+const movie = {
+  id: "m1",
+  mediaId: "11324",
+  name: "Shutter Island",
+  poster: "poster.jpg",
+};
+const song = {
+  id: "s1",
+  mediaId: "6EGh05sts1Y48cG6RhLdWm",
+  name: "Let's Live For Today",
+};
 
 describe("CarouselSearchResults", () => {
   it("renders only the categories that have results", () => {
@@ -76,7 +85,10 @@ describe("CarouselSearchResults", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /see all/i }));
 
-    expect(setViewAllType).toHaveBeenCalledWith({ type: "movie", title: "Movies" });
+    expect(setViewAllType).toHaveBeenCalledWith({
+      type: "movie",
+      title: "Movies",
+    });
     expect(setViewAllMedia).toHaveBeenCalledWith(true);
   });
 });

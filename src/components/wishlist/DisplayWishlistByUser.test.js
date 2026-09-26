@@ -13,7 +13,11 @@ const makeWishlistItem = (id, name, mediaId) => ({
     mediaId,
     picture: "https://example.com/poster.jpg",
   },
-  addedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
+  addedBy: {
+    userName: "anihadagali7",
+    firstName: "Anirudha",
+    lastName: "Hadagali",
+  },
   dateCreated: "2024-01-01T00:00:00.000Z",
 });
 
@@ -29,7 +33,9 @@ describe("DisplayWishlistByUser", () => {
       <DisplayWishlistByUser userName="anihadagali7" />
     );
 
-    expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
+    expect(
+      container.querySelectorAll(".MuiSkeleton-root").length
+    ).toBeGreaterThan(0);
   });
 
   it("renders the user's wishlist items", async () => {
@@ -50,7 +56,9 @@ describe("DisplayWishlistByUser", () => {
   });
 
   it("shows an empty state when the wishlist has no items", async () => {
-    WishlistClient.getAllWishlistForUser.mockResolvedValue(mockWishlistResponse([]));
+    WishlistClient.getAllWishlistForUser.mockResolvedValue(
+      mockWishlistResponse([])
+    );
 
     renderWithProviders(<DisplayWishlistByUser userName="anihadagali7" />);
 
@@ -92,10 +100,9 @@ describe("DisplayWishlistByUser", () => {
       mockWishlistResponse([makeWishlistItem("w1", "Succession", "76331")])
     );
 
-    renderWithProviders(
-      <DisplayWishlistByUser userName="anihadagali7" />,
-      { userContextValue: { currentUser: { userName: "someoneelse" } } }
-    );
+    renderWithProviders(<DisplayWishlistByUser userName="anihadagali7" />, {
+      userContextValue: { currentUser: { userName: "someoneelse" } },
+    });
 
     expect(await screen.findByText("Succession")).toBeInTheDocument();
     expect(

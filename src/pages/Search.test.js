@@ -40,7 +40,12 @@ describe("Search", () => {
     SearchClient.searchAllMedia.mockResolvedValue(
       mockSearchResponse({
         movie: [
-          { id: "m1", mediaId: "11324", name: "Shutter Island", poster: "poster.jpg" },
+          {
+            id: "m1",
+            mediaId: "11324",
+            name: "Shutter Island",
+            poster: "poster.jpg",
+          },
         ],
       })
     );
@@ -56,7 +61,12 @@ describe("Search", () => {
     SearchClient.searchAllMedia.mockResolvedValue(
       mockSearchResponse({
         movie: [
-          { id: "m1", mediaId: "11324", name: "Shutter Island", poster: "poster.jpg" },
+          {
+            id: "m1",
+            mediaId: "11324",
+            name: "Shutter Island",
+            poster: "poster.jpg",
+          },
         ],
       })
     );
@@ -93,7 +103,14 @@ describe("Search", () => {
   it("runs a search when Enter is pressed after typing a keyword", async () => {
     SearchClient.searchAllMedia.mockResolvedValue(
       mockSearchResponse({
-        tv: [{ id: "t1", mediaId: "76331", name: "Succession", poster: "poster.jpg" }],
+        tv: [
+          {
+            id: "t1",
+            mediaId: "76331",
+            name: "Succession",
+            poster: "poster.jpg",
+          },
+        ],
       })
     );
 
@@ -121,7 +138,9 @@ describe("Search", () => {
 
     const { container } = renderWithProviders(<Search />);
 
-    expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
+    expect(
+      container.querySelectorAll(".MuiSkeleton-root").length
+    ).toBeGreaterThan(0);
   });
 
   it("shows a no results message when the search returns nothing", async () => {

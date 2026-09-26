@@ -33,9 +33,13 @@ describe("Signup (logged out)", () => {
     const { container } = renderWithProviders(<Signup />);
 
     expect(screen.getByText("Create an Account")).toBeInTheDocument();
-    expect(container.querySelector('input[name="userName"]')).not.toBeDisabled();
+    expect(
+      container.querySelector('input[name="userName"]')
+    ).not.toBeDisabled();
     expect(container.querySelector('input[name="email"]')).not.toBeDisabled();
-    expect(screen.getByRole("button", { name: /sign up/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /sign up/i })
+    ).toBeInTheDocument();
   });
 
   it("disables Sign Up until all required fields, including password, are filled in", () => {
@@ -45,9 +49,7 @@ describe("Signup (logged out)", () => {
 
     fillForm(container, validSignupPayload);
 
-    expect(
-      screen.getByRole("button", { name: /sign up/i })
-    ).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /sign up/i })).not.toBeDisabled();
   });
 
   it("blocks submission and shows errors for invalid fields", async () => {

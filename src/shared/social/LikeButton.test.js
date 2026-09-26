@@ -32,16 +32,16 @@ describe("LikeButton", () => {
     fireEvent.click(screen.getByRole("button", { name: /unlike/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /unlike/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /unlike/i })
+      ).toBeInTheDocument();
       expect(screen.getByText("4")).toBeInTheDocument();
     });
   });
 
   it("does not toggle when disabled", () => {
     const onToggle = jest.fn();
-    render(
-      <LikeButton initialCount={0} disabled onToggle={onToggle} />
-    );
+    render(<LikeButton initialCount={0} disabled onToggle={onToggle} />);
 
     fireEvent.click(screen.getByRole("button", { name: /like/i }));
 

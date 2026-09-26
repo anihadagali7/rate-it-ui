@@ -49,9 +49,7 @@ describe("ProfileDetails - sign up", () => {
 
     fillForm(container, validSignupPayload);
 
-    expect(
-      screen.getByRole("button", { name: /sign up/i })
-    ).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /sign up/i })).not.toBeDisabled();
   });
 
   it("blocks submission and shows errors for invalid fields", async () => {
@@ -134,14 +132,14 @@ describe("ProfileDetails - sign up", () => {
 
   it("navigates a brand-new social sign-up to finish their profile", () => {
     const setCurrentUser = jest.fn();
-    renderWithProviders(<ProfileDetails createProfile updateProfile={false} />, {
-      userContextValue: { setCurrentUser },
-    });
-
-    socialAuthButtonsProps.onSuccess(
-      { isProfileComplete: false },
-      "jwt-token"
+    renderWithProviders(
+      <ProfileDetails createProfile updateProfile={false} />,
+      {
+        userContextValue: { setCurrentUser },
+      }
     );
+
+    socialAuthButtonsProps.onSuccess({ isProfileComplete: false }, "jwt-token");
 
     expect(localStorage.getItem("accessToken")).toBe("jwt-token");
     expect(mockNavigate).toHaveBeenCalledWith("/complete-profile");

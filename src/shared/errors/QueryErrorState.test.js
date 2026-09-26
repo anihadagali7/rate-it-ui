@@ -20,7 +20,9 @@ describe("QueryErrorState", () => {
       />
     );
 
-    expect(screen.getByText("Unable to load explore ratings.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Unable to load explore ratings.")
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /try again/i }));
     expect(onRetry).toHaveBeenCalledTimes(1);
   });

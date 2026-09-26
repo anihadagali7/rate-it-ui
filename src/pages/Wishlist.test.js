@@ -13,7 +13,11 @@ jest.mock("react-router-dom", () => ({
 const makeWishlistItem = (id, name, mediaId) => ({
   _id: id,
   media: { name, mediaType: "TV", mediaId },
-  addedBy: { userName: "anihadagali7", firstName: "Anirudha", lastName: "Hadagali" },
+  addedBy: {
+    userName: "anihadagali7",
+    firstName: "Anirudha",
+    lastName: "Hadagali",
+  },
   dateCreated: "2024-01-01T00:00:00.000Z",
 });
 

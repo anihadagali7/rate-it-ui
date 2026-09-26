@@ -82,10 +82,9 @@ describe("AuthClient", () => {
     it("POSTs the access token to the Facebook endpoint without auth headers", () => {
       AuthClient.loginWithFacebook("fb-access-token");
 
-      expect(axios.post).toHaveBeenCalledWith(
-        `${API_URL}/api/auth/facebook`,
-        { accessToken: "fb-access-token" }
-      );
+      expect(axios.post).toHaveBeenCalledWith(`${API_URL}/api/auth/facebook`, {
+        accessToken: "fb-access-token",
+      });
     });
   });
 

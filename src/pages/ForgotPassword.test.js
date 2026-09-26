@@ -55,9 +55,7 @@ describe("ForgotPassword", () => {
     fireEvent.click(screen.getByRole("button", { name: /send reset link/i }));
 
     expect(await screen.findByText(/we've sent a link/i)).toBeInTheDocument();
-    expect(AuthClient.forgotPassword).toHaveBeenCalledWith(
-      "user@example.com"
-    );
+    expect(AuthClient.forgotPassword).toHaveBeenCalledWith("user@example.com");
   });
 
   it("shows an error message if the request itself fails", async () => {

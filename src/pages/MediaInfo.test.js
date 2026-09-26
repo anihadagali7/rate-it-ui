@@ -31,8 +31,12 @@ beforeEach(() => {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   }));
-  MediaClient.getMediaInfoDetails.mockResolvedValue({ data: mediaInfoResponse });
-  RatingClient.getAllRatingsForMedia.mockResolvedValue({ data: ratingsResponse });
+  MediaClient.getMediaInfoDetails.mockResolvedValue({
+    data: mediaInfoResponse,
+  });
+  RatingClient.getAllRatingsForMedia.mockResolvedValue({
+    data: ratingsResponse,
+  });
   WishlistClient.getAllWishlistForUser.mockResolvedValue({
     data: { data: { wishlistList: [] } },
   });
@@ -44,7 +48,9 @@ describe("MediaInfo", () => {
 
     const { container } = renderWithProviders(<MediaInfo />);
 
-    expect(container.querySelectorAll(".MuiSkeleton-root").length).toBeGreaterThan(0);
+    expect(
+      container.querySelectorAll(".MuiSkeleton-root").length
+    ).toBeGreaterThan(0);
     expect(screen.queryByText("Succession")).not.toBeInTheDocument();
   });
 
@@ -70,7 +76,9 @@ describe("MediaInfo", () => {
   it("renders community reviews when ratings exist", async () => {
     renderWithProviders(<MediaInfo />);
 
-    expect(await screen.findByText("Community reviews (1)")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Community reviews (1)")
+    ).toBeInTheDocument();
     expect(screen.getByText("Anirudha Hadagali")).toBeInTheDocument();
     expect(screen.getByText("great story")).toBeInTheDocument();
   });
@@ -82,7 +90,9 @@ describe("MediaInfo", () => {
 
     renderWithProviders(<MediaInfo />);
 
-    expect(await screen.findByRole("heading", { name: "Succession" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Succession" })
+    ).toBeInTheDocument();
     expect(screen.queryByText(/community reviews/i)).not.toBeInTheDocument();
     expect(screen.getByText("No reviews yet")).toBeInTheDocument();
   });
@@ -183,9 +193,7 @@ describe("MediaInfo", () => {
     expect(
       await screen.findByText("You rated Succession 5/10")
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /rated 5\/10/i })
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /rated 5\/10/i })).toBeDisabled();
   });
 
   it("disables the rate button when the user already rated the media", async () => {

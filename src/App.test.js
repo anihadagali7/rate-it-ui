@@ -49,9 +49,7 @@ test("does not redirect an already logged-in user away from a password reset lin
 
   renderApp();
 
-  expect(
-    await screen.findByText("Choose a new password")
-  ).toBeInTheDocument();
+  expect(await screen.findByText("Choose a new password")).toBeInTheDocument();
 
   window.history.pushState({}, "", "/");
 });
@@ -74,7 +72,5 @@ test("resolves the current user via getMe when only an access token is stored (m
 
   renderApp();
 
-  expect(
-    await screen.findByText("Finish setting up")
-  ).toBeInTheDocument();
+  expect(await screen.findByText("Finish setting up")).toBeInTheDocument();
 });

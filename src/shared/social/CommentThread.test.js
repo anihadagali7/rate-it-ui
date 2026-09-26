@@ -17,9 +17,7 @@ const comments = [
 
 describe("CommentThread", () => {
   it("shows the comment count and expands the thread", () => {
-    renderWithProviders(
-      <CommentThread comments={comments} commentCount={1} />
-    );
+    renderWithProviders(<CommentThread comments={comments} commentCount={1} />);
 
     fireEvent.click(screen.getByRole("button", { name: /1 comment/i }));
 

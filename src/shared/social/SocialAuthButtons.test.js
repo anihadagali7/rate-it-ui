@@ -33,9 +33,7 @@ describe("SocialAuthButtons", () => {
   it("only renders Google by default (Facebook and Apple are temporarily disabled)", () => {
     render(<SocialAuthButtons onSuccess={onSuccess} onError={onError} />);
 
-    expect(
-      screen.getByRole("button", { name: /google/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /google/i })).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /facebook/i })
     ).not.toBeInTheDocument();
@@ -53,15 +51,11 @@ describe("SocialAuthButtons", () => {
       />
     );
 
-    expect(
-      screen.getByRole("button", { name: /google/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /google/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /facebook/i })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /apple/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /apple/i })).toBeInTheDocument();
   });
 
   it("exchanges the Google auth code and forwards the resulting user", async () => {
