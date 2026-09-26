@@ -99,11 +99,11 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 
 - `VITE_BASE_URL` points at the API. Locally that's `http://localhost:8080`, whose
   `.env` uses the **dev** MongoDB. Never point the UI at the prod API while testing.
-- Do not read or print `.env` values; variable names are documented in `README.md`.
+- Do not read or print `.env` values; variable names are in `.env.example` and `README.md`.
 - `VITE_*` vars are baked in at build time and read in one place, `src/config.js`
   (`import.meta.env`) — import from there rather than reading `import.meta.env` directly.
-  A new one must be added to `src/config.js` and the README, and set on Heroku; call
-  this out in the PR.
+  A new one must be added to `src/config.js`, `.env.example` and the README, and set on
+  Heroku; call this out in the PR.
 
 ## Verifying changes in the browser
 

@@ -23,7 +23,11 @@ Protected routes require a valid JWT stored in `localStorage`. The app sends the
 
 ## Environment variables
 
-Create a `.env` file in the project root (gitignored):
+Copy `.env.example` to `.env` in the project root (`.env` is gitignored) and fill in the values:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 VITE_BASE_URL=http://localhost:8080
