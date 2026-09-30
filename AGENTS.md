@@ -134,10 +134,11 @@ errors. Include a screenshot in the PR for visual changes when possible.
 ## Cross-repo work
 
 The API is at `../rate-it-service`. Its routes are in `routes/`, the logic in `services/`,
-and the full endpoint table is in `../rate-it-service/AGENTS.md`.
+and every endpoint is documented in `../rate-it-service/openapi.json` (browse it at
+`http://localhost:8080/api/docs` while the API runs locally).
 
 - If a story needs a new or changed endpoint, that's a backend story that ships first.
-  Don't guess at response shapes — read the service code.
+  Don't guess at response shapes — check the spec and read the service code.
 - UI stories that depend on an unmerged backend change should say so in the PR.
 
 ## Git & PR workflow
