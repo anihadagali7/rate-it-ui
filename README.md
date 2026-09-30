@@ -45,7 +45,7 @@ VITE_APPLE_REDIRECT_URI=https://your-app-origin
 | `VITE_FACEBOOK_APP_ID` | For Facebook sign-in | From a Facebook Login app |
 | `VITE_APPLE_CLIENT_ID` / `VITE_APPLE_REDIRECT_URI` | For Apple sign-in | Your Apple Services ID and its registered return URL. Apple's sign-in popup requires HTTPS, even locally |
 
-Vite reads `VITE_*` variables at **build time** (code reads them from `import.meta.env` via `src/config.js`). Only variables with the `VITE_` prefix reach the browser. If you change this value on Heroku, trigger a new deploy so the production bundle is rebuilt.
+Code reads these values through `src/config.ts`. Locally, Vite compiles them in from `.env` at build time; only variables with the `VITE_` prefix reach the browser. On Heroku, `scripts/heroku-start.js` serves each app's own values as `/config.js` when the page loads, so one build works on every app in the pipeline (see [Notes for Heroku](#notes-for-heroku)).
 
 On the API side, make sure `CORS_ORIGIN` includes your UI origin (e.g. `http://localhost:3000` locally, or your Heroku UI URL in production).
 
@@ -138,7 +138,7 @@ Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
    heroku git:remote -a your-rate-it-ui
    ```
 
-4. Set config vars **before** deploying (values are baked into the build):
+4. Set config vars (each app in the pipeline sets its own; they're read when the page loads):
 
    ```bash
    heroku config:set VITE_BASE_URL="https://your-rate-it-service.herokuapp.com"
@@ -187,7 +187,8 @@ Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
 ### Notes for Heroku
 
 - Do **not** commit `node_modules`, `.env`, or `build/`. Heroku installs dependencies and runs the production build during deploy.
-- `VITE_BASE_URL` must point at your deployed API. After changing it, redeploy the UI so the new value is compiled into the bundle.
+- `VITE_BASE_URL` must point at that app's API (staging → `rate-it-service`, production → `rate-it-service-prod`). `scripts/heroku-start.js` serves the `VITE_*` config vars as `/config.js` when the page loads, and `src/config.ts` prefers them over the values compiled into the bundle. So promoting a build through the pipeline is safe, and changing a value only needs the restart that `heroku config:set` does, not a rebuild.
+- Only the keys listed in `scripts/runtimeConfig.js` are sent to the browser. Adding a new client value means adding it there too; never add a secret.
 - The Express server serves `build/index.html` for client-side routes so React Router works on refresh and deep links.
 - If you update API env vars only, restart the API dyno: `heroku restart -a your-rate-it-service`.
 
@@ -198,7 +199,8 @@ rate-it-ui/
 ├── index.html             # Vite entry HTML
 ├── public/                # Static assets copied as-is into build/
 ├── scripts/
-│   └── heroku-start.js    # Express server for Heroku (serves build/)
+│   ├── heroku-start.js    # Express server for Heroku (serves build/ and /config.js)
+│   └── runtimeConfig.js   # Builds /config.js from the app's VITE_* config vars
 ├── src/
 │   ├── client/            # API clients (axios)
 │   ├── components/        # UI components
@@ -207,7 +209,7 @@ rate-it-ui/
 │   ├── shared/            # Buttons, inputs, Protected route, errors, loading
 │   ├── utils/             # Auth header helpers and axios interceptor
 │   ├── App.js             # Routes and session bootstrap
-│   ├── config.js          # VITE_* env vars, read once
+│   ├── config.ts          # Client config: /config.js values, else VITE_* from the build
 │   └── index.js           # App entry point
 ├── Procfile               # Heroku process definition
 ├── vite.config.mjs        # Vite + Vitest config
