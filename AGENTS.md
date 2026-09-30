@@ -17,6 +17,7 @@ npm run typecheck    # tsc --noEmit (CI runs it before the tests)
 npm run test:ci      # full Vitest suite, non-interactive (what CI runs)
 npx vitest run src/pages/Wishlist.test.js   # one file
 npm run build        # production build into build/
+npm run api:sync     # copy ../rate-it-service/openapi.json and regenerate API types
 ```
 
 Always run `npm run typecheck` and `npm run test:ci` before opening a PR. The UI needs the API running
@@ -44,7 +45,7 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 | `src/components/<feature>/` | Feature components (`ratingcard`, `mediainfo`, `playlist`, `profile`, `modals`, `Search`, ...). |
 | `src/shared/` | Reusable building blocks: `primitives/` (ScoreBadge, MediaPoster, EmptyState, SurfaceCard, UserAvatar), `layout/` (FeedLayout, RightRail, AuthLayout, SectionHeader), `feedback/Toast`, `errors/` (QueryErrorState, ErrorBoundary), `loading/` skeletons, `hooks/`, `social/` (LikeButton, FollowButton, CommentThread), `buttons/`, `inputfield/`. **Check here before building something new.** |
 | `src/client/` | One static class per API area (`RatingClient`, `UserClient`, ...). Every API call goes through these. |
-| `src/types/` | `api.ts`: the API contract types (`ApiSuccess<T>`, `ApiError`, `Rating`, `PublicUser`, ...). |
+| `src/types/` | `api.ts`: the API contract types (`ApiRequest`, `ApiResponse`, `Rating`, `PublicUser`, ...), aliased from `api.generated.ts`, which is generated from the vendored service spec `openapi.json`. |
 | `src/navigation/` | App shell: `ResponsiveLayout`, `Sidebar`, `TopAppBar`, `Masthead`. |
 | `src/utils/` | `AuthorizationUtils.getHeaders()`, `authInterceptor`. |
 | `src/styles/` | `tokens.js`, MUI `Theme.js`. |
@@ -60,17 +61,22 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 - `tsconfig.json` is `strict`. Don't use `any`; if it's truly unavoidable, add a comment
   explaining why.
 - API types live in `src/types/api.ts`, and other code imports them only from there.
-  When the service contract changes (a path, request field, or response payload),
-  update `api.ts` and the client method's return type in the same PR. Each type names
-  its source file in `rate-it-service`. These types are hand-written for now; #64
-  replaces them with types generated from the service's OpenAPI spec.
+  They're aliases of the types in `src/types/api.generated.ts`, which is generated from
+  `src/types/openapi.json`, a copy of the service's spec (see
+  [Cross-repo work](#cross-repo-work)). Never edit either generated file by hand; CI
+  fails if `api.generated.ts` doesn't match the spec. `src/types/api.type-test.ts`
+  checks at compile time that the helpers resolve to real shapes.
+- The generator (`openapi-typescript`) needs TypeScript 5's compiler API, so it lives in
+  its own package, `tools/api-codegen/`, with its own lockfile. `npm run api:generate`
+  installs it on first use.
 
 ### Data fetching
 
 - Add API calls as static methods on the matching `src/client/*Client.ts` class, using
   `` `${API_URL}/api/...` `` (`import { BASE_URL as API_URL } from "../config"`) and
-  `getHeaders()`. Type the parameters and the return value, e.g.
-  `Promise<AxiosResponse<ApiSuccess<{ ratingsList: Rating[] }>>>`.
+  `getHeaders()`. Take the parameter and return types from the spec path the method
+  calls, e.g. `Promise<AxiosResponse<ApiResponse<"/api/ratings/explore", "get">>>` and
+  `ApiRequest<"/api/ratings", "post">`, so a contract change breaks the build.
 - Use `useQuery` / `useMutation` in components. API responses are
   `{ status, data: { <payload> } }`, so unwrap with `select: ({ data }) => data.data.<payload>`.
 - After a mutation, `queryClient.invalidateQueries({ queryKey: [...] })` for every
@@ -140,6 +146,12 @@ and every endpoint is documented in `../rate-it-service/openapi.json` (browse it
 - If a story needs a new or changed endpoint, that's a backend story that ships first.
   Don't guess at response shapes — check the spec and read the service code.
 - UI stories that depend on an unmerged backend change should say so in the PR.
+- The UI keeps a copy of the spec in `src/types/openapi.json`. Once a service change to
+  `openapi.json` has merged, UI work that depends on it starts with `npm run api:sync`
+  (with `../rate-it-service` on an up-to-date `master`). That copies the spec,
+  regenerates `src/types/api.generated.ts`, and turns any contract change into type
+  errors in `src/client/`. Commit both files with the UI change. `api:sync` fails with
+  a clear message if `../rate-it-service` isn't there.
 
 ## Git & PR workflow
 

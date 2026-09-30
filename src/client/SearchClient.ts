@@ -3,8 +3,8 @@ import axios, { type AxiosResponse } from "axios";
 import { getHeaders } from "../utils/AuthorizationUtils";
 import { BASE_URL as API_URL } from "../config";
 import type {
-  ApiSuccess,
-  FullSearchList,
+  ApiRequest,
+  ApiResponse,
   MediaCategory,
   MediaSearchResponse,
   UserSearchResponse,
@@ -34,8 +34,9 @@ export default class SearchClient {
 
   static searchAllMedia(
     keyWord: string
-  ): Promise<AxiosResponse<ApiSuccess<{ fullSearchList: FullSearchList }>>> {
+  ): Promise<AxiosResponse<ApiResponse<"/api/search/all", "post">>> {
     const url = `${API_URL}/api/search/all`;
-    return axios.post(url, { keyWord: keyWord }, getHeaders());
+    const body: ApiRequest<"/api/search/all", "post"> = { keyWord };
+    return axios.post(url, body, getHeaders());
   }
 }

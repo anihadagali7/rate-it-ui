@@ -94,6 +94,21 @@ npx vitest run src/pages/Home.test.js
 
 Tests use Vitest and React Testing Library. API clients are mocked in unit tests; no backend is required to run them.
 
+## API types
+
+The API types in `src/types/` are generated from the service's OpenAPI spec. After a
+change to `openapi.json` merges in [rate-it-service](https://github.com/anihadagali7/rate-it-service),
+update the copy here from a checkout next to this repo:
+
+```bash
+npm run api:sync       # copy ../rate-it-service/openapi.json and regenerate src/types/api.generated.ts
+npm run api:generate   # regenerate only, from the committed src/types/openapi.json
+```
+
+Commit both files. Don't edit them by hand: CI regenerates `api.generated.ts` and fails
+if it differs. The generator lives in `tools/api-codegen/` with its own lockfile,
+because it needs TypeScript 5 and the app uses TypeScript 7.
+
 ## Production build
 
 Build optimized static assets into `build/`:
@@ -199,14 +214,17 @@ rate-it-ui/
 ├── index.html             # Vite entry HTML
 ├── public/                # Static assets copied as-is into build/
 ├── scripts/
+│   ├── apiTypes.js        # npm run api:sync / api:generate
 │   ├── heroku-start.js    # Express server for Heroku (serves build/ and /config.js)
 │   └── runtimeConfig.js   # Builds /config.js from the app's VITE_* config vars
+├── tools/api-codegen/     # openapi-typescript + TypeScript 5, with their own lockfile
 ├── src/
 │   ├── client/            # API clients (axios)
 │   ├── components/        # UI components
 │   ├── navigation/        # Layout, header, sidebar
 │   ├── pages/             # Route-level pages
 │   ├── shared/            # Buttons, inputs, Protected route, errors, loading
+│   ├── types/             # API types: api.ts aliases, generated from openapi.json
 │   ├── utils/             # Auth header helpers and axios interceptor
 │   ├── App.js             # Routes and session bootstrap
 │   ├── config.ts          # Client config: /config.js values, else VITE_* from the build

@@ -1,0 +1,9 @@
+{
+  "name": "rate-it-ui-api-codegen",
+  "private": true,
+  "description": "Generates src/types/api.generated.ts from the service's OpenAPI spec. Kept out of the root package because openapi-typescript needs TypeScript 5's compiler API and the app uses TypeScript 7. Run it through `npm run api:generate` or `npm run api:sync`.",
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}
