@@ -1,9 +1,12 @@
 // Create new file scripts/heroku-start.js
 const express = require("express");
 const path = require("path");
+const { serveConfigScript } = require("./runtimeConfig");
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
+// Registered before the static folder so it replaces the build's public/config.js stub.
+app.get("/config.js", serveConfigScript(process.env));
 // Your static pre-build assets folder
 app.use(express.static(path.join(__dirname, "..", "build")));
 // Root Redirects to the pre-build assets

@@ -116,10 +116,14 @@ locally (`npm start` in `../rate-it-service`, port 8080) to be used in the brows
 - `VITE_BASE_URL` points at the API. Locally that's `http://localhost:8080`, whose
   `.env` uses the **dev** MongoDB. Never point the UI at the prod API while testing.
 - Do not read or print `.env` values; variable names are in `.env.example` and `README.md`.
-- `VITE_*` vars are baked in at build time and read in one place, `src/config.js`
-  (`import.meta.env`) — import from there rather than reading `import.meta.env` directly.
-  A new one must be added to `src/config.js`, `.env.example` and the README, and set on
-  Heroku; call this out in the PR.
+- `VITE_*` vars are read in one place, `src/config.ts`; import from there rather than
+  reading `import.meta.env` directly. On Heroku, `scripts/heroku-start.js` serves each
+  app's values as `/config.js` at page load, and they win over the build-time
+  `import.meta.env` values. This keeps promoting a build from `rate-it-ui` (staging) to
+  `rate-it-ui-prod` safe. A new one must be added to `src/config.ts`, the `RateItConfig`
+  type in `src/vite-env.d.ts`, `RUNTIME_CONFIG_KEYS` in `scripts/runtimeConfig.js`,
+  `.env.example` and the README, and set on each Heroku app; call this out in the PR.
+  Everything in `RUNTIME_CONFIG_KEYS` reaches the browser: never add a secret.
 
 ## Verifying changes in the browser
 
