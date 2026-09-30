@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/tools/api-codegen/node_modules
 /.pnp
 .pnp.js
 

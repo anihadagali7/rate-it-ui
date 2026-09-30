@@ -2,17 +2,12 @@ import axios, { type AxiosResponse } from "axios";
 
 import { getHeaders } from "../utils/AuthorizationUtils";
 import { BASE_URL as API_URL } from "../config";
-import type {
-  AddToWishlistRequest,
-  ApiSuccess,
-  WishlistDocument,
-  WishlistItem,
-} from "../types/api";
+import type { ApiRequest, ApiResponse } from "../types/api";
 
 export default class WishlistClient {
   static addToWishlist(
-    wishlist: AddToWishlistRequest
-  ): Promise<AxiosResponse<ApiSuccess<{ newWishlist: WishlistDocument }>>> {
+    wishlist: ApiRequest<"/api/wishlist", "post">
+  ): Promise<AxiosResponse<ApiResponse<"/api/wishlist", "post">>> {
     const url = `${API_URL}/api/wishlist`;
     return axios.post(url, wishlist, getHeaders());
   }
@@ -20,14 +15,16 @@ export default class WishlistClient {
   /** `mediaId` is the external media id (`Media.mediaId`). */
   static removeFromWishlist(
     mediaId: string
-  ): Promise<AxiosResponse<ApiSuccess<{ deletedWishlist: WishlistDocument }>>> {
+  ): Promise<AxiosResponse<ApiResponse<"/api/wishlist/{mediaId}", "delete">>> {
     const url = `${API_URL}/api/wishlist/${mediaId}`;
     return axios.delete(url, getHeaders());
   }
 
   static getAllWishlistForUser(
     userName: string
-  ): Promise<AxiosResponse<ApiSuccess<{ wishlistList: WishlistItem[] }>>> {
+  ): Promise<
+    AxiosResponse<ApiResponse<"/api/wishlist/user/{userName}", "get">>
+  > {
     const url = `${API_URL}/api/wishlist/user/${userName}`;
     return axios.get(url, getHeaders());
   }

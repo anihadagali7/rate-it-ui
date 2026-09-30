@@ -45,6 +45,8 @@
     "test": "vitest",
     "test:ci": "vitest run",
     "typecheck": "tsc --noEmit",
+    "api:sync": "node scripts/apiTypes.js sync",
+    "api:generate": "node scripts/apiTypes.js generate",
     "prepare": "husky install",
     "heroku-postbuild": "npm run build"
   },

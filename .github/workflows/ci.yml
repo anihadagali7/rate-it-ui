@@ -18,10 +18,23 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            tools/api-codegen/package-lock.json
 
       # Skip the husky `prepare` hook — git hooks aren't needed on CI
       - name: Install dependencies
         run: npm ci --ignore-scripts
+
+      # api.generated.ts must be exactly what the generator makes from the
+      # committed src/types/openapi.json, so it can't be edited by hand.
+      - name: Check generated API types
+        run: |
+          npm run api:generate
+          git diff --exit-code -- src/types/api.generated.ts || {
+            echo "::error file=src/types/api.generated.ts::api.generated.ts doesn't match src/types/openapi.json. Run \`npm run api:sync\` and commit the result; never edit the generated file by hand."
+            exit 1
+          }
 
       # Only files changed in the PR: much of src/ predates the Prettier hook.
       - name: Check formatting of changed files
