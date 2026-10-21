@@ -52,7 +52,6 @@ const Playlist = () => {
         <AddPlaylistModal
           open={openNewPlaylistModal}
           onClose={() => setNewPlaylistModal(false)}
-          profileUserName={profileUserName}
         />
       ) : null}
     </FeedLayout>
