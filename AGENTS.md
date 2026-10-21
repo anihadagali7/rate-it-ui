@@ -137,6 +137,22 @@ After UI changes, run the app (`npm start`, port 3000; the API must be running o
 and check the change at both mobile (375px) and desktop widths. Check the console for
 errors. Include a screenshot in the PR for visual changes when possible.
 
+To check logged-in flows, log in as the dev test user (`agent-test-user`, verified and
+profile-complete) instead of asking the user for credentials:
+
+1. Run `curl -s localhost:8080/api` and confirm it reports `"environment":"dev"`. If it
+   reports anything else, stop and tell the user.
+2. In `../rate-it-service`, run `node scripts/devTestUser.js`. It prints
+   `{ "userName": "...", "accessToken": "..." }` (and refuses unless `APP_ENV` is `dev`).
+3. In the browser on `http://localhost:3000`, set both values in `localStorage`, the same
+   keys the login flow uses:
+   `localStorage.setItem("accessToken", "<accessToken>")` and
+   `localStorage.setItem("userName", "<userName>")`.
+4. Reload. The app should load as `agent-test-user` without redirecting to
+   `/complete-profile`. When the token expires, re-run the script.
+
+Remove both keys (or log out) to check the logged-out state.
+
 ## Cross-repo work
 
 The API is at `../rate-it-service`. Its routes are in `routes/`, the logic in `services/`,
