@@ -314,7 +314,9 @@ const MediaInfo = () => {
               >
                 No reviews yet
               </Typography>
-              <Typography sx={{ fontSize: 14, color: tokens.colors.textSecondary }}>
+              <Typography
+                sx={{ fontSize: 14, color: tokens.colors.textSecondary }}
+              >
                 Be the first to rate this title.
               </Typography>
             </SurfaceCard>
@@ -336,7 +338,6 @@ const MediaInfo = () => {
         <AddPlaylistModal
           open={openNewPlaylistModal}
           onClose={() => setNewPlaylistModal(false)}
-          profileUserName={currentUser?.userName}
         />
       ) : null}
 
