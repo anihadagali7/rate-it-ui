@@ -33,17 +33,12 @@ cp .env.example .env
 VITE_BASE_URL=http://localhost:8080
 
 VITE_GOOGLE_CLIENT_ID=your-google-oauth-client-id
-VITE_FACEBOOK_APP_ID=your-facebook-app-id
-VITE_APPLE_CLIENT_ID=your-apple-services-id
-VITE_APPLE_REDIRECT_URI=https://your-app-origin
 ```
 
 | Variable | Required | Notes |
 |----------|----------|--------|
-| `VITE_BASE_URL` | Yes | Base URL of the API (no trailing slash). Example: `https://your-rate-it-service.herokuapp.com` |
+| `VITE_BASE_URL` | Yes | Base URL of the API (no trailing slash). `http://localhost:8080` for a local API, or `https://rate-it-service.herokuapp.com` for the dev Heroku API; never the production API while testing |
 | `VITE_GOOGLE_CLIENT_ID` | For Google sign-in | OAuth client ID from Google Cloud Console. Never put the client *secret* here — that stays backend-only |
-| `VITE_FACEBOOK_APP_ID` | For Facebook sign-in | From a Facebook Login app |
-| `VITE_APPLE_CLIENT_ID` / `VITE_APPLE_REDIRECT_URI` | For Apple sign-in | Your Apple Services ID and its registered return URL. Apple's sign-in popup requires HTTPS, even locally |
 
 Code reads these values through `src/config.ts`. Locally, Vite compiles them in from `.env` at build time; only variables with the `VITE_` prefix reach the browser. On Heroku, `scripts/heroku-start.js` serves each app's own values as `/config.js` when the page loads, so one build works on every app in the pipeline (see [Notes for Heroku](#notes-for-heroku)).
 
@@ -51,26 +46,40 @@ On the API side, make sure `CORS_ORIGIN` includes your UI origin (e.g. `http://l
 
 ## Getting started
 
-Install dependencies:
+1. Pick an API. Either:
 
-```bash
-npm install
-```
+   - **Run it locally** (needed if you're changing the API too). Follow [rate-it-service](https://github.com/anihadagali7/rate-it-service)'s README; it runs on `http://localhost:8080`. Check that it's up and on the dev database:
 
-Start the dev server:
+     ```bash
+     curl http://localhost:8080/api   # {"status":"UP","environment":"dev"}
+     ```
 
-```bash
-npm start
-```
+   - **Use the dev Heroku API** (UI-only work, no local API or database needed). Set `VITE_BASE_URL=https://rate-it-service.herokuapp.com` in step 3. That's the staging API on the dev database, and it already allows `http://localhost:3000` in CORS. Never use `rate-it-service-prod`.
 
-The app runs at [http://localhost:3000](http://localhost:3000) and sends API calls to the URL in `VITE_BASE_URL`.
+2. In this repo, switch to Node 24 and install dependencies (this also installs the Prettier pre-commit hook):
 
-Make sure the backend is running first (default `http://localhost:8080`):
+   ```bash
+   nvm use
+   npm install
+   ```
 
-```bash
-# in rate-it-service
-npm start
-```
+3. Create `.env` from `.env.example` (see [Environment variables](#environment-variables)). `VITE_BASE_URL` (from step 1) is the only value you need. Never point it at the production API while testing.
+
+4. Start the dev server:
+
+   ```bash
+   npm start
+   ```
+
+   The app runs at [http://localhost:3000](http://localhost:3000). It must be port 3000: the API's CORS allowlist and email links expect it.
+
+## Using the app locally
+
+- **Browse without an account:** Home, Search and media pages work logged out. Actions like rating or saving prompt you to log in.
+- **Create an account:** go to `/signup` and sign up with email and password. You're logged in straight away. Google sign-ups are first asked to finish their profile at `/complete-profile`. Email verification isn't required to use the app. Without `BREVO_API_KEY` on the API, no verification email is sent.
+- **Google sign-in:** needs a real Google OAuth client ID on both the UI and the API. Email and password is the easiest way to sign in locally.
+- **Forgot password:** the API prints the reset link to its console outside production, so you can test it without email (see the service README). With the dev Heroku API, find it in `heroku logs --tail -a rate-it-service`.
+- **Log out:** to reset the session, use the app's log out, or clear `accessToken` and `userName` from `localStorage`.
 
 ## Running tests
 
@@ -133,6 +142,13 @@ web: node scripts/heroku-start.js
 
 Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
 
+There are two apps in one Heroku pipeline:
+
+| App | Stage | API (`VITE_BASE_URL`) |
+|-----|-------|-----------------------|
+| `rate-it-ui` | staging | `rate-it-service` (dev database) |
+| `rate-it-ui-prod` | production | `rate-it-service-prod` |
+
 ### First-time setup
 
 1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) and log in:
@@ -141,31 +157,18 @@ Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
    heroku login
    ```
 
-2. Create the Heroku app (skip if it already exists):
+2. Create both apps and add them to a pipeline (staging and production). On the staging app, connect the GitHub repo under **Deploy** and enable **Automatic deploys** from `master`.
 
-   ```bash
-   heroku create your-rate-it-ui
-   ```
-
-3. Add the Heroku git remote:
-
-   ```bash
-   heroku git:remote -a your-rate-it-ui
-   ```
-
-4. Set config vars (each app in the pipeline sets its own; they're read when the page loads):
+3. Set config vars on each app (each app in the pipeline sets its own; they're read when the page loads):
 
    ```bash
    heroku config:set VITE_BASE_URL="https://your-rate-it-service.herokuapp.com"
    heroku config:set VITE_GOOGLE_CLIENT_ID="your-google-oauth-client-id"
-   heroku config:set VITE_FACEBOOK_APP_ID="your-facebook-app-id"
-   heroku config:set VITE_APPLE_CLIENT_ID="your-apple-services-id"
-   heroku config:set VITE_APPLE_REDIRECT_URI="https://your-rate-it-ui.herokuapp.com"
    ```
 
    Or set them in the Heroku Dashboard under **Settings → Config Vars**.
 
-5. On **rate-it-service**, allow this UI origin in CORS:
+4. On each API app, allow the matching UI origin in CORS:
 
    ```bash
    heroku config:set CORS_ORIGIN="https://your-rate-it-ui.herokuapp.com" -a your-rate-it-service
@@ -173,31 +176,21 @@ Heroku runs `heroku-postbuild` after install, which executes `npm run build`.
 
 ### Deploy a new version
 
-1. Commit your changes:
+1. Open a PR. When it merges to `master` (after CI passes), Heroku deploys it to the staging app `rate-it-ui` automatically. Don't push to Heroku by hand.
+2. Check staging:
 
    ```bash
-   git add .
-   git commit -m "Describe your changes"
+   heroku open -a rate-it-ui
+   heroku logs --tail -a rate-it-ui
    ```
 
-2. Push to Heroku:
+3. Promote the same build to production, from the pipeline in the Heroku Dashboard or with:
 
    ```bash
-   git push heroku main
+   heroku pipelines:promote -a rate-it-ui
    ```
 
-   If your default branch is `master`:
-
-   ```bash
-   git push heroku master
-   ```
-
-3. Verify the deployment:
-
-   ```bash
-   heroku open
-   heroku logs --tail
-   ```
+   The promoted build reads `rate-it-ui-prod`'s own config vars at page load, so it calls the prod API. If the change needs a new API endpoint, promote the service first.
 
 ### Notes for Heroku
 
@@ -223,7 +216,9 @@ rate-it-ui/
 │   ├── components/        # UI components
 │   ├── navigation/        # Layout, header, sidebar
 │   ├── pages/             # Route-level pages
-│   ├── shared/            # Buttons, inputs, Protected route, errors, loading
+│   ├── shared/            # Reusable primitives, layout, social, errors, loading skeletons, hooks
+│   ├── styles/            # Design tokens and MUI theme
+│   ├── testUtils/         # renderWithProviders for tests
 │   ├── types/             # API types: api.ts aliases, generated from openapi.json
 │   ├── utils/             # Auth header helpers and axios interceptor
 │   ├── App.js             # Routes and session bootstrap
